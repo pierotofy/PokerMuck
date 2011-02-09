@@ -1,0 +1,11 @@
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\bin\Release\PokerMuck.exe
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\bin\Release\PokerMuck.pdb
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.HandPanel.resources
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.PlayerHandPanel.resources
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.FrmMain.resources
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.Properties.Resources.resources
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.exe
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.pdb
