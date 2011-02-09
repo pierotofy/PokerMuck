@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1F70892C-33D0-49A2-8D33-F6DD206398BA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PokerMuck</RootNamespace>
+    <AssemblyName>PokerMuck</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\UIComponents\CardPictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Classes\PokerClients\PokerClientsList.cs" />
+    <Compile Include="Classes\Settings\PokerMuckUserSettings.cs" />
+    <Compile Include="Classes\Settings\UserSettings.cs" />
+    <Compile Include="Classes\HandHistory\Parser\UniversalHHParser.cs" />
+    <Compile Include="Classes\PokerMuckDirector.cs" />
+    <Compile Include="Classes\Player.cs" />
+    <Compile Include="Classes\Table.cs" />
+    <Compile Include="Classes\HandHistory\HHDirectoryParser.cs" />
+    <Compile Include="Classes\HandHistory\Monitor\FilesLineTracker.cs" />
+    <Compile Include="Classes\HandHistory\Monitor\HHMonitor.cs" />
+    <Compile Include="Classes\HandHistory\Monitor\IHHMonitorHandler.cs" />
+    <Compile Include="Classes\HandHistory\Parser\HHParserEventArgs.cs" />
+    <Compile Include="Classes\HandHistory\Parser\HoldemHHParser.cs" />
+    <Compile Include="Classes\Hand\Hand.cs" />
+    <Compile Include="Classes\Hand\HoldemHand.cs" />
+    <Compile Include="Classes\WindowsListener\IDetectWindowsChanges.cs" />
+    <Compile Include="Classes\Card.cs" />
+    <Compile Include="Classes\PokerClients\PokerClient.cs" />
+    <Compile Include="Classes\PokerClients\PokerStarsIT.cs" />
+    <Compile Include="Classes\UIComponents\HandPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\HandPanel.Designer.cs">
+      <DependentUpon>HandPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\UIComponents\PlayerHandPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\PlayerHandPanel.Designer.cs">
+      <DependentUpon>PlayerHandPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\WindowsListener\WindowsListener.cs" />
+    <Compile Include="Classes\HandHistory\Parser\HHParser.cs" />
+    <Compile Include="FrmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Classes\UIComponents\HandPanel.resx">
+      <DependentUpon>HandPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\PlayerHandPanel.resx">
+      <DependentUpon>PlayerHandPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Cards\1_1.png" />
+    <Content Include="Resources\Cards\1_10.png" />
+    <Content Include="Resources\Cards\1_11.png" />
+    <Content Include="Resources\Cards\1_12.png" />
+    <Content Include="Resources\Cards\1_13.png" />
+    <Content Include="Resources\Cards\1_2.png" />
+    <Content Include="Resources\Cards\1_3.png" />
+    <Content Include="Resources\Cards\1_4.png" />
+    <Content Include="Resources\Cards\1_5.png" />
+    <Content Include="Resources\Cards\1_6.png" />
+    <Content Include="Resources\Cards\1_7.png" />
+    <Content Include="Resources\Cards\1_8.png" />
+    <Content Include="Resources\Cards\1_9.png" />
+    <Content Include="Resources\Cards\2_1.png" />
+    <Content Include="Resources\Cards\2_10.png" />
+    <Content Include="Resources\Cards\2_11.png" />
+    <Content Include="Resources\Cards\2_12.png" />
+    <Content Include="Resources\Cards\2_13.png" />
+    <Content Include="Resources\Cards\2_2.png" />
+    <Content Include="Resources\Cards\2_3.png" />
+    <Content Include="Resources\Cards\2_4.png" />
+    <Content Include="Resources\Cards\2_5.png" />
+    <Content Include="Resources\Cards\2_6.png" />
+    <Content Include="Resources\Cards\2_7.png" />
+    <Content Include="Resources\Cards\2_8.png" />
+    <Content Include="Resources\Cards\2_9.png" />
+    <Content Include="Resources\Cards\3_1.png" />
+    <Content Include="Resources\Cards\3_10.png" />
+    <Content Include="Resources\Cards\3_11.png" />
+    <Content Include="Resources\Cards\3_12.png" />
+    <Content Include="Resources\Cards\3_13.png" />
+    <Content Include="Resources\Cards\3_2.png" />
+    <Content Include="Resources\Cards\3_3.png" />
+    <Content Include="Resources\Cards\3_4.png" />
+    <Content Include="Resources\Cards\3_5.png" />
+    <Content Include="Resources\Cards\3_6.png" />
+    <Content Include="Resources\Cards\3_7.png" />
+    <Content Include="Resources\Cards\3_8.png" />
+    <Content Include="Resources\Cards\3_9.png" />
+    <Content Include="Resources\Cards\4_1.png" />
+    <Content Include="Resources\Cards\4_10.png" />
+    <Content Include="Resources\Cards\4_11.png" />
+    <Content Include="Resources\Cards\4_12.png" />
+    <Content Include="Resources\Cards\4_13.png" />
+    <Content Include="Resources\Cards\4_2.png" />
+    <Content Include="Resources\Cards\4_3.png" />
+    <Content Include="Resources\Cards\4_4.png" />
+    <Content Include="Resources\Cards\4_5.png" />
+    <Content Include="Resources\Cards\4_6.png" />
+    <Content Include="Resources\Cards\4_7.png" />
+    <Content Include="Resources\Cards\4_8.png" />
+    <Content Include="Resources\Cards\4_9.png" />
+    <Content Include="Resources\Cards\cover.png" />
+    <None Include="Resources\Eagle.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
