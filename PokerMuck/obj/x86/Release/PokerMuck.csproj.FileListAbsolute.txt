@@ -9,3 +9,4 @@ C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\GenerateResource.write.1.tlog
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.exe
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.pdb
+C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.ControlListContainer.resources

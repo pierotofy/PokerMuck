@@ -64,6 +64,12 @@
     <Compile Include="Classes\HandHistory\Parser\HoldemHHParser.cs" />
     <Compile Include="Classes\Hand\Hand.cs" />
     <Compile Include="Classes\Hand\HoldemHand.cs" />
+    <Compile Include="Classes\UIComponents\ControlListContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\ControlListContainer.Designer.cs">
+      <DependentUpon>ControlListContainer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\WindowsListener\IDetectWindowsChanges.cs" />
     <Compile Include="Classes\Card.cs" />
     <Compile Include="Classes\PokerClients\PokerClient.cs" />
@@ -90,6 +96,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Classes\UIComponents\ControlListContainer.resx">
+      <DependentUpon>ControlListContainer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\HandPanel.resx">
       <DependentUpon>HandPanel.cs</DependentUpon>
     </EmbeddedResource>

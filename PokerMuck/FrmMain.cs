@@ -54,14 +54,19 @@ namespace PokerMuck
         void pmDirector_DisplayPlayerMuckedHand(Player player)
         {
             Debug.Print("Displayed!");
-            handPanel.PlayerName = player.Name;
-            handPanel.HandToDisplay = player.MuckedHand;
+
+            PlayerHandPanel php = new PlayerHandPanel();
+            php.PlayerName = player.Name;
+            php.HandToDisplay = player.MuckedHand;
+
+            playerHandsContainer.AddPanel(php);
 
         }
 
         void pmDirector_ClearAllPlayerMuckedHands()
         {
             Debug.Print("ClearAllPLayermuckedhands");
+            playerHandsContainer.ClearAll();
         }
 
         /* Helper methods */
