@@ -18,10 +18,11 @@ namespace PokerMuck
 
         protected override void InitializeDefaultValues()
         {
-            HandHistoryDirectory = @"";
+            HandHistoryDirectory = "";
             CurrentPokerClient = new PokerStarsIT("English");
             WindowPosition = new Point(480, 320); // We assume monitors will be bigger than this resolution
             WindowSize = new Size(209, 331); // Designer size
+            UserID = "";
         }
 
         public String HandHistoryDirectory
@@ -33,6 +34,19 @@ namespace PokerMuck
 
             set{
                 SetSetting("hand_history_directory", value);
+            }
+        }
+
+        public String UserID
+        {
+            get
+            {
+                return GetStringSetting("player_user_id");
+            }
+
+            set
+            {
+                SetSetting("player_user_id", value);
             }
         }
 

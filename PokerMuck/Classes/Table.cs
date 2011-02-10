@@ -16,6 +16,9 @@ namespace PokerMuck
         private List<Player> playerList;
         public List<Player> PlayerList { get { return playerList; } }
 
+        /* Game ID associated with this table */
+        public String GameID { get; set; }
+
         /* Identification string of the table */
         public String TableId { get; set; }
 
@@ -41,6 +44,7 @@ namespace PokerMuck
             this.handHistoryFilename = handHistoryFilename;
             this.windowTitle = windowTitle;
             this.pokerClient = pokerClient;
+            this.TableId = String.Empty; // We don't know yet
 
             // By default we use the universal parser
             handHistoryParser = new UniversalHHParser(pokerClient);
@@ -61,7 +65,7 @@ namespace PokerMuck
             player.HasShowedLastRound = true;
         }
 
-        void handHistoryParser_PlayerIsSeated(string playerName, HHParserEventArgs args)
+        void handHistoryParser_PlayerIsSeated(string playerName)
         {
             Debug.Print("Player added: {0}", playerName);
             AddPlayer(playerName);
@@ -107,7 +111,23 @@ namespace PokerMuck
                 handHistoryParser.PlayerMuckHandAvailable += new HHParser.PlayerMuckHandAvailableHandler(handHistoryParser_PlayerMuckHandAvailable);
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
                 handHistoryParser.ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(handHistoryParser_ShowdownWillBegin);
+                handHistoryParser.NewTableHasBeenCreated += new HHParser.NewTableHasBeenCreatedHandler(handHistoryParser_NewTableHasBeenCreated);
             }
+        }
+
+        void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
+        {
+            if (this.TableId != String.Empty && this.TableId != tableId)
+            {
+
+                Debug.Print("An existing table has just changed its tableID... just fwi");
+                Debug.Print("Previous ID: " + this.TableId);
+                Debug.Print("New ID: " + tableId);
+
+            }
+
+            this.GameID = gameId;
+            this.TableId = tableId;
         }
 
 

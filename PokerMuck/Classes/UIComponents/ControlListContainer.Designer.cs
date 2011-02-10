@@ -36,6 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "ControlListContainer";
             this.Size = new System.Drawing.Size(150, 72);
+            this.Resize += new System.EventHandler(this.ControlListContainer_Resize);
             this.ResumeLayout(false);
 
         }

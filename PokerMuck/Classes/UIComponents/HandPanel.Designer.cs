@@ -36,6 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "HandPanel";
             this.Size = new System.Drawing.Size(196, 79);
+            this.SizeChanged += new System.EventHandler(this.HandPanel_SizeChanged);
             this.ResumeLayout(false);
 
         }

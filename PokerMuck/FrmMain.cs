@@ -33,6 +33,7 @@ namespace PokerMuck
             pmDirector = new PokerMuckDirector();
             pmDirector.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
             pmDirector.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
+            pmDirector.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
             pmDirector.Test();
 
             // Adjust size
@@ -43,30 +44,42 @@ namespace PokerMuck
 
             // Load configuration
             LoadConfigurationValues();
+        }
 
-/*
-            handPanel.PlayerName = "PieroTofy";
-            handPanel.HandToDisplay = new HoldemHand(new Card(CardFace.Ace, CardSuit.Clubs),
-                                                    new Card(CardFace.Four, CardSuit.Diamonds));
- */
+        void pmDirector_DisplayStatus(string status)
+        {
+            // Thread safe
+            this.Invoke((Action)delegate()
+            {
+                SetStatus(status);
+            });
         }
 
         void pmDirector_DisplayPlayerMuckedHand(Player player)
         {
             Debug.Print("Displayed!");
 
-            PlayerHandPanel php = new PlayerHandPanel();
-            php.PlayerName = player.Name;
-            php.HandToDisplay = player.MuckedHand;
+            // Thread safe
+            this.Invoke((Action)delegate()
+            {
+                PlayerHandPanel php = new PlayerHandPanel();
+                php.PlayerName = player.Name;
+                php.HandToDisplay = player.MuckedHand;
 
-            playerHandsContainer.AddPanel(php);
-
+                playerHandsContainer.AddPanel(php, 100);
+            });
+             
         }
 
         void pmDirector_ClearAllPlayerMuckedHands()
         {
             Debug.Print("ClearAllPLayermuckedhands");
-            playerHandsContainer.ClearAll();
+
+            // Thread safe
+            this.Invoke((Action)delegate()
+            {
+                playerHandsContainer.ClearAll();
+            });
         }
 
         /* Helper methods */
@@ -98,6 +111,7 @@ namespace PokerMuck
         private void LoadConfigurationValues()
         {
             txtHandHistoryDirectory.Text = pmDirector.UserSettings.HandHistoryDirectory;
+            txtUserId.Text = pmDirector.UserSettings.UserID;
         }
 
         /* Change hand history directory */
@@ -111,6 +125,12 @@ namespace PokerMuck
                 pmDirector.ChangeHandHistoryDirectory(browserDialog.SelectedPath);
             }
 
+        }
+
+        /* User ID has changed, store in config */
+        private void txtUserId_TextChanged(object sender, EventArgs e)
+        {
+            pmDirector.UserSettings.UserID = txtUserId.Text;
         }
     }
 }

@@ -6,23 +6,29 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections;
 
 namespace PokerMuck
 {
     public partial class ControlListContainer : UserControl
     {
+        /* This hashtable maps every control to a maximum height */
+        Hashtable maxHeightTable;
+
         public ControlListContainer()
         {
+            maxHeightTable = new Hashtable();
             InitializeComponent();
         }
 
 
         /* Adds a new control to our canvas */
-        public void AddPanel(Control control)
+        public void AddPanel(Control control, int maximumHeight = 0)
         {
-            control.Dock = DockStyle.Left;
-            control.Anchor = AnchorStyles.Right;
+            control.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             Controls.Add(control);
+            maxHeightTable[control] = maximumHeight;
+
 
             AdjustSizes();
             AdjustPositions();
@@ -53,15 +59,22 @@ namespace PokerMuck
                 int availableHeight = this.ClientSize.Height;
                 int controlHeight = firstControl.Height;
 
-                // Need to resize?
-                if (availableHeight / numControls < controlHeight)
-                {
-                    int newHeight = (int)Math.Floor((double)availableHeight / (double)numControls);
+                int newHeight = (int)Math.Floor((double)availableHeight / (double)numControls);
 
-                    foreach (Control c in Controls)
+                foreach (Control c in Controls)
+                {
+                    // Is the new height bigger than what's allowed (zero means no limit)?
+                    int allowedMaxHeight = (int)maxHeightTable[c];
+                    if (allowedMaxHeight != 0 && newHeight > allowedMaxHeight)
                     {
-                        c.Height = newHeight;
+                        // Set the control's height to the max allowed height instead
+                        c.Height = allowedMaxHeight;
                     }
+                    else
+                    {
+                        // We're good, new height is OK
+                        c.Height = newHeight;
+                    } 
                 }
             }
 
@@ -71,6 +84,14 @@ namespace PokerMuck
         public void ClearAll()
         {
             Controls.Clear();
+            maxHeightTable.Clear();
+        }
+
+
+        private void ControlListContainer_Resize(object sender, EventArgs e)
+        {
+            AdjustSizes();
+            AdjustPositions();
         }
     }
 }

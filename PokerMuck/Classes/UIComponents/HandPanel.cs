@@ -41,8 +41,7 @@ namespace PokerMuck
 
         /* Every reference to a CardPictureBox is stored here */
         private List<CardPictureBox> cardPictures;
-
-       
+               
         public HandPanel()
         {
             InitializeComponent();
@@ -125,6 +124,7 @@ namespace PokerMuck
             int widthAvailable = this.ClientSize.Width - BorderPadding * 2;
             int heightAvailable = this.ClientSize.Height - BorderPadding * 2;
 
+
             int numCards = cardPictures.Count;
             Debug.Assert(numCards > 0, "Trying to adjust zero cards?");
 
@@ -152,6 +152,18 @@ namespace PokerMuck
             foreach (CardPictureBox cardPicture in cardPictures)
             {
                 cardPicture.Scale(scaleFactor);
+
+                // Adjust proportions in case we lost them during smaller resizes
+                cardPicture.Width = (int)((float)cardPicture.Height / cardPicture.HeightWidthRatio);
+            }
+        }
+
+        /* When the size has changed, we need to scale and move any existing picture box */
+        private void HandPanel_SizeChanged(object sender, EventArgs e)
+        {
+            if (cardPictures.Count > 0){
+                ScaleCardPictures();
+                MoveCardPictures();
             }
         }
     }

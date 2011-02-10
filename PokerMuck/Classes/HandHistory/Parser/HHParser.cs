@@ -21,12 +21,12 @@ namespace PokerMuck
         }        
 
         /* A player is sitting at the table with us */
-        public delegate void PlayerIsSeatedHandler(String playerName, HHParserEventArgs args);
+        public delegate void PlayerIsSeatedHandler(String playerName);
         public event PlayerIsSeatedHandler PlayerIsSeated;
 
         protected void OnPlayerIsSeated(String playerName)
         {
-            if (PlayerIsSeated != null) PlayerIsSeated(playerName, GenerateHHParserEventArgs());
+            if (PlayerIsSeated != null) PlayerIsSeated(playerName);
         }
         
         /* A new game has begun */
@@ -128,10 +128,5 @@ namespace PokerMuck
             return LineMatchesRegex(line, regex, out result);
         }
 
-        /* Returns the current event args (GameID, TableID, etc.) structure */
-        protected HHParserEventArgs GenerateHHParserEventArgs()
-        {
-            return new HHParserEventArgs(currentGameId, currentTableId);
-        }
     }
 }

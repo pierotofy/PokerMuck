@@ -60,7 +60,6 @@
     <Compile Include="Classes\HandHistory\Monitor\FilesLineTracker.cs" />
     <Compile Include="Classes\HandHistory\Monitor\HHMonitor.cs" />
     <Compile Include="Classes\HandHistory\Monitor\IHHMonitorHandler.cs" />
-    <Compile Include="Classes\HandHistory\Parser\HHParserEventArgs.cs" />
     <Compile Include="Classes\HandHistory\Parser\HoldemHHParser.cs" />
     <Compile Include="Classes\Hand\Hand.cs" />
     <Compile Include="Classes\Hand\HoldemHand.cs" />

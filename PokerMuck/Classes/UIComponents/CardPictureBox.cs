@@ -11,12 +11,17 @@ namespace PokerMuck
     {
         private Card card;
 
+        // Store the original image height/width ratio
+        private float heightWidthRatio;
+        public float HeightWidthRatio { get { return heightWidthRatio; } }
+
         public CardPictureBox(Card card)
         {
             this.card = card;
             this.SizeMode = PictureBoxSizeMode.StretchImage;
             this.ClientSize = GetImageSize();
-                
+            this.heightWidthRatio = (float)ClientSize.Height / (float)ClientSize.Width;
+
             ReloadImage();
         }
 

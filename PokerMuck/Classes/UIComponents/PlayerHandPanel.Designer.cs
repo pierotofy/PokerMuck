@@ -60,7 +60,7 @@
             this.handPanel.Location = new System.Drawing.Point(92, 3);
             this.handPanel.Name = "handPanel";
             this.handPanel.Size = new System.Drawing.Size(98, 46);
-            this.handPanel.TabIndex = 1;
+            this.handPanel.TabIndex = 3;
             // 
             // PlayerHandPanel
             // 

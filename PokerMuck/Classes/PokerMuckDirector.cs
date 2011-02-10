@@ -34,6 +34,10 @@ namespace PokerMuck
         public delegate void ClearAllPlayerMuckedHandsHandler();
         public event ClearAllPlayerMuckedHandsHandler ClearAllPlayerMuckedHands;
 
+        /* Tell the UI to display a status message */
+        public delegate void DisplayStatusHandler(String status);
+        public event DisplayStatusHandler DisplayStatus;
+
 
         public PokerMuckDirector()
         {
@@ -106,7 +110,7 @@ namespace PokerMuck
             String pattern = pokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(windowTitle);
             if (pattern != String.Empty)
             {
-                String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(@"C:\Users\piero\AppData\Local\PokerStars.IT\HandHistory\stallion089", pattern);
+                String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(UserSettings.HandHistoryDirectory, pattern);
 
                 if (filename != String.Empty)
                 {
@@ -128,10 +132,12 @@ namespace PokerMuck
 
                     // Start monitoring the new file!
                     hhMonitor.ChangeHandHistoryFile(filename);
+                    OnDisplayStatus("Now monitoring " + filename);
                     Debug.Print(String.Format("Valid window title match! Now monitoring {0}", filename));
                 }
                 else
                 {
+                    OnDisplayStatus("New game started on window: " + windowTitle + "?");
                     Debug.Print("A valid window title was found ({0}) but no filename associated with the window could be found using pattern {1}. Is this our first hand at the table and no hand history is available?", windowTitle, pattern);
 
                 }
@@ -145,6 +151,7 @@ namespace PokerMuck
         /* Data in one of the tables has changed, refresh the UI */
         void table_DataHasChanged(Table sender)
         {
+            OnDisplayStatus("Table #" + sender.TableId);
 
             // Tell the UI to clear any previous mucked hand from the screen
             if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
@@ -152,9 +159,9 @@ namespace PokerMuck
             // Check which players need to be shown
             foreach (Player p in sender.PlayerList)
             {
-                if (p.HasShowedLastRound)
-                {
-                    
+                // If it has showed and it's not us
+                if (p.HasShowedLastRound && p.Name != UserSettings.UserID)
+                {                    
                     // Inform the UI
                     if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
                 }
@@ -187,6 +194,12 @@ namespace PokerMuck
         {
             if (windowsListener != null) windowsListener.StopListening();
             if (hhMonitor != null) hhMonitor.StopMonitoring();
+        }
+
+        /* Helper method to raise the DisplayStatus event */
+        private void OnDisplayStatus(String status)
+        {
+            if (DisplayStatus != null) DisplayStatus(status);
         }
 
         /* This method must be called when you are done with the director */

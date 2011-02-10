@@ -28,7 +28,7 @@ namespace PokerMuck
         private void AdjustComponents()
         {
             // Sizes
-            handPanel.Size = new Size(this.Size.Width - lblPlayerName.Size.Width - 12, this.Size.Height - 10);
+            handPanel.Size = new Size(this.Size.Width - lblPlayerName.Size.Width - 28, this.Size.Height - 10);
             lblline.Size = new Size(this.Size.Width - 4, 2);
             lblPlayerName.Size = new Size(lblPlayerName.Size.Width, this.Size.Height - 16);
 
