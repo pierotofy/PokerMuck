@@ -26,6 +26,15 @@ namespace PokerMuck
         private PokerMuckUserSettings userSettings;
         public PokerMuckUserSettings UserSettings { get { return userSettings; } }
 
+        /* Tell the UI that we need to display a hand */
+        public delegate void DisplayPlayerMuckedHandHandler(Player player);
+        public event DisplayPlayerMuckedHandHandler DisplayPlayerMuckedHand;
+
+        /* Tell the UI to clear the list of mucked hands */
+        public delegate void ClearAllPlayerMuckedHandsHandler();
+        public event ClearAllPlayerMuckedHandsHandler ClearAllPlayerMuckedHands;
+
+
         public PokerMuckDirector()
         {
             InitializeSupportedPokerClientList();
@@ -48,17 +57,16 @@ namespace PokerMuck
             // TODO read config to find the directory to monitor
             hhMonitor = new HHMonitor(userSettings.HandHistoryDirectory, this);
             hhMonitor.StartMonitoring();
+        }
 
-
-            /* TEST CODE REMOVE IN PRODUCTION */
-            /*
+        /* TEST CODE REMOVE IN PRODUCTION */
+        public void Test()
+        {
             String filename = "test.txt";
             Table newTable = new Table(filename, "Test", pokerClient);
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
             tables.Add(newTable);
             hhMonitor.ChangeHandHistoryFile(filename); // TODO REMOVE
-             * */
-
         }
 
         /* Change the hand history directory */
@@ -137,7 +145,20 @@ namespace PokerMuck
         /* Data in one of the tables has changed, refresh the UI */
         void table_DataHasChanged(Table sender)
         {
-            Debug.Print("CALLED!!!!!");
+
+            // Tell the UI to clear any previous mucked hand from the screen
+            if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
+
+            // Check which players need to be shown
+            foreach (Player p in sender.PlayerList)
+            {
+                if (p.HasShowedLastRound)
+                {
+                    
+                    // Inform the UI
+                    if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
+                }
+            }
         }
 
         /* Finds a table given its hand history filename. It can be null */

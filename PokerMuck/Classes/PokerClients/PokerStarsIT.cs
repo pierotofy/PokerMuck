@@ -51,16 +51,27 @@ namespace PokerMuck
                 regex.Add("hand_history_detect_player_in_game", @"Seat [\d]+: (?<playerName>[^(]+) \([\d]+ in chips\)");
 
                 /* Recognize mucked hands
-                 Ex. stallion089: shows [Kc Kd] (two pair, Kings and Tens) => "stallion089", "Kc Kd" */
-                regex.Add("hand_history_detect_mucked_hand", @"(?<playerName>[^:]+): shows \[(?<cards>[\d\w ]+)\]");
+                 Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/
+                regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^ ]+)([^\[]*)\[(?<cards>[\d\w ]+)\]");
+
+                //Ex. stallion089: shows [Kc Kd] (two pair, Kings and Tens) => "stallion089", "Kc Kd" 
+                //regex.Add("hand_history_detect_mucked_hand", @"(?<playerName>[^:]+): shows \[(?<cards>[\d\w ]+)\]");
+                                
+                /* Recognize end of round character sequence (in PokerStars.it it's
+                 * a blank line */
+                regex.Add("hand_history_detect_end_of_round", @"^$");
 
                 /* Hand history file format. Example: HH20111216 T123456789 ... .txt */
                 config.Add("hand_history_tournament_filename_format", "HH[0-9]+ {0}{1}");
                 config.Add("hand_history_play_money_filename_format", "HH[0-9]+ {0}");
 
-                
                 /* Game description (as shown in the hand history) */
                 config.Add("game_description_no_limit_holdem", "Hold'em No Limit");
+
+                /* Number of sequences required to raise the OnRoundHasTerminated event.
+                 * This refers to the hand_history_detect_end_of_round regex, on PokerStars.it
+                 * a round is over after 3 blank lines. Most clients might have only one line */
+                config.Add("hand_history_end_of_round_number_of_tokens_required", 3);
             }
         }
 
@@ -92,7 +103,7 @@ namespace PokerMuck
                 String prefix = parts[0].Substring(0,1); //T
                 String gameID = parts[1];
 
-                return String.Format(GetConfig("hand_history_tournament_filename_format"), prefix, gameID);
+                return String.Format(GetConfigString("hand_history_tournament_filename_format"), prefix, gameID);
             }
             else
             {
@@ -104,7 +115,7 @@ namespace PokerMuck
                     string gameDescription = match.Groups["gameDescription"].Value;
                     
                     // We matched a play money game window, need to convert the description into a filename friendly format
-                    return String.Format(GetConfig("hand_history_play_money_filename_format"),gameDescription);
+                    return String.Format(GetConfigString("hand_history_play_money_filename_format"),gameDescription);
                 }
                 else
                 {
@@ -202,7 +213,7 @@ namespace PokerMuck
 
         protected override RegexOptions regexOptions{
             get{
-                return RegexOptions.IgnoreCase;
+                return RegexOptions.IgnoreCase | RegexOptions.Compiled;
             }
         }
     }

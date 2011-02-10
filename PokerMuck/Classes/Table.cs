@@ -14,6 +14,7 @@ namespace PokerMuck
 
         /* Holds a list of the players currently seated at the table */
         private List<Player> playerList;
+        public List<Player> PlayerList { get { return playerList; } }
 
         /* Identification string of the table */
         public String TableId { get; set; }
@@ -57,6 +58,7 @@ namespace PokerMuck
             Debug.Assert(player != null, "Player " + playerName + " mucked hand became available, but this player is not in our list");
 
             player.MuckedHand = hand;
+            player.HasShowedLastRound = true;
         }
 
         void handHistoryParser_PlayerIsSeated(string playerName, HHParserEventArgs args)
@@ -68,6 +70,15 @@ namespace PokerMuck
         void handHistoryParser_RoundHasTerminated()
         {
             if (DataHasChanged != null) DataHasChanged(this);
+        }
+
+        void handHistoryParser_ShowdownWillBegin()
+        {
+            // Mark every player as not having shown their hands during the last showdown
+            foreach (Player p in playerList)
+            {
+                p.HasShowedLastRound = false;
+            }
         }
 
         private void handHistoryParser_GameTypeDiscovered(string gameType)
@@ -95,8 +106,11 @@ namespace PokerMuck
                 handHistoryParser.PlayerIsSeated += new HHParser.PlayerIsSeatedHandler(handHistoryParser_PlayerIsSeated);
                 handHistoryParser.PlayerMuckHandAvailable += new HHParser.PlayerMuckHandAvailableHandler(handHistoryParser_PlayerMuckHandAvailable);
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
+                handHistoryParser.ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(handHistoryParser_ShowdownWillBegin);
             }
         }
+
+
 
         /* Adds a player to the table. If a player has already been added with the same name, this method
          * ignores the request */
@@ -117,7 +131,7 @@ namespace PokerMuck
             playerList.RemoveAll(
                 delegate(Player p)
                 {
-                    return p.PlayerName == playerName;
+                    return p.Name == playerName;
                 }
             );
         }
@@ -130,7 +144,7 @@ namespace PokerMuck
             Player result = playerList.Find(
                  delegate(Player p)
                  {
-                     return p.PlayerName == playerName;
+                     return p.Name == playerName;
                  }
             );
 

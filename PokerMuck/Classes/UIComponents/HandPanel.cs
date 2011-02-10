@@ -125,9 +125,6 @@ namespace PokerMuck
             int widthAvailable = this.ClientSize.Width - BorderPadding * 2;
             int heightAvailable = this.ClientSize.Height - BorderPadding * 2;
 
-
-            Debug.Print(heightAvailable.ToString());
-
             int numCards = cardPictures.Count;
             Debug.Assert(numCards > 0, "Trying to adjust zero cards?");
 

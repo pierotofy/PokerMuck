@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
@@ -29,12 +30,21 @@ namespace PokerMuck
         }
         
         /* A new game has begun */
-        public delegate void NewGameHasStartedHandler(String gameId);
+        public delegate void NewGameHasStartedHandler(String gameId); // TODO: do I really need gameID?
         public event NewGameHasStartedHandler NewGameHasStarted;
 
         protected void OnNewGameHasStarted(String gameId)
         {
             if (NewGameHasStarted != null) NewGameHasStarted(gameId);
+        }
+
+        /* A showdown is about to happen */
+        public delegate void ShowdownWillBeginHandler();
+        public event ShowdownWillBeginHandler ShowdownWillBegin;
+
+        protected void OnShowdownWillBegin()
+        {
+            if (ShowdownWillBegin != null) ShowdownWillBegin();
         }
 
         /* A new table has been created for a game */
@@ -64,13 +74,47 @@ namespace PokerMuck
         /* What tableID are we currently parsing? */
         protected String currentTableId;
 
+        /* Counter for end of round tokens.
+         * Every time this variable reaches a certain value (specified in the pokerclient class)
+         * OnRoundHasTerminated() is raised.
+         * This counter increases everytime a certain end of round regex matches */
+        protected int endOfRoundTokensDetected;
+
         /* This will force subclasses to have a PokerClient in their constructor as well */
         public HHParser(PokerClient pokerClient)
         {
             this.pokerClient = pokerClient;
+            endOfRoundTokensDetected = 0;
         }
 
-        public abstract void ParseLine(String line);
+        /* Every type of game has an end to a round. This is why we detect it here. 
+           A subclass can still disable this mechanism by overriding CheckForEndOfRound() */
+        public virtual void ParseLine(String line)
+        {
+            Debug.Assert(pokerClient != null, "pokerClient has not been initialized in the constructor before ParseLine has been called!");
+
+            CheckForEndOfRound(line);
+        }
+        
+        /* Every hand history file ends with a sequence of tokens (1 or more)
+         * If we detect the end of a game we raise the appropriate event */
+        protected virtual void CheckForEndOfRound(String line)
+        {
+            if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_end_of_round")))
+            {
+                // Increment
+                endOfRoundTokensDetected++;
+
+                // Have we reached the limit?
+                int numberRequired = pokerClient.GetConfigInt("hand_history_end_of_round_number_of_tokens_required");
+                if (endOfRoundTokensDetected >= numberRequired)
+                {
+                    Debug.Print("End of round");
+                    OnRoundHasTerminated();
+                    endOfRoundTokensDetected = 0;
+                }
+            }
+        }
 
         protected bool LineMatchesRegex(String line, Regex regex, out Match result)
         {

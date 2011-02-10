@@ -16,8 +16,6 @@ namespace PokerMuck
         /* Instance of the director */
         PokerMuckDirector pmDirector;
 
-        PlayerHandPanel playerHandPanel;
-
         public FrmMain()
         {
             InitializeComponent();
@@ -33,6 +31,9 @@ namespace PokerMuck
             SetStatus("Waiting...");
 
             pmDirector = new PokerMuckDirector();
+            pmDirector.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
+            pmDirector.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
+            pmDirector.Test();
 
             // Adjust size
             this.Size = pmDirector.UserSettings.WindowSize;
@@ -43,10 +44,24 @@ namespace PokerMuck
             // Load configuration
             LoadConfigurationValues();
 
-
+/*
             handPanel.PlayerName = "PieroTofy";
             handPanel.HandToDisplay = new HoldemHand(new Card(CardFace.Ace, CardSuit.Clubs),
                                                     new Card(CardFace.Four, CardSuit.Diamonds));
+ */
+        }
+
+        void pmDirector_DisplayPlayerMuckedHand(Player player)
+        {
+            Debug.Print("Displayed!");
+            handPanel.PlayerName = player.Name;
+            handPanel.HandToDisplay = player.MuckedHand;
+
+        }
+
+        void pmDirector_ClearAllPlayerMuckedHands()
+        {
+            Debug.Print("ClearAllPLayermuckedhands");
         }
 
         /* Helper methods */

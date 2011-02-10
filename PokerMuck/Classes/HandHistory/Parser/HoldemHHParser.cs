@@ -11,32 +11,25 @@ namespace PokerMuck
     class HoldemHHParser : HHParser
     {
         /* Enum of the possible game phases in a Hold'em game */
-        public enum GamePhase { Preflop, Flop, Turn, River, Showdown, Summary };
-        private GamePhase currentGamePhase;
+        public enum HoldemGamePhase { Preflop, Flop, Turn, River, Showdown, Summary };
+        private HoldemGamePhase currentGamePhase;
 
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
         {
-            // Other init stuff?
+            
         }
 
         public override void ParseLine(string line)
         {
-            Debug.Assert(pokerClient != null, "pokerClient has not been initialized in the constructor before ParseLine has been called!");
+            // Call base class method FIRST
+            base.ParseLine(line);
 
             // Declare match variable that will hold the results
             Match matchResult;
 
             /* Check game phase changes */
             bool gamePhaseChanged = ParseForGamePhaseChanges(line);
-
-            // Changed?
-            if (gamePhaseChanged)
-            {
-                // Are we in the summary? If so we can consider the current round ended
-                if (currentGamePhase == GamePhase.Summary) OnRoundHasTerminated();
-
-                return; //In any case we can return
-            }
+            if (gamePhaseChanged) return;
 
             /* Compare line to extract game id or table id */
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_game_id_token"), out matchResult))
@@ -80,16 +73,19 @@ namespace PokerMuck
                 Hand hand = new HoldemHand(first, second);
                 
                 // Raise event if we're at showdown
-                if (currentGamePhase == GamePhase.Showdown || currentGamePhase == GamePhase.Preflop) OnPlayerMuckHandAvailable(playerName, hand);
+                if (currentGamePhase == HoldemGamePhase.Summary || currentGamePhase == HoldemGamePhase.Showdown || currentGamePhase == HoldemGamePhase.Preflop)
+                {
+                    OnPlayerMuckHandAvailable(playerName, hand);
+                }
                 else
                 {
-                    Debug.Print("Muck hand detected, but we're not at showdown or preflop?");
+                    Debug.Print("Muck hand detected, but we're not at showdown, summary or preflop?");
                 }
             }
-
         }
 
-        /* Will modify the value of currentGamePhase */
+        /* Will modify the value of currentGamePhase 
+           and it might raise a ShowdownWillBegin event */
         private bool ParseForGamePhaseChanges(String line)
         {
             bool foundMatch = false;
@@ -97,27 +93,28 @@ namespace PokerMuck
             /* Check changes in the game phase */
             if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_preflop_phase_token")))
             {
-                currentGamePhase = GamePhase.Preflop;
+                currentGamePhase = HoldemGamePhase.Preflop;
             }
             else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_flop_phase_token")))
             {
-                currentGamePhase = GamePhase.Flop;
+                currentGamePhase = HoldemGamePhase.Flop;
             }
             else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_turn_phase_token")))
             {
-                currentGamePhase = GamePhase.Turn;
+                currentGamePhase = HoldemGamePhase.Turn;
             }
             else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_river_phase_token")))
             {
-                currentGamePhase = GamePhase.River;
+                currentGamePhase = HoldemGamePhase.River;
             }
             else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_showdown_phase_token")))
             {
-                currentGamePhase = GamePhase.Showdown;
+                currentGamePhase = HoldemGamePhase.Showdown;
+                OnShowdownWillBegin();
             }
             else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_summary_phase_token")))
             {
-                currentGamePhase = GamePhase.Summary;
+                currentGamePhase = HoldemGamePhase.Summary;
             }
 
             return foundMatch; 

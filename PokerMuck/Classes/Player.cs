@@ -8,15 +8,19 @@ namespace PokerMuck
     class Player
     {
         /* Every player has a name */
-        private String playerName;
-        public String PlayerName { get { return playerName; } }
+        private String name;
+        public String Name { get { return name; } }
 
         /* Last mucked hand are stored here */
         public Hand MuckedHand { get; set; }
 
-        public Player(String playerName)
+        /* Has this player showed his hands last round? */
+        public bool HasShowedLastRound { get; set; }
+
+        public Player(String name)
         {
-            this.playerName = playerName;
+            this.name = name;
+            this.HasShowedLastRound = false;
         }
     }
 }

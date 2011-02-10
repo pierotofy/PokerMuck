@@ -71,11 +71,21 @@ namespace PokerMuck
         }
 
 
-        public String GetConfig(String key)
+        public String GetConfigString(String key)
+        {            
+            return (String)GetConfig(key);
+        }
+
+        public int GetConfigInt(String key)
+        {
+            return (int)GetConfig(key);
+        }
+
+        public Object GetConfig(String key)
         {
             Debug.Assert(config.ContainsKey(key), String.Format("The derived PokerClient class does not include the config key: " + key));
 
-            return (String)config[key];
+            return config[key];
         }
 
         /* This method clears everything in regex and config */

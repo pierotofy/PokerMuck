@@ -23,6 +23,8 @@ namespace PokerMuck
 
         public override void ParseLine(string line)
         {
+            base.ParseLine(line);
+
             Match match = reGameType.Match(line);
 
             if (match.Success)
@@ -31,6 +33,12 @@ namespace PokerMuck
 
                 if (GameTypeDiscovered != null) GameTypeDiscovered(gameType);
             }
+        }
+
+        /* We don't need to check for the end of a round with the universal parser
+         * (only exception) */
+        protected override void CheckForEndOfRound(string line)
+        {
         }
     }
 }
