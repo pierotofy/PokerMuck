@@ -62,13 +62,12 @@ namespace PokerMuck
             // Thread safe
             this.Invoke((Action)delegate()
             {
-                PlayerHandPanel php = new PlayerHandPanel();
-                php.PlayerName = player.Name;
-                php.HandToDisplay = player.MuckedHand;
+                EntityHandPanel ehp = new EntityHandPanel();
+                ehp.EntityName = player.Name;
+                ehp.HandToDisplay = player.MuckedHand;
 
-                playerHandsContainer.AddPanel(php, 100);
+                playerHandsContainer.AddPanel(ehp, 100);
             });
-             
         }
 
         void pmDirector_ClearAllPlayerMuckedHands()

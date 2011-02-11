@@ -79,11 +79,11 @@
     <Compile Include="Classes\UIComponents\HandPanel.Designer.cs">
       <DependentUpon>HandPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\UIComponents\PlayerHandPanel.cs">
+    <Compile Include="Classes\UIComponents\EntityHandPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Classes\UIComponents\PlayerHandPanel.Designer.cs">
-      <DependentUpon>PlayerHandPanel.cs</DependentUpon>
+    <Compile Include="Classes\UIComponents\EntityHandPanel.Designer.cs">
+      <DependentUpon>EntityHandPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\WindowsListener\WindowsListener.cs" />
     <Compile Include="Classes\HandHistory\Parser\HHParser.cs" />
@@ -101,8 +101,8 @@
     <EmbeddedResource Include="Classes\UIComponents\HandPanel.resx">
       <DependentUpon>HandPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Classes\UIComponents\PlayerHandPanel.resx">
-      <DependentUpon>PlayerHandPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Classes\UIComponents\EntityHandPanel.resx">
+      <DependentUpon>EntityHandPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>

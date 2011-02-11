@@ -11,7 +11,7 @@ namespace PokerMuck
 	/// <summary>
 	/// Card Class
 	/// </summary>
-	public class Card
+	public class Card : ICloneable
 	{
         public CardFace Face { get; set; }
         public CardSuit Suit { get; set; }
@@ -21,5 +21,11 @@ namespace PokerMuck
 			this.Face = face;
 			this.Suit = suit;
 		}
+
+        /* Shallow copy, no objects to take care of */
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
 	}
 }
