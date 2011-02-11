@@ -49,7 +49,7 @@ namespace PokerMuck
         void pmDirector_DisplayStatus(string status)
         {
             // Thread safe
-            this.Invoke((Action)delegate()
+            this.BeginInvoke((Action)delegate()
             {
                 SetStatus(status);
             });
@@ -60,13 +60,17 @@ namespace PokerMuck
             Debug.Print("Displayed!");
 
             // Thread safe
-            this.Invoke((Action)delegate()
+            this.BeginInvoke((Action)delegate()
             {
-                EntityHandPanel ehp = new EntityHandPanel();
+                EntityCardListPanel ehp = new EntityCardListPanel();
                 ehp.EntityName = player.Name;
-                ehp.HandToDisplay = player.MuckedHand;
+                ehp.CardListToDisplay = player.MuckedHand;
 
-                playerHandsContainer.AddPanel(ehp, 100);
+                /* We set the initial size of the component to the largest possible, the
+                 * addPanel method will take care of setting the proper size */
+                ehp.Size = entityHandsContainer.Size;
+
+                entityHandsContainer.AddPanel(ehp, 100);
             });
         }
 
@@ -77,7 +81,7 @@ namespace PokerMuck
             // Thread safe
             this.Invoke((Action)delegate()
             {
-                playerHandsContainer.ClearAll();
+                entityHandsContainer.ClearAll();
             });
         }
 
@@ -131,5 +135,6 @@ namespace PokerMuck
         {
             pmDirector.UserSettings.UserID = txtUserId.Text;
         }
+
     }
 }

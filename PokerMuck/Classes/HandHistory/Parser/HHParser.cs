@@ -18,7 +18,16 @@ namespace PokerMuck
         protected void OnPlayerMuckHandAvailable(String playerName, Hand hand)
         {
             if (PlayerMuckHandAvailable != null) PlayerMuckHandAvailable(playerName, hand);
-        }        
+        }
+
+        /* The final board is available */
+        public delegate void FinalBoardAvailableHandler(Board board);
+        public event FinalBoardAvailableHandler FinalBoardAvailable;
+
+        protected void OnFinalBoardAvailable(Board board)
+        {
+            if (FinalBoardAvailable != null) FinalBoardAvailable(board);
+        }  
 
         /* A player is sitting at the table with us */
         public delegate void PlayerIsSeatedHandler(String playerName);

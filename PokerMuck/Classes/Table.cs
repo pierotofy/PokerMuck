@@ -16,6 +16,10 @@ namespace PokerMuck
         private List<Player> playerList;
         public List<Player> PlayerList { get { return playerList; } }
 
+        /* The last final board available */
+        private Board finalBoard;
+        public Board FinalBoard { get { return finalBoard; } }
+
         /* Game ID associated with this table */
         public String GameID { get; set; }
 
@@ -112,7 +116,13 @@ namespace PokerMuck
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
                 handHistoryParser.ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(handHistoryParser_ShowdownWillBegin);
                 handHistoryParser.NewTableHasBeenCreated += new HHParser.NewTableHasBeenCreatedHandler(handHistoryParser_NewTableHasBeenCreated);
+                handHistoryParser.FinalBoardAvailable += new HHParser.FinalBoardAvailableHandler(handHistoryParser_FinalBoardAvailable);
             }
+        }
+
+        void handHistoryParser_FinalBoardAvailable(Board board)
+        {
+            finalBoard = board;
         }
 
         void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)

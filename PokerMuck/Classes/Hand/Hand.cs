@@ -7,32 +7,12 @@ using System.Collections;
 namespace PokerMuck
 {
     /* A hand can be thought of a collection of 1 or more cards */
-    public class Hand : ICloneable
+    public class Hand : CardList
     {
-        protected List<Card> cards;
-        public List<Card> Cards { get { return cards; } }
-
         public Hand()
+            : base()
         {
-            cards = new List<Card>(5);
+            // No extra init required
         }
-
-        protected void AddCard(Card card){
-            cards.Add(card);
-        }
-
-        /* Perform a deep copy */
-        public object Clone()
-        {
-            Hand hand = (Hand)this.MemberwiseClone();
-            hand.cards = new List<Card>(5);
-
-            foreach (Card c in Cards)
-            {
-                hand.AddCard((Card)c.Clone());
-            }
-            return hand;
-        }
-
     }
 }

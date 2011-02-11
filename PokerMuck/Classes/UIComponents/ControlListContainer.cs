@@ -87,7 +87,6 @@ namespace PokerMuck
             maxHeightTable.Clear();
         }
 
-
         private void ControlListContainer_Resize(object sender, EventArgs e)
         {
             AdjustSizes();

@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace PokerMuck
 {
-    public partial class EntityHandPanel : UserControl
+    public partial class EntityCardListPanel : UserControl
     {
-        public EntityHandPanel()
+        public EntityCardListPanel()
         {
             InitializeComponent();            
         }
@@ -35,16 +35,16 @@ namespace PokerMuck
         [Description("Sets the hand displayed in the component"),
          Category("Values"),
          DefaultValue(null)]
-        public Hand HandToDisplay
+        public CardList CardListToDisplay
         {
             get
             {
-                return handPanel.HandToDisplay;
+                return CardListPanel.CardListToDisplay;
             }
 
             set
             {
-                handPanel.HandToDisplay = value;
+                CardListPanel.CardListToDisplay = value;
             }
         }
     }

@@ -10,21 +10,21 @@ using System.Diagnostics;
 
 namespace PokerMuck
 {
-    public partial class HandPanel : UserControl
+    public partial class CardListPanel : UserControl
     {
 
         /* Holds the current hand to display */
-        private Hand handToDisplay;
-        public Hand HandToDisplay
+        private CardList cardListToDisplay;
+        public CardList CardListToDisplay
         {
             get
             {
-                return handToDisplay;
+                return cardListToDisplay;
             }
 
             set
             {
-                handToDisplay = value;
+                cardListToDisplay = value;
                 ReloadGraphics();
             }
         }
@@ -42,7 +42,7 @@ namespace PokerMuck
         /* Every reference to a CardPictureBox is stored here */
         private List<CardPictureBox> cardPictures;
                
-        public HandPanel()
+        public CardListPanel()
         {
             InitializeComponent();
             cardPictures = new List<CardPictureBox>(10);
@@ -67,10 +67,10 @@ namespace PokerMuck
         /* This method will load the card pictures (if available) */
         private void LoadCardPictures()
         {
-            if (handToDisplay != null)
+            if (cardListToDisplay != null)
             {
                 // Generate the card picture boxes for each card in the hand
-                foreach (Card c in handToDisplay.Cards)
+                foreach (Card c in cardListToDisplay.Cards)
                 {
                     CardPictureBox pictureBox = new CardPictureBox(c);
                     cardPictures.Add(pictureBox);
@@ -162,7 +162,7 @@ namespace PokerMuck
         }
 
         /* When the size has changed, we need to scale and move any existing picture box */
-        private void HandPanel_SizeChanged(object sender, EventArgs e)
+        private void CardListPanel_SizeChanged(object sender, EventArgs e)
         {
             if (cardPictures.Count > 0){
                 ScaleCardPictures();

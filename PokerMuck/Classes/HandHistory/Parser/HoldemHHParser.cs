@@ -82,6 +82,35 @@ namespace PokerMuck
                     Debug.Print("Muck hand detected, but we're not at showdown, summary or preflop?");
                 }
             }
+
+            /* Search for final board */
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_final_board"), out matchResult))
+            {
+                // Retrieve cards
+                String cardsText = matchResult.Groups["cards"].Value;
+                String[] cards = cardsText.Split(' ');
+
+                // Now that we have the string representation of the cards, we need to convert the string into an Hand object
+                Debug.Assert(cards.Length == 5, "Less or more than five cards were identified in this final board string: " + cardsText);
+
+                Card first = pokerClient.GenerateCardFromString(cards[0]);
+                Card second = pokerClient.GenerateCardFromString(cards[1]);
+                Card third = pokerClient.GenerateCardFromString(cards[2]);
+                Card fourth = pokerClient.GenerateCardFromString(cards[3]);
+                Card fifth = pokerClient.GenerateCardFromString(cards[4]);
+
+                Board board = new HoldemBoard(first, second, third, fourth, fifth);
+
+                // Raise event if we're at summary
+                if (currentGamePhase == HoldemGamePhase.Summary)
+                {
+                    OnFinalBoardAvailable(board);
+                }
+                else
+                {
+                    Debug.Print("Board detected, but we're not at the summary?");
+                }
+            }
         }
 
         /* Will modify the value of currentGamePhase 

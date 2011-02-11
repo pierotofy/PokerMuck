@@ -54,9 +54,9 @@ namespace PokerMuck
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/
                 regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^ ]+)([^\[]*)\[(?<cards>[\d\w ]+)\]");
 
-                //Ex. stallion089: shows [Kc Kd] (two pair, Kings and Tens) => "stallion089", "Kc Kd" 
-                //regex.Add("hand_history_detect_mucked_hand", @"(?<playerName>[^:]+): shows \[(?<cards>[\d\w ]+)\]");
-                                
+                /* Recognize the final board */
+                regex.Add("hand_history_detect_final_board", @"Board \[(?<cards>[\d\w ]+)\]");
+                
                 /* Recognize end of round character sequence (in PokerStars.it it's
                  * a blank line */
                 regex.Add("hand_history_detect_end_of_round", @"^$");

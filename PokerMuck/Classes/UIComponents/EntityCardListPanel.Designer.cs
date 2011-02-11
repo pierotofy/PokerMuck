@@ -1,6 +1,6 @@
 ﻿namespace PokerMuck
 {
-    partial class EntityHandPanel
+    partial class EntityCardListPanel
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,7 +30,7 @@
         {
             this.lblEntityName = new System.Windows.Forms.Label();
             this.lblline = new System.Windows.Forms.Label();
-            this.handPanel = new PokerMuck.HandPanel();
+            this.CardListPanel = new PokerMuck.CardListPanel();
             this.SuspendLayout();
             // 
             // lblEntityName
@@ -54,29 +54,29 @@
             this.lblline.Size = new System.Drawing.Size(186, 2);
             this.lblline.TabIndex = 2;
             // 
-            // handPanel
+            // CardListPanel
             // 
-            this.handPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.CardListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.handPanel.BackColor = System.Drawing.Color.Transparent;
-            this.handPanel.BorderPadding = 0;
-            this.handPanel.CardSpacing = 4;
-            this.handPanel.HandToDisplay = null;
-            this.handPanel.Location = new System.Drawing.Point(92, 3);
-            this.handPanel.Name = "handPanel";
-            this.handPanel.Size = new System.Drawing.Size(92, 46);
-            this.handPanel.TabIndex = 3;
+            this.CardListPanel.BackColor = System.Drawing.Color.Transparent;
+            this.CardListPanel.BorderPadding = 0;
+            this.CardListPanel.CardSpacing = 4;
+            this.CardListPanel.CardListToDisplay = null;
+            this.CardListPanel.Location = new System.Drawing.Point(92, 3);
+            this.CardListPanel.Name = "CardListPanel";
+            this.CardListPanel.Size = new System.Drawing.Size(96, 46);
+            this.CardListPanel.TabIndex = 3;
             // 
-            // EntityHandPanel
+            // EntityCardListPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.lblline);
-            this.Controls.Add(this.handPanel);
+            this.Controls.Add(this.CardListPanel);
             this.Controls.Add(this.lblEntityName);
-            this.Name = "EntityHandPanel";
+            this.Name = "EntityCardListPanel";
             this.Size = new System.Drawing.Size(194, 64);
             this.ResumeLayout(false);
 
@@ -85,7 +85,7 @@
         #endregion
 
         private System.Windows.Forms.Label lblEntityName;
-        private HandPanel handPanel;
+        private CardListPanel CardListPanel;
         private System.Windows.Forms.Label lblline;
     }
 }

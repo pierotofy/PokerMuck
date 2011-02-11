@@ -30,7 +30,6 @@
         {
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
-            this.playerHandsContainer = new PokerMuck.ControlListContainer();
             this.lblStatus = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
             this.txtUserId = new System.Windows.Forms.TextBox();
@@ -39,6 +38,7 @@
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
+            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
@@ -60,7 +60,7 @@
             // 
             // tabHandsPage
             // 
-            this.tabHandsPage.Controls.Add(this.playerHandsContainer);
+            this.tabHandsPage.Controls.Add(this.entityHandsContainer);
             this.tabHandsPage.Controls.Add(this.lblStatus);
             this.tabHandsPage.Location = new System.Drawing.Point(4, 22);
             this.tabHandsPage.Name = "tabHandsPage";
@@ -69,15 +69,6 @@
             this.tabHandsPage.TabIndex = 0;
             this.tabHandsPage.Text = "Hands";
             this.tabHandsPage.UseVisualStyleBackColor = true;
-            // 
-            // playerHandsContainer
-            // 
-            this.playerHandsContainer.BackColor = System.Drawing.Color.Transparent;
-            this.playerHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.playerHandsContainer.Location = new System.Drawing.Point(3, 3);
-            this.playerHandsContainer.Name = "playerHandsContainer";
-            this.playerHandsContainer.Size = new System.Drawing.Size(179, 224);
-            this.playerHandsContainer.TabIndex = 4;
             // 
             // lblStatus
             // 
@@ -169,6 +160,15 @@
             this.pictureEagle.TabIndex = 0;
             this.pictureEagle.TabStop = false;
             // 
+            // entityHandsContainer
+            // 
+            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
+            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
+            this.entityHandsContainer.Name = "entityHandsContainer";
+            this.entityHandsContainer.Size = new System.Drawing.Size(179, 224);
+            this.entityHandsContainer.TabIndex = 4;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,7 +199,7 @@
 
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabHandsPage;
-        private ControlListContainer playerHandsContainer;
+        private ControlListContainer entityHandsContainer;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.TabPage tabConfigurationPage;
         private System.Windows.Forms.Button btnChangeHandHistory;

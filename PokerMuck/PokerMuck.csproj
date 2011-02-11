@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Board\Board.cs" />
+    <Compile Include="Classes\Board\HoldemBoard.cs" />
+    <Compile Include="Classes\Card\CardList.cs" />
     <Compile Include="Classes\UIComponents\CardPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -70,20 +73,20 @@
       <DependentUpon>ControlListContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\WindowsListener\IDetectWindowsChanges.cs" />
-    <Compile Include="Classes\Card.cs" />
+    <Compile Include="Classes\Card\Card.cs" />
     <Compile Include="Classes\PokerClients\PokerClient.cs" />
     <Compile Include="Classes\PokerClients\PokerStarsIT.cs" />
-    <Compile Include="Classes\UIComponents\HandPanel.cs">
+    <Compile Include="Classes\UIComponents\CardListPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Classes\UIComponents\HandPanel.Designer.cs">
-      <DependentUpon>HandPanel.cs</DependentUpon>
+    <Compile Include="Classes\UIComponents\CardListPanel.Designer.cs">
+      <DependentUpon>CardListPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\UIComponents\EntityHandPanel.cs">
+    <Compile Include="Classes\UIComponents\EntityCardListPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Classes\UIComponents\EntityHandPanel.Designer.cs">
-      <DependentUpon>EntityHandPanel.cs</DependentUpon>
+    <Compile Include="Classes\UIComponents\EntityCardListPanel.Designer.cs">
+      <DependentUpon>EntityCardListPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\WindowsListener\WindowsListener.cs" />
     <Compile Include="Classes\HandHistory\Parser\HHParser.cs" />
@@ -98,11 +101,11 @@
     <EmbeddedResource Include="Classes\UIComponents\ControlListContainer.resx">
       <DependentUpon>ControlListContainer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Classes\UIComponents\HandPanel.resx">
-      <DependentUpon>HandPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Classes\UIComponents\CardListPanel.resx">
+      <DependentUpon>CardListPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Classes\UIComponents\EntityHandPanel.resx">
-      <DependentUpon>EntityHandPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Classes\UIComponents\EntityCardListPanel.resx">
+      <DependentUpon>EntityCardListPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
@@ -183,6 +186,7 @@
     <Content Include="Resources\Cards\cover.png" />
     <None Include="Resources\Eagle.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

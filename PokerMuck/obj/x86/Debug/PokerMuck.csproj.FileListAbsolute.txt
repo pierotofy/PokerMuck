@@ -13,8 +13,6 @@ C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.pdb
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\bin\Debug\PokerMuck.exe
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\bin\Debug\PokerMuck.pdb
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.HandPanel.resources
-C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.PlayerHandPanel.resources
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.FrmMain.resources
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.Properties.Resources.resources
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\GenerateResource.read.1.tlog
@@ -22,3 +20,5 @@ C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\GenerateResource.write.
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.ControlListContainer.resources
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.ControlListContainer.resources
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.EntityHandPanel.resources
+C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.CardListPanel.resources
+C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.EntityCardListPanel.resources
