@@ -135,6 +135,11 @@ namespace PokerMuck
             float originalCardWidth = (float)cardPictures[0].Width;
             float originalCardHeight = (float)cardPictures[0].Height;
 
+            /* This check makes sure that we never resize the pictures to zero,
+             * because that would cause issues when we try to get them back to a bigger size */
+            if ((originalCardHeight < 10 && heightAvailable < 20) ||
+                (originalCardWidth < 10 && widthAvailable < 20)) return;
+
             /* If we have N cards, we need (N-1) * Spacing space reserved for padding, thus   
              * every card is going to be (spaceAvailable - (N-1) * spacing) / N
             */
@@ -147,7 +152,7 @@ namespace PokerMuck
             float widthScaleFactor = allowedCardWidth / originalCardWidth;
             float heightScaleFactor = allowedCardHeight / originalCardHeight;
 
-            float scaleFactorValue = Math.Min(widthScaleFactor, heightScaleFactor); // TODO check
+            float scaleFactorValue = Math.Min(widthScaleFactor, heightScaleFactor);
 
             SizeF scaleFactor = new SizeF(scaleFactorValue, scaleFactorValue);
 

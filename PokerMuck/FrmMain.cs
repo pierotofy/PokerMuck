@@ -34,6 +34,8 @@ namespace PokerMuck
             pmDirector.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
             pmDirector.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
             pmDirector.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
+            pmDirector.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
+            pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
             pmDirector.Test();
 
             // Adjust size
@@ -44,6 +46,19 @@ namespace PokerMuck
 
             // Load configuration
             LoadConfigurationValues();
+        }
+
+        /* Display the board after all the mucked hands */
+        void pmDirector_DisplayFinalBoard(Board board)
+        {
+            AddEntityCardListPanelEntry(board.Description, board);
+        }
+
+        /* Our board is represented in the same panel as the mucked hands, so we don't need
+         * to do anything */
+        void pmDirector_ClearFinalBoard()
+        {
+
         }
 
         void pmDirector_DisplayStatus(string status)
@@ -59,19 +74,7 @@ namespace PokerMuck
         {
             Debug.Print("Displayed!");
 
-            // Thread safe
-            this.BeginInvoke((Action)delegate()
-            {
-                EntityCardListPanel ehp = new EntityCardListPanel();
-                ehp.EntityName = player.Name;
-                ehp.CardListToDisplay = player.MuckedHand;
-
-                /* We set the initial size of the component to the largest possible, the
-                 * addPanel method will take care of setting the proper size */
-                ehp.Size = entityHandsContainer.Size;
-
-                entityHandsContainer.AddPanel(ehp, 100);
-            });
+            AddEntityCardListPanelEntry(player.Name, player.MuckedHand);
         }
 
         void pmDirector_ClearAllPlayerMuckedHands()
@@ -86,6 +89,24 @@ namespace PokerMuck
         }
 
         /* Helper methods */
+
+        /* Thread safe insertion in the entity card list panel */
+        private void AddEntityCardListPanelEntry(String entityName, CardList list)
+        {
+            this.BeginInvoke((Action)delegate()
+            {
+                EntityCardListPanel ehp = new EntityCardListPanel();
+                ehp.EntityName = entityName;
+                ehp.CardListToDisplay = list;
+
+                /* We set the initial size of the component to the largest possible, the
+                 * addPanel method will take care of setting the proper size */
+                ehp.Size = entityHandsContainer.Size;
+
+                entityHandsContainer.AddPanel(ehp, 100);
+            });
+        }
+
         private void SetStatus(String status)
         {
             lblStatus.Text = status;

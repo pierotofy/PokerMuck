@@ -80,7 +80,7 @@ namespace PokerMuck
             if (DataHasChanged != null) DataHasChanged(this);
         }
 
-        void handHistoryParser_ShowdownWillBegin()
+        void handHistoryParser_HoleCardsWillBeDealt()
         {
             // Mark every player as not having shown their hands during the last showdown
             foreach (Player p in playerList)
@@ -114,9 +114,9 @@ namespace PokerMuck
                 handHistoryParser.PlayerIsSeated += new HHParser.PlayerIsSeatedHandler(handHistoryParser_PlayerIsSeated);
                 handHistoryParser.PlayerMuckHandAvailable += new HHParser.PlayerMuckHandAvailableHandler(handHistoryParser_PlayerMuckHandAvailable);
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
-                handHistoryParser.ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(handHistoryParser_ShowdownWillBegin);
                 handHistoryParser.NewTableHasBeenCreated += new HHParser.NewTableHasBeenCreatedHandler(handHistoryParser_NewTableHasBeenCreated);
                 handHistoryParser.FinalBoardAvailable += new HHParser.FinalBoardAvailableHandler(handHistoryParser_FinalBoardAvailable);
+                handHistoryParser.HoleCardsWillBeDealt += new HHParser.HoleCardsWillBeDealtHandler(handHistoryParser_HoleCardsWillBeDealt);
             }
         }
 

@@ -8,7 +8,8 @@ namespace PokerMuck
     class HoldemBoard : Board
     {
         /* In hold'em there are five cards at the final board */
-        public HoldemBoard(Card first, Card second, Card third, Card fourth, Card fifth)
+        public HoldemBoard(Card first, Card second, Card third, Card fourth, Card fifth) : 
+            base("Board")
         {
             AddCard(first);
             AddCard(second);

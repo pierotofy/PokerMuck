@@ -47,6 +47,15 @@ namespace PokerMuck
             if (NewGameHasStarted != null) NewGameHasStarted(gameId);
         }
 
+        /* Cards are about to be dealt */
+        public delegate void HoleCardsWillBeDealtHandler();
+        public event HoleCardsWillBeDealtHandler HoleCardsWillBeDealt;
+
+        protected void OnHoleCardsWillBeDealt()
+        {
+            if (HoleCardsWillBeDealt != null) HoleCardsWillBeDealt();
+        }
+
         /* A showdown is about to happen */
         public delegate void ShowdownWillBeginHandler();
         public event ShowdownWillBeginHandler ShowdownWillBegin;

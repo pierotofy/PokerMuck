@@ -30,9 +30,18 @@ namespace PokerMuck
         public delegate void DisplayPlayerMuckedHandHandler(Player player);
         public event DisplayPlayerMuckedHandHandler DisplayPlayerMuckedHand;
 
+        /* Tell the UI that we need to display a final board */
+        public delegate void DisplayFinalBoardHandler(Board board);
+        public event DisplayFinalBoardHandler DisplayFinalBoard;
+
+
         /* Tell the UI to clear the list of mucked hands */
         public delegate void ClearAllPlayerMuckedHandsHandler();
         public event ClearAllPlayerMuckedHandsHandler ClearAllPlayerMuckedHands;
+
+        /* Tell the UI to clear the last final board */
+        public delegate void ClearFinalBoardHandler();
+        public event ClearFinalBoardHandler ClearFinalBoard;
 
         /* Tell the UI to display a status message */
         public delegate void DisplayStatusHandler(String status);
@@ -156,6 +165,9 @@ namespace PokerMuck
             // Tell the UI to clear any previous mucked hand from the screen
             if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
 
+            // And the final board (if any)
+            if (ClearFinalBoard != null) ClearFinalBoard();
+
             // Check which players need to be shown
             foreach (Player p in sender.PlayerList)
             {
@@ -165,6 +177,14 @@ namespace PokerMuck
                     // Inform the UI
                     if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
                 }
+            }
+
+            // Display the final board (if any and if it hasn't been displayed before)
+            if (sender.FinalBoard != null && !sender.FinalBoard.Displayed)
+            {
+                if (DisplayFinalBoard != null) DisplayFinalBoard(sender.FinalBoard);
+
+                sender.FinalBoard.Displayed = true;
             }
         }
 
