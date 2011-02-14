@@ -25,7 +25,7 @@ namespace PokerMuck
             {
                 /* To recognize the Game ID given the table window (including any prefixes such as T for tournament)
                  * ex. T1234567990 from €2.60+€0.40 EUR Hold'em No Limit [Heads-up Turbo] - Tournament 1234567990 - 1 on 1 - ...*/
-                regex.Add("game_window_title_to_recognize_tournament_game_id", @"] - (?<tournamentId>[^ ]+ [0-9]+) [^$]+$");
+                regex.Add("game_window_title_to_recognize_tournament_game_id", @"]? - (?<tournamentId>[^ ]+ [0-9]+) [^$]+$");
                 regex.Add("game_window_title_to_recognize_play_money_game_description", @"(?<gameDescription>[^-]+)-[^-]+ Play Money");
                 
                 /* Recognize the Hand History game phases */
