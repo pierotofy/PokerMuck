@@ -49,6 +49,7 @@
     <Compile Include="Classes\Board\Board.cs" />
     <Compile Include="Classes\Board\HoldemBoard.cs" />
     <Compile Include="Classes\Card\CardList.cs" />
+    <Compile Include="Classes\PokerClients\FullTilt.cs" />
     <Compile Include="Classes\UIComponents\CardPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>

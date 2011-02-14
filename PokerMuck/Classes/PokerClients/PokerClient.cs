@@ -42,6 +42,16 @@ namespace PokerMuck
         public abstract String Name { get; }
         public abstract ArrayList SupportedLanguages { get; }
         public abstract ArrayList SupportedGameModes { get; }
+
+        /* The first language in the SupportedLanguages list is the default language */
+        public String DefaultLanguage
+        {
+            get
+            {
+                Debug.Assert(SupportedLanguages.Count > 0, "There are no languages in this client");
+                return (String)SupportedLanguages[0];
+            }
+        }
         
         protected abstract RegexOptions regexOptions { get; }
 

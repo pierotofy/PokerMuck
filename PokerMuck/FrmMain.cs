@@ -136,6 +136,34 @@ namespace PokerMuck
         {
             txtHandHistoryDirectory.Text = pmDirector.UserSettings.HandHistoryDirectory;
             txtUserId.Text = pmDirector.UserSettings.UserID;
+
+            // Load poker client list
+            LoadPokerClientList();
+
+            // Set current poker client
+            cmbPokerClient.Text = pmDirector.UserSettings.CurrentPokerClient.Name;
+
+            // Load languages for the current client
+            LoadPokerClientLanguages(pmDirector.UserSettings.CurrentPokerClient);
+
+            // Set current poker client language
+            cmbPokerClientLanguage.Text = pmDirector.UserSettings.CurrentPokerClient.CurrentLanguage;
+        }
+
+        /* Loads the poker clients into the appropriate combobox */
+        private void LoadPokerClientList()
+        {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = PokerClientsList.ClientList;
+
+            cmbPokerClient.DataSource = bs;
+            cmbPokerClient.DisplayMember = "Key";
+        }
+
+        /* Loads the languages available for a specific client */
+        private void LoadPokerClientLanguages(PokerClient client)
+        {
+            cmbPokerClientLanguage.DataSource = client.SupportedLanguages;
         }
 
         /* Change hand history directory */
@@ -156,6 +184,26 @@ namespace PokerMuck
         {
             pmDirector.UserSettings.UserID = txtUserId.Text;
         }
+
+        /* Pokerclient has changed, store in config and load available languages */
+        private void cmbPokerClient_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            PokerClient client = PokerClientsList.Find(cmbPokerClient.Text);
+            client.InitializeLanguage(client.DefaultLanguage);
+
+            pmDirector.ChangePokerClient(client);
+            LoadPokerClientLanguages(client);
+        }
+
+        /* Pokerclient language has changed, initialize the new config */
+        private void cmbPokerClientLanguage_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            PokerClient client = pmDirector.UserSettings.CurrentPokerClient;
+            client.InitializeLanguage(cmbPokerClientLanguage.Text);
+
+            // Tell directory that we have changed the client
+            pmDirector.ChangePokerClient(client);
+        }        
 
     }
 }

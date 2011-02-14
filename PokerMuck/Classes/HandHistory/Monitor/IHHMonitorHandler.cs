@@ -9,5 +9,6 @@ namespace PokerMuck
     {
         void NewLineArrived(String filename, String line);
         void NewFileWasCreated(String filename);
+        void EndOfFileReached(String filename);
     }
 }

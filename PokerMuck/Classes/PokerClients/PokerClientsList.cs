@@ -11,26 +11,20 @@ namespace PokerMuck
      * in order to be considered for instantiation */
     static class PokerClientsList
     {
-        private static List<PokerClient> pokerClientsList = new List<PokerClient>(10);
+        private static Hashtable clientList = new Hashtable();
+        public static Hashtable ClientList { get { return clientList; } }
         
         /* Adds a poker client to the list of supported clients */
         public static void Add(PokerClient client)
         {
-            pokerClientsList.Add(client);
+            clientList.Add(client.Name, client);
         }
 
         public static PokerClient Find(String name)
         {
-            PokerClient result = pokerClientsList.Find(
-                delegate(PokerClient client)
-                {
-                    return client.Name == name;
-                }
-            );
-
-            Debug.Assert(result != null, "No valid poker client was found {0}", name);
-
-            return result;
+            Debug.Assert(clientList.ContainsKey(name), "No valid poker client was found: " + name);
+           
+            return (PokerClient)clientList[name];
         }
 
     }

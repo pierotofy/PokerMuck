@@ -59,7 +59,7 @@ namespace PokerMuck
             userSettings = new PokerMuckUserSettings();
 
             // Get the poker client from the user settings
-            pokerClient = userSettings.CurrentPokerClient;
+            ChangePokerClient(userSettings.CurrentPokerClient);
 
             // Init windows listener
             windowsListener = new WindowsListener(this);
@@ -89,6 +89,13 @@ namespace PokerMuck
             hhMonitor.ChangeHandHistoryFile(newDirectory);
         }
 
+        /* Change the poker client */
+        public void ChangePokerClient(PokerClient client)
+        {
+            UserSettings.CurrentPokerClient = client;
+            pokerClient = client;
+        }
+
         /* Hand history monitor handler, a new line has been read from a file */
         public void NewLineArrived(String filename, String line)
         {
@@ -96,8 +103,9 @@ namespace PokerMuck
             Table table = FindTableByHHFilename(filename);
             Debug.Assert(table != null, "A new line has arrived for a table that hasn't been created.");
 
-            table.HandHistoryParser.ParseLine(line);
+            OnDisplayStatus("Parsing... please wait.");
 
+            table.HandHistoryParser.ParseLine(line);
         }
 
         /* Hand history monitor handler, a new filename has been created in our folder, we might be interested 
@@ -108,6 +116,46 @@ namespace PokerMuck
             Debug.Print("New file created: {0}", filename);
 
             NewForegroundWindow(windowsListener.CurrentForegroundWindowTitle);
+        }
+
+        /* Hand history monitor handler, an end of file has been reached
+         * this means that the UI can finally be updated. */
+        public void EndOfFileReached(String filename)
+        {
+            Table t = FindTableByHHFilename(filename);
+            Debug.Assert(t != null, "End of file was reached by a table not in our table list");
+
+            OnDisplayStatus("Displaying Table #" + t.TableId);
+
+            // Tell the UI to clear any previous mucked hand from the screen
+            if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
+
+            // And the final board (if any)
+            if (ClearFinalBoard != null) ClearFinalBoard();
+
+            // Flag to keep track of whether at least one mucked hand is available
+            bool muckedHandsAvailable = false;
+
+            // Check which players need to be shown
+            foreach (Player p in t.PlayerList)
+            {
+                // If it has showed and it's not us
+                if (p.HasShowedLastRound && p.Name != UserSettings.UserID)
+                {
+                    // Inform the UI
+                    if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
+
+                    muckedHandsAvailable = true;
+                }
+            }
+
+            // Display the final board (if any and if it hasn't been displayed before and if there were mucked hands)
+            if (t.FinalBoard != null && !t.FinalBoard.Displayed && muckedHandsAvailable)
+            {
+                if (DisplayFinalBoard != null) DisplayFinalBoard(t.FinalBoard);
+
+                t.FinalBoard.Displayed = true;
+            }
         }
 
 
@@ -157,35 +205,10 @@ namespace PokerMuck
             }
         }
 
-        /* Data in one of the tables has changed, refresh the UI */
+        /* Data in one of the tables has changed */
         void table_DataHasChanged(Table sender)
         {
-            OnDisplayStatus("Table #" + sender.TableId);
-
-            // Tell the UI to clear any previous mucked hand from the screen
-            if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
-
-            // And the final board (if any)
-            if (ClearFinalBoard != null) ClearFinalBoard();
-
-            // Check which players need to be shown
-            foreach (Player p in sender.PlayerList)
-            {
-                // If it has showed and it's not us
-                if (p.HasShowedLastRound && p.Name != UserSettings.UserID)
-                {                    
-                    // Inform the UI
-                    if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
-                }
-            }
-
-            // Display the final board (if any and if it hasn't been displayed before)
-            if (sender.FinalBoard != null && !sender.FinalBoard.Displayed)
-            {
-                if (DisplayFinalBoard != null) DisplayFinalBoard(sender.FinalBoard);
-
-                sender.FinalBoard.Displayed = true;
-            }
+                   
         }
 
         /* Finds a table given its hand history filename. It can be null */
@@ -206,7 +229,9 @@ namespace PokerMuck
            to this list */
         private void InitializeSupportedPokerClientList()
         {
+            PokerClientsList.Add(new FullTilt());
             PokerClientsList.Add(new PokerStarsIT());
+
         }
 
         // Cleanup stuff

@@ -32,12 +32,16 @@
             this.tabHandsPage = new System.Windows.Forms.TabPage();
             this.lblStatus = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
+            this.lblPokerClient = new System.Windows.Forms.Label();
+            this.cmbPokerClient = new System.Windows.Forms.ComboBox();
             this.txtUserId = new System.Windows.Forms.TextBox();
             this.lblUserId = new System.Windows.Forms.Label();
             this.btnChangeHandHistory = new System.Windows.Forms.Button();
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
+            this.lblPokerClientLanguage = new System.Windows.Forms.Label();
+            this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
             this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
@@ -83,6 +87,10 @@
             // 
             // tabConfigurationPage
             // 
+            this.tabConfigurationPage.Controls.Add(this.lblPokerClientLanguage);
+            this.tabConfigurationPage.Controls.Add(this.cmbPokerClientLanguage);
+            this.tabConfigurationPage.Controls.Add(this.lblPokerClient);
+            this.tabConfigurationPage.Controls.Add(this.cmbPokerClient);
             this.tabConfigurationPage.Controls.Add(this.txtUserId);
             this.tabConfigurationPage.Controls.Add(this.lblUserId);
             this.tabConfigurationPage.Controls.Add(this.btnChangeHandHistory);
@@ -94,6 +102,27 @@
             this.tabConfigurationPage.TabIndex = 1;
             this.tabConfigurationPage.Text = "Configuration";
             this.tabConfigurationPage.UseVisualStyleBackColor = true;
+            // 
+            // lblPokerClient
+            // 
+            this.lblPokerClient.Location = new System.Drawing.Point(8, 123);
+            this.lblPokerClient.Name = "lblPokerClient";
+            this.lblPokerClient.Size = new System.Drawing.Size(38, 21);
+            this.lblPokerClient.TabIndex = 6;
+            this.lblPokerClient.Text = "Client:";
+            this.lblPokerClient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClient
+            // 
+            this.cmbPokerClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClient.FormattingEnabled = true;
+            this.cmbPokerClient.Location = new System.Drawing.Point(49, 124);
+            this.cmbPokerClient.Name = "cmbPokerClient";
+            this.cmbPokerClient.Size = new System.Drawing.Size(128, 21);
+            this.cmbPokerClient.TabIndex = 5;
+            this.cmbPokerClient.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClient_SelectionChangeCommitted);
             // 
             // txtUserId
             // 
@@ -160,6 +189,27 @@
             this.pictureEagle.TabIndex = 0;
             this.pictureEagle.TabStop = false;
             // 
+            // lblPokerClientLanguage
+            // 
+            this.lblPokerClientLanguage.Location = new System.Drawing.Point(8, 150);
+            this.lblPokerClientLanguage.Name = "lblPokerClientLanguage";
+            this.lblPokerClientLanguage.Size = new System.Drawing.Size(59, 21);
+            this.lblPokerClientLanguage.TabIndex = 8;
+            this.lblPokerClientLanguage.Text = "Language:";
+            this.lblPokerClientLanguage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClientLanguage
+            // 
+            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClientLanguage.FormattingEnabled = true;
+            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(68, 151);
+            this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
+            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(109, 21);
+            this.cmbPokerClientLanguage.TabIndex = 7;
+            this.cmbPokerClientLanguage.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientLanguage_SelectionChangeCommitted);
+            // 
             // entityHandsContainer
             // 
             this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
@@ -208,6 +258,10 @@
         private System.Windows.Forms.PictureBox pictureEagle;
         private System.Windows.Forms.Label lblUserId;
         private System.Windows.Forms.TextBox txtUserId;
+        private System.Windows.Forms.Label lblPokerClient;
+        private System.Windows.Forms.ComboBox cmbPokerClient;
+        private System.Windows.Forms.Label lblPokerClientLanguage;
+        private System.Windows.Forms.ComboBox cmbPokerClientLanguage;
 
 
     }

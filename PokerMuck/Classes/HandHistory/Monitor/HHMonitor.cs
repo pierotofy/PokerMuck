@@ -72,11 +72,15 @@ namespace PokerMuck
                         if (lastLineRead > 0) SkipNLines(reader, lastLineRead);
 
                         int linesRead = 0;
+
                         while (!reader.EndOfStream)
                         {
                             handler.NewLineArrived(handHistoryFilename, reader.ReadLine());
                             linesRead++;
                         }
+
+                        // Raise the end of file reached event if we have read at least one line
+                        if (linesRead > 0) handler.EndOfFileReached(handHistoryFilename);
 
                         // Update files line tracker
                         filesLineTracker.IncreaseLineCount(handHistoryFilename, linesRead);
