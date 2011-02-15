@@ -16,12 +16,15 @@ namespace PokerMuck
         /* Instance of the director */
         PokerMuckDirector pmDirector;
 
+        /* Maximum height of card list panels */
+        private static int MAXIMUM_CARD_LIST_PANEL_HEIGHT = 100;
+
         public FrmMain()
         {
             InitializeComponent();
 
-            // Update window title
-            this.Text = Application.ProductName + " " + Application.ProductVersion;
+            // Update program title
+            lblProgramName.Text = Application.ProductName + " " + Application.ProductVersion;
         }
 
 
@@ -51,7 +54,19 @@ namespace PokerMuck
         /* Display the board after all the mucked hands */
         void pmDirector_DisplayFinalBoard(Board board)
         {
-            AddEntityCardListPanelEntry(board.Description, board);
+            this.BeginInvoke((Action)delegate()
+            {
+                CardListPanel clp = new CardListPanel();
+                clp.CardListToDisplay = board;
+                clp.CardSpacing = 4;
+                clp.BackColor = Color.Transparent;
+
+                /* We set the initial size of the component to the largest possible, the
+                 * addPanel method will take care of setting the proper size */
+                clp.Size = entityHandsContainer.Size;
+
+                entityHandsContainer.AddPanel(clp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
+            });
         }
 
         /* Our board is represented in the same panel as the mucked hands, so we don't need
@@ -103,7 +118,7 @@ namespace PokerMuck
                  * addPanel method will take care of setting the proper size */
                 ehp.Size = entityHandsContainer.Size;
 
-                entityHandsContainer.AddPanel(ehp, 100);
+                entityHandsContainer.AddPanel(ehp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
             });
         }
 
@@ -203,7 +218,36 @@ namespace PokerMuck
 
             // Tell directory that we have changed the client
             pmDirector.ChangePokerClient(client);
-        }        
+        }
+
+        /* Open www.pierotofy.it */
+        private void lblPieroTofyLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new ProcessStartInfo(lblPieroTofyLink.Text));
+        }
+
+
+        /* Donate to paypal
+         * Thanks to: http://www.gorancic.com/blog/net/c-paypal-donate-button */
+        private void btnDonate_Click(object sender, EventArgs e)
+        {
+            string url = "";
+
+            string business = "pierotofy@gmail.com";  // your paypal email
+            string description = "PokerMuck";            // '%20' represents a space. remember HTML!
+            string country = "US";                  // AU, US, etc.
+            string currency = "USD";                 // AUD, USD, etc.
+
+            url += "https://www.paypal.com/cgi-bin/webscr" +
+                "?cmd=" + "_donations" +
+                "&business=" + business +
+                "&lc=" + country +
+                "&item_name=" + description +
+                "&currency_code=" + currency +
+                "&bn=" + "PP%2dDonationsBF";
+
+            System.Diagnostics.Process.Start(url);
+        }
 
     }
 }

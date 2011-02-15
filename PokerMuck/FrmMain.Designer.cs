@@ -28,10 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
             this.lblStatus = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
+            this.lblPokerClientLanguage = new System.Windows.Forms.Label();
+            this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
             this.lblPokerClient = new System.Windows.Forms.Label();
             this.cmbPokerClient = new System.Windows.Forms.ComboBox();
             this.txtUserId = new System.Windows.Forms.TextBox();
@@ -40,8 +43,10 @@
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
-            this.lblPokerClientLanguage = new System.Windows.Forms.Label();
-            this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
+            this.lblProgramName = new System.Windows.Forms.Label();
+            this.lblPieroTofyLink = new System.Windows.Forms.LinkLabel();
+            this.lblDonate = new System.Windows.Forms.Label();
+            this.btnDonate = new System.Windows.Forms.Button();
             this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
@@ -59,7 +64,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(193, 293);
+            this.tabControl.Size = new System.Drawing.Size(195, 323);
             this.tabControl.TabIndex = 3;
             // 
             // tabHandsPage
@@ -69,7 +74,7 @@
             this.tabHandsPage.Location = new System.Drawing.Point(4, 22);
             this.tabHandsPage.Name = "tabHandsPage";
             this.tabHandsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHandsPage.Size = new System.Drawing.Size(185, 267);
+            this.tabHandsPage.Size = new System.Drawing.Size(187, 297);
             this.tabHandsPage.TabIndex = 0;
             this.tabHandsPage.Text = "Hands";
             this.tabHandsPage.UseVisualStyleBackColor = true;
@@ -78,9 +83,9 @@
             // 
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblStatus.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatus.Location = new System.Drawing.Point(3, 227);
+            this.lblStatus.Location = new System.Drawing.Point(3, 257);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(179, 37);
+            this.lblStatus.Size = new System.Drawing.Size(181, 37);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -98,10 +103,31 @@
             this.tabConfigurationPage.Location = new System.Drawing.Point(4, 22);
             this.tabConfigurationPage.Name = "tabConfigurationPage";
             this.tabConfigurationPage.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigurationPage.Size = new System.Drawing.Size(185, 267);
+            this.tabConfigurationPage.Size = new System.Drawing.Size(187, 297);
             this.tabConfigurationPage.TabIndex = 1;
             this.tabConfigurationPage.Text = "Configuration";
             this.tabConfigurationPage.UseVisualStyleBackColor = true;
+            // 
+            // lblPokerClientLanguage
+            // 
+            this.lblPokerClientLanguage.Location = new System.Drawing.Point(8, 150);
+            this.lblPokerClientLanguage.Name = "lblPokerClientLanguage";
+            this.lblPokerClientLanguage.Size = new System.Drawing.Size(59, 21);
+            this.lblPokerClientLanguage.TabIndex = 8;
+            this.lblPokerClientLanguage.Text = "Language:";
+            this.lblPokerClientLanguage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClientLanguage
+            // 
+            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClientLanguage.FormattingEnabled = true;
+            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(68, 151);
+            this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
+            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(109, 21);
+            this.cmbPokerClientLanguage.TabIndex = 7;
+            this.cmbPokerClientLanguage.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientLanguage_SelectionChangeCommitted);
             // 
             // lblPokerClient
             // 
@@ -169,10 +195,14 @@
             // 
             // tabAboutPage
             // 
+            this.tabAboutPage.Controls.Add(this.btnDonate);
+            this.tabAboutPage.Controls.Add(this.lblDonate);
+            this.tabAboutPage.Controls.Add(this.lblPieroTofyLink);
+            this.tabAboutPage.Controls.Add(this.lblProgramName);
             this.tabAboutPage.Controls.Add(this.pictureEagle);
             this.tabAboutPage.Location = new System.Drawing.Point(4, 22);
             this.tabAboutPage.Name = "tabAboutPage";
-            this.tabAboutPage.Size = new System.Drawing.Size(185, 267);
+            this.tabAboutPage.Size = new System.Drawing.Size(187, 297);
             this.tabAboutPage.TabIndex = 2;
             this.tabAboutPage.Text = "About";
             this.tabAboutPage.UseVisualStyleBackColor = true;
@@ -182,33 +212,62 @@
             this.pictureEagle.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureEagle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureEagle.Image = global::PokerMuck.Properties.Resources.Eagle;
-            this.pictureEagle.Location = new System.Drawing.Point(41, 69);
+            this.pictureEagle.Location = new System.Drawing.Point(48, 191);
             this.pictureEagle.Name = "pictureEagle";
-            this.pictureEagle.Size = new System.Drawing.Size(106, 89);
+            this.pictureEagle.Size = new System.Drawing.Size(93, 74);
             this.pictureEagle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureEagle.TabIndex = 0;
             this.pictureEagle.TabStop = false;
             // 
-            // lblPokerClientLanguage
+            // lblProgramName
             // 
-            this.lblPokerClientLanguage.Location = new System.Drawing.Point(8, 150);
-            this.lblPokerClientLanguage.Name = "lblPokerClientLanguage";
-            this.lblPokerClientLanguage.Size = new System.Drawing.Size(59, 21);
-            this.lblPokerClientLanguage.TabIndex = 8;
-            this.lblPokerClientLanguage.Text = "Language:";
-            this.lblPokerClientLanguage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // cmbPokerClientLanguage
-            // 
-            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.lblProgramName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPokerClientLanguage.FormattingEnabled = true;
-            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(68, 151);
-            this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
-            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(109, 21);
-            this.cmbPokerClientLanguage.TabIndex = 7;
-            this.cmbPokerClientLanguage.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientLanguage_SelectionChangeCommitted);
+            this.lblProgramName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProgramName.Location = new System.Drawing.Point(8, 8);
+            this.lblProgramName.Name = "lblProgramName";
+            this.lblProgramName.Size = new System.Drawing.Size(171, 20);
+            this.lblProgramName.TabIndex = 1;
+            this.lblProgramName.Text = "PokerMuck";
+            this.lblProgramName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblPieroTofyLink
+            // 
+            this.lblPieroTofyLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPieroTofyLink.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPieroTofyLink.Location = new System.Drawing.Point(3, 268);
+            this.lblPieroTofyLink.Name = "lblPieroTofyLink";
+            this.lblPieroTofyLink.Size = new System.Drawing.Size(181, 17);
+            this.lblPieroTofyLink.TabIndex = 2;
+            this.lblPieroTofyLink.TabStop = true;
+            this.lblPieroTofyLink.Text = "http://www.pierotofy.it";
+            this.lblPieroTofyLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPieroTofyLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblPieroTofyLink_LinkClicked);
+            // 
+            // lblDonate
+            // 
+            this.lblDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDonate.Location = new System.Drawing.Point(3, 28);
+            this.lblDonate.Name = "lblDonate";
+            this.lblDonate.Size = new System.Drawing.Size(184, 108);
+            this.lblDonate.TabIndex = 3;
+            this.lblDonate.Text = resources.GetString("lblDonate.Text");
+            this.lblDonate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnDonate
+            // 
+            this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDonate.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDonate.Location = new System.Drawing.Point(11, 139);
+            this.btnDonate.Name = "btnDonate";
+            this.btnDonate.Size = new System.Drawing.Size(168, 46);
+            this.btnDonate.TabIndex = 4;
+            this.btnDonate.Text = "Donate \r\n(any amount)";
+            this.btnDonate.UseVisualStyleBackColor = true;
+            this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
             // 
             // entityHandsContainer
             // 
@@ -216,7 +275,7 @@
             this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
             this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(179, 224);
+            this.entityHandsContainer.Size = new System.Drawing.Size(181, 254);
             this.entityHandsContainer.TabIndex = 4;
             // 
             // FrmMain
@@ -224,7 +283,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Silver;
-            this.ClientSize = new System.Drawing.Size(193, 293);
+            this.ClientSize = new System.Drawing.Size(195, 323);
             this.Controls.Add(this.tabControl);
             this.MaximizeBox = false;
             this.Name = "FrmMain";
@@ -262,6 +321,10 @@
         private System.Windows.Forms.ComboBox cmbPokerClient;
         private System.Windows.Forms.Label lblPokerClientLanguage;
         private System.Windows.Forms.ComboBox cmbPokerClientLanguage;
+        private System.Windows.Forms.Label lblProgramName;
+        private System.Windows.Forms.LinkLabel lblPieroTofyLink;
+        private System.Windows.Forms.Label lblDonate;
+        private System.Windows.Forms.Button btnDonate;
 
 
     }

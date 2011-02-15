@@ -117,4 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="lblDonate.Text" xml:space="preserve">
+    <value>This program is free software. If you enjoyed using this program, next time you play poker save a bet and donate that amount to contribute to the growth of this project instead. Your help is necessary to keep this program free.</value>
+  </data>
 </root>
