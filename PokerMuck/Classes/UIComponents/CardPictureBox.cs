@@ -60,7 +60,7 @@ namespace PokerMuck
 
         private String GetImagePath()
         {
-            return "../../Resources/Cards/" + GetImageFilename();
+            return "Resources/Cards/" + GetImageFilename();
         }
 
         private Size GetImageSize()
