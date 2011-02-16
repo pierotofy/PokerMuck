@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
+            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.lblStatus = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
             this.lblPokerClientLanguage = new System.Windows.Forms.Label();
@@ -42,12 +43,11 @@
             this.btnChangeHandHistory = new System.Windows.Forms.Button();
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
-            this.pictureEagle = new System.Windows.Forms.PictureBox();
-            this.lblProgramName = new System.Windows.Forms.Label();
-            this.lblPieroTofyLink = new System.Windows.Forms.LinkLabel();
-            this.lblDonate = new System.Windows.Forms.Label();
             this.btnDonate = new System.Windows.Forms.Button();
-            this.entityHandsContainer = new PokerMuck.ControlListContainer();
+            this.lblDonate = new System.Windows.Forms.Label();
+            this.lblPieroTofyLink = new System.Windows.Forms.LinkLabel();
+            this.lblProgramName = new System.Windows.Forms.Label();
+            this.pictureEagle = new System.Windows.Forms.PictureBox();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
@@ -78,6 +78,15 @@
             this.tabHandsPage.TabIndex = 0;
             this.tabHandsPage.Text = "Hands";
             this.tabHandsPage.UseVisualStyleBackColor = true;
+            // 
+            // entityHandsContainer
+            // 
+            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
+            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
+            this.entityHandsContainer.Name = "entityHandsContainer";
+            this.entityHandsContainer.Size = new System.Drawing.Size(181, 254);
+            this.entityHandsContainer.TabIndex = 4;
             // 
             // lblStatus
             // 
@@ -207,29 +216,29 @@
             this.tabAboutPage.Text = "About";
             this.tabAboutPage.UseVisualStyleBackColor = true;
             // 
-            // pictureEagle
+            // btnDonate
             // 
-            this.pictureEagle.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.pictureEagle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureEagle.Image = global::PokerMuck.Properties.Resources.Eagle;
-            this.pictureEagle.Location = new System.Drawing.Point(48, 191);
-            this.pictureEagle.Name = "pictureEagle";
-            this.pictureEagle.Size = new System.Drawing.Size(93, 74);
-            this.pictureEagle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureEagle.TabIndex = 0;
-            this.pictureEagle.TabStop = false;
-            // 
-            // lblProgramName
-            // 
-            this.lblProgramName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblProgramName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProgramName.Location = new System.Drawing.Point(8, 8);
-            this.lblProgramName.Name = "lblProgramName";
-            this.lblProgramName.Size = new System.Drawing.Size(171, 20);
-            this.lblProgramName.TabIndex = 1;
-            this.lblProgramName.Text = "PokerMuck";
-            this.lblProgramName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDonate.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDonate.Location = new System.Drawing.Point(11, 139);
+            this.btnDonate.Name = "btnDonate";
+            this.btnDonate.Size = new System.Drawing.Size(168, 46);
+            this.btnDonate.TabIndex = 4;
+            this.btnDonate.Text = "Donate \r\n(any amount)";
+            this.btnDonate.UseVisualStyleBackColor = true;
+            this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
+            // 
+            // lblDonate
+            // 
+            this.lblDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDonate.Location = new System.Drawing.Point(3, 28);
+            this.lblDonate.Name = "lblDonate";
+            this.lblDonate.Size = new System.Drawing.Size(184, 108);
+            this.lblDonate.TabIndex = 3;
+            this.lblDonate.Text = resources.GetString("lblDonate.Text");
+            this.lblDonate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPieroTofyLink
             // 
@@ -245,38 +254,29 @@
             this.lblPieroTofyLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblPieroTofyLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblPieroTofyLink_LinkClicked);
             // 
-            // lblDonate
+            // lblProgramName
             // 
-            this.lblDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.lblProgramName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblDonate.Location = new System.Drawing.Point(3, 28);
-            this.lblDonate.Name = "lblDonate";
-            this.lblDonate.Size = new System.Drawing.Size(184, 108);
-            this.lblDonate.TabIndex = 3;
-            this.lblDonate.Text = resources.GetString("lblDonate.Text");
-            this.lblDonate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblProgramName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProgramName.Location = new System.Drawing.Point(8, 8);
+            this.lblProgramName.Name = "lblProgramName";
+            this.lblProgramName.Size = new System.Drawing.Size(171, 20);
+            this.lblProgramName.TabIndex = 1;
+            this.lblProgramName.Text = "PokerMuck";
+            this.lblProgramName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // btnDonate
+            // pictureEagle
             // 
-            this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDonate.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDonate.Location = new System.Drawing.Point(11, 139);
-            this.btnDonate.Name = "btnDonate";
-            this.btnDonate.Size = new System.Drawing.Size(168, 46);
-            this.btnDonate.TabIndex = 4;
-            this.btnDonate.Text = "Donate \r\n(any amount)";
-            this.btnDonate.UseVisualStyleBackColor = true;
-            this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
-            // 
-            // entityHandsContainer
-            // 
-            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
-            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
-            this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(181, 254);
-            this.entityHandsContainer.TabIndex = 4;
+            this.pictureEagle.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.pictureEagle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureEagle.Image = global::PokerMuck.Properties.Resources.Eagle;
+            this.pictureEagle.Location = new System.Drawing.Point(48, 191);
+            this.pictureEagle.Name = "pictureEagle";
+            this.pictureEagle.Size = new System.Drawing.Size(93, 74);
+            this.pictureEagle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureEagle.TabIndex = 0;
+            this.pictureEagle.TabStop = false;
             // 
             // FrmMain
             // 
@@ -285,6 +285,7 @@
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(195, 323);
             this.Controls.Add(this.tabControl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
