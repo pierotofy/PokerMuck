@@ -11,18 +11,17 @@
     <deploymentProvider codebase="http://www.pierotofy.it/pokermuck/application/PokerMuck.application" />
   </deployment>
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
-    <framework targetVersion="4.0" profile="Client" supportedRuntime="4.0.30319" />
     <framework targetVersion="4.0" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="PokerMuck.exe.manifest" size="24215">
+    <dependentAssembly dependencyType="install" codebase="PokerMuck.exe.manifest" size="24594">
       <assemblyIdentity name="PokerMuck.exe" version="0.1.0.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="x86" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Pe9XnNmPh1Wk15DrZIPfSM3EqeM=</dsig:DigestValue>
+        <dsig:DigestValue>+M9L8jlv28TbxN1fjA7LzNNV0tU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PokerMuck.exe" size="208384">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PokerMuck.exe" size="211968">
       <assemblyIdentity name="PokerMuck" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>yv8brhPPRqshIzmTtqSjmma5nso=</dsig:DigestValue>
+        <dsig:DigestValue>U9G3F3ci05BkfCqy348BO6G5bHU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -70,6 +70,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>KYPzQFZ5Z2Rn03Bh5vrT5h41RQk=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="PokerMuck.exe.config" size="144">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>cpzNzlRjZspwKGLNlX6RAlU3880=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Resources\Cards\1_1.png" size="6248">

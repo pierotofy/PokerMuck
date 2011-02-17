@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
@@ -17,88 +18,34 @@ namespace PokerMuck
 
         public PokerProLabsRankScanner()
         {
-            /* 
-                    PostSubmitter post = new PostSubmitter();
-                    post.Url = "http://www.3dblackjacktrainer.pierotofy.it/bug/submit";
-
-                    //Show status and disable button
-                    btnSubmit.Enabled = false;
-                    SetStatus("Looking for system information...");
-
-                    //OS version
-                    post.PostItems.Add("bug[os]", Environment.OSVersion.VersionString);
-
-                    //RAM
-                    VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
-                    post.PostItems.Add("bug[ram]", string.Format("{0} mb", ci.TotalPhysicalMemory / 1048576));
-
-                    //Videocard information
-                    StringBuilder data = new StringBuilder();
-                    int i = 1;
-                    foreach (AdapterInformation ai in Manager.Adapters)
-                    {
-
-                        data.Append(string.Format("Adapter #{0}: {1}*", i, ai.Information.Description));
-
-                        data.Append(string.Format
-                            ("Driver information: {0} - {1}*",
-                            ai.Information.DriverName,
-                            ai.Information.DriverVersion));
-
-                        // Get each display mode supported
-                        data.Append(string.Format
-                            ("Current Display Mode: {0}x{1}x{2}*",
-                            ai.CurrentDisplayMode.Width,
-                            ai.CurrentDisplayMode.Height,
-                            ai.CurrentDisplayMode.Format));
-
-                        foreach (DisplayMode dm in ai.SupportedDisplayModes)
-                        {
-                            data.Append(string.Format
-                                ("Supported: {0}x{1}x{2}*",
-                                dm.Width, dm.Height, dm.Format));
-                        }
-
-                        i++;
-                    }
-                    post.PostItems.Add("bug[videocardsinfo]", data.ToString());
-
-                    //Game error
-                    post.PostItems.Add("bug[gameerror]", gameError);
-
-                    //Game version
-                    post.PostItems.Add("bug[gameversion]", gameVersion);
-
-                    //Stack trace
-                    post.PostItems.Add("bug[stacktrace]", stackTrace);
-
-                    //User description
-                    post.PostItems.Add("bug[usererrordescription]", txtDescription.Text);
-
-                    
-                    SetStatus("Submitting the information...");
-                    post.Type = PostSubmitter.PostTypeEnum.Get;
-
-                    try
-                    {
-                        string result = post.Post();
-                    }
-                    catch (Exception)
-                    {
-                        //It might happen that the bug has been submitted already,
-                        //So the server refuses the post
-                    }
-             * */
         }
 
-        protected override float GetMaxRankValue()
+        public override Rank FindPlayerRank(string playerName)
         {
-            return 65.0f; // 5 stars * num cards in a deck
-        }
+            // TODO in another thread
 
-        protected override float GetMinRankValue()
-        {
-            return 1.0f; // 1 star, two
+            /* We'll use this to make post requests to the website */
+            PostSubmitter post = new PostSubmitter();
+            post.Type = PostSubmitter.PostTypeEnum.Post;
+
+            /* Do a preliminary search to see if the player is in the database */
+            post.PostItems.Add("pn", playerName);
+            
+            try
+            {
+                string result = post.Post(SEARCH_PLAYER_URL);
+                Debug.Print(result);
+            }
+            catch (Exception)
+            {
+                // Something went wrong?
+
+                return null; //TODO error handling?
+            }
+
+            return null;
+
+          
         }
 
 

@@ -31,6 +31,13 @@ namespace PokerMuck
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
+            // TODO remove
+            RankScanner r = new PokerProLabsRankScanner();
+            r.FindPlayerRank("POKERFEDE87");
+
+
+
+
             SetStatus("Waiting for a game to start...");
 
             pmDirector = new PokerMuckDirector();

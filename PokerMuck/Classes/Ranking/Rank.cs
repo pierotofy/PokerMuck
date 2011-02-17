@@ -15,25 +15,32 @@ namespace PokerMuck
         /* Holds the ranks for different game categories */
         private Hashtable ranks;
 
-        /* The rank value ranges */
-        private float maxRankValue, minRankValue;
-
-        public Rank(float minRankValue, float maxRankValue)
+        public Rank()
         {
-            this.minRankValue = minRankValue;
-            this.maxRankValue = maxRankValue;
+
         }
 
-        public void SetRank(float rankValue, PokerGameCategory category){
-            Debug.Assert(rankValue >= minRankValue && rankValue <= maxRankValue, "rankValue is greather than or less than range.");
+        /* The rank is a value between 0 and 1, with the exception of -1, which indicates that no rank is available */
+        public void SetRank(float rank, PokerGameCategory category){
+            Debug.Assert((rank >= 0.0f || rank == -1.0f) && rank <= 1.0f, "rank is greather than or less than the allowed range.");
 
-            ranks[category] = rankValue;
+            ranks[category] = rank;
         }
 
-        /* Returns the rank score (calculated proportionally to the maxRankValue and minRankValue)
-         * 1.0 is the strongest, 0 the weakest */
-        public float GetRankScore(PokerGameCategory category){
-            return 1.0f;
+        /* Returns the rank score
+         * 1.0 is the strongest, 0 the weakest, -1.0 is N/A */
+        public float GetRank(PokerGameCategory category){
+            if (ranks.ContainsKey(category))
+            {
+                return (float)ranks[category];
+            }
+            else return -1.0f;
+        }
+
+        /* Returns an average of all categories */
+        public float GetCategoriesAverageRank()
+        {
+            return 0.0f; //TODO
         }
     }
 }
