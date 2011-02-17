@@ -80,5 +80,4 @@ C:\Users\piero\Desktop\PokerMuck\PokerMuck\bin\Debug\PokerMuck.exe.manifest
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\bin\Debug\PokerMuck.application
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.exe.manifest
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.application
-C:\Users\piero\Desktop\PokerMuck\PokerMuck\bin\Debug\Cards.ico
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\bin\Debug\License.txt

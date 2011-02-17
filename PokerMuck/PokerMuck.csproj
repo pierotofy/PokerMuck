@@ -90,6 +90,10 @@
     <Compile Include="Classes\Board\HoldemBoard.cs" />
     <Compile Include="Classes\Card\CardList.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
+    <Compile Include="Classes\Ranking\PokerProLabsRankScanner.cs" />
+    <Compile Include="Classes\Ranking\PostSubmitter.cs" />
+    <Compile Include="Classes\Ranking\Rank.cs" />
+    <Compile Include="Classes\Ranking\RankScanner.cs" />
     <Compile Include="Classes\UIComponents\CardPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>

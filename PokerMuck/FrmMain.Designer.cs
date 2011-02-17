@@ -121,9 +121,9 @@
             // 
             this.lblPokerClientLanguage.Location = new System.Drawing.Point(8, 150);
             this.lblPokerClientLanguage.Name = "lblPokerClientLanguage";
-            this.lblPokerClientLanguage.Size = new System.Drawing.Size(59, 21);
+            this.lblPokerClientLanguage.Size = new System.Drawing.Size(71, 31);
             this.lblPokerClientLanguage.TabIndex = 8;
-            this.lblPokerClientLanguage.Text = "Language:";
+            this.lblPokerClientLanguage.Text = "Hand History Language:";
             this.lblPokerClientLanguage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cmbPokerClientLanguage
@@ -132,9 +132,9 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClientLanguage.FormattingEnabled = true;
-            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(68, 151);
+            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(82, 156);
             this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
-            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(109, 21);
+            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(95, 21);
             this.cmbPokerClientLanguage.TabIndex = 7;
             this.cmbPokerClientLanguage.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientLanguage_SelectionChangeCommitted);
             // 

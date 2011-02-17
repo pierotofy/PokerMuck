@@ -31,7 +31,7 @@ namespace PokerMuck
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            SetStatus("Waiting...");
+            SetStatus("Waiting for a game to start...");
 
             pmDirector = new PokerMuckDirector();
             pmDirector.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
@@ -39,7 +39,7 @@ namespace PokerMuck
             pmDirector.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
             pmDirector.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
             pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
-            pmDirector.Test();
+            //pmDirector.Test();
 
             // Adjust size
             this.Size = pmDirector.UserSettings.WindowSize;
