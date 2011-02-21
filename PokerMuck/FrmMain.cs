@@ -32,8 +32,9 @@ namespace PokerMuck
         private void FrmMain_Load(object sender, EventArgs e)
         {
             // TODO remove
-            RankScanner r = new SharkScopeRankScanner();
-            r.FindPlayerRank("stallion089");
+            //RankScanner r = new SharkScopeRankScanner();
+            //r.FindPlayerRank("stallion089");
+
 
 
             SetStatus("Waiting for a game to start...");
@@ -44,7 +45,17 @@ namespace PokerMuck
             pmDirector.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
             pmDirector.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
             pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
-            //pmDirector.Test();
+            pmDirector.Test();
+
+            /* TODO remove
+            Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_detect_mucked_hand");
+            Match m = r.Match("Seat 1: stallion089 (button) (small blind) mucked [5d 5s]");
+
+            if (m.Success)
+            {
+                Debug.Print("OOOK");
+                Debug.Print(m.Groups["playerName"].Value);
+            }*/
 
             // Adjust size
             this.Size = pmDirector.UserSettings.WindowSize;

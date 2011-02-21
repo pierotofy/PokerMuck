@@ -47,8 +47,11 @@ namespace PokerMuck
                 regex.Add("hand_history_game_type_token", @"(EUR (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \([\d]+/[\d]+\))");
 
                 /* Recognize players 
-                 Ex. Seat 1: stallion089 (2105 in chips) => "stallion089" */
-                regex.Add("hand_history_detect_player_in_game", @"Seat [\d]+: (?<playerName>[^(]+) \([\d]+ in chips\)");
+                 Ex. Seat 1: stallion089 (2105 in chips) => "stallion089" 
+                 Note that spaces will be ignored (Ex. "Ale 89" => "Ale")
+                 This will cause ambiguity in the (rare) case that two players share the same prefix
+                 */
+                regex.Add("hand_history_detect_player_in_game", @"Seat [\d]+: (?<playerName>[^ ]+) .*\([\d]+ in chips\)");
 
                 /* Recognize mucked hands
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/
