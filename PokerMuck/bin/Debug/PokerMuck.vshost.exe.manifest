@@ -50,7 +50,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>G6aUwvn48zf6EhkOKpq7BThE1yU=</dsig:DigestValue>
+        <dsig:DigestValue>Zx8r0Lc4Xtx4VYCl/eYR8kAyFtA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -70,15 +70,6 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>KYPzQFZ5Z2Rn03Bh5vrT5h41RQk=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="PokerMuck.exe.config" size="144">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>cpzNzlRjZspwKGLNlX6RAlU3880=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Resources\Cards\1_1.png" size="6248">

@@ -26,6 +26,9 @@ namespace PokerMuck
         /* Identification string of the table */
         public String TableId { get; set; }
 
+        /* Game type of the table */
+        public PokerGameType GameType { get; set; }
+
         /* The playing window's title currently associated with this table */
         private String windowTitle;
         public String WindowTitle { get { return windowTitle; } }
@@ -49,6 +52,7 @@ namespace PokerMuck
             this.windowTitle = windowTitle;
             this.pokerClient = pokerClient;
             this.TableId = String.Empty; // We don't know yet
+            this.GameType = PokerGameType.Unknown; // We don't know
 
             // By default we use the universal parser
             handHistoryParser = new UniversalHHParser(pokerClient);
@@ -94,16 +98,16 @@ namespace PokerMuck
             Debug.Print("GameType discovered! {0}",gameType);
 
             // Find to what game this gametype string corresponds
-            PokerGameType gameTypeEnum = pokerClient.GetPokerGameTypeFromGameDescription(gameType);
+            GameType = pokerClient.GetPokerGameTypeFromGameDescription(gameType);
 
             bool foundParser = false;
 
             // Holdem?
-            if (foundParser = (gameTypeEnum == PokerGameType.Holdem))
+            if (foundParser = (GameType == PokerGameType.Holdem))
             {
                 handHistoryParser = new HoldemHHParser(pokerClient);
             }
-            else if (gameTypeEnum == PokerGameType.Unknown)
+            else if (GameType == PokerGameType.Unknown)
             {
                 Debug.Print("We weren't able to find a better parser for this GameType");
             }
@@ -151,7 +155,7 @@ namespace PokerMuck
             // We found a new player. Yay!
             if (result == null)
             {
-                playerList.Add(new Player(playerName));
+                playerList.Add(PlayerFactory.CreatePlayer(playerName, GameType));
             }
         }
 

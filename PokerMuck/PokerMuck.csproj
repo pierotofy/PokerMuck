@@ -91,6 +91,8 @@
     <Compile Include="Classes\Board\Board.cs" />
     <Compile Include="Classes\Board\HoldemBoard.cs" />
     <Compile Include="Classes\Card\CardList.cs" />
+    <Compile Include="Classes\Player\Player.cs" />
+    <Compile Include="Classes\Player\PlayerFactory.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
     <Compile Include="Classes\Ranking\PostSubmitter.cs" />
     <Compile Include="Classes\Ranking\Rank.cs" />
@@ -104,7 +106,6 @@
     <Compile Include="Classes\Settings\UserSettings.cs" />
     <Compile Include="Classes\HandHistory\Parser\UniversalHHParser.cs" />
     <Compile Include="Classes\PokerMuckDirector.cs" />
-    <Compile Include="Classes\Player.cs" />
     <Compile Include="Classes\Table.cs" />
     <Compile Include="Classes\HandHistory\HHDirectoryParser.cs" />
     <Compile Include="Classes\HandHistory\Monitor\FilesLineTracker.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\Player\HoldemPlayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Classes\UIComponents\ControlListContainer.resx">

@@ -7,11 +7,13 @@ using System.Text.RegularExpressions;
 
 namespace PokerMuck
 {
+    /* Enum of the possible game phases in a Hold'em game */
+    public enum HoldemGamePhase { Preflop, Flop, Turn, River, Showdown, Summary };
+        
+
     /* Hold'em Hand History Parser */
     class HoldemHHParser : HHParser
     {
-        /* Enum of the possible game phases in a Hold'em game */
-        public enum HoldemGamePhase { Preflop, Flop, Turn, River, Showdown, Summary };
         private HoldemGamePhase currentGamePhase;
 
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)

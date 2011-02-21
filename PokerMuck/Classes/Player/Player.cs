@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
-    class Player
+    abstract class Player
     {
         /* Every player has a name */
         private String name;
@@ -16,7 +17,7 @@ namespace PokerMuck
 
         /* Has this player showed his hands last round? */
         public bool HasShowedLastRound { get; set; }
-
+        
         public Player(String name)
         {
             this.name = name;
