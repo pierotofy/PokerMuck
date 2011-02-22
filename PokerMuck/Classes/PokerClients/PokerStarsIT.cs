@@ -62,10 +62,24 @@ namespace PokerMuck
                    Ex. stallion089: posts small blind 15 */
                 regex.Add("hand_history_detect_small_blind", @"(?<playerName>[^:]+): posts small blind (?<smallBlindAmount>[\d]+)");
                 regex.Add("hand_history_detect_big_blind", @"(?<playerName>[^:]+): posts big blind (?<bigBlindAmount>[\d]+)");
-                
 
 
-                
+                /* Detect calls
+                 * ex. stallion089: calls 10 */
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>[^:]+): calls (?<amount>[\d]+)");
+
+                /* Detect bets 
+                   ex. stallion089: bets 20 */
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>[^:]+): bets (?<amount>[\d]+)");
+
+                /* Detect folds
+                 * ex. preferiti90: folds */
+                regex.Add("hand_history_detect_player_fold", @"(?<playerName>[^:]+): folds");
+
+                /* Detect raises 
+                 * ex. zanzara za: raises 755 to 1155 and is all-in */
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>[^:]+): raises (?<initialPot>[\d]+) to (?<raiseAmount>[\d]+)");
+
                 /* Recognize end of round character sequence (in PokerStars.it it's
                  * a blank line */
                 regex.Add("hand_history_detect_end_of_round", @"^$");

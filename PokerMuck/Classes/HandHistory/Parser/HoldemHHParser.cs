@@ -16,6 +16,68 @@ namespace PokerMuck
     {
         private HoldemGamePhase currentGamePhase;
 
+        /* The final board is available */
+        public delegate void FinalBoardAvailableHandler(Board board);
+        public event FinalBoardAvailableHandler FinalBoardAvailable;
+
+        protected void OnFinalBoardAvailable(Board board)
+        {
+            if (FinalBoardAvailable != null) FinalBoardAvailable(board);
+        }
+
+        /* We found who the big/small blind is */
+        public delegate void FoundSmallBlindHandler(String playerName);
+        public event FoundSmallBlindHandler FoundSmallBlind;
+
+        protected void OnFoundSmallBlind(String playerName)
+        {
+            if (FoundSmallBlind != null) FoundSmallBlind(playerName);
+        }
+
+        public delegate void FoundBigBlindHandler(String playerName);
+        public event FoundBigBlindHandler FoundBigBlind;
+
+        protected void OnFoundBigBlind(String playerName)
+        {
+            if (FoundBigBlind != null) FoundBigBlind(playerName);
+        } 
+
+        /* A player bet */
+        public delegate void PlayerBetHandler(String playerName, float amount, HoldemGamePhase gamePhase);
+        public event PlayerBetHandler PlayerBet;
+
+        protected void OnPlayerBet(String playerName, float amount, HoldemGamePhase gamePhase)
+        {
+            if (PlayerBet != null) PlayerBet(playerName, amount, gamePhase);
+        }
+
+        /* A player called */
+        public delegate void PlayerCalledHandler(String playerName, float amount, HoldemGamePhase gamePhase);
+        public event PlayerCalledHandler PlayerCalled;
+
+        protected void OnPlayerCalled(String playerName, float amount, HoldemGamePhase gamePhase)
+        {
+            if (PlayerCalled != null) PlayerCalled(playerName, amount, gamePhase);
+        }
+
+        /* A player folded */
+        public delegate void PlayerFoldedHandler(String playerName, HoldemGamePhase gamePhase);
+        public event PlayerFoldedHandler PlayerFolded;
+
+        protected void OnPlayerFolded(String playerName, HoldemGamePhase gamePhase)
+        {
+            if (PlayerFolded != null) PlayerFolded(playerName, gamePhase);
+        }
+
+        /* A player raised */
+        public delegate void PlayerRaisedHandler(String playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase);
+        public event PlayerRaisedHandler PlayerRaised;
+
+        protected void OnPlayerRaised(String playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
+        {
+            if (PlayerRaised != null) PlayerRaised(playerName, initialPot, raiseAmount, gamePhase);
+        }
+
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
         {
             
@@ -123,11 +185,37 @@ namespace PokerMuck
             /* Detect small/big blind */
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_small_blind"), out matchResult))
             {
-                Debug.Print("Small blind! " + matchResult.Groups["playerName"]);            
+                OnFoundSmallBlind(matchResult.Groups["playerName"].Value);          
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_big_blind"), out matchResult))
             {
-                Debug.Print("Big blind! " + matchResult.Groups["playerName"]);
+                OnFoundBigBlind(matchResult.Groups["playerName"].Value);
+            }
+
+            /* Detect raises, calls, folds, bets */
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_call"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                float amount = float.Parse(matchResult.Groups["amount"].Value);
+                OnPlayerCalled(playerName,amount, currentGamePhase);
+            }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_bet"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                float amount = float.Parse(matchResult.Groups["amount"].Value);
+                OnPlayerBet(playerName, amount, currentGamePhase);
+            }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_fold"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                OnPlayerFolded(playerName, currentGamePhase);
+            }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_raise"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                float initialPot = float.Parse(matchResult.Groups["initialPot"].Value);
+                float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);
+                OnPlayerRaised(playerName, initialPot, raiseAmount, currentGamePhase);
             }
         }
 

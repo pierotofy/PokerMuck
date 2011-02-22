@@ -9,8 +9,7 @@ namespace PokerMuck
     /* A holdem player has certain statistics that a five card draw player might not have */
     class HoldemPlayer : Player
     {
-        /* Holdem statistics 
-         Each table is set this way:
+        /* Each table is set this way:
          key => value
          GamePhase => value
          Ex. calls[flop] == 4 --> player has flat called 4 times during the flop
@@ -54,8 +53,6 @@ namespace PokerMuck
         {
             /* If he's not the small or big blind, this is also a limp */
             if (!IsSmallBlind && !IsBigBlind && gamePhase == HoldemGamePhase.Preflop) IncrementStatistics(limps, gamePhase);
-
-            // TODO: need regex for finding small and big blind
 
             IncrementStatistics(calls, gamePhase);
         }

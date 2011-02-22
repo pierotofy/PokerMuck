@@ -82,6 +82,17 @@ namespace PokerMuck
         void handHistoryParser_RoundHasTerminated()
         {
             if (DataHasChanged != null) DataHasChanged(this);
+
+
+            /* Game specific operations */
+            if (GameType == PokerGameType.Holdem)
+            {
+                // Clear the information about the blinds
+                foreach (HoldemPlayer p in playerList)
+                {
+                    p.IsSmallBlind = p.IsBigBlind = false;
+                }
+            }
         }
 
         void handHistoryParser_HoleCardsWillBeDealt()
@@ -115,19 +126,72 @@ namespace PokerMuck
             // If we replaced our parser, we need to register the event handlers
             if (foundParser)
             {
+                // Generic handlers (all game types)
                 handHistoryParser.PlayerIsSeated += new HHParser.PlayerIsSeatedHandler(handHistoryParser_PlayerIsSeated);
                 handHistoryParser.PlayerMuckHandAvailable += new HHParser.PlayerMuckHandAvailableHandler(handHistoryParser_PlayerMuckHandAvailable);
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
                 handHistoryParser.NewTableHasBeenCreated += new HHParser.NewTableHasBeenCreatedHandler(handHistoryParser_NewTableHasBeenCreated);
-                handHistoryParser.FinalBoardAvailable += new HHParser.FinalBoardAvailableHandler(handHistoryParser_FinalBoardAvailable);
                 handHistoryParser.HoleCardsWillBeDealt += new HHParser.HoleCardsWillBeDealtHandler(handHistoryParser_HoleCardsWillBeDealt);
+
+                // Game specific handlers
+                if (GameType == PokerGameType.Holdem)
+                {
+                    ((HoldemHHParser)handHistoryParser).FinalBoardAvailable += new HoldemHHParser.FinalBoardAvailableHandler(handHistoryParser_FinalBoardAvailable);
+                    ((HoldemHHParser)handHistoryParser).FoundBigBlind += new HoldemHHParser.FoundBigBlindHandler(handHistoryParser_FoundBigBlind);
+                    ((HoldemHHParser)handHistoryParser).FoundSmallBlind += new HoldemHHParser.FoundSmallBlindHandler(handHistoryParser_FoundSmallBlind);
+                    ((HoldemHHParser)handHistoryParser).PlayerBet += new HoldemHHParser.PlayerBetHandler(handHistoryParser_PlayerBet);
+                    ((HoldemHHParser)handHistoryParser).PlayerCalled += new HoldemHHParser.PlayerCalledHandler(handHistoryParser_PlayerCalled);
+                    ((HoldemHHParser)handHistoryParser).PlayerFolded += new HoldemHHParser.PlayerFoldedHandler(handHistoryParser_PlayerFolded);
+                    ((HoldemHHParser)handHistoryParser).PlayerRaised += new HoldemHHParser.PlayerRaisedHandler(handHistoryParser_PlayerRaised);
+                }
             }
+        }
+
+        /* Holdem specific handlers */
+
+        void handHistoryParser_PlayerRaised(string playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
+        {
+            Debug.Print(playerName + " Raised " + raiseAmount);
+        }
+
+        void handHistoryParser_PlayerFolded(string playerName, HoldemGamePhase gamePhase)
+        {
+            Debug.Print(playerName + " Folded");
+        }
+
+        void handHistoryParser_PlayerCalled(string playerName, float amount, HoldemGamePhase gamePhase)
+        {
+            Debug.Print(playerName + " Called " + amount);
+        }
+
+        void handHistoryParser_PlayerBet(string playerName, float amount, HoldemGamePhase gamePhase)
+        {
+            Debug.Print(playerName + " Bet " + amount);
         }
 
         void handHistoryParser_FinalBoardAvailable(Board board)
         {
             finalBoard = board;
         }
+
+        void handHistoryParser_FoundBigBlind(String playerName)
+        {
+            // Keep track of who is the big blind
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            p.IsBigBlind = true;
+        }
+
+        void handHistoryParser_FoundSmallBlind(String playerName)
+        {
+            // Keep track of who is the small blind
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            p.IsSmallBlind = true;
+        }
+
+
+        /* Generic handlers */
+
+
 
         void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
         {
