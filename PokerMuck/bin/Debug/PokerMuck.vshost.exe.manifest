@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PokerMuck.exe" size="212480">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PokerMuck.exe" size="215040">
       <assemblyIdentity name="PokerMuck" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Zx8r0Lc4Xtx4VYCl/eYR8kAyFtA=</dsig:DigestValue>
+        <dsig:DigestValue>trAyou3Gm8wjbMME6hr/pGwFMsU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

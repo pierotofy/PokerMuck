@@ -48,17 +48,23 @@ namespace PokerMuck
 
                 /* Recognize players 
                  Ex. Seat 1: stallion089 (2105 in chips) => "stallion089" 
-                 Note that spaces will be ignored (Ex. "Ale 89" => "Ale")
-                 This will cause ambiguity in the (rare) case that two players share the same prefix
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat [\d]+: (?<playerName>[^ ]+) .*\([\d]+ in chips\)");
+                regex.Add("hand_history_detect_player_in_game", @"Seat [\d]+: (?<playerName>[^(]+) .*\([\d]+ in chips\)");
 
                 /* Recognize mucked hands
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/
-                regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^ ]+)([^\[]*)\[(?<cards>[\d\w ]+)\]");
+                regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^(]+) .*(showed|mucked) \[(?<cards>[\d\w ]+)\]");
 
                 /* Recognize the final board */
                 regex.Add("hand_history_detect_final_board", @"Board \[(?<cards>[\d\w ]+)\]");
+
+                /* Detect who is the small/big blind
+                   Ex. stallion089: posts small blind 15 */
+                regex.Add("hand_history_detect_small_blind", @"(?<playerName>[^:]+): posts small blind (?<smallBlindAmount>[\d]+)");
+                regex.Add("hand_history_detect_big_blind", @"(?<playerName>[^:]+): posts big blind (?<bigBlindAmount>[\d]+)");
+                
+
+
                 
                 /* Recognize end of round character sequence (in PokerStars.it it's
                  * a blank line */

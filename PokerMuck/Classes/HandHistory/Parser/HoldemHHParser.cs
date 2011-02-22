@@ -119,6 +119,16 @@ namespace PokerMuck
                     Debug.Print("Board detected, but only " + cards.Length + " cards in there. Skipping...");
                 }
             }
+
+            /* Detect small/big blind */
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_small_blind"), out matchResult))
+            {
+                Debug.Print("Small blind! " + matchResult.Groups["playerName"]);            
+            }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_big_blind"), out matchResult))
+            {
+                Debug.Print("Big blind! " + matchResult.Groups["playerName"]);
+            }
         }
 
         /* Will modify the value of currentGamePhase 
