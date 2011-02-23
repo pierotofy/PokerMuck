@@ -44,6 +44,10 @@ namespace PokerMuck
         /* Notifies the delegate that data has changed */
         public delegate void DataHasChangedHandler(Table sender);
         public event DataHasChangedHandler DataHasChanged;
+
+        /* Information about the blinds */
+        public float BigBlindAmount { get; set; }
+        public float SmallBlindAmount { get; set; }
         
 
         public Table(String handHistoryFilename, String windowTitle, PokerClient pokerClient)
@@ -84,14 +88,10 @@ namespace PokerMuck
             if (DataHasChanged != null) DataHasChanged(this);
 
 
-            /* Game specific operations */
-            if (GameType == PokerGameType.Holdem)
+            // Clear the statistics information relative to a single round
+            foreach (Player p in playerList)
             {
-                // Clear the information about the blinds
-                foreach (HoldemPlayer p in playerList)
-                {
-                    p.IsSmallBlind = p.IsBigBlind = false;
-                }
+                p.PrepareStatisticsForNewRound();
             }
         }
 
@@ -101,6 +101,7 @@ namespace PokerMuck
             foreach (Player p in playerList)
             {
                 p.HasShowedLastRound = false;
+                p.IsDealtHoleCards();
             }
         }
 
@@ -151,22 +152,34 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerRaised(string playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
         {
-            Debug.Print(playerName + " Raised " + raiseAmount);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            p.HasRaised(gamePhase);
         }
 
         void handHistoryParser_PlayerFolded(string playerName, HoldemGamePhase gamePhase)
         {
-            Debug.Print(playerName + " Folded");
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            p.HasFolded(gamePhase);
         }
 
         void handHistoryParser_PlayerCalled(string playerName, float amount, HoldemGamePhase gamePhase)
         {
-            Debug.Print(playerName + " Called " + amount);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+
+            // If we are preflop and the call is the same amount as the big blind, this is also a limp
+            if (amount == BigBlindAmount)
+            {
+                // HasLimped() makes further checks to avoid duplicate counts and whether the player is the big blind or small blind
+                p.HasLimped();
+            }
+
+            p.HasCalled(gamePhase);
         }
 
         void handHistoryParser_PlayerBet(string playerName, float amount, HoldemGamePhase gamePhase)
         {
-            Debug.Print(playerName + " Bet " + amount);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            p.HasBet(gamePhase);
         }
 
         void handHistoryParser_FinalBoardAvailable(Board board)
@@ -174,15 +187,21 @@ namespace PokerMuck
             finalBoard = board;
         }
 
-        void handHistoryParser_FoundBigBlind(String playerName)
+        void handHistoryParser_FoundBigBlind(String playerName, float amount)
         {
+            // Save current blind
+            BigBlindAmount = amount;
+
             // Keep track of who is the big blind
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
             p.IsBigBlind = true;
         }
 
-        void handHistoryParser_FoundSmallBlind(String playerName)
+        void handHistoryParser_FoundSmallBlind(String playerName, float amount)
         {
+            // Save current blind
+            SmallBlindAmount = amount;
+
             // Keep track of who is the small blind
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
             p.IsSmallBlind = true;
@@ -190,8 +209,6 @@ namespace PokerMuck
 
 
         /* Generic handlers */
-
-
 
         void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
         {

@@ -25,21 +25,21 @@ namespace PokerMuck
             if (FinalBoardAvailable != null) FinalBoardAvailable(board);
         }
 
-        /* We found who the big/small blind is */
-        public delegate void FoundSmallBlindHandler(String playerName);
+        /* We found who the big/small blind is (and the amount of it) */
+        public delegate void FoundSmallBlindHandler(String playerName, float amount);
         public event FoundSmallBlindHandler FoundSmallBlind;
 
-        protected void OnFoundSmallBlind(String playerName)
+        protected void OnFoundSmallBlind(String playerName, float amount)
         {
-            if (FoundSmallBlind != null) FoundSmallBlind(playerName);
+            if (FoundSmallBlind != null) FoundSmallBlind(playerName, amount);
         }
 
-        public delegate void FoundBigBlindHandler(String playerName);
+        public delegate void FoundBigBlindHandler(String playerName, float amount);
         public event FoundBigBlindHandler FoundBigBlind;
 
-        protected void OnFoundBigBlind(String playerName)
+        protected void OnFoundBigBlind(String playerName, float amount)
         {
-            if (FoundBigBlind != null) FoundBigBlind(playerName);
+            if (FoundBigBlind != null) FoundBigBlind(playerName, amount);
         } 
 
         /* A player bet */
@@ -185,11 +185,15 @@ namespace PokerMuck
             /* Detect small/big blind */
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_small_blind"), out matchResult))
             {
-                OnFoundSmallBlind(matchResult.Groups["playerName"].Value);          
+                String playerName = matchResult.Groups["playerName"].Value;
+                float amount = float.Parse(matchResult.Groups["smallBlindAmount"].Value);
+                OnFoundSmallBlind(playerName, amount);          
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_big_blind"), out matchResult))
             {
-                OnFoundBigBlind(matchResult.Groups["playerName"].Value);
+                String playerName = matchResult.Groups["playerName"].Value;
+                float amount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
+                OnFoundBigBlind(playerName, amount);
             }
 
             /* Detect raises, calls, folds, bets */
