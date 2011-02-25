@@ -17,7 +17,7 @@ namespace PokerMuck
 
         public Rank()
         {
-
+            ranks = new Hashtable();
         }
 
         /* The rank is a value between 0 and 1, with the exception of -1, which indicates that no rank is available */

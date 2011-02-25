@@ -16,6 +16,9 @@ namespace PokerMuck
         private int voluntaryPutMoneyPreflop;
         private bool HasVoluntaryPutMoneyPreflopThisRound;
 
+        private int preflopRaises;
+        private bool HasPreflopRaisedThisRound;
+
         /* Each table is set this way:
          key => value
          GamePhase => value
@@ -53,12 +56,19 @@ namespace PokerMuck
         {
             return (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
         }
+
+        /* How many times has the player raised preflop? */
+        public float GetPFRRatio()
+        {
+            return (float)preflopRaises / (float)totalHandsPlayed;
+        }
         
         /* This player has raised, increment the stats */
         public void HasRaised(HoldemGamePhase gamePhase){
             if (gamePhase == HoldemGamePhase.Preflop)
             {
                 IncrementVoluntaryPutMoneyPreflop();
+                IncrementPreflopRaise();
             }
 
             IncrementStatistics(raises, gamePhase);
@@ -116,6 +126,16 @@ namespace PokerMuck
         }
 
 
+        /* Helper function to increment the PFR stat */
+        private void IncrementPreflopRaise()
+        {
+            if (!HasPreflopRaisedThisRound)
+            {
+                HasPreflopRaisedThisRound = true;
+                preflopRaises += 1;
+            }
+        }
+
         /* Helper function to increment the value in one of the hash tables (calls, raises, folds, etc.) */
         private void IncrementStatistics(Hashtable table, HoldemGamePhase gamePhase)
         {
@@ -132,6 +152,7 @@ namespace PokerMuck
             IsSmallBlind = false;
             HasLimpedThisRound = false;
             HasVoluntaryPutMoneyPreflopThisRound = false;
+            HasPreflopRaisedThisRound = false;
         }
 
         
@@ -147,6 +168,7 @@ namespace PokerMuck
             limps = 0;
             voluntaryPutMoneyPreflop = 0;
             totalHandsPlayed = 0;
+            preflopRaises = 0;
 
             PrepareStatisticsForNewRound();
         }
@@ -167,6 +189,7 @@ namespace PokerMuck
 
             result["VPF"] = GetVPFRatio();
             result["Limp"] = GetLimpRatio();
+            result["PFR"] = GetPFRRatio();
 
             return result;
         }

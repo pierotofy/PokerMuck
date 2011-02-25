@@ -49,7 +49,7 @@ namespace PokerMuck
                 /* Recognize players 
                  Ex. Seat 1: stallion089 (2105 in chips) => "stallion089" 
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat [\d]+: (?<playerName>[^(]+) .*\([\d]+");
+                regex.Add("hand_history_detect_player_in_game", @"Seat [\d]+: (?<playerName>[^(]+) .*\([\d]+ in chips");
 
                 /* Recognize mucked hands
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/

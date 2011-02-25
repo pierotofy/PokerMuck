@@ -76,8 +76,8 @@ namespace PokerMuck
         /* TEST CODE REMOVE IN PRODUCTION */
         public void Test()
         {
-            //String filename = "test.txt";
-            String filename = "HH20110209 T362898524 No Limit Hold'em €4.60 + €0.40.txt";
+            String filename = "test.txt";
+            //String filename = "HH20110112 T352120210 No Limit Hold'em €2.55 + €0.45.txt";
             Table newTable = new Table(filename, "Test", pokerClient);
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
             tables.Add(newTable);
