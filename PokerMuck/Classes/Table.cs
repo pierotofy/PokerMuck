@@ -167,7 +167,7 @@ namespace PokerMuck
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
 
             // If we are preflop and the call is the same amount as the big blind, this is also a limp
-            if (amount == BigBlindAmount)
+            if (amount == BigBlindAmount && gamePhase == HoldemGamePhase.Preflop)
             {
                 // HasLimped() makes further checks to avoid duplicate counts and whether the player is the big blind or small blind
                 p.HasLimped();

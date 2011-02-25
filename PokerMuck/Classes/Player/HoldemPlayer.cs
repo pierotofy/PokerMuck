@@ -9,12 +9,18 @@ namespace PokerMuck
     /* A holdem player has certain statistics that a five card draw player might not have */
     class HoldemPlayer : Player
     {
+
+        private int limps;
+        private bool HasLimpedThisRound;
+
+        private int voluntaryPutMoneyPreflop;
+        private bool HasVoluntaryPutMoneyPreflopThisRound;
+
         /* Each table is set this way:
          key => value
          GamePhase => value
          Ex. calls[flop] == 4 --> player has flat called 4 times during the flop
          */
-        private int limps;
         private Hashtable calls;
         private Hashtable bets;
         private Hashtable folds;
@@ -23,7 +29,6 @@ namespace PokerMuck
         public bool IsBigBlind { get; set; }
         public bool IsSmallBlind { get; set; }
 
-        private bool HasLimpedThisRound;
 
 
         public HoldemPlayer(String playerName)
@@ -37,26 +42,36 @@ namespace PokerMuck
             ResetAllStatistics();
         }
 
-        /* Returns the % of limps (1.0 to 0) */
-        public float GetLimpPercentage()
+        /* Returns the limp ratio (1.0 to 0) */
+        public float GetLimpRatio()
         {
             return (float)limps / (float)totalHandsPlayed;
         }
 
-        /* How many times has the player raised? */
-        public float GetRaisesPreflopPercentage()
+        /* How many times has the player put money in preflop? */
+        public float GetVPFRatio()
         {
-            //return (float)raises[HoldemGamePhase.Preflop] / (float)totalHandsPlayed;
+            return (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
         }
         
         /* This player has raised, increment the stats */
         public void HasRaised(HoldemGamePhase gamePhase){
+            if (gamePhase == HoldemGamePhase.Preflop)
+            {
+                IncrementVoluntaryPutMoneyPreflop();
+            }
+
             IncrementStatistics(raises, gamePhase);
         }
 
         /* Has bet */
         public void HasBet(HoldemGamePhase gamePhase)
         {
+            if (gamePhase == HoldemGamePhase.Preflop)
+            {
+                IncrementVoluntaryPutMoneyPreflop();
+            }
+
             IncrementStatistics(bets, gamePhase);
         }
 
@@ -74,6 +89,12 @@ namespace PokerMuck
         /* Has called */
         public void HasCalled(HoldemGamePhase gamePhase)
         {
+            if (gamePhase == HoldemGamePhase.Preflop)
+            {
+                IncrementVoluntaryPutMoneyPreflop();
+            }
+
+
             IncrementStatistics(calls, gamePhase);
         }
 
@@ -83,18 +104,34 @@ namespace PokerMuck
             IncrementStatistics(folds, gamePhase);
         }
 
+
+        /* Helper function to increment the VPF stat */
+        private void IncrementVoluntaryPutMoneyPreflop()
+        {
+            if (!HasVoluntaryPutMoneyPreflopThisRound)
+            {
+                HasVoluntaryPutMoneyPreflopThisRound = true;
+                voluntaryPutMoneyPreflop += 1;
+            }
+        }
+
+
+        /* Helper function to increment the value in one of the hash tables (calls, raises, folds, etc.) */
         private void IncrementStatistics(Hashtable table, HoldemGamePhase gamePhase)
         {
             table[gamePhase] = (int)table[gamePhase] + 1;
         }
 
+        /* Certain statistics are round specific (for example a person can only limp once per round)
+         * This function should get called at the beginning of a new round */
         public override void PrepareStatisticsForNewRound()
         {
             base.PrepareStatisticsForNewRound();
 
             IsBigBlind = false;
             IsSmallBlind = false;
-            HasLimped = false;
+            HasLimpedThisRound = false;
+            HasVoluntaryPutMoneyPreflopThisRound = false;
         }
 
         
@@ -108,17 +145,30 @@ namespace PokerMuck
             ResetStatistics(folds);
             ResetStatistics(raises);
             limps = 0;
+            voluntaryPutMoneyPreflop = 0;
+            totalHandsPlayed = 0;
 
             PrepareStatisticsForNewRound();
         }
 
-        /* Reset the stats for a particular set */
+        /* Reset the stats for a particular hash table set */
         private void ResetStatistics(Hashtable table)
         {
             table[HoldemGamePhase.Preflop] = 0;
             table[HoldemGamePhase.Flop] = 0;
             table[HoldemGamePhase.Turn] = 0;
             table[HoldemGamePhase.River] = 0;
+        }
+
+        /* Returns the statistics of the player in a (stat => value) table */
+        public override Hashtable GetStatistics()
+        {
+            Hashtable result =  base.GetStatistics();
+
+            result["VPF"] = GetVPFRatio();
+            result["Limp"] = GetLimpRatio();
+
+            return result;
         }
     }
 }

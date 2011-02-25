@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Threading;
+using System.Collections;
 
 namespace PokerMuck
 {
@@ -75,7 +76,8 @@ namespace PokerMuck
         /* TEST CODE REMOVE IN PRODUCTION */
         public void Test()
         {
-            String filename = "test.txt";
+            //String filename = "test.txt";
+            String filename = "HH20110209 T362898524 No Limit Hold'em €4.60 + €0.40.txt";
             Table newTable = new Table(filename, "Test", pokerClient);
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
             tables.Add(newTable);
@@ -155,6 +157,17 @@ namespace PokerMuck
                 if (DisplayFinalBoard != null) DisplayFinalBoard(t.FinalBoard);
 
                 t.FinalBoard.Displayed = true;
+            }
+
+            // Print stats
+            foreach (Player p in t.PlayerList)
+            {
+                Hashtable stats = p.GetStatistics();
+                Debug.Print(p.Name);
+                foreach (string key in stats.Keys)
+                {
+                    Debug.Print(String.Format("{0}: {1}", key, stats[key]));
+                }
             }
         }
 

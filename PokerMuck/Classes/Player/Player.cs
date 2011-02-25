@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Collections;
 
 namespace PokerMuck
 {
@@ -45,6 +46,12 @@ namespace PokerMuck
         public virtual void PrepareStatisticsForNewRound()
         {
 
+        }
+
+        /* Returns a hash table (stat => value) of all the statistics available for the current player */
+        public virtual Hashtable GetStatistics()
+        {
+            return new Hashtable(); // Empty
         }
     }
 }
