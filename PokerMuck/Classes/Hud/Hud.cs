@@ -65,7 +65,7 @@ namespace PokerMuck
                 if (p.HudWindow != null)
                 {
                     p.HudWindow.DisplayPlayerName(p.Name);
-                    p.HudWindow.DisplayStatistics(p.GetStatistics());
+                    p.HudWindow.DisplayStatistics(p.GetStatistics());                 
                 }
                 else
                 {

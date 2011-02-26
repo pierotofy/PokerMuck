@@ -127,10 +127,10 @@ namespace PokerMuck
         private void SetWindowLocation(HudWindow w, Point location)
         {
             // Thread safe
-            w.Invoke((Action)delegate()
-            {
+            //w.Invoke((Action)delegate()
+           // {
                 w.Location = location;
-            });
+           // });
         }
 
         private int GetDistanceXFromCenter(Point center){

@@ -24,9 +24,6 @@ namespace PokerMuck
         /* Table list */
         private List<Table> tables;
 
-        /* Hud */
-        private Hud hud;
-
         /* Configuration */
         private PokerMuckUserSettings userSettings;
         public PokerMuckUserSettings UserSettings { get { return userSettings; } }
@@ -52,6 +49,11 @@ namespace PokerMuck
         public delegate void DisplayStatusHandler(String status);
         public event DisplayStatusHandler DisplayStatus;
 
+        /* Tell the UI to display hud information */
+        public delegate void DisplayHudHandler(Table t);
+        public event DisplayHudHandler DisplayHud;
+
+
 
         public PokerMuckDirector()
         {
@@ -65,9 +67,6 @@ namespace PokerMuck
 
             // Get the poker client from the user settings
             ChangePokerClient(userSettings.CurrentPokerClient);
-
-            // Initialize the hud
-            hud = new Hud(userSettings.CurrentPokerClient);
 
             // Init windows listener
             windowsListener = new WindowsListener(this);
@@ -169,7 +168,7 @@ namespace PokerMuck
             }
 
             // Display hud information
-            hud.DisplayTable(t);
+            if (DisplayHud != null) DisplayHud(t);
 
             // Print stats
             foreach (Player p in t.PlayerList)
@@ -197,7 +196,6 @@ namespace PokerMuck
 
                 // Update information
                 t.WindowRect = windowRect;
-                hud.SetupHudInitialPosition(t); // TODO REMOVE
             }
 
         }

@@ -8,13 +8,17 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace PokerMuck
 {
     public partial class FrmMain : Form
     {
         /* Instance of the director */
-        PokerMuckDirector pmDirector;
+        private PokerMuckDirector pmDirector;
+
+        /* Hud */
+        private Hud hud;
 
         /* Maximum height of card list panels */
         private static int MAXIMUM_CARD_LIST_PANEL_HEIGHT = 100;
@@ -35,8 +39,6 @@ namespace PokerMuck
             //RankScanner r = new SharkScopeRankScanner();
             //r.FindPlayerRank("stallion089");
 
-
-
             SetStatus("Waiting for a game to start...");
 
             pmDirector = new PokerMuckDirector();
@@ -45,7 +47,12 @@ namespace PokerMuck
             pmDirector.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
             pmDirector.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
             pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
-            pmDirector.Test();
+            pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
+
+            // Initialize the hud
+            hud = new Hud(pmDirector.UserSettings.CurrentPokerClient);
+
+            //pmDirector.Test();
 
             /* TODO remove
             Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_detect_mucked_hand");
@@ -65,6 +72,17 @@ namespace PokerMuck
 
             // Load configuration
             LoadConfigurationValues();
+        }
+
+        /* Display the hud
+         * This cannot be handled by the director because
+         * it has to be thread safe. So we do it. */
+        void pmDirector_DisplayHud(Table t)
+        {
+            this.BeginInvoke((Action)delegate()
+            {
+                hud.DisplayTable(t);
+            });
         }
 
         /* Display the board after all the mucked hands */
