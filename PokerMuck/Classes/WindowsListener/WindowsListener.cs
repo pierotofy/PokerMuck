@@ -6,6 +6,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Drawing;
 
 namespace PokerMuck
 {
@@ -17,6 +18,21 @@ namespace PokerMuck
         static extern int GetForegroundWindow();
         [DllImport("user32.dll")]
         static extern int GetWindowText(int hWnd, StringBuilder text, int count); 
+
+        /* Additionally we'll need this one to find the X-Y coordinate of the window */
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetWindowRect(int hWnd, out RECT lpRect);
+
+        /* We need also to define a RECT structure */
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;        // x position of upper-left corner
+            public int Top;         // y position of upper-left corner
+            public int Right;       // x position of lower-right corner
+            public int Bottom;      // y position of lower-right corner
+        }
 
         /* Object that will receive the notifications when something changes */
         private IDetectWindowsChanges handler;
@@ -30,13 +46,17 @@ namespace PokerMuck
         /* Current foreground window title */
         public String CurrentForegroundWindowTitle { get; set; }
 
+        /* Current foreground window rectangle */
+        public Rectangle CurrentForegroundWindowRect { get; set; }
+
         public WindowsListener(IDetectWindowsChanges handler)
         {
             this.handler = handler;
             this.ListenInterval = 1000;
             
-            // Set this the first time
+            // Set these the first time
             CurrentForegroundWindowTitle = GetForegroundWindowTitle();
+            CurrentForegroundWindowRect = GetForegroundWindowRect();
         }
 
         /* Control methods */
@@ -53,16 +73,30 @@ namespace PokerMuck
         /* Loop method */
         private void ListenLoop(){
             while(listening){
-                // Copy current foreground window title
+                // Copy current foreground window title and window rect
                 String previousForegroundWindowTitle = CurrentForegroundWindowTitle;
+                Rectangle previousForegroundWindowRect = CurrentForegroundWindowRect;
 
-                // Update current foreground window title
-                CurrentForegroundWindowTitle = GetForegroundWindowTitle();
+                // Retrieve window handle
+                int handle = GetForegroundWindowHandle();
 
-                // Different?
+                // Update current foreground window title and window rect
+                CurrentForegroundWindowTitle = GetWindowTitleFromHandle(handle);
+                CurrentForegroundWindowRect = GetWindowRectFromHandle(handle);
+
+                // Title Different?
                 if (CurrentForegroundWindowTitle != String.Empty && CurrentForegroundWindowTitle != previousForegroundWindowTitle){
+                   
                     // Notify handler
                     handler.NewForegroundWindow(CurrentForegroundWindowTitle);
+
+                }
+
+                // Rectangle different?
+                if (!CurrentForegroundWindowRect.Equals(previousForegroundWindowRect))
+                {
+                    // Notify
+                    handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
                 }
 
                 Thread.Sleep(ListenInterval);
@@ -91,6 +125,33 @@ namespace PokerMuck
         private String GetForegroundWindowTitle(){
             int handle = GetForegroundWindowHandle();
             return GetWindowTitleFromHandle(handle);
+        }
+
+        private Rectangle GetForegroundWindowRect()
+        {
+            int handle = GetForegroundWindowHandle();
+            return GetWindowRectFromHandle(handle);
+        }
+
+        private Rectangle GetWindowRectFromHandle(int handle)
+        {
+            // Ok, let's figure out it's position
+
+            RECT rct; // C++ style
+            Rectangle windowRect = new Rectangle(); // C# style
+            if (GetWindowRect(handle, out rct))
+            {
+                windowRect.X = rct.Left;
+                windowRect.Y = rct.Top;
+                windowRect.Width = rct.Right - rct.Left;
+                windowRect.Height = rct.Bottom - rct.Top;
+            }
+            else
+            {
+                Debug.Print("A new window became the foreground window, but I couldn't figure out its position and size.");
+            }
+
+            return windowRect;   
         }
     }
 }

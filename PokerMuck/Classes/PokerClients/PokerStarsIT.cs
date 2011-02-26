@@ -91,11 +91,44 @@ namespace PokerMuck
                 /* Game description (as shown in the hand history) */
                 config.Add("game_description_no_limit_holdem", "Hold'em No Limit");
 
-                /* Number of sequences required to raise the OnRoundHasTerminated event.
-                 * This refers to the hand_history_detect_end_of_round regex, on PokerStars.it
-                 * a round is over after 3 blank lines. Most clients might have only one line */
-                config.Add("hand_history_end_of_round_number_of_tokens_required", 3);
             }
+
+            /* Number of sequences required to raise the OnRoundHasTerminated event.
+             * This refers to the hand_history_detect_end_of_round regex, on PokerStars.it
+             * a round is over after 3 blank lines. Most clients might have only one line */
+            config.Add("hand_history_end_of_round_number_of_tokens_required", 3);
+
+            /* Hud display configuration */
+
+            /* If you take the game window width, what's the factor to multiply by to obtain
+             * the relative X position of the center of the table */
+            config.Add("hud_table_center_x_factor_related_to_window_width", 0.5f);
+
+            /* Since the Y position of the center of the table is always (assume) proportional
+             * to the relative X position, we can obtain the Y position of the center of the table
+             * by multiplying by this factor */
+            config.Add("hud_table_center_y_factor_related_to_table_center_x", 0.6f);
+
+            /* The distance in the X direction of a player from the center is proportional
+             * to the position of the center (X) */
+            config.Add("hud_player_x_distance_from_center_factor_related_to_center_x", 0.8f);
+
+            /* Same for Y */
+            config.Add("hud_player_y_distance_from_center_factor_related_to_center_y", 0.7f); 
+
+            /* The drawing of the huds begins from the top center and goes clockwise
+             * (if you think of a clock, it starts at noon). We need two angles: skip angle
+             * which tells us the angle at which the first seat is drawn, and distance between players
+             * which tells us the angle that exists between two players (in radians) 
+             * The skip angle is obviously different depending on how many seats are available at
+             * the table */
+            // TODO 10 seats?
+            config.Add("hud_9_seats_skip_angle", 0.65f);
+            config.Add("hud_6_seats_skip_angle", 1.186f);
+            config.Add("hud_2_seats_skip_angle", (float)Math.PI/2);
+
+            config.Add("hud_distance_between_players_angle", (float)Math.PI/6);
+
         }
 
         /* Given a game description, returns the corresponding PokerGameType */

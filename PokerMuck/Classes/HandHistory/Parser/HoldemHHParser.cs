@@ -95,8 +95,35 @@ namespace PokerMuck
             bool gamePhaseChanged = ParseForGamePhaseChanges(line);
             if (gamePhaseChanged) return;
 
+
+            /* Detect raises, calls, folds, bets */
+            if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_call"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                float amount = float.Parse(matchResult.Groups["amount"].Value);
+                OnPlayerCalled(playerName, amount, currentGamePhase);
+            }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_bet"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                float amount = float.Parse(matchResult.Groups["amount"].Value);
+                OnPlayerBet(playerName, amount, currentGamePhase);
+            }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_fold"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                OnPlayerFolded(playerName, currentGamePhase);
+            }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_raise"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                float initialPot = float.Parse(matchResult.Groups["initialPot"].Value);
+                float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);
+                OnPlayerRaised(playerName, initialPot, raiseAmount, currentGamePhase);
+            }
+
             /* Compare line to extract game id or table id */
-            if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_game_id_token"), out matchResult))
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_game_id_token"), out matchResult))
             {
                 currentGameId = matchResult.Groups["gameId"].Value;
                 OnNewGameHasStarted(currentGameId);
@@ -194,32 +221,6 @@ namespace PokerMuck
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
                 OnFoundBigBlind(playerName, amount);
-            }
-
-            /* Detect raises, calls, folds, bets */
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_call"), out matchResult))
-            {
-                String playerName = matchResult.Groups["playerName"].Value;
-                float amount = float.Parse(matchResult.Groups["amount"].Value);
-                OnPlayerCalled(playerName,amount, currentGamePhase);
-            }
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_bet"), out matchResult))
-            {
-                String playerName = matchResult.Groups["playerName"].Value;
-                float amount = float.Parse(matchResult.Groups["amount"].Value);
-                OnPlayerBet(playerName, amount, currentGamePhase);
-            }
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_fold"), out matchResult))
-            {
-                String playerName = matchResult.Groups["playerName"].Value;
-                OnPlayerFolded(playerName, currentGamePhase);
-            }
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_raise"), out matchResult))
-            {
-                String playerName = matchResult.Groups["playerName"].Value;
-                float initialPot = float.Parse(matchResult.Groups["initialPot"].Value);
-                float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);
-                OnPlayerRaised(playerName, initialPot, raiseAmount, currentGamePhase);
             }
         }
 

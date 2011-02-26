@@ -91,6 +91,9 @@
     <Compile Include="Classes\Board\Board.cs" />
     <Compile Include="Classes\Board\HoldemBoard.cs" />
     <Compile Include="Classes\Card\CardList.cs" />
+    <Compile Include="Classes\Hud\Hud.cs" />
+    <Compile Include="Classes\Hud\HudWindowFactory.cs" />
+    <Compile Include="Classes\Hud\HudWindowsList.cs" />
     <Compile Include="Classes\Player\Player.cs" />
     <Compile Include="Classes\Player\PlayerFactory.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="Classes\Ranking\Rank.cs" />
     <Compile Include="Classes\Ranking\RankScanner.cs" />
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
+    <Compile Include="Classes\Statistics.cs" />
     <Compile Include="Classes\UIComponents\CardPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -119,6 +123,18 @@
     </Compile>
     <Compile Include="Classes\UIComponents\ControlListContainer.Designer.cs">
       <DependentUpon>ControlListContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Hud\HoldemHudWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Hud\HoldemHudWindow.Designer.cs">
+      <DependentUpon>HoldemHudWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Hud\HudWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Hud\HudWindow.designer.cs">
+      <DependentUpon>HudWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\WindowsListener\IDetectWindowsChanges.cs" />
     <Compile Include="Classes\Card\Card.cs" />
@@ -155,6 +171,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\EntityCardListPanel.resx">
       <DependentUpon>EntityCardListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\Hud\HoldemHudWindow.resx">
+      <DependentUpon>HoldemHudWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\Hud\HudWindow.resx">
+      <DependentUpon>HudWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
@@ -370,6 +392,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

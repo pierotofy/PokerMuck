@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading;
 using System.Collections;
+using System.Drawing;
 
 namespace PokerMuck
 {
@@ -22,6 +23,9 @@ namespace PokerMuck
 
         /* Table list */
         private List<Table> tables;
+
+        /* Hud */
+        private Hud hud;
 
         /* Configuration */
         private PokerMuckUserSettings userSettings;
@@ -62,6 +66,9 @@ namespace PokerMuck
             // Get the poker client from the user settings
             ChangePokerClient(userSettings.CurrentPokerClient);
 
+            // Initialize the hud
+            hud = new Hud(userSettings.CurrentPokerClient);
+
             // Init windows listener
             windowsListener = new WindowsListener(this);
             windowsListener.ListenInterval = 200;
@@ -76,9 +83,11 @@ namespace PokerMuck
         /* TEST CODE REMOVE IN PRODUCTION */
         public void Test()
         {
+            
+
             String filename = "test.txt";
             //String filename = "HH20110112 T352120210 No Limit Hold'em €2.55 + €0.45.txt";
-            Table newTable = new Table(filename, "Test", pokerClient);
+            Table newTable = new Table(filename, "test.txt - Notepad", pokerClient);
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
             tables.Add(newTable);
             hhMonitor.ChangeHandHistoryFile(filename); // TODO REMOVE
@@ -159,22 +168,47 @@ namespace PokerMuck
                 t.FinalBoard.Displayed = true;
             }
 
+            // Display hud information
+            hud.DisplayTable(t);
+
             // Print stats
             foreach (Player p in t.PlayerList)
             {
-                Hashtable stats = p.GetStatistics();
+                Statistics stats = p.GetStatistics();
                 Debug.Print(p.Name);
-                foreach (string key in stats.Keys)
-                {
-                    Debug.Print(String.Format("{0}: {1}", key, stats[key]));
-                }
+                Debug.Print(stats.ToString());
             }
         }
 
 
+        /* Windows Listener event handler, a window changed its position */
+        public void ForegroundWindowPositionChanged(string windowTitle, Rectangle windowRect)
+        {
+            /* We ignore any event that is caused by a window titled "HudWindow"
+             * because the user might be simply interacting with our hud */
+            if (windowTitle == "HudWindow") return;
+
+            Debug.Print("Position X: {0}, Y: {1}", windowRect.X, windowRect.Y);
+
+            Table t = FindTableByWindowTitle(windowTitle);
+            if (t != null)
+            {
+                // The position of this window which is associated with a table has changed
+
+                // Update information
+                t.WindowRect = windowRect;
+                hud.SetupHudInitialPosition(t); // TODO REMOVE
+            }
+
+        }
+
         /* Windows Listener event handler, detects when a new windows becomes the active window */
         public void NewForegroundWindow(string windowTitle)
         {
+            /* We ignore any event that is caused by a window titled "HudWindow"
+             * because the user might be simply interacting with our hud */
+            if (windowTitle == "HudWindow") return;
+
             Debug.Print(String.Format("Window title: {0}", windowTitle));
 
             String pattern = pokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(windowTitle);
@@ -231,6 +265,19 @@ namespace PokerMuck
                 delegate(Table t)
                 {
                     return t.HandHistoryFilename == hhFilename;
+                }
+            );
+
+            return result;
+        }
+
+        /* Finds a table given its window title. It can be null */
+        private Table FindTableByWindowTitle(String windowTitle)
+        {
+            Table result = tables.Find(
+                delegate(Table t)
+                {
+                    return t.WindowTitle == windowTitle;
                 }
             );
 

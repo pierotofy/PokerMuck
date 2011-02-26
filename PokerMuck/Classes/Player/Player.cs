@@ -21,11 +21,15 @@ namespace PokerMuck
 
         /* Number of hands played */
         protected int totalHandsPlayed;
+
+        /* Reference to the Hud Window (if any), can be null */
+        public HudWindow HudWindow { get; set; }
         
         public Player(String name)
         {
             this.name = name;
             this.HasShowedLastRound = false;
+            this.HudWindow = null;
         }
 
         /* This player received the whole cards */
@@ -48,10 +52,10 @@ namespace PokerMuck
 
         }
 
-        /* Returns a hash table (stat => value) of all the statistics available for the current player */
-        public virtual Hashtable GetStatistics()
+        /* Returns all the statistics available for the current player */
+        public virtual Statistics GetStatistics()
         {
-            return new Hashtable(); // Empty
+            return new Statistics(); // Empty
         }
     }
 }

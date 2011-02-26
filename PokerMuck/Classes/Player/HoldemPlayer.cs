@@ -182,14 +182,14 @@ namespace PokerMuck
             table[HoldemGamePhase.River] = 0;
         }
 
-        /* Returns the statistics of the player in a (stat => value) table */
-        public override Hashtable GetStatistics()
+        /* Returns the statistics of the player */
+        public override Statistics GetStatistics()
         {
-            Hashtable result =  base.GetStatistics();
+            Statistics result =  base.GetStatistics();
 
-            result["VPF"] = GetVPFRatio();
-            result["Limp"] = GetLimpRatio();
-            result["PFR"] = GetPFRRatio();
+            result.Set("VPF", GetVPFRatio());
+            result.Set("Limp", GetLimpRatio());
+            result.Set("PFR", GetPFRRatio());
 
             return result;
         }

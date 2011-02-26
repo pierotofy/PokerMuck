@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace PokerMuck
 {
@@ -12,7 +13,9 @@ namespace PokerMuck
         /* What client is table using? */
         private PokerClient pokerClient;
 
-        /* Holds a list of the players currently seated at the table */
+        /* Holds a list of the players currently seated at the table
+         * Note that they're going to be added in order of seating
+         * (Seat #1 Player will be stored as the first element) */
         private List<Player> playerList;
         public List<Player> PlayerList { get { return playerList; } }
 
@@ -32,6 +35,9 @@ namespace PokerMuck
         /* The playing window's title currently associated with this table */
         private String windowTitle;
         public String WindowTitle { get { return windowTitle; } }
+
+        /* The window rectangle associated with this table */
+        public Rectangle WindowRect { get; set; }
 
         /* The hand history filename associated with this table */ 
         private String handHistoryFilename;
@@ -57,6 +63,7 @@ namespace PokerMuck
             this.pokerClient = pokerClient;
             this.TableId = String.Empty; // We don't know yet
             this.GameType = PokerGameType.Unknown; // We don't know
+            this.WindowRect = new Rectangle();
 
             // By default we use the universal parser
             handHistoryParser = new UniversalHHParser(pokerClient);
