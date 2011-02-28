@@ -23,20 +23,31 @@ namespace PokerMuck
          * have to be moved by */
         Rectangle previousWindowRect;
 
+        /* This variable holds the maximum number of windows that we have been dealing with
+         * with this particular window list */
+        private int maxNumberOfWindowsManaged;
+        public int MaxNumberOfWindowsManaged;
+
         public HudWindowsList(PokerClient client)
         {
             this.client = client;
             this.previousWindowRect = new Rectangle();
+            this.maxNumberOfWindowsManaged = 0;
             windowsList = new List<HudWindow>(9);
         }
 
         public void Add(HudWindow window)
         {
             windowsList.Add(window);
+
+            // Save the new max
+            if (windowsList.Count > maxNumberOfWindowsManaged) maxNumberOfWindowsManaged = windowsList.Count;
         }
 
         public void Remove(HudWindow window)
         {
+            Debug.Assert(window != null, "Trying to remove a null reference to a hud window");
+            window.Close();
             windowsList.Remove(window);
         }
 

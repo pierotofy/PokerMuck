@@ -24,12 +24,20 @@ namespace PokerMuck
 
         /* Reference to the Hud Window (if any), can be null */
         public HudWindow HudWindow { get; set; }
+
+        /* Has this player played last round? */
+        public bool HasPlayedLastRound { get; set; }
+
+        /* Is this player still playing or is he out? */
+        public bool IsPlaying { get; set; }
         
         public Player(String name)
         {
             this.name = name;
             this.HasShowedLastRound = false;
             this.HudWindow = null;
+            this.IsPlaying = true;
+            this.HasPlayedLastRound = true;
         }
 
         /* This player received the whole cards */
@@ -57,5 +65,11 @@ namespace PokerMuck
         {
             return new Statistics(); // Empty
         }
+
+        public void Terminate()
+        {
+            if (HudWindow != null) HudWindow.Close(); //TODO uhm....
+        }
+
     }
 }

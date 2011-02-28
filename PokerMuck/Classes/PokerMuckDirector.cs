@@ -175,14 +175,6 @@ namespace PokerMuck
 
             // Display hud information
             if (DisplayHud != null) DisplayHud(t);
-
-            // Print stats
-            foreach (Player p in t.PlayerList)
-            {
-                Statistics stats = p.GetStatistics();
-                Debug.Print(p.Name);
-                Debug.Print(stats.ToString());
-            }
         }
 
 
@@ -262,7 +254,7 @@ namespace PokerMuck
         /* Data in one of the tables has changed */
         void table_DataHasChanged(Table sender)
         {
-                   
+
         }
 
         /* Finds a table given its hand history filename. It can be null */

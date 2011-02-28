@@ -74,6 +74,23 @@ namespace PokerMuck
             playerList = new List<Player>(10); //Usually no more than 10 players per table
         }
 
+        /* Certain stuff needs to be done AFTER the hud is done updating.
+         * This is the right place */
+        public void PostHudDisplayAction()
+        {
+            RemoveDeadPlayers();
+        }
+
+        /* Remove from the table all players who have the IsPlaying flag set to false */
+        private void RemoveDeadPlayers()
+        {
+            for (int i = 0; i < PlayerList.Count; i++)
+            {
+                Player p = PlayerList[i];
+                if (!p.IsPlaying) RemovePlayer(p.Name);
+            }
+        }
+
         /* Find a player with playerName name and set its mucked hand */
         void handHistoryParser_PlayerMuckHandAvailable(string playerName, Hand hand)
         {
@@ -88,6 +105,10 @@ namespace PokerMuck
         {
             Debug.Print("Player added: {0}", playerName);
             AddPlayer(playerName);
+
+            // Make sure he is still playing
+            Player p = FindPlayer(playerName);
+            p.HasPlayedLastRound = true;
         }
 
         void handHistoryParser_RoundHasTerminated()
@@ -95,11 +116,28 @@ namespace PokerMuck
             if (DataHasChanged != null) DataHasChanged(this);
 
 
-            // Clear the statistics information relative to a single round
-            foreach (Player p in playerList)
+            /* 1. Clear the statistics information relative to a single round
+             * 2. Delete from our list of players any player who has the flag IsPlaying set to false
+             * because it means that we didn't recognize him as seated in the current round.
+             * 3. Set every other player's HasPlayedLastRound flag to false, as to identify who will get eliminated
+             * in future rounds */
+
+            for (int i = 0; i<PlayerList.Count; i++)
             {
+                Player p = PlayerList[i];
+
                 p.PrepareStatisticsForNewRound();
+
+                if (!p.HasPlayedLastRound)
+                {
+                    p.IsPlaying = false;
+                }
+                else
+                {
+                    p.HasPlayedLastRound = false;
+                }
             }
+
         }
 
         void handHistoryParser_HoleCardsWillBeDealt()
@@ -250,12 +288,14 @@ namespace PokerMuck
         /* Remove a player from the table */
         private void RemovePlayer(String playerName)
         {
+            Debug.Print("Removing " + playerName);
             playerList.RemoveAll(
                 delegate(Player p)
                 {
                     return p.Name == playerName;
                 }
             );
+
         }
         
         /* Finds a player given its player name

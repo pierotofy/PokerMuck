@@ -142,3 +142,5 @@ C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.application
 C:\Users\piero\Documents\Visual Studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.HudWindow.resources
 C:\Users\piero\Documents\Visual Studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.HoldemHudWindow.resources
+C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.HoldemHudWindow.resources
+C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Debug\PokerMuck.HudWindow.resources
