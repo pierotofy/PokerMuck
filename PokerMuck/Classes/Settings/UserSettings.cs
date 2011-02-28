@@ -132,7 +132,7 @@ namespace PokerMuck
         /* Set settings method 
            Note that no changes to the file will be made
            A call to Save() has to be done before the changes are permanent! */
-        public void SetSetting(Object key, Object value)
+        protected void SetSetting(Object key, Object value)
         {
             if (settingsTable.ContainsKey(key))
                 settingsTable[key] = value;
@@ -158,6 +158,12 @@ namespace PokerMuck
             //Close the Xml File
             xmlWriter.WriteEndDocument();
             xmlWriter.Close();
+        }
+
+        /* Verifies whether a particular setting has been set or not */
+        public bool HasSetting(String key)
+        {
+            return settingsTable.ContainsKey(key);
         }
 
         /* Two helper methods to help create directories and files */

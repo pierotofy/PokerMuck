@@ -17,9 +17,16 @@ namespace PokerMuck
         /* What client are we using */
         PokerClient client;
 
+        /* The last windowRect that we have been using for our positioning
+         * This is useful when we have to shift the huds around, keeping a reference
+         * to our previous windowRect allows us to compute the offset (X, Y) that the windows
+         * have to be moved by */
+        Rectangle previousWindowRect;
+
         public HudWindowsList(PokerClient client)
         {
             this.client = client;
+            this.previousWindowRect = new Rectangle();
             windowsList = new List<HudWindow>(9);
         }
 
@@ -51,9 +58,68 @@ namespace PokerMuck
             }
         }
 
-        /* Setup the initial position of the windows hud instances */
-        public void SetupInitialPositions(Rectangle windowRect)
+        /* Shifts the windows from the previousWindowRect to a new one */
+        public void ShiftWindowPositions(Rectangle windowRect)
         {
+            foreach (HudWindow w in windowsList)
+            {
+                Point offset = new Point(windowRect.X - previousWindowRect.X,
+                                        windowRect.Y - previousWindowRect.Y);
+
+                w.Location = new Point(w.Location.X + offset.X, w.Location.Y + offset.Y);
+            }
+
+            SaveWindowRect(windowRect);
+        }
+
+        /* Retrieve the list of positions of all windows in the collection,
+         * relative to another window rectangle */
+        public List<Point> RetrieveWindowPositions(Rectangle windowRect)
+        {
+            SaveWindowRect(windowRect);
+
+            List<Point> result = new List<Point>(windowsList.Count);
+
+            foreach (HudWindow w in windowsList)
+            {
+                result.Add(new Point(w.Location.X - windowRect.X, w.Location.Y - windowRect.Y));
+            }
+
+            return result;
+        }
+
+        /* Given a list of points, it moves the hud windows according to those 
+        * points (relative to the windowRect) */
+        public void SetupWindowPositions(List<Point> positions, Rectangle windowRect)
+        {
+            SaveWindowRect(windowRect);
+
+            Debug.Assert(positions.Count >= windowsList.Count, "The number of positions available is less than number of hud windows!");
+
+            int i = 0;
+
+            // In order
+            foreach (Point relativePosition in positions)
+            {
+                Point absolutePosition = new Point(relativePosition.X + windowRect.X, relativePosition.Y + windowRect.Y);
+
+                HudWindow w = windowsList[i];
+                w.Location = absolutePosition;
+
+                i++;
+            }
+        }
+
+        /* Returns the number of windows in the list */
+        public int Count { get { return windowsList.Count; } }
+
+        /* Setup the initial default position of the windows hud instances 
+         * The guess is often not perfect, but the user can adjust the position 
+         * later. */
+        public void SetupDefaultPositions(Rectangle windowRect)
+        {
+            SaveWindowRect(windowRect);
+
             Point relativeTableCenter = FindRelativeTableCenter(windowRect.Width);
             Point absoluteTableCenter = new Point(windowRect.X + relativeTableCenter.X,
                                                   windowRect.Y + relativeTableCenter.Y);
@@ -73,7 +139,7 @@ namespace PokerMuck
             // 2. Draw lower half of windows and increment by angleBetweenPlayers
             int lowerHalf = (int)Math.Floor((double)numberOfWindows / 2);
 
-            int i; // We'll use this later
+            int i; // We'll use this later too
             for (i = 0; i < lowerHalf; i++)
             {
                 HudWindow w = windowsList[i];
@@ -110,6 +176,12 @@ namespace PokerMuck
             }
         }
 
+        /* Stores a copy of the windowRect */
+        private void SaveWindowRect(Rectangle windowRect)
+        {
+            previousWindowRect = windowRect;
+        }
+
         private Point CalculatePoint(float currentAngle, float distanceFromCenterX, float distanceFromCenterY, Point absoluteCenter)
         {
             /* Trig 101
@@ -123,14 +195,9 @@ namespace PokerMuck
             return newPosition;
         }
 
-        // Thread safe
         private void SetWindowLocation(HudWindow w, Point location)
         {
-            // Thread safe
-            //w.Invoke((Action)delegate()
-           // {
-                w.Location = location;
-           // });
+            w.Location = location;
         }
 
         private int GetDistanceXFromCenter(Point center){
@@ -144,7 +211,7 @@ namespace PokerMuck
 
 
         /* Find the skip angle to use
-         * If it cannot find a perfect match, it returns 25°
+         * If it cannot find a perfect match, it returns a default value
          * Sometimes the client might not specify a particular situation, so 
          * we make checks on every value */
         private float FindSkipAngle(int numberOfWindows)
@@ -168,7 +235,7 @@ namespace PokerMuck
             else
             {
                 // We don't know!
-                Debug.Print("Skip angle unknown for " + numberOfWindows + " windows, setting to 25°");
+                Debug.Print("Skip angle unknown for " + numberOfWindows + " windows, setting to default");
                 return (float)Math.PI / 3; 
             }
         }

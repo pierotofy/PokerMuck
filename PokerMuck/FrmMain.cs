@@ -48,11 +48,12 @@ namespace PokerMuck
             pmDirector.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
             pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
             pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
+            pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
 
             // Initialize the hud
-            hud = new Hud(pmDirector.UserSettings.CurrentPokerClient);
+            hud = new Hud(pmDirector.UserSettings);
 
-            //pmDirector.Test();
+            pmDirector.Test();
 
             /* TODO remove
             Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_detect_mucked_hand");
@@ -72,6 +73,15 @@ namespace PokerMuck
 
             // Load configuration
             LoadConfigurationValues();
+        }
+
+        /* Shift the position of the hud */
+        void pmDirector_ShiftHud(Table t)
+        {
+            this.BeginInvoke((Action)delegate()
+            {
+                hud.ShiftHud(t);
+            });
         }
 
         /* Display the hud
@@ -165,7 +175,8 @@ namespace PokerMuck
         // Cleanup
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            pmDirector.Terminate();
+            hud.Terminate(); // Call this before terminating the director
+            pmDirector.Terminate();             
         }
 
         // Save new window size

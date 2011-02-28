@@ -53,6 +53,11 @@ namespace PokerMuck
         public delegate void DisplayHudHandler(Table t);
         public event DisplayHudHandler DisplayHud;
 
+        /* Tell the UI to shift the position of the hud */
+        public delegate void ShiftHudHandler(Table t);
+        public event ShiftHudHandler ShiftHud;
+
+
 
 
         public PokerMuckDirector()
@@ -90,6 +95,7 @@ namespace PokerMuck
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
             tables.Add(newTable);
             hhMonitor.ChangeHandHistoryFile(filename); // TODO REMOVE
+            newTable.WindowRect = new Rectangle(30, 30, 640, 480);
         }
 
         /* Change the hand history directory */
@@ -196,6 +202,9 @@ namespace PokerMuck
 
                 // Update information
                 t.WindowRect = windowRect;
+
+                // Inform the UI that we might need to shift the hud
+                if (ShiftHud != null) ShiftHud(t);
             }
 
         }

@@ -44,10 +44,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.BurlyWood;
             this.ClientSize = new System.Drawing.Size(130, 70);
             this.Controls.Add(this.lblPlayerName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "HudWindow";
+            this.Opacity = 0.9D;
             this.Text = "HudWindow";
             this.TopMost = true;
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseDown);
