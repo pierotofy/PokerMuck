@@ -128,10 +128,11 @@ namespace PokerMuck
                 currentGameId = matchResult.Groups["gameId"].Value;
                 OnNewGameHasStarted(currentGameId);
             }
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_table_id_token"), out matchResult))
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_table_token"), out matchResult))
             {
                 currentTableId = matchResult.Groups["tableId"].Value;
-                if (currentGameId != String.Empty) OnNewTableHasBeenCreated(currentGameId, currentTableId);
+                String maxSeatingCapacity = matchResult.Groups["tableSeatingCapacity"].Value;
+                if (currentGameId != String.Empty) OnNewTableHasBeenCreated(currentGameId, currentTableId, maxSeatingCapacity);
                 else
                 {
                     Debug.Print("Table ID {0} found but no game ID has been assigned to this parser yet. Ignoring event.");
@@ -143,9 +144,10 @@ namespace PokerMuck
             {
                 // Retrieve player name
                 String playerName = matchResult.Groups["playerName"].Value;
+                int seatNumber = Int32.Parse(matchResult.Groups["seatNumber"].Value);
 
                 // Raise event
-                OnPlayerIsSeated(playerName);
+                OnPlayerIsSeated(playerName, seatNumber);
             }
 
             /* Search for mucked hands */

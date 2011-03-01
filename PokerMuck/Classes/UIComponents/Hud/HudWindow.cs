@@ -26,6 +26,19 @@ namespace PokerMuck
             lblPlayerName.Text = playerName;
         }
 
+        /* Sets the position of the window relative to windowRect */
+        public void SetAbsolutePosition(Point relativePosition, Rectangle windowRect)
+        {
+            Point absolutePosition = new Point(relativePosition.X + windowRect.X, relativePosition.Y + windowRect.Y);
+            this.Location = absolutePosition;
+        }
+
+        public Point GetRelativePosition(Rectangle windowRect)
+        {
+            Point result = new Point(this.Location.X - windowRect.X, this.Location.Y - windowRect.Y);
+            return result;
+        }
+
         /* This function is overriden by child classes and takes care of displaying
          * game specific layout */
         public virtual void DisplayStatistics(Statistics stats)

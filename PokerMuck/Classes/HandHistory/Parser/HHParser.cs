@@ -21,12 +21,12 @@ namespace PokerMuck
         }
 
         /* A player is sitting at the table with us */
-        public delegate void PlayerIsSeatedHandler(String playerName);
+        public delegate void PlayerIsSeatedHandler(String playerName, int seatNumber);
         public event PlayerIsSeatedHandler PlayerIsSeated;
 
-        protected void OnPlayerIsSeated(String playerName)
+        protected void OnPlayerIsSeated(String playerName, int seatNumber)
         {
-            if (PlayerIsSeated != null) PlayerIsSeated(playerName);
+            if (PlayerIsSeated != null) PlayerIsSeated(playerName, seatNumber);
         }
         
         /* A new game has begun */
@@ -57,12 +57,12 @@ namespace PokerMuck
         }
 
         /* A new table has been created for a game */
-        public delegate void NewTableHasBeenCreatedHandler(String gameId, String tableId);
+        public delegate void NewTableHasBeenCreatedHandler(String gameId, String tableId, String maxSeatingCapacity);
         public event NewTableHasBeenCreatedHandler NewTableHasBeenCreated;
 
-        protected void OnNewTableHasBeenCreated(String gameId, String tableId)
+        protected void OnNewTableHasBeenCreated(String gameId, String tableId, String maxSeatingCapacity)
         {
-            if (NewTableHasBeenCreated != null) NewTableHasBeenCreated(gameId, tableId);
+            if (NewTableHasBeenCreated != null) NewTableHasBeenCreated(gameId, tableId, maxSeatingCapacity);
         }
 
         /* A round has just terminated */

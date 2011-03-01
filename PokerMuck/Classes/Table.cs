@@ -29,12 +29,15 @@ namespace PokerMuck
         /* Identification string of the table */
         public String TableId { get; set; }
 
+        /* Max seating capacity */
+        private int maxSeatingCapacity;
+        public int MaxSeatingCapacity { get { return maxSeatingCapacity; } }
+
         /* Game type of the table */
         public PokerGameType GameType { get; set; }
 
         /* The playing window's title currently associated with this table */
-        private String windowTitle;
-        public String WindowTitle { get { return windowTitle; } }
+        public String WindowTitle { get; set; }
 
         /* The window rectangle associated with this table */
         public Rectangle WindowRect { get; set; }
@@ -54,16 +57,31 @@ namespace PokerMuck
         /* Information about the blinds */
         public float BigBlindAmount { get; set; }
         public float SmallBlindAmount { get; set; }
+
+        /* Reference to the Hud Window associated with this table. */
+        public Hud Hud { get; set; }
+
+        /* Accessor for retrieving the name of the poker client in use by 
+         * this table */
+        public String PokerClientName
+        {
+            get
+            {
+                return pokerClient.Name;
+            }
+        }
         
 
         public Table(String handHistoryFilename, String windowTitle, PokerClient pokerClient)
         {
             this.handHistoryFilename = handHistoryFilename;
-            this.windowTitle = windowTitle;
+            this.WindowTitle = windowTitle;
             this.pokerClient = pokerClient;
+            this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
             this.GameType = PokerGameType.Unknown; // We don't know
             this.WindowRect = new Rectangle();
+            this.Hud = new Hud(this);
 
             // By default we use the universal parser
             handHistoryParser = new UniversalHHParser(pokerClient);
@@ -101,7 +119,7 @@ namespace PokerMuck
             player.HasShowedLastRound = true;
         }
 
-        void handHistoryParser_PlayerIsSeated(string playerName)
+        void handHistoryParser_PlayerIsSeated(string playerName, int seatNumber)
         {
             Debug.Print("Player added: {0}", playerName);
             AddPlayer(playerName);
@@ -109,6 +127,9 @@ namespace PokerMuck
             // Make sure he is still playing
             Player p = FindPlayer(playerName);
             p.HasPlayedLastRound = true;
+
+            // Also update his seat number
+            p.SeatNumber = seatNumber;
         }
 
         void handHistoryParser_RoundHasTerminated()
@@ -117,8 +138,7 @@ namespace PokerMuck
 
 
             /* 1. Clear the statistics information relative to a single round
-             * 2. Delete from our list of players any player who has the flag IsPlaying set to false
-             * because it means that we didn't recognize him as seated in the current round.
+             * 2. Any player that hasn't played last round should be flagged as non-playing
              * 3. Set every other player's HasPlayedLastRound flag to false, as to identify who will get eliminated
              * in future rounds */
 
@@ -255,7 +275,7 @@ namespace PokerMuck
 
         /* Generic handlers */
 
-        void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
+        void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId, String maxSeatingCapacity)
         {
             if (this.TableId != String.Empty && this.TableId != tableId)
             {
@@ -268,6 +288,7 @@ namespace PokerMuck
 
             this.GameID = gameId;
             this.TableId = tableId;
+            this.maxSeatingCapacity = Int32.Parse(maxSeatingCapacity);
         }
 
 

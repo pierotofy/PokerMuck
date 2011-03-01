@@ -232,6 +232,12 @@ namespace PokerMuck
                         // and add it to our list
                         tables.Add(newTable);
                     }
+                    else
+                    {
+                        // Yeah we have a table, but the title might have changed... make
+                        // sure the table keeps track of this change!
+                        table.WindowTitle = windowTitle;
+                    }
 
                     // Start monitoring the new file!
                     hhMonitor.ChangeHandHistoryFile(filename);

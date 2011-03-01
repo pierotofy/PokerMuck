@@ -17,9 +17,6 @@ namespace PokerMuck
         /* Instance of the director */
         private PokerMuckDirector pmDirector;
 
-        /* Hud */
-        private Hud hud;
-
         /* Maximum height of card list panels */
         private static int MAXIMUM_CARD_LIST_PANEL_HEIGHT = 100;
 
@@ -50,9 +47,6 @@ namespace PokerMuck
             pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
             pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
 
-            // Initialize the hud
-            hud = new Hud(pmDirector.UserSettings);
-
             pmDirector.Test();
 
             /* TODO remove
@@ -80,7 +74,7 @@ namespace PokerMuck
         {
             this.BeginInvoke((Action)delegate()
             {
-                hud.ShiftHud(t);
+                t.Hud.Shift();
             });
         }
 
@@ -91,7 +85,7 @@ namespace PokerMuck
         {
             this.BeginInvoke((Action)delegate()
             {
-                hud.DisplayTable(t);
+                t.Hud.DisplayAndUpdate();
             });
         }
 
@@ -175,7 +169,6 @@ namespace PokerMuck
         // Cleanup
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            hud.Terminate(); // Call this before terminating the director
             pmDirector.Terminate();             
         }
 

@@ -50,7 +50,11 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+<<<<<<< .mine
+        <dsig:DigestValue>Xj0QIyCEwER4JNM6vY8wI9d919E=</dsig:DigestValue>
+=======
         <dsig:DigestValue>wMUl5nd9gIWbwD4oApgDOVOLMac=</dsig:DigestValue>
+>>>>>>> .r32
       </hash>
     </dependentAssembly>
   </dependency>

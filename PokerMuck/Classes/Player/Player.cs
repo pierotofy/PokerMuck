@@ -30,6 +30,10 @@ namespace PokerMuck
 
         /* Is this player still playing or is he out? */
         public bool IsPlaying { get; set; }
+
+        /* What seat # is the player seated at? 
+           -1 = Unknown or none */
+        public int SeatNumber { get; set; }
         
         public Player(String name)
         {
@@ -38,6 +42,7 @@ namespace PokerMuck
             this.HudWindow = null;
             this.IsPlaying = true;
             this.HasPlayedLastRound = true;
+            this.SeatNumber = -1; // Don't know
         }
 
         /* This player received the whole cards */

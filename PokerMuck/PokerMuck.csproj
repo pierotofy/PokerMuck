@@ -101,6 +101,7 @@
     <Compile Include="Classes\Ranking\Rank.cs" />
     <Compile Include="Classes\Ranking\RankScanner.cs" />
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
+    <Compile Include="Classes\Settings\HudUserSettings.cs" />
     <Compile Include="Classes\Statistics.cs" />
     <Compile Include="Classes\UIComponents\CardPictureBox.cs">
       <SubType>Component</SubType>

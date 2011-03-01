@@ -14,34 +14,42 @@ namespace PokerMuck
         /* This is where the instances of the hud windows are stored */
         List<HudWindow> windowsList;
 
-        /* What client are we using */
-        PokerClient client;
-
         /* The last windowRect that we have been using for our positioning
          * This is useful when we have to shift the huds around, keeping a reference
          * to our previous windowRect allows us to compute the offset (X, Y) that the windows
          * have to be moved by */
         Rectangle previousWindowRect;
 
-        /* This variable holds the maximum number of windows that we have been dealing with
-         * with this particular window list */
-        private int maxNumberOfWindowsManaged;
-        public int MaxNumberOfWindowsManaged;
+        /* Constants */
 
-        public HudWindowsList(PokerClient client)
+        private static float SKIP_ANGLE = (float)Math.PI / 3;
+        private static float HUD_DISTANCE_FROM_PLAYERS_ANGLE = (float)Math.PI / 6;
+        
+        /* If you take the game window width, what's the factor to multiply by to obtain
+         * the relative X position of the center of the table */
+        private static float TABLE_CENTER_X_FACTOR_RELATED_TO_WINDOW_WIDTH = 0.5f;
+
+        /* Since the Y position of the center of the table is always (assume) proportional
+        * to the relative X position, we can obtain the Y position of the center of the table
+        * by multiplying by this factor */
+        private static float TABLE_CENTER_Y_FACTOR_RELATED_TO_TABLE_CENTER_X = 0.6f;
+        
+        /* The distance in the X direction of a player from the center is proportional
+         * to the position of the center (X) */
+        private static float PLAYER_X_DISTANCE_FROM_CENTER_FACTOR_RELATED_TO_CENTER_X = 0.8f;
+
+        /* Same for Y */
+        private static float PLAYER_Y_DISTANCE_FROM_CENTER_FACTOR_RELATED_TO_CENTER_Y = 0.7f;
+
+        public HudWindowsList()
         {
-            this.client = client;
             this.previousWindowRect = new Rectangle();
-            this.maxNumberOfWindowsManaged = 0;
             windowsList = new List<HudWindow>(9);
         }
 
         public void Add(HudWindow window)
         {
             windowsList.Add(window);
-
-            // Save the new max
-            if (windowsList.Count > maxNumberOfWindowsManaged) maxNumberOfWindowsManaged = windowsList.Count;
         }
 
         public void Remove(HudWindow window)
@@ -83,47 +91,6 @@ namespace PokerMuck
             SaveWindowRect(windowRect);
         }
 
-        /* Retrieve the list of positions of all windows in the collection,
-         * relative to another window rectangle */
-        public List<Point> RetrieveWindowPositions(Rectangle windowRect)
-        {
-            SaveWindowRect(windowRect);
-
-            List<Point> result = new List<Point>(windowsList.Count);
-
-            foreach (HudWindow w in windowsList)
-            {
-                result.Add(new Point(w.Location.X - windowRect.X, w.Location.Y - windowRect.Y));
-            }
-
-            return result;
-        }
-
-        /* Given a list of points, it moves the hud windows according to those 
-        * points (relative to the windowRect) */
-        public void SetupWindowPositions(List<Point> positions, Rectangle windowRect)
-        {
-            SaveWindowRect(windowRect);
-
-            Debug.Assert(positions.Count >= windowsList.Count, "The number of positions available is less than number of hud windows!");
-
-            int i = 0;
-
-            // In order
-            foreach (Point relativePosition in positions)
-            {
-                Point absolutePosition = new Point(relativePosition.X + windowRect.X, relativePosition.Y + windowRect.Y);
-
-                HudWindow w = windowsList[i];
-                w.Location = absolutePosition;
-
-                i++;
-            }
-        }
-
-        /* Returns the number of windows in the list */
-        public int Count { get { return windowsList.Count; } }
-
         /* Setup the initial default position of the windows hud instances 
          * The guess is often not perfect, but the user can adjust the position 
          * later. */
@@ -136,8 +103,8 @@ namespace PokerMuck
                                                   windowRect.Y + relativeTableCenter.Y);
                                                    
             int numberOfWindows = windowsList.Count;
-            float skipAngle = FindSkipAngle(numberOfWindows);
-            float angleBetweenPlayers = client.GetConfigFloat("hud_distance_between_players_angle");
+            float skipAngle = SKIP_ANGLE;
+            float angleBetweenPlayers = HUD_DISTANCE_FROM_PLAYERS_ANGLE;
 
             int distanceFromCenterX = GetDistanceXFromCenter(relativeTableCenter);
             int distanceFromCenterY = GetDistanceYFromCenter(relativeTableCenter);
@@ -212,55 +179,23 @@ namespace PokerMuck
         }
 
         private int GetDistanceXFromCenter(Point center){
-            return (int)((float)center.X * client.GetConfigFloat("hud_player_x_distance_from_center_factor_related_to_center_x"));
+            return (int)((float)center.X * PLAYER_X_DISTANCE_FROM_CENTER_FACTOR_RELATED_TO_CENTER_X);
         }
 
         private int GetDistanceYFromCenter(Point center)
         {
-            return (int)((float)center.Y * client.GetConfigFloat("hud_player_y_distance_from_center_factor_related_to_center_y"));
+            return (int)((float)center.Y * PLAYER_Y_DISTANCE_FROM_CENTER_FACTOR_RELATED_TO_CENTER_Y);
         }
 
-
-        /* Find the skip angle to use
-         * If it cannot find a perfect match, it returns a default value
-         * Sometimes the client might not specify a particular situation, so 
-         * we make checks on every value */
-        private float FindSkipAngle(int numberOfWindows)
-        {
-            if (client.ProvidesConfig("hud_10_seats_skip_angle") && numberOfWindows == 10)
-            {
-                return client.GetConfigFloat("hud_10_seats_skip_angle");
-            }
-            else if (client.ProvidesConfig("hud_9_seats_skip_angle") && numberOfWindows == 9)
-            {
-                return client.GetConfigFloat("hud_9_seats_skip_angle");
-            }
-            else if (client.ProvidesConfig("hud_6_seats_skip_angle") && numberOfWindows == 6)
-            {
-                return client.GetConfigFloat("hud_6_seats_skip_angle");
-            }
-            else if (client.ProvidesConfig("hud_2_seats_skip_angle") && numberOfWindows == 2)
-            {
-                return client.GetConfigFloat("hud_2_seats_skip_angle");
-            }
-            else
-            {
-                // We don't know!
-                Debug.Print("Skip angle unknown for " + numberOfWindows + " windows, setting to default");
-                return (float)Math.PI / 3; 
-            }
-        }
 
         /* Given the windowWidth, finds the position of the center of the table
          * Using the proportion factors given by the client */
         private Point FindRelativeTableCenter(int windowWidth)
         {
             // Find the center
-            float tableCenterXFactorRelativeToWindowWidth = client.GetConfigFloat("hud_table_center_x_factor_related_to_window_width");
-            float tableCenterYFactorRelativeToTableCenterX = client.GetConfigFloat("hud_table_center_y_factor_related_to_table_center_x");
 
-            int tableCenterX = (int)((float)windowWidth * tableCenterXFactorRelativeToWindowWidth);
-            int tableCenterY = (int)((float)tableCenterX * tableCenterYFactorRelativeToTableCenterX);
+            int tableCenterX = (int)((float)windowWidth * TABLE_CENTER_X_FACTOR_RELATED_TO_WINDOW_WIDTH);
+            int tableCenterY = (int)((float)tableCenterX * TABLE_CENTER_Y_FACTOR_RELATED_TO_TABLE_CENTER_X);
 
             return new Point(tableCenterX, tableCenterY);
         }
