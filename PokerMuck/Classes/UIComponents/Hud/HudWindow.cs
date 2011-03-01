@@ -16,6 +16,10 @@ namespace PokerMuck
         private bool draggingWindow;
         private Point mousePositionOnDrag;
 
+        /* Notifies that the statistics of this hud need to be reset */
+        public delegate void OnResetStatisticsButtonPressedHandler(HudWindow sender);
+        public event OnResetStatisticsButtonPressedHandler OnResetStatisticsButtonPressed;
+
         public HudWindow()
         {
             InitializeComponent();
@@ -61,6 +65,11 @@ namespace PokerMuck
         private void HudWindow_MouseUp(object sender, MouseEventArgs e)
         {
             draggingWindow = false;
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            // TODO!
         }
     }
 }

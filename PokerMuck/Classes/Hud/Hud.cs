@@ -107,9 +107,9 @@ namespace PokerMuck
         /* We can remove a hud (the game is over?) or we're closing the application? */
         public void RemoveHud()
         {
-            // TODO!
-
             StoreHudWindowPositions();
+
+            windowsList.RemoveAll();
         }
 
         /* Save the position of the hud windows associated with this table */
@@ -166,8 +166,6 @@ namespace PokerMuck
         // Cleanup
         ~Hud()
         {
-            // TODO cleanup
-
             StoreHudWindowPositions();
 
             // Commit to file

@@ -46,6 +46,7 @@ namespace PokerMuck
             pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
             pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
             pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
+            pmDirector.RemoveHud += new PokerMuckDirector.RemoveHudHandler(pmDirector_RemoveHud);
 
             pmDirector.Test();
 
@@ -67,6 +68,14 @@ namespace PokerMuck
 
             // Load configuration
             LoadConfigurationValues();
+        }
+
+        void pmDirector_RemoveHud(Table t)
+        {
+            this.Invoke((Action)delegate()
+            {
+                t.Hud.RemoveHud();
+            });
         }
 
         /* Shift the position of the hud */

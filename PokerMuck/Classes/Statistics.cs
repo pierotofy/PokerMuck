@@ -35,7 +35,7 @@ namespace PokerMuck
         public String GetPercentage(String name, int precision = 0)
         {
             float value = GetFloat(name);
-            return Math.Round(value * 100, precision).ToString() + "%";
+            return Math.Round(value * 100, precision).ToString();
         }
 
         /* Returns every statistic recorded, used for debugging */

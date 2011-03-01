@@ -33,9 +33,10 @@
             // 
             // lblImmediateStats
             // 
-            this.lblImmediateStats.Location = new System.Drawing.Point(0, 18);
+            this.lblImmediateStats.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.lblImmediateStats.Location = new System.Drawing.Point(0, 20);
             this.lblImmediateStats.Name = "lblImmediateStats";
-            this.lblImmediateStats.Size = new System.Drawing.Size(157, 23);
+            this.lblImmediateStats.Size = new System.Drawing.Size(157, 21);
             this.lblImmediateStats.TabIndex = 1;
             this.lblImmediateStats.Text = "VPF";
             // 

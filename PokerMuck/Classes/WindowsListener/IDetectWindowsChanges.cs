@@ -10,5 +10,6 @@ namespace PokerMuck
     {
         void NewForegroundWindow(string windowTitle);
         void ForegroundWindowPositionChanged(string windowTitle, Rectangle windowRect);
+        void WindowClosed(string windowTitle);
     }
 }

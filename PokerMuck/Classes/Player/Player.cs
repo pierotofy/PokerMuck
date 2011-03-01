@@ -71,9 +71,8 @@ namespace PokerMuck
             return new Statistics(); // Empty
         }
 
-        public void Terminate()
-        {
-            if (HudWindow != null) HudWindow.Close(); //TODO uhm....
+        ~Player(){
+            Debug.Print("Destroying... " + Name);
         }
 
     }

@@ -57,6 +57,9 @@ namespace PokerMuck
         public delegate void ShiftHudHandler(Table t);
         public event ShiftHudHandler ShiftHud;
 
+        /* Tell the UI to remove a hud */
+        public delegate void RemoveHudHandler(Table t);
+        public event RemoveHudHandler RemoveHud;
 
 
 
@@ -201,6 +204,25 @@ namespace PokerMuck
 
         }
 
+        /* Windows Listener event handler, detects when a window closes */
+        public void WindowClosed(string windowTitle)
+        {
+            /* We ignore any event that is caused by a window titled "HudWindow"
+             * because the user might be simply interacting with our hud */
+            if (windowTitle == "HudWindow") return;
+
+            Debug.Print("Window closed: " + windowTitle);
+
+            Table t = FindTableByWindowTitle(windowTitle);
+
+            if (t != null)
+            {
+                if (RemoveHud != null) RemoveHud(t);
+                t.Terminate();
+                tables.Remove(t);
+            }
+        }
+
         /* Windows Listener event handler, detects when a new windows becomes the active window */
         public void NewForegroundWindow(string windowTitle)
         {
@@ -237,6 +259,9 @@ namespace PokerMuck
                         // Yeah we have a table, but the title might have changed... make
                         // sure the table keeps track of this change!
                         table.WindowTitle = windowTitle;
+
+                        // Inform the UI that we might need to shift the hud
+                        if (ShiftHud != null) ShiftHud(table);
                     }
 
                     // Start monitoring the new file!

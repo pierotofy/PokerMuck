@@ -59,6 +59,17 @@ namespace PokerMuck
             windowsList.Remove(window);
         }
 
+        /* Remove all hud windows */
+        public void RemoveAll()
+        {
+            foreach (HudWindow w in windowsList)
+            {
+                w.Close();
+            }
+
+            windowsList.Clear();
+        }
+
         /* Hides all windows hud instances in the collection */
         public void Hide()
         {

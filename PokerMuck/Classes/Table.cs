@@ -333,5 +333,11 @@ namespace PokerMuck
 
             return result;
         }
+
+        /* We are done with this table */
+        public void Terminate()
+        {
+            PlayerList.Clear();
+        }
     }
 }

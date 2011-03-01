@@ -34,6 +34,10 @@ namespace PokerMuck
             public int Bottom;      // y position of lower-right corner
         }
 
+        /* This one will help us detect when a window gets closed */
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+
         /* Object that will receive the notifications when something changes */
         private IDetectWindowsChanges handler;
 
@@ -49,10 +53,13 @@ namespace PokerMuck
         /* Current foreground window rectangle */
         public Rectangle CurrentForegroundWindowRect { get; set; }
 
+        private bool currentWindowExists;
+
         public WindowsListener(IDetectWindowsChanges handler)
         {
             this.handler = handler;
             this.ListenInterval = 1000;
+            this.currentWindowExists = false;
             
             // Set these the first time
             CurrentForegroundWindowTitle = GetForegroundWindowTitle();
@@ -84,20 +91,34 @@ namespace PokerMuck
                 CurrentForegroundWindowTitle = GetWindowTitleFromHandle(handle);
                 CurrentForegroundWindowRect = GetWindowRectFromHandle(handle);
 
-                // Title Different?
-                if (CurrentForegroundWindowTitle != String.Empty && CurrentForegroundWindowTitle != previousForegroundWindowTitle){
-                   
-                    // Notify handler
-                    handler.NewForegroundWindow(CurrentForegroundWindowTitle);
 
-                }
-
-                // Rectangle different?
-                if (!CurrentForegroundWindowRect.Equals(previousForegroundWindowRect))
+                // If the previous window existed and now it doesn't exists, it means that we closed it
+                if (currentWindowExists && !WindowExists(previousForegroundWindowTitle))
                 {
-                    // Notify
-                    handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
+                    handler.WindowClosed(previousForegroundWindowTitle);
                 }
+                else
+                {
+
+                    // Title Different?
+                    if (CurrentForegroundWindowTitle != String.Empty && CurrentForegroundWindowTitle != previousForegroundWindowTitle)
+                    {
+                        // Notify handler
+                        handler.NewForegroundWindow(CurrentForegroundWindowTitle);
+
+                        // Check if the window actually exists
+                        currentWindowExists = WindowExists(CurrentForegroundWindowTitle);
+                    }
+
+                    // Rectangle different?
+                    if (!CurrentForegroundWindowRect.Equals(previousForegroundWindowRect))
+                    {
+                        // Notify
+                        handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
+                    }
+
+                }
+
 
                 Thread.Sleep(ListenInterval);
             }
@@ -109,6 +130,11 @@ namespace PokerMuck
             int handle = 0;
             handle = GetForegroundWindow();
             return handle;
+        }
+
+        private bool WindowExists(String windowTitle)
+        {
+            return FindWindowByCaption(IntPtr.Zero, windowTitle) != IntPtr.Zero;
         }
 
         private String GetWindowTitleFromHandle(int handle){
