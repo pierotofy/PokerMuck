@@ -72,9 +72,9 @@ namespace PokerMuck
         }
 
         /* Returns all the statistics available for the current player */
-        public virtual Statistics GetStatistics()
+        public virtual PlayerStatistics GetStatistics()
         {
-            return new Statistics(); // Empty
+            return new PlayerStatistics(); // Empty
         }
 
         ~Player(){

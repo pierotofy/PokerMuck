@@ -78,6 +78,15 @@ namespace PokerMuck
             if (PlayerRaised != null) PlayerRaised(playerName, initialPot, raiseAmount, gamePhase);
         }
 
+        /* A player checked */
+        public delegate void PlayerCheckedHandler(String playerName, HoldemGamePhase gamePhase);
+        public event PlayerCheckedHandler PlayerChecked;
+
+        protected void OnPlayerChecked(String playerName, HoldemGamePhase gamePhase)
+        {
+            if (PlayerChecked != null) PlayerChecked(playerName, gamePhase);
+        }
+
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
         {
             
@@ -114,6 +123,12 @@ namespace PokerMuck
                 String playerName = matchResult.Groups["playerName"].Value;
                 OnPlayerFolded(playerName, currentGamePhase);
             }
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_check"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                OnPlayerChecked(playerName, currentGamePhase);
+            }
+
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_raise"), out matchResult))
             {
                 String playerName = matchResult.Groups["playerName"].Value;

@@ -8,11 +8,11 @@ using System.Diagnostics;
 namespace PokerMuck
 {
     /* Stores statistical information */
-    public class Statistics
+    public class PlayerStatistics
     {
         private Hashtable table;
 
-        public Statistics()
+        public PlayerStatistics()
         {
             table = new Hashtable();
         }

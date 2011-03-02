@@ -45,7 +45,7 @@ namespace PokerMuck
 
         /* This function is overriden by child classes and takes care of displaying
          * game specific layout */
-        public virtual void DisplayStatistics(Statistics stats)
+        public virtual void DisplayStatistics(PlayerStatistics stats)
         {
             
         }

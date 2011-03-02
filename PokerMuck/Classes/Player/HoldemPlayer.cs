@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
@@ -28,12 +29,13 @@ namespace PokerMuck
         private Hashtable bets;
         private Hashtable folds;
         private Hashtable raises;
+        private Hashtable checks;
+
 
         public bool IsBigBlind { get; set; }
         public bool IsSmallBlind { get; set; }
 
-
-
+        
         public HoldemPlayer(String playerName)
             : base(playerName)
         {
@@ -41,6 +43,7 @@ namespace PokerMuck
             bets = new Hashtable(5);
             folds = new Hashtable(5);
             raises = new Hashtable(5);
+            checks = new Hashtable(5);
 
             ResetAllStatistics();
         }
@@ -100,6 +103,13 @@ namespace PokerMuck
                 limps += 1;
                 HasLimpedThisRound = true;
             }
+        }
+
+        /* Has checked */
+        public void HasChecked(HoldemGamePhase gamePhase)
+        {
+            Debug.Print(Name + " checks");
+            IncrementStatistics(checks, gamePhase);
         }
 
         /* Has called */
@@ -171,6 +181,7 @@ namespace PokerMuck
             ResetStatistics(bets);
             ResetStatistics(folds);
             ResetStatistics(raises);
+            ResetStatistics(checks);
             limps = 0;
             voluntaryPutMoneyPreflop = 0;
             totalHandsPlayed = 0;
@@ -189,9 +200,9 @@ namespace PokerMuck
         }
 
         /* Returns the statistics of the player */
-        public override Statistics GetStatistics()
+        public override PlayerStatistics GetStatistics()
         {
-            Statistics result =  base.GetStatistics();
+            PlayerStatistics result =  base.GetStatistics();
 
             result.Set("VPF", GetVPFRatio());
             result.Set("Limp", GetLimpRatio());

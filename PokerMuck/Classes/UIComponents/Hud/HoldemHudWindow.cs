@@ -17,7 +17,7 @@ namespace PokerMuck
             InitializeComponent();
         }
 
-        public override void DisplayStatistics(Statistics stats)
+        public override void DisplayStatistics(PlayerStatistics stats)
         {
             base.DisplayStatistics(stats);
 

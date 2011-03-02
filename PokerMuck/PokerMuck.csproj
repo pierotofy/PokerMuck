@@ -96,13 +96,16 @@
     <Compile Include="Classes\Hud\HudWindowsList.cs" />
     <Compile Include="Classes\Player\Player.cs" />
     <Compile Include="Classes\Player\PlayerFactory.cs" />
+    <Compile Include="Classes\Player\PlayerStatistics.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
     <Compile Include="Classes\Ranking\PostSubmitter.cs" />
     <Compile Include="Classes\Ranking\Rank.cs" />
     <Compile Include="Classes\Ranking\RankScanner.cs" />
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
     <Compile Include="Classes\Settings\HudUserSettings.cs" />
-    <Compile Include="Classes\Statistics.cs" />
+    <Compile Include="Classes\Table\HoldemTableStatistics.cs" />
+    <Compile Include="Classes\Table\Table.cs" />
+    <Compile Include="Classes\Table\TableStatistics.cs" />
     <Compile Include="Classes\UIComponents\CardPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -111,7 +114,6 @@
     <Compile Include="Classes\Settings\UserSettings.cs" />
     <Compile Include="Classes\HandHistory\Parser\UniversalHHParser.cs" />
     <Compile Include="Classes\PokerMuckDirector.cs" />
-    <Compile Include="Classes\Table.cs" />
     <Compile Include="Classes\HandHistory\HHDirectoryParser.cs" />
     <Compile Include="Classes\HandHistory\Monitor\FilesLineTracker.cs" />
     <Compile Include="Classes\HandHistory\Monitor\HHMonitor.cs" />

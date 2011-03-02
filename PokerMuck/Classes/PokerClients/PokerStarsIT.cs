@@ -78,6 +78,10 @@ namespace PokerMuck
                  * ex. preferiti90: folds */
                 regex.Add("hand_history_detect_player_fold", @"(?<playerName>[^:]+): folds");
 
+                /* Detect checks
+                 * ex. DOTTORE169: checks */
+                regex.Add("hand_history_detect_player_check", @"(?<playerName>[^:]+): checks");
+
                 /* Detect raises 
                  * ex. zanzara za: raises 755 to 1155 and is all-in */
                 regex.Add("hand_history_detect_player_raise", @"(?<playerName>[^:]+): raises (?<initialPot>[\d]+) to (?<raiseAmount>[\d]+)");

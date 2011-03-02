@@ -54,12 +54,11 @@ namespace PokerMuck
         public delegate void DataHasChangedHandler(Table sender);
         public event DataHasChangedHandler DataHasChanged;
 
-        /* Information about the blinds */
-        public float BigBlindAmount { get; set; }
-        public float SmallBlindAmount { get; set; }
-
         /* Reference to the Hud Window associated with this table. */
         public Hud Hud { get; set; }
+
+        /* Statistics related to this table */
+        private TableStatistics statistics;
 
         /* Accessor for retrieving the name of the poker client in use by 
          * this table */
@@ -80,6 +79,7 @@ namespace PokerMuck
             this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
             this.GameType = PokerGameType.Unknown; // We don't know
+            this.statistics = new TableStatistics(this); // We don't know what specific kind
             this.WindowRect = windowRect;
             this.Hud = new Hud(this);
 
@@ -183,6 +183,7 @@ namespace PokerMuck
             if (foundParser = (GameType == PokerGameType.Holdem))
             {
                 handHistoryParser = new HoldemHHParser(pokerClient);
+                statistics = new HoldemTableStatistics(this);
             }
             else if (GameType == PokerGameType.Unknown)
             {
@@ -203,75 +204,17 @@ namespace PokerMuck
                 if (GameType == PokerGameType.Holdem)
                 {
                     ((HoldemHHParser)handHistoryParser).FinalBoardAvailable += new HoldemHHParser.FinalBoardAvailableHandler(handHistoryParser_FinalBoardAvailable);
-                    ((HoldemHHParser)handHistoryParser).FoundBigBlind += new HoldemHHParser.FoundBigBlindHandler(handHistoryParser_FoundBigBlind);
-                    ((HoldemHHParser)handHistoryParser).FoundSmallBlind += new HoldemHHParser.FoundSmallBlindHandler(handHistoryParser_FoundSmallBlind);
-                    ((HoldemHHParser)handHistoryParser).PlayerBet += new HoldemHHParser.PlayerBetHandler(handHistoryParser_PlayerBet);
-                    ((HoldemHHParser)handHistoryParser).PlayerCalled += new HoldemHHParser.PlayerCalledHandler(handHistoryParser_PlayerCalled);
-                    ((HoldemHHParser)handHistoryParser).PlayerFolded += new HoldemHHParser.PlayerFoldedHandler(handHistoryParser_PlayerFolded);
-                    ((HoldemHHParser)handHistoryParser).PlayerRaised += new HoldemHHParser.PlayerRaisedHandler(handHistoryParser_PlayerRaised);
+                    statistics.RegisterParserHandlers(handHistoryParser);
                 }
             }
         }
 
         /* Holdem specific handlers */
 
-        void handHistoryParser_PlayerRaised(string playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
-        {
-            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
-            p.HasRaised(gamePhase);
-        }
-
-        void handHistoryParser_PlayerFolded(string playerName, HoldemGamePhase gamePhase)
-        {
-            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
-            p.HasFolded(gamePhase);
-        }
-
-        void handHistoryParser_PlayerCalled(string playerName, float amount, HoldemGamePhase gamePhase)
-        {
-            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
-
-            // If we are preflop and the call is the same amount as the big blind, this is also a limp
-            if (amount == BigBlindAmount && gamePhase == HoldemGamePhase.Preflop)
-            {
-                // HasLimped() makes further checks to avoid duplicate counts and whether the player is the big blind or small blind
-                p.HasLimped();
-            }
-
-            p.HasCalled(gamePhase);
-        }
-
-        void handHistoryParser_PlayerBet(string playerName, float amount, HoldemGamePhase gamePhase)
-        {
-            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
-            p.HasBet(gamePhase);
-        }
-
         void handHistoryParser_FinalBoardAvailable(Board board)
         {
             finalBoard = board;
         }
-
-        void handHistoryParser_FoundBigBlind(String playerName, float amount)
-        {
-            // Save current blind
-            BigBlindAmount = amount;
-
-            // Keep track of who is the big blind
-            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
-            p.IsBigBlind = true;
-        }
-
-        void handHistoryParser_FoundSmallBlind(String playerName, float amount)
-        {
-            // Save current blind
-            SmallBlindAmount = amount;
-
-            // Keep track of who is the small blind
-            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
-            p.IsSmallBlind = true;
-        }
-
 
         /* Generic handlers */
 
@@ -321,7 +264,7 @@ namespace PokerMuck
         
         /* Finds a player given its player name
          * It could return null */
-        private Player FindPlayer(String playerName)
+        public Player FindPlayer(String playerName)
         {
             // Has this player already been added?
             Player result = playerList.Find(

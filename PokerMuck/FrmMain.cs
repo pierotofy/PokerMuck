@@ -48,7 +48,7 @@ namespace PokerMuck
             pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
             pmDirector.RemoveHud += new PokerMuckDirector.RemoveHudHandler(pmDirector_RemoveHud);
 
-            //pmDirector.Test();
+            pmDirector.Test();
 
             /* TODO remove
             Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_detect_mucked_hand");
