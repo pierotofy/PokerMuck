@@ -109,10 +109,9 @@ namespace PokerMuck
                     handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
                 }
 
-                // If the previous window existed and now it doesn't exists, it means that we closed it
-                if (currentWindowExists && !WindowExists(previousForegroundWindowTitle))
+                // Previous window closed?
+                if (!WindowExists(previousForegroundWindowTitle))
                 {
-                    // TODO!! CHECK THIS!!!!!
                     handler.WindowClosed(previousForegroundWindowTitle);
                 }
 
