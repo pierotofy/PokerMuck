@@ -34,7 +34,6 @@ namespace PokerMuck
             {
                 // First timer, we need to create the appropriate window list
                 windowsList = new HudWindowsList();
-
            }
 
             // Do we have user specified positions?
@@ -67,6 +66,10 @@ namespace PokerMuck
                     // We set a 1:1 association between the player and the HudWindow
                     p.HudWindow = window;
 
+                    // Register a few handlers
+                    window.OnResetStatisticsButtonPressed += new HudWindow.OnResetStatisticsButtonPressedHandler(p.window_OnResetStatisticsButtonPressed);
+                    window.LocationChanged += new EventHandler(window_LocationChanged);
+
                     windowsList.Add(window);
                     window.Show(); // Without this we cannot move the windows
                     
@@ -96,12 +99,26 @@ namespace PokerMuck
             table.PostHudDisplayAction();
         }
 
+        /* Make sure we store the new locations */
+        void window_LocationChanged(object sender, EventArgs e)
+        {
+            StoreHudWindowPositions();
+        }
+
         /* If the window of a table has been moved around, we need to shift the 
          * hud windows associated with it */
         public void Shift()
         {
-            // Shift!
-            windowsList.ShiftWindowPositions(table.WindowRect);       
+            /* Simply move the windows according to their relative position to the table 
+             * windowRect */
+
+            List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
+            Debug.Assert(positions.Count > 0, "No positions available for shifting the hub");
+
+            foreach (Player p in table.PlayerList)
+            {
+                if (p.HudWindow != null) p.HudWindow.SetAbsolutePosition(positions[p.SeatNumber - 1], table.WindowRect); 
+            }
         }
 
         /* We can remove a hud (the game is over?) or we're closing the application? */

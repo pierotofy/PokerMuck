@@ -48,7 +48,7 @@ namespace PokerMuck
             pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
             pmDirector.RemoveHud += new PokerMuckDirector.RemoveHudHandler(pmDirector_RemoveHud);
 
-            pmDirector.Test();
+            //pmDirector.Test();
 
             /* TODO remove
             Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_detect_mucked_hand");
@@ -92,7 +92,7 @@ namespace PokerMuck
          * it has to be thread safe. So we do it. */
         void pmDirector_DisplayHud(Table t)
         {
-            this.BeginInvoke((Action)delegate()
+            this.Invoke((Action)delegate()
             {
                 t.Hud.DisplayAndUpdate();
             });

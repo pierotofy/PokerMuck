@@ -47,7 +47,7 @@ namespace PokerMuck
          * game specific layout */
         public virtual void DisplayStatistics(Statistics stats)
         {
-
+            
         }
 
         private void HudWindow_MouseDown(object sender, MouseEventArgs e)
@@ -69,7 +69,7 @@ namespace PokerMuck
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            // TODO!
+            if (OnResetStatisticsButtonPressed != null) OnResetStatisticsButtonPressed(this);
         }
     }
 }

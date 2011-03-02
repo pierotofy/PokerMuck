@@ -92,31 +92,28 @@ namespace PokerMuck
                 CurrentForegroundWindowRect = GetWindowRectFromHandle(handle);
 
 
+                // Title Different?
+                if (CurrentForegroundWindowTitle != String.Empty && CurrentForegroundWindowTitle != previousForegroundWindowTitle)
+                {
+                    // Notify handler
+                    handler.NewForegroundWindow(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
+
+                    // Check if the window actually exists
+                    currentWindowExists = WindowExists(CurrentForegroundWindowTitle);
+                }
+
+                // Rectangle different?
+                if (!CurrentForegroundWindowRect.Equals(previousForegroundWindowRect))
+                {
+                    // Notify
+                    handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
+                }
+
                 // If the previous window existed and now it doesn't exists, it means that we closed it
                 if (currentWindowExists && !WindowExists(previousForegroundWindowTitle))
                 {
+                    // TODO!! CHECK THIS!!!!!
                     handler.WindowClosed(previousForegroundWindowTitle);
-                }
-                else
-                {
-
-                    // Title Different?
-                    if (CurrentForegroundWindowTitle != String.Empty && CurrentForegroundWindowTitle != previousForegroundWindowTitle)
-                    {
-                        // Notify handler
-                        handler.NewForegroundWindow(CurrentForegroundWindowTitle);
-
-                        // Check if the window actually exists
-                        currentWindowExists = WindowExists(CurrentForegroundWindowTitle);
-                    }
-
-                    // Rectangle different?
-                    if (!CurrentForegroundWindowRect.Equals(previousForegroundWindowRect))
-                    {
-                        // Notify
-                        handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
-                    }
-
                 }
 
 

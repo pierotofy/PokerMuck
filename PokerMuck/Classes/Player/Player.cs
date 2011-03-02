@@ -51,6 +51,12 @@ namespace PokerMuck
             totalHandsPlayed += 1;
         }
 
+        public void window_OnResetStatisticsButtonPressed(HudWindow sender)
+        {
+            ResetAllStatistics();
+            sender.DisplayStatistics(GetStatistics());
+        }
+
         public virtual void ResetAllStatistics()
         {
             /* Reset the stats for a particular set */

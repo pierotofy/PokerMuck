@@ -41,7 +41,7 @@ namespace PokerMuck
                 regex.Add("hand_history_game_id_token", @"PokerStars Game #(?<gameId>[\d]+):");
                
                 /* Recognize the table ID and max seating capacity */
-                regex.Add("hand_history_table_token", @"Table '(?<tableId>[\d ]+)' (?<tableSeatingCapacity>[\d]+)-max Seat");
+                regex.Add("hand_history_table_token", @"Table '(?<tableId>[^(]+)' (?<tableSeatingCapacity>[\d]+)-max");
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                    Note that for PokerStars.it the only valid currency is EUR, but this might be different 

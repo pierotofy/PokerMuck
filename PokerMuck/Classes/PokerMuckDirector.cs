@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Collections;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace PokerMuck
 {
@@ -94,11 +95,11 @@ namespace PokerMuck
 
             String filename = "test.txt";
             //String filename = "HH20110112 T352120210 No Limit Hold'em €2.55 + €0.45.txt";
-            Table newTable = new Table(filename, "test.txt - Notepad", pokerClient);
+            Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient);
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
             tables.Add(newTable);
             hhMonitor.ChangeHandHistoryFile(filename); // TODO REMOVE
-            newTable.WindowRect = new Rectangle(30, 30, 640, 480);
+            
         }
 
         /* Change the hand history directory */
@@ -134,7 +135,7 @@ namespace PokerMuck
         {
             Debug.Print("New file created: {0}", filename);
 
-            NewForegroundWindow(windowsListener.CurrentForegroundWindowTitle);
+            NewForegroundWindow(windowsListener.CurrentForegroundWindowTitle, windowsListener.CurrentForegroundWindowRect);
         }
 
         /* Hand history monitor handler, an end of file has been reached
@@ -217,14 +218,20 @@ namespace PokerMuck
 
             if (t != null)
             {
-                if (RemoveHud != null) RemoveHud(t);
-                t.Terminate();
-                tables.Remove(t);
+                // TODO TEMP REMOVE DIALOG
+                DialogResult result = MessageBox.Show("Close the hud?", "PokerMuck", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes){
+
+                    if (RemoveHud != null) RemoveHud(t);
+                    t.Terminate();
+                    tables.Remove(t);
+
+                }
             }
         }
 
         /* Windows Listener event handler, detects when a new windows becomes the active window */
-        public void NewForegroundWindow(string windowTitle)
+        public void NewForegroundWindow(string windowTitle, Rectangle windowRect)
         {
             /* We ignore any event that is caused by a window titled "HudWindow"
              * because the user might be simply interacting with our hud */
@@ -246,7 +253,7 @@ namespace PokerMuck
                     if (table == null)
                     {
                         // First time we see it, we need to create a table for this request
-                        Table newTable = new Table(filename, windowTitle, pokerClient);
+                        Table newTable = new Table(filename, windowTitle, windowRect, pokerClient);
 
                         // Set a handler that notifies us of data changes
                         newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);

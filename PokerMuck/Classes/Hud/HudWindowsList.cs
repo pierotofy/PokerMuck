@@ -14,12 +14,6 @@ namespace PokerMuck
         /* This is where the instances of the hud windows are stored */
         List<HudWindow> windowsList;
 
-        /* The last windowRect that we have been using for our positioning
-         * This is useful when we have to shift the huds around, keeping a reference
-         * to our previous windowRect allows us to compute the offset (X, Y) that the windows
-         * have to be moved by */
-        Rectangle previousWindowRect;
-
         /* Constants */
 
         private static float SKIP_ANGLE = (float)Math.PI / 3;
@@ -43,7 +37,6 @@ namespace PokerMuck
 
         public HudWindowsList()
         {
-            this.previousWindowRect = new Rectangle();
             windowsList = new List<HudWindow>(9);
         }
 
@@ -88,26 +81,12 @@ namespace PokerMuck
             }
         }
 
-        /* Shifts the windows from the previousWindowRect to a new one */
-        public void ShiftWindowPositions(Rectangle windowRect)
-        {
-            foreach (HudWindow w in windowsList)
-            {
-                Point offset = new Point(windowRect.X - previousWindowRect.X,
-                                        windowRect.Y - previousWindowRect.Y);
-
-                w.Location = new Point(w.Location.X + offset.X, w.Location.Y + offset.Y);
-            }
-
-            SaveWindowRect(windowRect);
-        }
-
         /* Setup the initial default position of the windows hud instances 
          * The guess is often not perfect, but the user can adjust the position 
          * later. */
         public void SetupDefaultPositions(Rectangle windowRect)
         {
-            SaveWindowRect(windowRect);
+            Debug.Assert(windowRect.Width != 0, "Invalid windowRect sent for setting up hud windows default position. Zero.");
 
             Point relativeTableCenter = FindRelativeTableCenter(windowRect.Width);
             Point absoluteTableCenter = new Point(windowRect.X + relativeTableCenter.X,
@@ -163,12 +142,6 @@ namespace PokerMuck
 
                 currentAngle -= angleBetweenPlayers;
             }
-        }
-
-        /* Stores a copy of the windowRect */
-        private void SaveWindowRect(Rectangle windowRect)
-        {
-            previousWindowRect = windowRect;
         }
 
         private Point CalculatePoint(float currentAngle, float distanceFromCenterX, float distanceFromCenterY, Point absoluteCenter)

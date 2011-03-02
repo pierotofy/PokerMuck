@@ -72,7 +72,7 @@ namespace PokerMuck
         }
         
 
-        public Table(String handHistoryFilename, String windowTitle, PokerClient pokerClient)
+        public Table(String handHistoryFilename, String windowTitle, Rectangle windowRect, PokerClient pokerClient)
         {
             this.handHistoryFilename = handHistoryFilename;
             this.WindowTitle = windowTitle;
@@ -80,7 +80,7 @@ namespace PokerMuck
             this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
             this.GameType = PokerGameType.Unknown; // We don't know
-            this.WindowRect = new Rectangle();
+            this.WindowRect = windowRect;
             this.Hud = new Hud(this);
 
             // By default we use the universal parser

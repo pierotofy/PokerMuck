@@ -48,18 +48,24 @@ namespace PokerMuck
         /* Returns the limp ratio (1.0 to 0) */
         public float GetLimpRatio()
         {
+            if (totalHandsPlayed == 0) return 0.0f;
+
             return (float)limps / (float)totalHandsPlayed;
         }
 
         /* How many times has the player put money in preflop? */
         public float GetVPFRatio()
         {
+            if (totalHandsPlayed == 0) return 0.0f;
+
             return (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
         }
 
         /* How many times has the player raised preflop? */
         public float GetPFRRatio()
         {
+            if (totalHandsPlayed == 0) return 0.0f;
+
             return (float)preflopRaises / (float)totalHandsPlayed;
         }
         
