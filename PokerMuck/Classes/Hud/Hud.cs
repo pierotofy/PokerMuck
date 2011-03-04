@@ -68,6 +68,7 @@ namespace PokerMuck
 
                     // Register a few handlers
                     window.OnResetStatisticsButtonPressed += new HudWindow.OnResetStatisticsButtonPressedHandler(p.window_OnResetStatisticsButtonPressed);
+                    window.OnResetAllStatisticsButtonPressed += new HudWindow.OnResetAllStatisticsButtonPressedHandler(table.window_OnResetAllStatisticsButtonPressed);
                     window.LocationChanged += new EventHandler(window_LocationChanged);
 
                     windowsList.Add(window);
@@ -103,6 +104,7 @@ namespace PokerMuck
         void window_LocationChanged(object sender, EventArgs e)
         {
             StoreHudWindowPositions();
+            settings.Save(); // Commit to file
         }
 
         /* If the window of a table has been moved around, we need to shift the 

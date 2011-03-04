@@ -109,6 +109,18 @@ namespace PokerMuck
             }
         }
 
+        /* The user requested that all statistics get reset */
+        public void window_OnResetAllStatisticsButtonPressed(HudWindow sender)
+        {
+            statistics.PrepareStatisticsForNewRound();
+
+            foreach (Player p in PlayerList)
+            {
+                p.ResetAllStatistics();
+                if (p.HudWindow != null) p.HudWindow.DisplayStatistics(p.GetStatistics());
+            }
+        }
+
         /* Find a player with playerName name and set its mucked hand */
         void handHistoryParser_PlayerMuckHandAvailable(string playerName, Hand hand)
         {
@@ -158,6 +170,8 @@ namespace PokerMuck
                 }
             }
 
+            /* Clear the table statistics relative to a single round */
+            statistics.PrepareStatisticsForNewRound();
         }
 
         void handHistoryParser_HoleCardsWillBeDealt()

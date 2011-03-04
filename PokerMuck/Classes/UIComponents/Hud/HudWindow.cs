@@ -20,6 +20,11 @@ namespace PokerMuck
         public delegate void OnResetStatisticsButtonPressedHandler(HudWindow sender);
         public event OnResetStatisticsButtonPressedHandler OnResetStatisticsButtonPressed;
 
+        /* Notifies that the statistics of everybody need to be reset */
+        public delegate void OnResetAllStatisticsButtonPressedHandler(HudWindow sender);
+        public event OnResetAllStatisticsButtonPressedHandler OnResetAllStatisticsButtonPressed;
+
+
         public HudWindow()
         {
             InitializeComponent();
@@ -47,11 +52,12 @@ namespace PokerMuck
          * game specific layout */
         public virtual void DisplayStatistics(PlayerStatistics stats)
         {
-            
+            lblTotalHandsPlayed.Text = stats.GetFloat("TotalHandsPlayed").ToString();
         }
 
         private void HudWindow_MouseDown(object sender, MouseEventArgs e)
         {
+            
             draggingWindow = true;
             mousePositionOnDrag = e.Location;
         }
@@ -67,9 +73,15 @@ namespace PokerMuck
             draggingWindow = false;
         }
 
-        private void btnReset_Click(object sender, EventArgs e)
+        private void resetPlayerStatisticsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (OnResetStatisticsButtonPressed != null) OnResetStatisticsButtonPressed(this);
         }
+
+        private void resetEverybodysStatisticsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (OnResetAllStatisticsButtonPressed != null) OnResetAllStatisticsButtonPressed(this);
+        }
+
     }
 }

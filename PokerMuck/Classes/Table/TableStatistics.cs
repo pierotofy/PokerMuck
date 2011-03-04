@@ -20,5 +20,12 @@ namespace PokerMuck
         {
 
         }
+
+        /* We might keep track of certain data (has anybody bet on the flop this round?) that
+         * is round specific and needs to be reset at the end of each hand */
+        public virtual void PrepareStatisticsForNewRound()
+        {
+
+        }
     }
 }

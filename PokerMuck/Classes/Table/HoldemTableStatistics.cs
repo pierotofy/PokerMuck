@@ -11,10 +11,19 @@ namespace PokerMuck
         public float BigBlindAmount { get; set; }
         public float SmallBlindAmount { get; set; }
 
+        private bool PlayerBetTheFlopThisRound;
+
         public HoldemTableStatistics(Table table)
             : base(table)
         {
+            PrepareStatisticsForNewRound();
+        }
 
+        public override void PrepareStatisticsForNewRound()
+        {
+            base.PrepareStatisticsForNewRound();
+
+            PlayerBetTheFlopThisRound = false;
         }
 
         public override void RegisterParserHandlers(HHParser parser)
@@ -54,7 +63,7 @@ namespace PokerMuck
             if (amount == BigBlindAmount && gamePhase == HoldemGamePhase.Preflop)
             {
                 // HasLimped() makes further checks to avoid duplicate counts and whether the player is the big blind or small blind
-                p.HasLimped();
+                p.CheckForLimp();
             }
 
             p.HasCalled(gamePhase);
@@ -62,9 +71,17 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerBet(string playerName, float amount, HoldemGamePhase gamePhase)
         {
-            // TODO check if he's the first bettor on the flop
-
             HoldemPlayer p = FindPlayer(playerName);
+
+            if (!PlayerBetTheFlopThisRound)
+            {
+                // He's the first!
+                p.CheckForCBet(amount);
+
+                PlayerBetTheFlopThisRound = true;
+            }
+
+
             p.HasBet(gamePhase);
         }
 

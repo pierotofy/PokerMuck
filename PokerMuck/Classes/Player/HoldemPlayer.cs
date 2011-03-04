@@ -20,6 +20,9 @@ namespace PokerMuck
         private int preflopRaises;
         private bool HasPreflopRaisedThisRound;
 
+        private int cbets;
+        private bool HasCBetThisRound;
+
         /* Each table is set this way:
          key => value
          GamePhase => value
@@ -64,6 +67,14 @@ namespace PokerMuck
             return (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
         }
 
+        /* How many times has the player made a continuation bet following a preflop raise? */
+        public float GetCBetRatio()
+        {
+            if (preflopRaises == 0) return 0.0f;
+
+            return (float)cbets / (float)preflopRaises;
+        }
+
         /* How many times has the player raised preflop? */
         public float GetPFRRatio()
         {
@@ -76,8 +87,8 @@ namespace PokerMuck
         public void HasRaised(HoldemGamePhase gamePhase){
             if (gamePhase == HoldemGamePhase.Preflop)
             {
-                IncrementVoluntaryPutMoneyPreflop();
-                IncrementPreflopRaise();
+                CheckForVoluntaryPutMoneyPreflop();
+                CheckForPreflopRaise();
             }
 
             IncrementStatistics(raises, gamePhase);
@@ -88,14 +99,14 @@ namespace PokerMuck
         {
             if (gamePhase == HoldemGamePhase.Preflop)
             {
-                IncrementVoluntaryPutMoneyPreflop();
+                CheckForVoluntaryPutMoneyPreflop();
             }
 
             IncrementStatistics(bets, gamePhase);
         }
 
         /* Has limped */
-        public void HasLimped()
+        public void CheckForLimp()
         {
             /* If he's not the small or big blind, this is also a limp */
             if (!IsSmallBlind && !IsBigBlind && !HasLimpedThisRound)
@@ -117,7 +128,7 @@ namespace PokerMuck
         {
             if (gamePhase == HoldemGamePhase.Preflop)
             {
-                IncrementVoluntaryPutMoneyPreflop();
+                CheckForVoluntaryPutMoneyPreflop();
             }
 
 
@@ -131,8 +142,20 @@ namespace PokerMuck
         }
 
 
+        /* Check for cbets */
+        public void CheckForCBet(float amount)
+        {
+            /* This player has raised preflop and now has bet on the flop when first to act or when everybody
+             * checked on him. This is a cbet */
+            if (HasPreflopRaisedThisRound && !HasCBetThisRound)
+            {
+                HasCBetThisRound = true;
+                cbets += 1;
+            }
+        }
+
         /* Helper function to increment the VPF stat */
-        private void IncrementVoluntaryPutMoneyPreflop()
+        private void CheckForVoluntaryPutMoneyPreflop()
         {
             if (!HasVoluntaryPutMoneyPreflopThisRound)
             {
@@ -143,7 +166,7 @@ namespace PokerMuck
 
 
         /* Helper function to increment the PFR stat */
-        private void IncrementPreflopRaise()
+        private void CheckForPreflopRaise()
         {
             if (!HasPreflopRaisedThisRound)
             {
@@ -169,6 +192,7 @@ namespace PokerMuck
             HasLimpedThisRound = false;
             HasVoluntaryPutMoneyPreflopThisRound = false;
             HasPreflopRaisedThisRound = false;
+            HasCBetThisRound = false;
         }
 
         
@@ -183,6 +207,7 @@ namespace PokerMuck
             ResetStatistics(raises);
             ResetStatistics(checks);
             limps = 0;
+            cbets = 0;
             voluntaryPutMoneyPreflop = 0;
             totalHandsPlayed = 0;
             preflopRaises = 0;
@@ -207,6 +232,7 @@ namespace PokerMuck
             result.Set("VPF", GetVPFRatio());
             result.Set("Limp", GetLimpRatio());
             result.Set("PFR", GetPFRRatio());
+            result.Set("CBet", GetCBetRatio());
 
             return result;
         }

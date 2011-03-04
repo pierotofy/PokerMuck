@@ -21,10 +21,11 @@ namespace PokerMuck
         {
             base.DisplayStatistics(stats);
 
-            lblImmediateStats.Text = String.Format("VPF: {0} PFR: {1} Limp: {2}",
+            lblImmediateStats.Text = String.Format("VPF: {0} PFR: {1} L: {2} C: {3}",
                 stats.GetPercentage("VPF"),
                 stats.GetPercentage("PFR"),
-                stats.GetPercentage("Limp")
+                stats.GetPercentage("Limp"),
+                stats.GetPercentage("CBet")
               );
         }
     }

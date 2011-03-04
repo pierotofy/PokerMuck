@@ -74,7 +74,9 @@ namespace PokerMuck
         /* Returns all the statistics available for the current player */
         public virtual PlayerStatistics GetStatistics()
         {
-            return new PlayerStatistics(); // Empty
+            PlayerStatistics result = new PlayerStatistics();
+            result.Set("TotalHandsPlayed", totalHandsPlayed);
+            return result;
         }
 
         ~Player(){
