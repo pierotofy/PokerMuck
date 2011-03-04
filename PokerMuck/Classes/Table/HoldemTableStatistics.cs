@@ -11,7 +11,14 @@ namespace PokerMuck
         public float BigBlindAmount { get; set; }
         public float SmallBlindAmount { get; set; }
 
+        /* Somebody bet the flop */
         private bool PlayerBetTheFlopThisRound;
+
+        /* Somebody cbet the flop (which is different than simple betting) */
+        private bool PlayerCBetThisRound;
+
+        /* Somebody raised the flop */
+        private bool PlayerRaisedTheFlopThisRound;
 
         public HoldemTableStatistics(Table table)
             : base(table)
@@ -24,6 +31,8 @@ namespace PokerMuck
             base.PrepareStatisticsForNewRound();
 
             PlayerBetTheFlopThisRound = false;
+            PlayerRaisedTheFlopThisRound = false;
+            PlayerCBetThisRound = false;
         }
 
         public override void RegisterParserHandlers(HHParser parser)
@@ -39,6 +48,11 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerRaised(string playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
         {
+            if (gamePhase == HoldemGamePhase.Flop)
+            {
+                PlayerRaisedTheFlopThisRound = true;
+            }
+
             HoldemPlayer p = FindPlayer(playerName);
             p.HasRaised(gamePhase);
         }
@@ -46,6 +60,13 @@ namespace PokerMuck
         void handHistoryParser_PlayerFolded(string playerName, HoldemGamePhase gamePhase)
         {
             HoldemPlayer p = FindPlayer(playerName);
+
+            // Has somebody cbet?
+            if (gamePhase == HoldemGamePhase.Flop && !PlayerRaisedTheFlopThisRound && PlayerCBetThisRound)
+            {
+                p.IncrementFoldToACBet();
+            }
+
             p.HasFolded(gamePhase);
         }
 
@@ -73,10 +94,14 @@ namespace PokerMuck
         {
             HoldemPlayer p = FindPlayer(playerName);
 
-            if (!PlayerBetTheFlopThisRound)
+            // Flop
+            if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlopThisRound)
             {
                 // He's the first!
-                p.CheckForCBet(amount);
+                bool playerHasCBet = p.CheckForCBet(amount);
+
+                // Was this really a cbet? 
+                if (playerHasCBet) PlayerCBetThisRound = true;
 
                 PlayerBetTheFlopThisRound = true;
             }

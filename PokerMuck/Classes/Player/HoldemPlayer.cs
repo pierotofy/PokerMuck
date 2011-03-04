@@ -23,6 +23,8 @@ namespace PokerMuck
         private int cbets;
         private bool HasCBetThisRound;
 
+        private int foldsToACBet;
+
         /* Each table is set this way:
          key => value
          GamePhase => value
@@ -49,6 +51,26 @@ namespace PokerMuck
             checks = new Hashtable(5);
 
             ResetAllStatistics();
+        }
+
+        /* Resets all statistics counters */
+        public override void ResetAllStatistics()
+        {
+            base.ResetAllStatistics();
+
+            ResetStatistics(calls);
+            ResetStatistics(bets);
+            ResetStatistics(folds);
+            ResetStatistics(raises);
+            ResetStatistics(checks);
+            limps = 0;
+            foldsToACBet = 0;
+            cbets = 0;
+            voluntaryPutMoneyPreflop = 0;
+            totalHandsPlayed = 0;
+            preflopRaises = 0;
+
+            PrepareStatisticsForNewRound();
         }
 
         /* Returns the limp ratio (1.0 to 0) */
@@ -116,6 +138,12 @@ namespace PokerMuck
             }
         }
 
+        /* Fold after a cbet */
+        public void IncrementFoldToACBet()
+        {
+            foldsToACBet += 1;
+        }
+
         /* Has checked */
         public void HasChecked(HoldemGamePhase gamePhase)
         {
@@ -142,8 +170,9 @@ namespace PokerMuck
         }
 
 
-        /* Check for cbets */
-        public void CheckForCBet(float amount)
+        /* Check for cbets and increments the statistics if it is a valid cbet
+         * returns true when this is a cbet */
+        public bool CheckForCBet(float amount)
         {
             /* This player has raised preflop and now has bet on the flop when first to act or when everybody
              * checked on him. This is a cbet */
@@ -151,7 +180,11 @@ namespace PokerMuck
             {
                 HasCBetThisRound = true;
                 cbets += 1;
+
+                return true;
             }
+
+            return false;
         }
 
         /* Helper function to increment the VPF stat */
@@ -193,27 +226,8 @@ namespace PokerMuck
             HasVoluntaryPutMoneyPreflopThisRound = false;
             HasPreflopRaisedThisRound = false;
             HasCBetThisRound = false;
-        }
+        }       
 
-        
-        /* Resets all statistics counters */
-        public override void ResetAllStatistics()
-        {
-            base.ResetAllStatistics();
-
-            ResetStatistics(calls);
-            ResetStatistics(bets);
-            ResetStatistics(folds);
-            ResetStatistics(raises);
-            ResetStatistics(checks);
-            limps = 0;
-            cbets = 0;
-            voluntaryPutMoneyPreflop = 0;
-            totalHandsPlayed = 0;
-            preflopRaises = 0;
-
-            PrepareStatisticsForNewRound();
-        }
 
         /* Reset the stats for a particular hash table set */
         private void ResetStatistics(Hashtable table)
