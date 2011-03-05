@@ -16,6 +16,12 @@ namespace PokerMuck
         private bool draggingWindow;
         private Point mousePositionOnDrag;
 
+        /* Flag for disposal 
+         * If this variable is set to true,
+         * Next time the hud is updated, this window will be destroyed */
+        public bool DisposeFlag { get; set; }
+
+
         /* Notifies that the statistics of this hud need to be reset */
         public delegate void OnResetStatisticsButtonPressedHandler(HudWindow sender);
         public event OnResetStatisticsButtonPressedHandler OnResetStatisticsButtonPressed;
@@ -28,6 +34,7 @@ namespace PokerMuck
         public HudWindow()
         {
             InitializeComponent();
+            DisposeFlag = false;
         }
 
         public void DisplayPlayerName(String playerName)

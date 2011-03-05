@@ -52,6 +52,16 @@ namespace PokerMuck
             windowsList.Remove(window);
         }
 
+        /* Deletes every window that has the Dispose flag set to true */
+        public void RemoveFlaggedWindows()
+        {
+            for (int i = 0; i < windowsList.Count; i++)
+            {
+                HudWindow w = (HudWindow)windowsList[i];
+                if (w.DisposeFlag) Remove(w);
+            }
+        }
+
         /* Remove all hud windows */
         public void RemoveAll()
         {

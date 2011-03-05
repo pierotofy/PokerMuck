@@ -237,10 +237,19 @@ namespace PokerMuck
             if (this.TableId != String.Empty && this.TableId != tableId)
             {
 
-                Debug.Print("An existing table has just changed its tableID... just fwi");
+                Debug.Print("An existing table has just changed its tableID... starting transition.");
                 Debug.Print("Previous ID: " + this.TableId);
                 Debug.Print("New ID: " + tableId);
 
+                // Clear the list of players (new ones are coming)
+                for (int i = 0; i < PlayerList.Count; i++)
+                {
+                    Player p = PlayerList[i];
+                    PlayerList.Remove(p);
+
+                    // If the player has a hud associated, also mark that hud as disposable
+                    if (p.HudWindow != null) p.HudWindow.DisposeFlag = true;
+                }
             }
 
             this.GameID = gameId;

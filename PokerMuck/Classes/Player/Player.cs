@@ -81,6 +81,12 @@ namespace PokerMuck
 
         ~Player(){
             Debug.Print("Destroying... " + Name);
+
+            if (HudWindow != null)
+            {
+                HudWindow.DisposeFlag = true;
+                HudWindow = null;
+            }
         }
 
     }

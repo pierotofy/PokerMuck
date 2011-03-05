@@ -48,12 +48,20 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerRaised(string playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
         {
+            HoldemPlayer p = FindPlayer(playerName);
+            
             if (gamePhase == HoldemGamePhase.Flop)
             {
                 PlayerRaisedTheFlopThisRound = true;
+
+                // Has somebody cbet?
+                if (!PlayerRaisedTheFlopThisRound && PlayerCBetThisRound)
+                {
+                    p.IncrementRaiseToACBet();
+                }
             }
 
-            HoldemPlayer p = FindPlayer(playerName);
+            
             p.HasRaised(gamePhase);
         }
 
@@ -80,11 +88,23 @@ namespace PokerMuck
         {
             HoldemPlayer p = FindPlayer(playerName);
 
-            // If we are preflop and the call is the same amount as the big blind, this is also a limp
-            if (amount == BigBlindAmount && gamePhase == HoldemGamePhase.Preflop)
+            // If we are preflop
+            if (gamePhase == HoldemGamePhase.Preflop)
             {
-                // HasLimped() makes further checks to avoid duplicate counts and whether the player is the big blind or small blind
-                p.CheckForLimp();
+                // If the call is the same amount as the big blind, this is also a limp
+                if (amount == BigBlindAmount)
+                {
+                    // HasLimped() makes further checks to avoid duplicate counts and whether the player is the big blind or small blind
+                    p.CheckForLimp();
+                }
+            }
+            else if (gamePhase == HoldemGamePhase.Flop)
+            {
+                // Has somebody cbet?
+                if (!PlayerRaisedTheFlopThisRound && PlayerCBetThisRound)
+                {
+                    p.IncrementCallToACBet();
+                }
             }
 
             p.HasCalled(gamePhase);

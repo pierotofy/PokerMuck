@@ -50,6 +50,9 @@ namespace PokerMuck
                 setupInitialWindowPositions = true;
             }
 
+            // Check for windows that have been set to be destroyed
+            DisposeFlaggedWindows();
+
             // Now we're ready
 
             /* Check each player:
@@ -160,6 +163,11 @@ namespace PokerMuck
 
             // Finally, store the new positions in the settings!
             settings.StoreHudWindowPositions(table.PokerClientName, positions);
+        }
+
+        private void DisposeFlaggedWindows()
+        {
+            windowsList.RemoveFlaggedWindows();
         }
 
         /* Updates the information displayed by the hud associated with it */
