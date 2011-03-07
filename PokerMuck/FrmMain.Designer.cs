@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
-            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.lblStatus = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
             this.lblPokerClientLanguage = new System.Windows.Forms.Label();
@@ -48,23 +47,32 @@
             this.lblPieroTofyLink = new System.Windows.Forms.LinkLabel();
             this.lblProgramName = new System.Windows.Forms.Label();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
+            this.tabStatistics = new System.Windows.Forms.TabPage();
+            this.lblPlayerName = new System.Windows.Forms.Label();
+            this.playerStatsTabControl = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
             this.tabAboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
+            this.tabStatistics.SuspendLayout();
+            this.playerStatsTabControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
             // 
             this.tabControl.Controls.Add(this.tabHandsPage);
+            this.tabControl.Controls.Add(this.tabStatistics);
             this.tabControl.Controls.Add(this.tabConfigurationPage);
             this.tabControl.Controls.Add(this.tabAboutPage);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(195, 323);
+            this.tabControl.Size = new System.Drawing.Size(219, 323);
             this.tabControl.TabIndex = 3;
             // 
             // tabHandsPage
@@ -74,19 +82,10 @@
             this.tabHandsPage.Location = new System.Drawing.Point(4, 22);
             this.tabHandsPage.Name = "tabHandsPage";
             this.tabHandsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHandsPage.Size = new System.Drawing.Size(187, 297);
+            this.tabHandsPage.Size = new System.Drawing.Size(211, 297);
             this.tabHandsPage.TabIndex = 0;
-            this.tabHandsPage.Text = "Hands";
+            this.tabHandsPage.Text = "Muck";
             this.tabHandsPage.UseVisualStyleBackColor = true;
-            // 
-            // entityHandsContainer
-            // 
-            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
-            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
-            this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(181, 254);
-            this.entityHandsContainer.TabIndex = 4;
             // 
             // lblStatus
             // 
@@ -94,7 +93,7 @@
             this.lblStatus.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.Location = new System.Drawing.Point(3, 257);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(181, 37);
+            this.lblStatus.Size = new System.Drawing.Size(205, 37);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -112,7 +111,7 @@
             this.tabConfigurationPage.Location = new System.Drawing.Point(4, 22);
             this.tabConfigurationPage.Name = "tabConfigurationPage";
             this.tabConfigurationPage.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigurationPage.Size = new System.Drawing.Size(187, 297);
+            this.tabConfigurationPage.Size = new System.Drawing.Size(211, 297);
             this.tabConfigurationPage.TabIndex = 1;
             this.tabConfigurationPage.Text = "Configuration";
             this.tabConfigurationPage.UseVisualStyleBackColor = true;
@@ -211,7 +210,7 @@
             this.tabAboutPage.Controls.Add(this.pictureEagle);
             this.tabAboutPage.Location = new System.Drawing.Point(4, 22);
             this.tabAboutPage.Name = "tabAboutPage";
-            this.tabAboutPage.Size = new System.Drawing.Size(187, 297);
+            this.tabAboutPage.Size = new System.Drawing.Size(211, 297);
             this.tabAboutPage.TabIndex = 2;
             this.tabAboutPage.Text = "About";
             this.tabAboutPage.UseVisualStyleBackColor = true;
@@ -278,12 +277,76 @@
             this.pictureEagle.TabIndex = 0;
             this.pictureEagle.TabStop = false;
             // 
+            // tabStatistics
+            // 
+            this.tabStatistics.Controls.Add(this.playerStatsTabControl);
+            this.tabStatistics.Controls.Add(this.lblPlayerName);
+            this.tabStatistics.Location = new System.Drawing.Point(4, 22);
+            this.tabStatistics.Name = "tabStatistics";
+            this.tabStatistics.Size = new System.Drawing.Size(211, 297);
+            this.tabStatistics.TabIndex = 3;
+            this.tabStatistics.Text = "Statistics";
+            this.tabStatistics.UseVisualStyleBackColor = true;
+            // 
+            // lblPlayerName
+            // 
+            this.lblPlayerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPlayerName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPlayerName.Location = new System.Drawing.Point(-1, 8);
+            this.lblPlayerName.Name = "lblPlayerName";
+            this.lblPlayerName.Size = new System.Drawing.Size(169, 24);
+            this.lblPlayerName.TabIndex = 0;
+            this.lblPlayerName.Text = "PlayerName";
+            // 
+            // playerStatsTabControl
+            // 
+            this.playerStatsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.playerStatsTabControl.Controls.Add(this.tabPage1);
+            this.playerStatsTabControl.Controls.Add(this.tabPage2);
+            this.playerStatsTabControl.Location = new System.Drawing.Point(0, 35);
+            this.playerStatsTabControl.Name = "playerStatsTabControl";
+            this.playerStatsTabControl.SelectedIndex = 0;
+            this.playerStatsTabControl.Size = new System.Drawing.Size(215, 266);
+            this.playerStatsTabControl.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(207, 240);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Summary";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(207, 240);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Flop";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // entityHandsContainer
+            // 
+            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
+            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
+            this.entityHandsContainer.Name = "entityHandsContainer";
+            this.entityHandsContainer.Size = new System.Drawing.Size(205, 254);
+            this.entityHandsContainer.TabIndex = 4;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Silver;
-            this.ClientSize = new System.Drawing.Size(195, 323);
+            this.ClientSize = new System.Drawing.Size(219, 323);
             this.Controls.Add(this.tabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -301,6 +364,8 @@
             this.tabConfigurationPage.PerformLayout();
             this.tabAboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
+            this.tabStatistics.ResumeLayout(false);
+            this.playerStatsTabControl.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -326,6 +391,11 @@
         private System.Windows.Forms.LinkLabel lblPieroTofyLink;
         private System.Windows.Forms.Label lblDonate;
         private System.Windows.Forms.Button btnDonate;
+        private System.Windows.Forms.TabPage tabStatistics;
+        private System.Windows.Forms.Label lblPlayerName;
+        private System.Windows.Forms.TabControl playerStatsTabControl;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
 
 
     }

@@ -18,7 +18,7 @@ namespace PokerMuck
         }
 
         /* Sets a new statistic value */
-        public void Set(String name, float value)
+        public void Set(String name, float value, String category = "Summary")
         {
             table[name] = value;
         }
