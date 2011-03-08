@@ -40,13 +40,17 @@
             // 
             // lblPlayerName
             // 
-            this.lblPlayerName.Cursor = System.Windows.Forms.Cursors.Default;
+            this.lblPlayerName.Cursor = System.Windows.Forms.Cursors.SizeAll;
             this.lblPlayerName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPlayerName.Location = new System.Drawing.Point(1, 0);
             this.lblPlayerName.Name = "lblPlayerName";
             this.lblPlayerName.Size = new System.Drawing.Size(105, 13);
             this.lblPlayerName.TabIndex = 0;
             this.lblPlayerName.Text = "playerName";
+            this.lblPlayerName.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblPlayerName_MouseDoubleClick);
+            this.lblPlayerName.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPlayerName_MouseDown);
+            this.lblPlayerName.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lblPlayerName_MouseMove);
+            this.lblPlayerName.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblPlayerName_MouseUp);
             // 
             // contextMenu
             // 
@@ -79,19 +83,23 @@
             // lblTotalHandsPlayed
             // 
             this.lblTotalHandsPlayed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTotalHandsPlayed.Location = new System.Drawing.Point(137, 0);
+            this.lblTotalHandsPlayed.Location = new System.Drawing.Point(107, 0);
             this.lblTotalHandsPlayed.Name = "lblTotalHandsPlayed";
             this.lblTotalHandsPlayed.Size = new System.Drawing.Size(22, 13);
             this.lblTotalHandsPlayed.TabIndex = 1;
             this.lblTotalHandsPlayed.Text = "(0)";
             this.lblTotalHandsPlayed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblTotalHandsPlayed.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblTotalHandsPlayed_MouseDoubleClick);
+            this.lblTotalHandsPlayed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblTotalHandsPlayed_MouseDown);
+            this.lblTotalHandsPlayed.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lblTotalHandsPlayed_MouseMove);
+            this.lblTotalHandsPlayed.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblTotalHandsPlayed_MouseUp);
             // 
             // HudWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.BurlyWood;
-            this.ClientSize = new System.Drawing.Size(159, 49);
+            this.ClientSize = new System.Drawing.Size(127, 38);
             this.ContextMenuStrip = this.contextMenu;
             this.Controls.Add(this.lblPlayerName);
             this.Controls.Add(this.lblTotalHandsPlayed);

@@ -10,16 +10,22 @@ namespace PokerMuck
     /* A holdem player has certain statistics that a five card draw player might not have */
     class HoldemPlayer : Player
     {
+        /* Limp */
 
         private int limps;
         private bool HasLimpedThisRound;
 
+        /* VPF */
+        
         private int voluntaryPutMoneyPreflop;
         private bool HasVoluntaryPutMoneyPreflopThisRound;
 
+        /* Preflop raises */
+        
         private int preflopRaises;
         private bool HasPreflopRaisedThisRound;
-
+                
+        /* C Bets */ 
         private int opportunitiesToCBet;
 
         private int cbets;
@@ -28,6 +34,21 @@ namespace PokerMuck
         private int foldsToACBet;
         private int callsToACBet;
         private int raisesToACBet;
+
+        /* Check-raise */
+        
+        private bool HasCheckedTheFlopThisRound;
+        private bool HasCheckRaisedTheFlopThisRound;
+        private int flopCheckRaises;
+
+        private bool HasCheckRaisedTheTurnThisRound;
+        private bool HasCheckedTheTurnThisRound;
+        private int turnCheckRaises;
+
+        private bool HasCheckedTheRiverThisRound;
+        private bool HasCheckRaisedTheRiverThisRound;
+        private int riverCheckRaises;
+
 
         /* Each table is set this way:
          key => value
@@ -79,50 +100,85 @@ namespace PokerMuck
             preflopRaises = 0;
             opportunitiesToCBet = 0;
 
+            flopCheckRaises = 0;
+            turnCheckRaises = 0;
+            riverCheckRaises = 0;
+
             PrepareStatisticsForNewRound();
         }
 
-        /* Returns the limp ratio (1.0 to 0) */
-        public float GetLimpRatio()
+        /* Returns the limp statistics */
+        public StatisticsData GetLimpStats()
         {
-            if (totalHandsPlayed == 0) return 0.0f;
+            float limpRatio = 0;
 
-            return (float)limps / (float)totalHandsPlayed;
+            if (totalHandsPlayed == 0) limpRatio = 0;
+            else limpRatio = (float)limps / (float)totalHandsPlayed;
+            
+            return new StatisticsPercentageData("Limp", limpRatio, "Preflop");
         }
 
         /* How many times has the player put money in preflop? */
-        public float GetVPFRatio()
+        public StatisticsData GetVPFStats()
         {
-            if (totalHandsPlayed == 0) return 0.0f;
+            float vpfRatio = 0;
 
-            return (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
+            if (totalHandsPlayed == 0) vpfRatio = 0;
+            else vpfRatio = (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
+            return new StatisticsPercentageData("Voluntary Put $", vpfRatio, "Preflop");
         }
 
-        /* How many times has the player made a continuation bet following a preflop raise?
-         * Usually people will hit their hand 20% of the times, so default is 0.2 */
-        public float GetCBetRatio()
+        /* How many times has the player made a continuation bet following a preflop raise? */
+        public StatisticsData GetCBetStats()
         {
-            if (opportunitiesToCBet == 0) return 0.2f;
+            if (opportunitiesToCBet == 0) return new StatisticsUnknownData("Continuation bets", "Flop");
 
-            return (float)cbets / (float)opportunitiesToCBet;
+            float cbetsRatio = (float)cbets / (float)opportunitiesToCBet;
+            return new StatisticsPercentageData("Continuation bets", cbetsRatio, "Flop");
         }
 
         /* How many times has a player folded to a continuation bet? */
-        public float GetFoldToACBetRatio()
+        public StatisticsData GetFoldToACBetStats()
         {
-            if (foldsToACBet > 0 && raisesToACBet + callsToACBet == 0.0f) return 1.0f;
-            else if (foldsToACBet + raisesToACBet + callsToACBet == 0.0f) return 0.5f; // Default, 50/50
-            else if (raisesToACBet + callsToACBet == 0.0f) return 0.0f;
+            float actionsToACbet = foldsToACBet + raisesToACBet + callsToACBet;
 
-            return (float)foldsToACBet / (float)(raisesToACBet + callsToACBet);
+            if (actionsToACbet == 0) return new StatisticsUnknownData("Folds to a continuation bet", "Flop");
+            else
+            {
+                return new StatisticsPercentageData("Folds to a continuatino bet",
+                    (float)foldsToACBet / (float)(raisesToACBet + callsToACBet + foldsToACBet),
+                    "Flop");
+            }
         }
 
         /* How many times has the player raised preflop? */
-        public float GetPFRRatio()
+        public StatisticsData GetPFRStats()
         {
-            if (totalHandsPlayed == 0) return 0.0f;
+            float pfrRatio = 0;
 
-            return (float)preflopRaises / (float)totalHandsPlayed;
+            if (totalHandsPlayed == 0) pfrRatio = 0;
+            else pfrRatio = (float)preflopRaises / (float)totalHandsPlayed;
+
+            return new StatisticsPercentageData("Raises", pfrRatio, "Preflop");
+        }
+
+        /* How many times has the player check raised? */
+        public StatisticsData GetCheckRaiseStats(HoldemGamePhase phase, String category)
+        {
+            int totalChecks = (int)checks[phase];
+
+            if (totalChecks == 0) return new StatisticsUnknownData("Check Raise", category);
+            else
+            {
+                float checkRaiseRatio = 0;
+
+                if (phase == HoldemGamePhase.Flop) checkRaiseRatio = (float)flopCheckRaises / (float)totalChecks;
+                else if (phase == HoldemGamePhase.Turn) checkRaiseRatio = (float)turnCheckRaises / (float)totalChecks;
+                else if (phase == HoldemGamePhase.River) checkRaiseRatio = (float)riverCheckRaises / (float)totalChecks;
+                else Debug.Assert(false, "Calculating a check raise for a game phase that doesn't make sense");
+
+                return new StatisticsPercentageData("Check Raise", checkRaiseRatio, category);
+            }
         }
         
         /* Has limped */
@@ -161,6 +217,33 @@ namespace PokerMuck
                 CheckForVoluntaryPutMoneyPreflop();
                 CheckForPreflopRaise();
             }
+            else if (gamePhase == HoldemGamePhase.Flop)
+            {
+                // Check raise?
+                if (HasCheckedTheFlopThisRound && !HasCheckRaisedTheFlopThisRound)
+                {
+                    flopCheckRaises += 1;
+                    HasCheckRaisedTheFlopThisRound = true;
+                }
+            }
+            else if (gamePhase == HoldemGamePhase.Turn)
+            {
+                // Check raise?
+                if (HasCheckedTheTurnThisRound && !HasCheckRaisedTheTurnThisRound)
+                {
+                    turnCheckRaises += 1;
+                    HasCheckRaisedTheTurnThisRound = true;
+                }
+            }
+            else if (gamePhase == HoldemGamePhase.River)
+            {
+                // Check raise?
+                if (HasCheckedTheRiverThisRound && !HasCheckRaisedTheRiverThisRound)
+                {
+                    riverCheckRaises += 1;
+                    HasCheckRaisedTheRiverThisRound = true;
+                }
+            }
 
             IncrementStatistics(raises, gamePhase);
         }
@@ -179,7 +262,19 @@ namespace PokerMuck
         /* Has checked */
         public void HasChecked(HoldemGamePhase gamePhase)
         {
-            Debug.Print(Name + " checks");
+            if (gamePhase == HoldemGamePhase.Flop)
+            {
+                HasCheckedTheFlopThisRound = true;
+            }
+            else if (gamePhase == HoldemGamePhase.Turn)
+            {
+                HasCheckedTheTurnThisRound = true;
+            }
+            else if (gamePhase == HoldemGamePhase.River)
+            {
+                HasCheckedTheRiverThisRound = true;
+            }
+
             IncrementStatistics(checks, gamePhase);
         }
 
@@ -277,6 +372,12 @@ namespace PokerMuck
             HasVoluntaryPutMoneyPreflopThisRound = false;
             HasPreflopRaisedThisRound = false;
             HasCBetThisRound = false;
+            HasCheckedTheFlopThisRound = false;
+            HasCheckedTheTurnThisRound = false;
+            HasCheckedTheRiverThisRound = false;
+            HasCheckRaisedTheFlopThisRound = false;
+            HasCheckRaisedTheTurnThisRound = false;
+            HasCheckRaisedTheRiverThisRound = false;
         }       
 
 
@@ -294,11 +395,15 @@ namespace PokerMuck
         {
             PlayerStatistics result =  base.GetStatistics();
 
-            result.Set("VPF", GetVPFRatio());
-            result.Set("Limp", GetLimpRatio());
-            result.Set("PFR", GetPFRRatio());
-            result.Set("CBet", GetCBetRatio());
-            result.Set("FoldToACBet", GetFoldToACBetRatio());
+            result.Set(GetVPFStats());
+            result.Set(GetLimpStats());
+            result.Set(GetPFRStats());
+            result.Set(GetCBetStats());
+            result.Set(GetFoldToACBetStats());
+
+            result.Set(GetCheckRaiseStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetCheckRaiseStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetCheckRaiseStats(HoldemGamePhase.River, "River"));
 
             return result;
         }

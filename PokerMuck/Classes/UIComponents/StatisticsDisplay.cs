@@ -13,7 +13,6 @@ namespace PokerMuck
     public partial class StatisticsDisplay : UserControl
     {
         private int labelSpacing;
-        
         [Description("Sets the spacing between labels"),
          Category("Values"),
          DefaultValue(3)]
@@ -31,7 +30,6 @@ namespace PokerMuck
         }
 
         private int topMargin;
-
         [Description("Sets the margin of labels from the top"),
          Category("Values"),
          DefaultValue(3)]
@@ -48,14 +46,20 @@ namespace PokerMuck
             }
         }
 
+
+        /* Who was the last player we displayed? */
+        private Player lastPlayerDisplayed;
+
         public StatisticsDisplay()
         {
             InitializeComponent();
+            lastPlayerDisplayed = null;
         }
 
         /* Displays the statistics for a player */
         public void DisplayStatistics(Player p)
         {
+            lastPlayerDisplayed = p;
             lblPlayerName.Text = p.Name;
 
             PlayerStatistics statistics = p.GetStatistics();
@@ -65,6 +69,31 @@ namespace PokerMuck
             GenerateTabPages(statistics.GetCategories());
 
             FillStatistics(statistics);
+        }
+
+        /* Simply update the statistics of the last player we displayed */
+        public void UpdateStatistics()
+        {
+            if (lastPlayerDisplayed != null)
+            {
+                PlayerStatistics statistics = lastPlayerDisplayed.GetStatistics();
+
+                RemoveStatistics(statistics);
+                FillStatistics(statistics);
+            }
+        }
+
+        private void RemoveStatistics(PlayerStatistics statistics)
+        {
+            // For each statistic category
+            foreach (String category in statistics.GetCategories())
+            {
+                // Find the tab page for this category
+                TabPage tp = FindTabPage(category);
+
+                // Clear it
+                tp.Controls.Clear();
+            }
         }
 
         private void ClearAllTabPages()
@@ -90,12 +119,12 @@ namespace PokerMuck
             {
                 int positionX = topMargin; // Keep track of the position of new labels
 
+                // Find the tab page for this category
+                TabPage tp = FindTabPage(category);
+
                 // For each data in that category
                 foreach (StatisticsData data in statistics.GetStatistics(category))
                 {
-                    // Find the tab page for this category
-                    TabPage tp = FindTabPage(category);
-
                     // Create the proper label for it
                     Label label = new Label();
                     
@@ -110,7 +139,7 @@ namespace PokerMuck
                     positionX += label.Height + labelSpacing;
 
                     // Set the label text to the value of the data
-                    label.Text = String.Format("{0}: {1}",data.Name, data.GetPercentage());
+                    label.Text = String.Format("{0}: {1}",data.Name, data.GetValue());
 
 
                 }

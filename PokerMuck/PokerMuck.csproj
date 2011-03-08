@@ -97,13 +97,16 @@
     <Compile Include="Classes\Player\Player.cs" />
     <Compile Include="Classes\Player\PlayerFactory.cs" />
     <Compile Include="Classes\Player\PlayerStatistics.cs" />
-    <Compile Include="Classes\Player\StatisticsData.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
     <Compile Include="Classes\Ranking\PostSubmitter.cs" />
     <Compile Include="Classes\Ranking\Rank.cs" />
     <Compile Include="Classes\Ranking\RankScanner.cs" />
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
     <Compile Include="Classes\Settings\HudUserSettings.cs" />
+    <Compile Include="Classes\Statistics\StatisticsData.cs" />
+    <Compile Include="Classes\Statistics\StatisticsNumberData.cs" />
+    <Compile Include="Classes\Statistics\StatisticsPercentageData.cs" />
+    <Compile Include="Classes\Statistics\StatisticsUnknownData.cs" />
     <Compile Include="Classes\Table\HoldemTableStatistics.cs" />
     <Compile Include="Classes\Table\Table.cs" />
     <Compile Include="Classes\Table\TableStatistics.cs" />

@@ -17,27 +17,22 @@ namespace PokerMuck
             table = new Hashtable();
         }
 
-        /* Sets a new statistic value */
-        public void Set(String name, float value, String category = "Summary")
+        
+        /* Sets a new data statistics in our table */
+        public void Set(StatisticsData data)
         {
-            table[name] = new StatisticsData(name, value, category);
+            table[data.Name + "_" + data.Category] = data;
         }
 
-        /* Return a particular statistic in float */
-        public float GetFloat(String name)
+        public StatisticsData Get(String name, String category)
         {
-            Debug.Assert(table.ContainsKey(name), "Trying to access a statistic that doesn't exist");
+            String key = name + "_" + category;
+            StatisticsData result = (StatisticsData)table[key];
+            Debug.Assert(result != null, "Trying to access a statistics value that doesn't exist. " + key);
 
-            return ((StatisticsData)table[name]).GetFloat();
+            return result;
         }
 
-        /* Converts a particular statistic in string percentage */
-        public String GetPercentage(String name, int precision = 0)
-        {
-            Debug.Assert(table.ContainsKey(name), "Trying to access a statistic that doesn't exist");
-
-            return ((StatisticsData)table[name]).GetPercentage(precision);
-        }
 
         /* Returns all the data pertaining to a specific category */
         public List<StatisticsData> GetStatistics(String category)

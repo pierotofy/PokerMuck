@@ -75,6 +75,7 @@ namespace PokerMuck
         {
             this.Invoke((Action)delegate()
             {
+                tabControl.SelectedIndex = 1;
                 statisticsDisplay.DisplayStatistics(p);
             });
         }
@@ -104,6 +105,9 @@ namespace PokerMuck
             this.Invoke((Action)delegate()
             {
                 t.Hud.DisplayAndUpdate();
+
+                // We also update the statistics that we might be watching
+                statisticsDisplay.UpdateStatistics();
             });
         }
 
@@ -122,6 +126,8 @@ namespace PokerMuck
                 clp.Size = entityHandsContainer.Size;
 
                 entityHandsContainer.AddPanel(clp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
+
+                tabControl.SelectedIndex = 0;
             });
         }
 

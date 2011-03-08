@@ -6,7 +6,7 @@ using System.Text;
 namespace PokerMuck
 {
     /* Represents a statistical data */
-    public class StatisticsData
+    public abstract class StatisticsData
     {
         private String name;
         public String Name { get { return name; } }
@@ -34,6 +34,9 @@ namespace PokerMuck
         {
             return Math.Round(value * 100, precision).ToString();
         }
+
+        /* Returns the default format for this data */
+        public abstract String GetValue();
 
         /* To String override */
         public override String ToString()

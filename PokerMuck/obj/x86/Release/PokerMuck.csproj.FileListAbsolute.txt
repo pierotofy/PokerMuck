@@ -140,3 +140,6 @@ C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.exe.manifest
 C:\Users\piero\documents\visual studio 2010\Projects\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.application
 C:\Users\piero\Desktop\PokerMuck\PokerMuck\bin\Release\License.txt
+C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.HoldemHudWindow.resources
+C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.HudWindow.resources
+C:\Users\piero\Desktop\PokerMuck\PokerMuck\obj\x86\Release\PokerMuck.StatisticsDisplay.resources

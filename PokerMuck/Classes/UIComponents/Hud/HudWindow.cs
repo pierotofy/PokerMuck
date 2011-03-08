@@ -63,23 +63,35 @@ namespace PokerMuck
          * game specific layout */
         public virtual void DisplayStatistics(PlayerStatistics stats)
         {
-            lblTotalHandsPlayed.Text = stats.GetFloat("TotalHandsPlayed").ToString();
+            lblTotalHandsPlayed.Text = stats.Get("Total Hands Played", "Summary").GetFloat().ToString();
         }
 
-        private void HudWindow_MouseDown(object sender, MouseEventArgs e)
+        protected void HudWindow_MouseDown(object sender, MouseEventArgs e)
         {
+            Control c = (Control)sender;
             
             draggingWindow = true;
-            mousePositionOnDrag = e.Location;
+
+            // Is this a hud window we're moving?
+            if (c is HudWindow)
+            {
+                mousePositionOnDrag = e.Location;
+            }
+            else
+            {
+                // No, it's a control and we need to compute it's relative location for a smooth move
+
+                mousePositionOnDrag = new Point(e.Location.X + c.Location.X, e.Location.Y + c.Location.Y);
+            }
         }
 
-        private void HudWindow_MouseMove(object sender, MouseEventArgs e)
+        protected void HudWindow_MouseMove(object sender, MouseEventArgs e)
         {
             if (draggingWindow) this.Location = new Point(Cursor.Position.X - mousePositionOnDrag.X,
                                                             Cursor.Position.Y - mousePositionOnDrag.Y);
         }
 
-        private void HudWindow_MouseUp(object sender, MouseEventArgs e)
+        protected void HudWindow_MouseUp(object sender, MouseEventArgs e)
         {
             draggingWindow = false;
         }
@@ -94,7 +106,7 @@ namespace PokerMuck
             if (OnResetAllStatisticsButtonPressed != null) OnResetAllStatisticsButtonPressed(this);
         }
 
-        private void HudWindow_MouseDoubleClick(object sender, MouseEventArgs e)
+        protected void HudWindow_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (OnPlayerStatisticsNeedToBeDisplayed != null) OnPlayerStatisticsNeedToBeDisplayed(this);
         }
@@ -113,6 +125,46 @@ namespace PokerMuck
         public override int GetHashCode()
         {
             return lblPlayerName.Text.GetHashCode();
+        }
+
+        private void lblPlayerName_MouseUp(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseUp(sender, e);
+        }
+
+        private void lblPlayerName_MouseMove(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseMove(sender, e);
+        }
+
+        private void lblPlayerName_MouseDown(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseDown(sender, e);
+        }
+
+        private void lblTotalHandsPlayed_MouseUp(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseDown(sender, e);
+        }
+
+        private void lblTotalHandsPlayed_MouseMove(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseMove(sender, e);
+        }
+
+        private void lblTotalHandsPlayed_MouseDown(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseDown(sender, e);
+        }
+
+        private void lblTotalHandsPlayed_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseDoubleClick(sender, e);
+        }
+
+        private void lblPlayerName_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            HudWindow_MouseDoubleClick(sender, e);
         }
 
     }
