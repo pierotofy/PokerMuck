@@ -54,6 +54,15 @@ namespace PokerMuck
         public delegate void DataHasChangedHandler(Table sender);
         public event DataHasChangedHandler DataHasChanged;
 
+        /* The statistics of a player in this table need to be displayed */
+        public delegate void DisplayPlayerStatisticsHandler(Player p);
+        public event DisplayPlayerStatisticsHandler DisplayPlayerStatistics;
+
+        public void OnDisplayPlayerStatistics(Player p)
+        {
+            if (DisplayPlayerStatistics != null) DisplayPlayerStatistics(p);
+        }
+
         /* Reference to the Hud Window associated with this table. */
         public Hud Hud { get; set; }
 

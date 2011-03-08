@@ -31,7 +31,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
+            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.tabStatistics = new System.Windows.Forms.TabPage();
+            this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
             this.lblPokerClientLanguage = new System.Windows.Forms.Label();
             this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
@@ -47,19 +50,12 @@
             this.lblPieroTofyLink = new System.Windows.Forms.LinkLabel();
             this.lblProgramName = new System.Windows.Forms.Label();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
-            this.tabStatistics = new System.Windows.Forms.TabPage();
-            this.lblPlayerName = new System.Windows.Forms.Label();
-            this.playerStatsTabControl = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
+            this.tabStatistics.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
             this.tabAboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
-            this.tabStatistics.SuspendLayout();
-            this.playerStatsTabControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -87,6 +83,15 @@
             this.tabHandsPage.Text = "Muck";
             this.tabHandsPage.UseVisualStyleBackColor = true;
             // 
+            // entityHandsContainer
+            // 
+            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
+            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
+            this.entityHandsContainer.Name = "entityHandsContainer";
+            this.entityHandsContainer.Size = new System.Drawing.Size(205, 254);
+            this.entityHandsContainer.TabIndex = 4;
+            // 
             // lblStatus
             // 
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -97,6 +102,29 @@
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tabStatistics
+            // 
+            this.tabStatistics.Controls.Add(this.statisticsDisplay);
+            this.tabStatistics.Location = new System.Drawing.Point(4, 22);
+            this.tabStatistics.Name = "tabStatistics";
+            this.tabStatistics.Size = new System.Drawing.Size(211, 297);
+            this.tabStatistics.TabIndex = 3;
+            this.tabStatistics.Text = "Statistics";
+            this.tabStatistics.UseVisualStyleBackColor = true;
+            // 
+            // statisticsDisplay
+            // 
+            this.statisticsDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.statisticsDisplay.BackColor = System.Drawing.Color.White;
+            this.statisticsDisplay.LabelSpacing = 5;
+            this.statisticsDisplay.Location = new System.Drawing.Point(0, 2);
+            this.statisticsDisplay.Name = "statisticsDisplay";
+            this.statisticsDisplay.Size = new System.Drawing.Size(211, 295);
+            this.statisticsDisplay.TabIndex = 0;
+            this.statisticsDisplay.TopMargin = 4;
             // 
             // tabConfigurationPage
             // 
@@ -133,7 +161,7 @@
             this.cmbPokerClientLanguage.FormattingEnabled = true;
             this.cmbPokerClientLanguage.Location = new System.Drawing.Point(82, 156);
             this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
-            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(95, 21);
+            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(121, 21);
             this.cmbPokerClientLanguage.TabIndex = 7;
             this.cmbPokerClientLanguage.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientLanguage_SelectionChangeCommitted);
             // 
@@ -154,7 +182,7 @@
             this.cmbPokerClient.FormattingEnabled = true;
             this.cmbPokerClient.Location = new System.Drawing.Point(49, 124);
             this.cmbPokerClient.Name = "cmbPokerClient";
-            this.cmbPokerClient.Size = new System.Drawing.Size(128, 21);
+            this.cmbPokerClient.Size = new System.Drawing.Size(154, 21);
             this.cmbPokerClient.TabIndex = 5;
             this.cmbPokerClient.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClient_SelectionChangeCommitted);
             // 
@@ -164,7 +192,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUserId.Location = new System.Drawing.Point(82, 8);
             this.txtUserId.Name = "txtUserId";
-            this.txtUserId.Size = new System.Drawing.Size(95, 20);
+            this.txtUserId.Size = new System.Drawing.Size(121, 20);
             this.txtUserId.TabIndex = 4;
             this.txtUserId.TextChanged += new System.EventHandler(this.txtUserId_TextChanged);
             // 
@@ -185,7 +213,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.btnChangeHandHistory.Location = new System.Drawing.Point(8, 78);
             this.btnChangeHandHistory.Name = "btnChangeHandHistory";
-            this.btnChangeHandHistory.Size = new System.Drawing.Size(169, 23);
+            this.btnChangeHandHistory.Size = new System.Drawing.Size(195, 23);
             this.btnChangeHandHistory.TabIndex = 2;
             this.btnChangeHandHistory.Text = "Change Hand History Directory";
             this.btnChangeHandHistory.UseVisualStyleBackColor = true;
@@ -198,7 +226,7 @@
             this.txtHandHistoryDirectory.Location = new System.Drawing.Point(8, 52);
             this.txtHandHistoryDirectory.Name = "txtHandHistoryDirectory";
             this.txtHandHistoryDirectory.ReadOnly = true;
-            this.txtHandHistoryDirectory.Size = new System.Drawing.Size(169, 20);
+            this.txtHandHistoryDirectory.Size = new System.Drawing.Size(195, 20);
             this.txtHandHistoryDirectory.TabIndex = 1;
             // 
             // tabAboutPage
@@ -222,7 +250,7 @@
             this.btnDonate.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDonate.Location = new System.Drawing.Point(11, 139);
             this.btnDonate.Name = "btnDonate";
-            this.btnDonate.Size = new System.Drawing.Size(168, 46);
+            this.btnDonate.Size = new System.Drawing.Size(192, 46);
             this.btnDonate.TabIndex = 4;
             this.btnDonate.Text = "Donate \r\n(any amount)";
             this.btnDonate.UseVisualStyleBackColor = true;
@@ -234,7 +262,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDonate.Location = new System.Drawing.Point(3, 28);
             this.lblDonate.Name = "lblDonate";
-            this.lblDonate.Size = new System.Drawing.Size(184, 108);
+            this.lblDonate.Size = new System.Drawing.Size(200, 108);
             this.lblDonate.TabIndex = 3;
             this.lblDonate.Text = resources.GetString("lblDonate.Text");
             this.lblDonate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -246,7 +274,7 @@
             this.lblPieroTofyLink.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPieroTofyLink.Location = new System.Drawing.Point(3, 268);
             this.lblPieroTofyLink.Name = "lblPieroTofyLink";
-            this.lblPieroTofyLink.Size = new System.Drawing.Size(181, 17);
+            this.lblPieroTofyLink.Size = new System.Drawing.Size(200, 24);
             this.lblPieroTofyLink.TabIndex = 2;
             this.lblPieroTofyLink.TabStop = true;
             this.lblPieroTofyLink.Text = "http://www.pierotofy.it";
@@ -260,7 +288,7 @@
             this.lblProgramName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblProgramName.Location = new System.Drawing.Point(8, 8);
             this.lblProgramName.Name = "lblProgramName";
-            this.lblProgramName.Size = new System.Drawing.Size(171, 20);
+            this.lblProgramName.Size = new System.Drawing.Size(195, 20);
             this.lblProgramName.TabIndex = 1;
             this.lblProgramName.Text = "PokerMuck";
             this.lblProgramName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -270,76 +298,12 @@
             this.pictureEagle.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureEagle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureEagle.Image = global::PokerMuck.Properties.Resources.Eagle;
-            this.pictureEagle.Location = new System.Drawing.Point(48, 191);
+            this.pictureEagle.Location = new System.Drawing.Point(62, 191);
             this.pictureEagle.Name = "pictureEagle";
             this.pictureEagle.Size = new System.Drawing.Size(93, 74);
             this.pictureEagle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureEagle.TabIndex = 0;
             this.pictureEagle.TabStop = false;
-            // 
-            // tabStatistics
-            // 
-            this.tabStatistics.Controls.Add(this.playerStatsTabControl);
-            this.tabStatistics.Controls.Add(this.lblPlayerName);
-            this.tabStatistics.Location = new System.Drawing.Point(4, 22);
-            this.tabStatistics.Name = "tabStatistics";
-            this.tabStatistics.Size = new System.Drawing.Size(211, 297);
-            this.tabStatistics.TabIndex = 3;
-            this.tabStatistics.Text = "Statistics";
-            this.tabStatistics.UseVisualStyleBackColor = true;
-            // 
-            // lblPlayerName
-            // 
-            this.lblPlayerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPlayerName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPlayerName.Location = new System.Drawing.Point(-1, 8);
-            this.lblPlayerName.Name = "lblPlayerName";
-            this.lblPlayerName.Size = new System.Drawing.Size(169, 24);
-            this.lblPlayerName.TabIndex = 0;
-            this.lblPlayerName.Text = "PlayerName";
-            // 
-            // playerStatsTabControl
-            // 
-            this.playerStatsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.playerStatsTabControl.Controls.Add(this.tabPage1);
-            this.playerStatsTabControl.Controls.Add(this.tabPage2);
-            this.playerStatsTabControl.Location = new System.Drawing.Point(0, 35);
-            this.playerStatsTabControl.Name = "playerStatsTabControl";
-            this.playerStatsTabControl.SelectedIndex = 0;
-            this.playerStatsTabControl.Size = new System.Drawing.Size(215, 266);
-            this.playerStatsTabControl.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(207, 240);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Summary";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(207, 240);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Flop";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // entityHandsContainer
-            // 
-            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
-            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
-            this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(205, 254);
-            this.entityHandsContainer.TabIndex = 4;
             // 
             // FrmMain
             // 
@@ -360,12 +324,11 @@
             this.LocationChanged += new System.EventHandler(this.FrmMain_LocationChanged);
             this.tabControl.ResumeLayout(false);
             this.tabHandsPage.ResumeLayout(false);
+            this.tabStatistics.ResumeLayout(false);
             this.tabConfigurationPage.ResumeLayout(false);
             this.tabConfigurationPage.PerformLayout();
             this.tabAboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
-            this.tabStatistics.ResumeLayout(false);
-            this.playerStatsTabControl.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -392,10 +355,7 @@
         private System.Windows.Forms.Label lblDonate;
         private System.Windows.Forms.Button btnDonate;
         private System.Windows.Forms.TabPage tabStatistics;
-        private System.Windows.Forms.Label lblPlayerName;
-        private System.Windows.Forms.TabControl playerStatsTabControl;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private StatisticsDisplay statisticsDisplay;
 
 
     }

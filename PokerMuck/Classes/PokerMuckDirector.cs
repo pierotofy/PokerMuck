@@ -62,6 +62,10 @@ namespace PokerMuck
         public delegate void RemoveHudHandler(Table t);
         public event RemoveHudHandler RemoveHud;
 
+        /* Tell the UI to display the statistics of this player */
+        public delegate void DisplayPlayerStatisticsHandler(Player p);
+        public event DisplayPlayerStatisticsHandler DisplayPlayerStatistics;
+
 
 
         public PokerMuckDirector()
@@ -94,9 +98,10 @@ namespace PokerMuck
             
 
             String filename = "test.txt";
-            //String filename = "HH20110112 T352120210 No Limit Hold'em €2.55 + €0.45.txt";
+            //String filename = "HH20110305 T371715473 No Limit Hold'em €4.46 + €0.54.txt";
             Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient);
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
+            newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
             tables.Add(newTable);
             hhMonitor.ChangeHandHistoryFile(filename); // TODO REMOVE
             
@@ -257,6 +262,11 @@ namespace PokerMuck
 
                         // Set a handler that notifies us of data changes
                         newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
+                        
+                        // Set a handler that notifies of the necessity to display the 
+                        // statistics of a player
+                        newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
+                        
 
                         // and add it to our list
                         tables.Add(newTable);
@@ -287,6 +297,12 @@ namespace PokerMuck
             {
                 // The window is not a poker window... do what?
             }
+        }
+
+        void newTable_DisplayPlayerStatistics(Player p)
+        {
+            // Notify the GUI
+            if (DisplayPlayerStatistics != null) DisplayPlayerStatistics(p);
         }
 
         /* Data in one of the tables has changed */

@@ -94,10 +94,10 @@
     <Compile Include="Classes\Hud\Hud.cs" />
     <Compile Include="Classes\Hud\HudWindowFactory.cs" />
     <Compile Include="Classes\Hud\HudWindowsList.cs" />
-    <Compile Include="Classes\Player\StatisticsValue.cs" />
     <Compile Include="Classes\Player\Player.cs" />
     <Compile Include="Classes\Player\PlayerFactory.cs" />
     <Compile Include="Classes\Player\PlayerStatistics.cs" />
+    <Compile Include="Classes\Player\StatisticsData.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
     <Compile Include="Classes\Ranking\PostSubmitter.cs" />
     <Compile Include="Classes\Ranking\Rank.cs" />
@@ -140,6 +140,12 @@
     <Compile Include="Classes\UIComponents\Hud\HudWindow.designer.cs">
       <DependentUpon>HudWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\UIComponents\StatisticsDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\StatisticsDisplay.Designer.cs">
+      <DependentUpon>StatisticsDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\WindowsListener\IDetectWindowsChanges.cs" />
     <Compile Include="Classes\Card\Card.cs" />
     <Compile Include="Classes\PokerClients\PokerClient.cs" />
@@ -181,6 +187,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\Hud\HudWindow.resx">
       <DependentUpon>HudWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\StatisticsDisplay.resx">
+      <DependentUpon>StatisticsDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>

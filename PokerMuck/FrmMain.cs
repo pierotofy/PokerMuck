@@ -47,6 +47,7 @@ namespace PokerMuck
             pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
             pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
             pmDirector.RemoveHud += new PokerMuckDirector.RemoveHudHandler(pmDirector_RemoveHud);
+            pmDirector.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
 
             pmDirector.Test();
 
@@ -68,6 +69,14 @@ namespace PokerMuck
 
             // Load configuration
             LoadConfigurationValues();
+        }
+
+        void pmDirector_DisplayPlayerStatistics(Player p)
+        {
+            this.Invoke((Action)delegate()
+            {
+                statisticsDisplay.DisplayStatistics(p);
+            });
         }
 
         void pmDirector_RemoveHud(Table t)

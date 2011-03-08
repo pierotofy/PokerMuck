@@ -36,7 +36,7 @@
             this.lblImmediateStats.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.lblImmediateStats.Location = new System.Drawing.Point(0, 20);
             this.lblImmediateStats.Name = "lblImmediateStats";
-            this.lblImmediateStats.Size = new System.Drawing.Size(164, 21);
+            this.lblImmediateStats.Size = new System.Drawing.Size(182, 21);
             this.lblImmediateStats.TabIndex = 1;
             this.lblImmediateStats.Text = "VPF";
             // 
@@ -44,7 +44,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(167, 40);
+            this.ClientSize = new System.Drawing.Size(183, 40);
             this.Controls.Add(this.lblImmediateStats);
             this.Name = "HoldemHudWindow";
             this.Controls.SetChildIndex(this.lblImmediateStats, 0);

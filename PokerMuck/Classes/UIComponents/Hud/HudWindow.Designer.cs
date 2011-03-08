@@ -101,6 +101,7 @@
             this.Opacity = 0.9D;
             this.Text = "HudWindow";
             this.TopMost = true;
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseDoubleClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseUp);

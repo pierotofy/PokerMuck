@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace PokerMuck
 {
-    abstract class Player
+    public abstract class Player
     {
         /* Every player has a name */
         private String name;

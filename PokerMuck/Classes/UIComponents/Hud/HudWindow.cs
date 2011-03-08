@@ -15,7 +15,7 @@ namespace PokerMuck
     {
         private bool draggingWindow;
         private Point mousePositionOnDrag;
-
+        
         /* Flag for disposal 
          * If this variable is set to true,
          * Next time the hud is updated, this window will be destroyed */
@@ -30,6 +30,10 @@ namespace PokerMuck
         public delegate void OnResetAllStatisticsButtonPressedHandler(HudWindow sender);
         public event OnResetAllStatisticsButtonPressedHandler OnResetAllStatisticsButtonPressed;
 
+        /* Notifies that the statistics of a our player need to be displayed 
+         * in the expanded view */
+        public delegate void OnPlayerStatisticsNeedToBeDisplayedHandler(HudWindow sender);
+        public event OnPlayerStatisticsNeedToBeDisplayedHandler OnPlayerStatisticsNeedToBeDisplayed;
 
         public HudWindow()
         {
@@ -88,6 +92,27 @@ namespace PokerMuck
         private void resetEverybodysStatisticsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (OnResetAllStatisticsButtonPressed != null) OnResetAllStatisticsButtonPressed(this);
+        }
+
+        private void HudWindow_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (OnPlayerStatisticsNeedToBeDisplayed != null) OnPlayerStatisticsNeedToBeDisplayed(this);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is HudWindow)) return false;
+
+            HudWindow otherObj = (HudWindow)obj;
+
+            // Two windows are equal if the playername label is the same (and initialized)
+            return (otherObj.lblPlayerName.Text == this.lblPlayerName.Text &&
+                this.lblPlayerName.Text != "playerName");
+        }
+
+        public override int GetHashCode()
+        {
+            return lblPlayerName.Text.GetHashCode();
         }
 
     }

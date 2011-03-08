@@ -20,7 +20,7 @@ namespace PokerMuck
         private int preflopRaises;
         private bool HasPreflopRaisedThisRound;
 
-        private int preflopRaisesAndSawFlop;
+        private int opportunitiesToCBet;
 
         private int cbets;
         private bool HasCBetThisRound;
@@ -77,7 +77,7 @@ namespace PokerMuck
             voluntaryPutMoneyPreflop = 0;
             totalHandsPlayed = 0;
             preflopRaises = 0;
-            preflopRaisesAndSawFlop = 0;
+            opportunitiesToCBet = 0;
 
             PrepareStatisticsForNewRound();
         }
@@ -98,18 +98,21 @@ namespace PokerMuck
             return (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
         }
 
-        /* How many times has the player made a continuation bet following a preflop raise? */
+        /* How many times has the player made a continuation bet following a preflop raise?
+         * Usually people will hit their hand 20% of the times, so default is 0.2 */
         public float GetCBetRatio()
         {
-            if (preflopRaises == 0) return 0.0f;
+            if (opportunitiesToCBet == 0) return 0.2f;
 
-            return (float)cbets / (float)preflopRaisesAndSawFlop;
+            return (float)cbets / (float)opportunitiesToCBet;
         }
 
         /* How many times has a player folded to a continuation bet? */
         public float GetFoldToACBetRatio()
         {
-            if (raisesToACBet + callsToACBet == 0.0f) return 0.0f;
+            if (foldsToACBet > 0 && raisesToACBet + callsToACBet == 0.0f) return 1.0f;
+            else if (foldsToACBet + raisesToACBet + callsToACBet == 0.0f) return 0.5f; // Default, 50/50
+            else if (raisesToACBet + callsToACBet == 0.0f) return 0.0f;
 
             return (float)foldsToACBet / (float)(raisesToACBet + callsToACBet);
         }
@@ -122,28 +125,6 @@ namespace PokerMuck
             return (float)preflopRaises / (float)totalHandsPlayed;
         }
         
-        /* This player has raised, increment the stats */
-        public void HasRaised(HoldemGamePhase gamePhase){
-            if (gamePhase == HoldemGamePhase.Preflop)
-            {
-                CheckForVoluntaryPutMoneyPreflop();
-                CheckForPreflopRaise();
-            }
-
-            IncrementStatistics(raises, gamePhase);
-        }
-
-        /* Has bet */
-        public void HasBet(HoldemGamePhase gamePhase)
-        {
-            if (gamePhase == HoldemGamePhase.Preflop)
-            {
-                CheckForVoluntaryPutMoneyPreflop();
-            }
-
-            IncrementStatistics(bets, gamePhase);
-        }
-
         /* Has limped */
         public void CheckForLimp()
         {
@@ -172,6 +153,29 @@ namespace PokerMuck
             raisesToACBet += 1;
         }
 
+        /* This player has raised, increment the stats */
+        public void HasRaised(HoldemGamePhase gamePhase)
+        {
+            if (gamePhase == HoldemGamePhase.Preflop)
+            {
+                CheckForVoluntaryPutMoneyPreflop();
+                CheckForPreflopRaise();
+            }
+
+            IncrementStatistics(raises, gamePhase);
+        }
+
+        /* Has bet */
+        public void HasBet(HoldemGamePhase gamePhase)
+        {
+            if (gamePhase == HoldemGamePhase.Preflop)
+            {
+                CheckForVoluntaryPutMoneyPreflop();
+            }
+
+            IncrementStatistics(bets, gamePhase);
+        }
+
         /* Has checked */
         public void HasChecked(HoldemGamePhase gamePhase)
         {
@@ -186,6 +190,15 @@ namespace PokerMuck
             {
                 CheckForVoluntaryPutMoneyPreflop();
             }
+            else if (gamePhase == HoldemGamePhase.Flop)
+            {
+                if (HasPreflopRaisedThisRound)
+                {
+                    // Somebody has bet before us on the flop and we called
+                    // Thus we missed an opportunity to cbet
+                    opportunitiesToCBet -= 1;
+                }
+            }
 
 
             IncrementStatistics(calls, gamePhase);
@@ -199,7 +212,7 @@ namespace PokerMuck
                 if (HasPreflopRaisedThisRound)
                 {
                     // We have raised preflop, but then we folded
-                    preflopRaisesAndSawFlop -= 1;
+                    opportunitiesToCBet -= 1;
                 }
             }
 
@@ -242,14 +255,14 @@ namespace PokerMuck
             {
                 HasPreflopRaisedThisRound = true;
                 preflopRaises += 1;
-                preflopRaisesAndSawFlop += 1; // Assume we see the flop
+                opportunitiesToCBet += 1; // Assume we see the flop and everybody checks on us
             }
         }
 
         /* Helper function to increment the value in one of the hash tables (calls, raises, folds, etc.) */
         private void IncrementStatistics(Hashtable table, HoldemGamePhase gamePhase)
         {
-            table[gamePhase] = (int)table[gamePhase] + 1;
+            if (table != null) table[gamePhase] = (int)table[gamePhase] + 1;
         }
 
         /* Certain statistics are round specific (for example a person can only limp once per round)
