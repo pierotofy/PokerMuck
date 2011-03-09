@@ -71,10 +71,25 @@ namespace PokerMuck
 
         }
 
+        /* Given the name of a category, returns an integer indicating its ordering
+         * 0 = first, inf = last */
+        protected abstract int GetCategoryOrder(String category);
+
+        /* How should the statistics categories be ordered? */
+        protected int CompareCategories(String category1, String category2)
+        {
+            int order1 = GetCategoryOrder(category1);
+            int order2 = GetCategoryOrder(category2);
+
+            if (order1 == order2) return 0;
+            else if (order1 < order2) return -1;
+            else return 1;
+        }
+
         /* Returns all the statistics available for the current player */
         public virtual PlayerStatistics GetStatistics()
         {
-            PlayerStatistics result = new PlayerStatistics();
+            PlayerStatistics result = new PlayerStatistics(CompareCategories);
             result.Set(new StatisticsNumberData("Total Hands Played", totalHandsPlayed, "Summary"));
             return result;
         }

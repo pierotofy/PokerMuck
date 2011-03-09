@@ -12,9 +12,13 @@ namespace PokerMuck
     {
         private Hashtable table;
 
-        public PlayerStatistics()
+        private Comparison<String> categorySortRoutine;
+
+        /* categorySortRoutine decides the order that categories need to be sorted */
+        public PlayerStatistics(Comparison<String> categorySortRoutine = null)
         {
             table = new Hashtable();
+            this.categorySortRoutine = categorySortRoutine;
         }
 
         
@@ -48,7 +52,7 @@ namespace PokerMuck
                 }
             }
 
-            // TODO sort?
+            // TODO
 
             return result;
         }
@@ -68,7 +72,7 @@ namespace PokerMuck
                 }                
             }
 
-            // TODO sort?
+            if (categorySortRoutine != null) result.Sort(categorySortRoutine);
 
             // Return 
             return result;

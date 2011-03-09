@@ -390,6 +390,19 @@ namespace PokerMuck
             table[HoldemGamePhase.River] = 0;
         }
 
+        protected override int GetCategoryOrder(string category)
+        {
+            switch (category)
+            {
+                case "Summary": return 0;
+                case "Preflop": return 1;
+                case "Flop": return 2;
+                case "Turn": return 3;
+                case "River": return 4;
+                default: return 5;
+            }
+        }
+
         /* Returns the statistics of the player */
         public override PlayerStatistics GetStatistics()
         {
