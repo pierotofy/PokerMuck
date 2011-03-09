@@ -144,7 +144,7 @@ namespace PokerMuck
 
         private void lblTotalHandsPlayed_MouseUp(object sender, MouseEventArgs e)
         {
-            HudWindow_MouseDown(sender, e);
+            HudWindow_MouseUp(sender, e);
         }
 
         private void lblTotalHandsPlayed_MouseMove(object sender, MouseEventArgs e)

@@ -145,7 +145,7 @@ namespace PokerMuck
             if (actionsToACbet == 0) return new StatisticsUnknownData("Folds to a continuation bet", "Flop");
             else
             {
-                return new StatisticsPercentageData("Folds to a continuatino bet",
+                return new StatisticsPercentageData("Folds to a continuation bet",
                     (float)foldsToACBet / (float)(raisesToACBet + callsToACBet + foldsToACBet),
                     "Flop");
             }

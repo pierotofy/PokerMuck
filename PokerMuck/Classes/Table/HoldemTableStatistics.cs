@@ -52,13 +52,14 @@ namespace PokerMuck
             
             if (gamePhase == HoldemGamePhase.Flop)
             {
-                PlayerRaisedTheFlopThisRound = true;
-
                 // Has somebody cbet?
                 if (!PlayerRaisedTheFlopThisRound && PlayerCBetThisRound)
                 {
                     p.IncrementRaiseToACBet();
                 }
+
+                PlayerRaisedTheFlopThisRound = true;
+
             }
 
             
