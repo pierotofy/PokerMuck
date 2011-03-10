@@ -11,55 +11,45 @@ namespace PokerMuck
     class HoldemPlayer : Player
     {
         /* Limp */
-
-        private int limps;
-        private bool HasLimpedThisRound;
+        private ValueCounter limps;
 
         /* VPF */
-        
-        private int voluntaryPutMoneyPreflop;
-        private bool HasVoluntaryPutMoneyPreflopThisRound;
+        private ValueCounter voluntaryPutMoneyPreflop;
 
-        /* Preflop raises */
-        
-        private int preflopRaises;
-        private bool HasPreflopRaisedThisRound;
+        /* Raises */
+        private MultipleValueCounter raises;
                 
         /* C Bets */ 
         private int opportunitiesToCBet;
 
-        private int cbets;
-        private bool HasCBetThisRound;
+        private ValueCounter cbets;
 
         private int foldsToACBet;
         private int callsToACBet;
         private int raisesToACBet;
 
+        /* Checks */
+        private MultipleValueCounter checks;
+
         /* Check-raise */
+        private MultipleValueCounter checkRaises;
+
         
-        private bool HasCheckedTheFlopThisRound;
-        private bool HasCheckRaisedTheFlopThisRound;
-        private int flopCheckRaises;
-
-        private bool HasCheckRaisedTheTurnThisRound;
-        private bool HasCheckedTheTurnThisRound;
-        private int turnCheckRaises;
-
-        private bool HasCheckedTheRiverThisRound;
-        private bool HasCheckRaisedTheRiverThisRound;
-        private int riverCheckRaises;
-
+        private int sawFlop;
+        private int sawTurn;
+        private int sawRiver;
+        
 
         /* Each table is set this way:
          key => value
          GamePhase => value
          Ex. calls[flop] == 4 --> player has flat called 4 times during the flop
          */
-        private Hashtable calls;
-        private Hashtable bets;
-        private Hashtable folds;
-        private Hashtable raises;
-        private Hashtable checks;
+        private Hashtable totalCalls;
+        private Hashtable totalBets;
+        private Hashtable totalFolds;
+        private Hashtable totalRaises;
+        private Hashtable totalChecks;
 
 
         public bool IsBigBlind { get; set; }
@@ -69,12 +59,21 @@ namespace PokerMuck
         public HoldemPlayer(String playerName)
             : base(playerName)
         {
-            calls = new Hashtable(5);
-            bets = new Hashtable(5);
-            folds = new Hashtable(5);
-            raises = new Hashtable(5);
-            checks = new Hashtable(5);
+            totalCalls = new Hashtable(5);
+            totalBets = new Hashtable(5);
+            totalFolds = new Hashtable(5);
+            totalRaises = new Hashtable(5);
+            totalChecks = new Hashtable(5);
 
+            limps = new ValueCounter();
+            voluntaryPutMoneyPreflop = new ValueCounter();
+
+            raises = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checkRaises = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checks = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+
+            cbets = new ValueCounter();
+            
             ResetAllStatistics();
         }
 
@@ -83,26 +82,29 @@ namespace PokerMuck
         {
             base.ResetAllStatistics();
 
-            ResetStatistics(calls);
-            ResetStatistics(bets);
-            ResetStatistics(folds);
-            ResetStatistics(raises);
-            ResetStatistics(checks);
-            limps = 0;
-            cbets = 0;
+            ResetStatistics(totalCalls);
+            ResetStatistics(totalBets);
+            ResetStatistics(totalFolds);
+            ResetStatistics(totalRaises);
+            ResetStatistics(totalChecks);
+
+            limps.Reset();
+            voluntaryPutMoneyPreflop.Reset();
+            raises.Reset();
+            cbets.Reset();
 
             callsToACBet = 0;
             foldsToACBet = 0;
             raisesToACBet = 0;
 
-            voluntaryPutMoneyPreflop = 0;
+            sawFlop = 0;
+            sawTurn = 0;
+            sawRiver = 0;
+
             totalHandsPlayed = 0;
-            preflopRaises = 0;
             opportunitiesToCBet = 0;
 
-            flopCheckRaises = 0;
-            turnCheckRaises = 0;
-            riverCheckRaises = 0;
+            checkRaises.Reset();
 
             PrepareStatisticsForNewRound();
         }
@@ -113,7 +115,7 @@ namespace PokerMuck
             float limpRatio = 0;
 
             if (totalHandsPlayed == 0) limpRatio = 0;
-            else limpRatio = (float)limps / (float)totalHandsPlayed;
+            else limpRatio = (float)limps.Value / (float)totalHandsPlayed;
             
             return new StatisticsPercentageData("Limp", limpRatio, "Preflop");
         }
@@ -124,7 +126,7 @@ namespace PokerMuck
             float vpfRatio = 0;
 
             if (totalHandsPlayed == 0) vpfRatio = 0;
-            else vpfRatio = (float)voluntaryPutMoneyPreflop / (float)totalHandsPlayed;
+            else vpfRatio = (float)voluntaryPutMoneyPreflop.Value / (float)totalHandsPlayed;
             return new StatisticsPercentageData("Voluntary Put $", vpfRatio, "Preflop");
         }
 
@@ -133,7 +135,7 @@ namespace PokerMuck
         {
             if (opportunitiesToCBet == 0) return new StatisticsUnknownData("Continuation bets", "Flop");
 
-            float cbetsRatio = (float)cbets / (float)opportunitiesToCBet;
+            float cbetsRatio = (float)cbets.Value / (float)opportunitiesToCBet;
             return new StatisticsPercentageData("Continuation bets", cbetsRatio, "Flop");
         }
 
@@ -157,25 +159,26 @@ namespace PokerMuck
             float pfrRatio = 0;
 
             if (totalHandsPlayed == 0) pfrRatio = 0;
-            else pfrRatio = (float)preflopRaises / (float)totalHandsPlayed;
+            else pfrRatio = (float)raises[HoldemGamePhase.Preflop].Value / (float)totalHandsPlayed;
 
             return new StatisticsPercentageData("Raises", pfrRatio, "Preflop");
+        }
+
+        /* How many times has the player raised? */
+        public StatisticsData GetRaiseStats(HoldemGamePhase phase, String category)
+        {
+            return null; // TODO
         }
 
         /* How many times has the player check raised? */
         public StatisticsData GetCheckRaiseStats(HoldemGamePhase phase, String category)
         {
-            int totalChecks = (int)checks[phase];
+            int totalChecksSoFar = (int)totalChecks[phase];
 
-            if (totalChecks == 0) return new StatisticsUnknownData("Check Raise", category);
+            if (totalChecksSoFar == 0) return new StatisticsUnknownData("Check Raise", category);
             else
             {
-                float checkRaiseRatio = 0;
-
-                if (phase == HoldemGamePhase.Flop) checkRaiseRatio = (float)flopCheckRaises / (float)totalChecks;
-                else if (phase == HoldemGamePhase.Turn) checkRaiseRatio = (float)turnCheckRaises / (float)totalChecks;
-                else if (phase == HoldemGamePhase.River) checkRaiseRatio = (float)riverCheckRaises / (float)totalChecks;
-                else Debug.Assert(false, "Calculating a check raise for a game phase that doesn't make sense");
+                float checkRaiseRatio = (float)checkRaises[phase].Value / (float)totalChecksSoFar;
 
                 return new StatisticsPercentageData("Check Raise", checkRaiseRatio, category);
             }
@@ -185,10 +188,9 @@ namespace PokerMuck
         public void CheckForLimp()
         {
             /* If he's not the small or big blind, this is also a limp */
-            if (!IsSmallBlind && !IsBigBlind && !HasLimpedThisRound)
+            if (!IsSmallBlind && !IsBigBlind)
             {
-                limps += 1;
-                HasLimpedThisRound = true;
+                limps.Increment();
             }
         }
 
@@ -217,35 +219,16 @@ namespace PokerMuck
                 CheckForVoluntaryPutMoneyPreflop();
                 CheckForPreflopRaise();
             }
-            else if (gamePhase == HoldemGamePhase.Flop)
-            {
-                // Check raise?
-                if (HasCheckedTheFlopThisRound && !HasCheckRaisedTheFlopThisRound)
-                {
-                    flopCheckRaises += 1;
-                    HasCheckRaisedTheFlopThisRound = true;
-                }
-            }
-            else if (gamePhase == HoldemGamePhase.Turn)
-            {
-                // Check raise?
-                if (HasCheckedTheTurnThisRound && !HasCheckRaisedTheTurnThisRound)
-                {
-                    turnCheckRaises += 1;
-                    HasCheckRaisedTheTurnThisRound = true;
-                }
-            }
-            else if (gamePhase == HoldemGamePhase.River)
-            {
-                // Check raise?
-                if (HasCheckedTheRiverThisRound && !HasCheckRaisedTheRiverThisRound)
-                {
-                    riverCheckRaises += 1;
-                    HasCheckRaisedTheRiverThisRound = true;
-                }
-            }
 
-            IncrementStatistics(raises, gamePhase);
+            // Check raise?
+            if (checks[gamePhase].WasIncremented)
+            {
+                checkRaises[gamePhase].Increment();
+            }    
+
+            raises[gamePhase].Increment();
+
+            IncrementStatistics(totalRaises, gamePhase);
         }
 
         /* Has bet */
@@ -256,26 +239,15 @@ namespace PokerMuck
                 CheckForVoluntaryPutMoneyPreflop();
             }
 
-            IncrementStatistics(bets, gamePhase);
+            IncrementStatistics(totalBets, gamePhase);
         }
 
         /* Has checked */
         public void HasChecked(HoldemGamePhase gamePhase)
         {
-            if (gamePhase == HoldemGamePhase.Flop)
-            {
-                HasCheckedTheFlopThisRound = true;
-            }
-            else if (gamePhase == HoldemGamePhase.Turn)
-            {
-                HasCheckedTheTurnThisRound = true;
-            }
-            else if (gamePhase == HoldemGamePhase.River)
-            {
-                HasCheckedTheRiverThisRound = true;
-            }
+            checks[gamePhase].Increment();
 
-            IncrementStatistics(checks, gamePhase);
+            IncrementStatistics(totalChecks, gamePhase);
         }
 
         /* Has called */
@@ -287,7 +259,7 @@ namespace PokerMuck
             }
             else if (gamePhase == HoldemGamePhase.Flop)
             {
-                if (HasPreflopRaisedThisRound)
+                if (raises[HoldemGamePhase.Preflop].WasIncremented)
                 {
                     // Somebody has bet before us on the flop and we called
                     // Thus we missed an opportunity to cbet
@@ -296,7 +268,7 @@ namespace PokerMuck
             }
 
 
-            IncrementStatistics(calls, gamePhase);
+            IncrementStatistics(totalCalls, gamePhase);
         }
 
         /* Folded */
@@ -304,14 +276,14 @@ namespace PokerMuck
         {
             if (gamePhase == HoldemGamePhase.Preflop)
             {
-                if (HasPreflopRaisedThisRound)
+                if (raises[HoldemGamePhase.Preflop].WasIncremented)
                 {
                     // We have raised preflop, but then we folded
                     opportunitiesToCBet -= 1;
                 }
             }
 
-            IncrementStatistics(folds, gamePhase);
+            IncrementStatistics(totalFolds, gamePhase);
         }
 
 
@@ -321,11 +293,9 @@ namespace PokerMuck
         {
             /* This player has raised preflop and now has bet on the flop when first to act or when everybody
              * checked on him. This is a cbet */
-            if (HasPreflopRaisedThisRound && !HasCBetThisRound)
+            if (raises[HoldemGamePhase.Preflop].WasIncremented && !cbets.WasIncremented)
             {
-                HasCBetThisRound = true;
-                cbets += 1;
-
+                cbets.Increment();
                 return true;
             }
 
@@ -335,21 +305,16 @@ namespace PokerMuck
         /* Helper function to increment the VPF stat */
         private void CheckForVoluntaryPutMoneyPreflop()
         {
-            if (!HasVoluntaryPutMoneyPreflopThisRound)
-            {
-                HasVoluntaryPutMoneyPreflopThisRound = true;
-                voluntaryPutMoneyPreflop += 1;
-            }
+            voluntaryPutMoneyPreflop.Increment();
         }
 
 
         /* Helper function to increment the PFR stat */
         private void CheckForPreflopRaise()
         {
-            if (!HasPreflopRaisedThisRound)
+            if (!raises[HoldemGamePhase.Preflop].WasIncremented)
             {
-                HasPreflopRaisedThisRound = true;
-                preflopRaises += 1;
+                raises[HoldemGamePhase.Preflop].Increment();
                 opportunitiesToCBet += 1; // Assume we see the flop and everybody checks on us
             }
         }
@@ -368,16 +333,14 @@ namespace PokerMuck
 
             IsBigBlind = false;
             IsSmallBlind = false;
-            HasLimpedThisRound = false;
-            HasVoluntaryPutMoneyPreflopThisRound = false;
-            HasPreflopRaisedThisRound = false;
-            HasCBetThisRound = false;
-            HasCheckedTheFlopThisRound = false;
-            HasCheckedTheTurnThisRound = false;
-            HasCheckedTheRiverThisRound = false;
-            HasCheckRaisedTheFlopThisRound = false;
-            HasCheckRaisedTheTurnThisRound = false;
-            HasCheckRaisedTheRiverThisRound = false;
+            limps.AllowIncrement();
+            voluntaryPutMoneyPreflop.AllowIncrement();
+            raises.AllowIncrement();
+            cbets.AllowIncrement();
+
+            checkRaises.AllowIncrement();
+
+            checks.AllowIncrement();
         }       
 
 
@@ -417,6 +380,8 @@ namespace PokerMuck
             result.Set(GetCheckRaiseStats(HoldemGamePhase.Flop, "Flop"));
             result.Set(GetCheckRaiseStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetCheckRaiseStats(HoldemGamePhase.River, "River"));
+
+
 
             return result;
         }
