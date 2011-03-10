@@ -34,10 +34,11 @@ namespace PokerMuck
         /* Check-raise */
         private MultipleValueCounter checkRaises;
 
-        
-        private int sawFlop;
-        private int sawTurn;
-        private int sawRiver;
+        /* Check-fold */
+        private MultipleValueCounter checkFolds;
+
+        /* How many times have we seen a particular street? */
+        private MultipleValueCounter sawStreet;
         
 
         /* Each table is set this way:
@@ -70,7 +71,9 @@ namespace PokerMuck
 
             raises = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checkRaises = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checkFolds = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checks = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            sawStreet = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
 
             cbets = new ValueCounter();
             
@@ -92,19 +95,18 @@ namespace PokerMuck
             voluntaryPutMoneyPreflop.Reset();
             raises.Reset();
             cbets.Reset();
+            sawStreet.Reset();
 
             callsToACBet = 0;
             foldsToACBet = 0;
             raisesToACBet = 0;
 
-            sawFlop = 0;
-            sawTurn = 0;
-            sawRiver = 0;
 
             totalHandsPlayed = 0;
             opportunitiesToCBet = 0;
 
             checkRaises.Reset();
+            checkFolds.Reset();
 
             PrepareStatisticsForNewRound();
         }
@@ -153,21 +155,15 @@ namespace PokerMuck
             }
         }
 
-        /* How many times has the player raised preflop? */
-        public StatisticsData GetPFRStats()
-        {
-            float pfrRatio = 0;
-
-            if (totalHandsPlayed == 0) pfrRatio = 0;
-            else pfrRatio = (float)raises[HoldemGamePhase.Preflop].Value / (float)totalHandsPlayed;
-
-            return new StatisticsPercentageData("Raises", pfrRatio, "Preflop");
-        }
-
         /* How many times has the player raised? */
         public StatisticsData GetRaiseStats(HoldemGamePhase phase, String category)
         {
-            return null; // TODO
+            if (sawStreet[phase].Value == 0) return new StatisticsUnknownData("Raises", category);
+            else
+            {
+                float raiseRatio =  (float)raises[phase].Value / (float)sawStreet[phase].Value;
+                return new StatisticsPercentageData("Raises", raiseRatio, category);
+            }
         }
 
         /* How many times has the player check raised? */
@@ -181,6 +177,20 @@ namespace PokerMuck
                 float checkRaiseRatio = (float)checkRaises[phase].Value / (float)totalChecksSoFar;
 
                 return new StatisticsPercentageData("Check Raise", checkRaiseRatio, category);
+            }
+        }
+
+        /* How many times has the player check folded? */
+        public StatisticsData GetCheckFoldStats(HoldemGamePhase phase, String category)
+        {
+            int totalChecksSoFar = (int)totalChecks[phase];
+
+            if (totalChecksSoFar == 0) return new StatisticsUnknownData("Check Fold", category);
+            else
+            {
+                float checkFoldRatio = (float)checkFolds[phase].Value / (float)totalChecksSoFar;
+
+                return new StatisticsPercentageData("Check Fold", checkFoldRatio, category);
             }
         }
         
@@ -229,6 +239,7 @@ namespace PokerMuck
             raises[gamePhase].Increment();
 
             IncrementStatistics(totalRaises, gamePhase);
+            sawStreet[gamePhase].Increment();
         }
 
         /* Has bet */
@@ -240,6 +251,7 @@ namespace PokerMuck
             }
 
             IncrementStatistics(totalBets, gamePhase);
+            sawStreet[gamePhase].Increment();
         }
 
         /* Has checked */
@@ -248,6 +260,7 @@ namespace PokerMuck
             checks[gamePhase].Increment();
 
             IncrementStatistics(totalChecks, gamePhase);
+            sawStreet[gamePhase].Increment();
         }
 
         /* Has called */
@@ -269,6 +282,7 @@ namespace PokerMuck
 
 
             IncrementStatistics(totalCalls, gamePhase);
+            sawStreet[gamePhase].Increment();
         }
 
         /* Folded */
@@ -283,7 +297,14 @@ namespace PokerMuck
                 }
             }
 
+            // Check fold?
+            if (checks[gamePhase].WasIncremented)
+            {
+                checkFolds[gamePhase].Increment();
+            }  
+
             IncrementStatistics(totalFolds, gamePhase);
+            sawStreet[gamePhase].Increment();
         }
 
 
@@ -339,8 +360,10 @@ namespace PokerMuck
             cbets.AllowIncrement();
 
             checkRaises.AllowIncrement();
+            checkFolds.AllowIncrement();
 
             checks.AllowIncrement();
+            sawStreet.AllowIncrement();
         }       
 
 
@@ -373,7 +396,10 @@ namespace PokerMuck
 
             result.Set(GetVPFStats());
             result.Set(GetLimpStats());
-            result.Set(GetPFRStats());
+            result.Set(GetRaiseStats(HoldemGamePhase.Preflop, "Preflop"));
+            result.Set(GetRaiseStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetRaiseStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetRaiseStats(HoldemGamePhase.River, "River"));
             result.Set(GetCBetStats());
             result.Set(GetFoldToACBetStats());
 
@@ -381,7 +407,9 @@ namespace PokerMuck
             result.Set(GetCheckRaiseStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetCheckRaiseStats(HoldemGamePhase.River, "River"));
 
-
+            result.Set(GetCheckFoldStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetCheckFoldStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetCheckFoldStats(HoldemGamePhase.River, "River"));
 
             return result;
         }
