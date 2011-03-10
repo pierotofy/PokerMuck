@@ -25,6 +25,9 @@ namespace PokerMuck
         /* Table list */
         private List<Table> tables;
 
+        /* Player's database */
+        private PlayerDatabase playerDatabase;
+
         /* Configuration */
         private PokerMuckUserSettings userSettings;
         public PokerMuckUserSettings UserSettings { get { return userSettings; } }
@@ -75,6 +78,9 @@ namespace PokerMuck
             // Initialize the list of tables (no more than 20 concurrent games to begin with right?)
             tables = new List<Table>(20);
 
+            // Initialize the database
+            playerDatabase = new PlayerDatabase();
+
             // Initialize the user configuration 
             userSettings = new PokerMuckUserSettings();
 
@@ -99,7 +105,7 @@ namespace PokerMuck
 
             String filename = "test.txt";
             //String filename = "HH20110305 T371715473 No Limit Hold'em €4.46 + €0.54.txt";
-            Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient);
+            Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient, playerDatabase);
             newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
             newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
             tables.Add(newTable);
@@ -258,7 +264,7 @@ namespace PokerMuck
                     if (table == null)
                     {
                         // First time we see it, we need to create a table for this request
-                        Table newTable = new Table(filename, windowTitle, windowRect, pokerClient);
+                        Table newTable = new Table(filename, windowTitle, windowRect, pokerClient, playerDatabase);
 
                         // Set a handler that notifies us of data changes
                         newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);

@@ -17,15 +17,15 @@ namespace PokerMuck
             players = new List<Player>();
         }
 
-        public bool Contains(String playerName)
+        public bool Contains(String playerName, PokerGameType gameType)
         {
-            Player p = Find(playerName);
+            Player p = Find(playerName, gameType);
             return p != null;
         }
 
-        public Player Retrieve(String playerName)
+        public Player Retrieve(String playerName, PokerGameType gameType)
         {
-            Player p = Find(playerName);
+            Player p = Find(playerName, gameType);
 
             Debug.Assert(p != null, "Player " + playerName + " doesn't exist in our database");
             return p;
@@ -47,27 +47,15 @@ namespace PokerMuck
             }
         }
 
-        /* Remove a player from the table */
-        private void RemovePlayer(String playerName)
-        {
-            players.RemoveAll(
-                delegate(Player p)
-                {
-                    return p.Name == playerName;
-                }
-            );
-
-        }
-
-        /* Finds a player given its player name
+        /* Finds a player given its player name and type of game
          * It could return null */
-        private Player Find(String playerName)
+        private Player Find(String playerName, PokerGameType gameType)
         {
             // Has this player already been added?
             Player result = players.Find(
                  delegate(Player p)
                  {
-                     return p.Name == playerName;
+                     return p.Name == playerName && p.GameType == gameType;
                  }
             );
 

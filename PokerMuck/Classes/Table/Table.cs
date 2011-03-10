@@ -13,6 +13,9 @@ namespace PokerMuck
         /* What client is table using? */
         private PokerClient pokerClient;
 
+        /* Reference to the player's database */
+        PlayerDatabase playerDatabase;
+
         /* Holds a list of the players currently seated at the table
          * Note that they're going to be added in order of seating
          * (Seat #1 Player will be stored as the first element) */
@@ -80,7 +83,7 @@ namespace PokerMuck
         }
         
 
-        public Table(String handHistoryFilename, String windowTitle, Rectangle windowRect, PokerClient pokerClient)
+        public Table(String handHistoryFilename, String windowTitle, Rectangle windowRect, PokerClient pokerClient, PlayerDatabase playerDatabase)
         {
             this.handHistoryFilename = handHistoryFilename;
             this.WindowTitle = windowTitle;
@@ -89,6 +92,7 @@ namespace PokerMuck
             this.TableId = String.Empty; // We don't know yet
             this.GameType = PokerGameType.Unknown; // We don't know
             this.statistics = new TableStatistics(this); // We don't know what specific kind
+            this.playerDatabase = playerDatabase;
             this.WindowRect = windowRect;
             this.Hud = new Hud(this);
 
@@ -143,7 +147,7 @@ namespace PokerMuck
         void handHistoryParser_PlayerIsSeated(string playerName, int seatNumber)
         {
             Debug.Print("Player added: {0}", playerName);
-            AddPlayer(playerName);
+            CreatePlayer(playerName);
 
             // Make sure he is still playing
             Player p = FindPlayer(playerName);
@@ -257,7 +261,11 @@ namespace PokerMuck
                     PlayerList.Remove(p);
 
                     // If the player has a hud associated, also mark that hud as disposable
-                    if (p.HudWindow != null) p.HudWindow.DisposeFlag = true;
+                    if (p.HudWindow != null)
+                    {
+                        p.HudWindow.DisposeFlag = true;
+                        p.HudWindow = null;
+                    }
                 }
             }
 
@@ -269,15 +277,34 @@ namespace PokerMuck
 
 
         /* Adds a player to the table. If a player has already been added with the same name, this method
-         * ignores the request */
-        private void AddPlayer(String playerName)
+         * ignores the request. If the player exists in our database, instead of creating a new player it loads the information
+         * from the database */
+        private void CreatePlayer(String playerName)
         {
+            // Is this player already in the table's player's list?
             Player result = FindPlayer(playerName);
 
             // We found a new player. Yay!
             if (result == null)
             {
-                playerList.Add(PlayerFactory.CreatePlayer(playerName, GameType));
+                // Do we need to create a new one?
+                if (!playerDatabase.Contains(playerName, GameType))
+                {
+                    // Create a new player
+                    Player p = PlayerFactory.CreatePlayer(playerName, GameType); 
+                    playerList.Add(p);
+
+                    // Also add it to our database
+                    playerDatabase.Store(p);
+                }
+                else
+                {
+                    // No, we have the player in our database
+                    Player p = playerDatabase.Retrieve(playerName, GameType);
+                    playerList.Add(p);
+
+                    Debug.Print("Retrieved " + playerName + " from our database!");
+                }
             }
         }
 

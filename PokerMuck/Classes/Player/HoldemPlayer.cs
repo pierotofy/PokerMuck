@@ -56,6 +56,14 @@ namespace PokerMuck
         public bool IsBigBlind { get; set; }
         public bool IsSmallBlind { get; set; }
 
+        public override PokerGameType GameType
+        {
+            get
+            {
+                return PokerGameType.Holdem;
+            }
+        }
+
         
         public HoldemPlayer(String playerName)
             : base(playerName)

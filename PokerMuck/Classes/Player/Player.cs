@@ -34,6 +34,9 @@ namespace PokerMuck
         /* What seat # is the player seated at? 
            -1 = Unknown or none */
         public int SeatNumber { get; set; }
+
+        /* What game type are we playing? */
+        public virtual PokerGameType GameType { get { return PokerGameType.Unknown; } }
         
         public Player(String name)
         {
