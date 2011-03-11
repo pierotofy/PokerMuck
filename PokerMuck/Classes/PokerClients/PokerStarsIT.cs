@@ -66,6 +66,9 @@ namespace PokerMuck
                 regex.Add("hand_history_detect_small_blind", @"(?<playerName>[^:]+): posts small blind (?<smallBlindAmount>[\d]+)");
                 regex.Add("hand_history_detect_big_blind", @"(?<playerName>[^:]+): posts big blind (?<bigBlindAmount>[\d]+)");
 
+                /* Detect who the button is */
+                regex.Add("hand_history_detect_button", @"#(?<seatNumber>[\d]+) is the button");
+
 
                 /* Detect calls
                  * ex. stallion089: calls 10 */

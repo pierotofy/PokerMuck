@@ -350,7 +350,6 @@ namespace PokerMuck
         {
             PokerClientsList.Add(new FullTilt());
             PokerClientsList.Add(new PokerStarsIT());
-
         }
 
         // Cleanup stuff

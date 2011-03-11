@@ -44,6 +44,21 @@ namespace PokerMuck
             ((HoldemHHParser)parser).PlayerFolded += new HoldemHHParser.PlayerFoldedHandler(handHistoryParser_PlayerFolded);
             ((HoldemHHParser)parser).PlayerRaised += new HoldemHHParser.PlayerRaisedHandler(handHistoryParser_PlayerRaised);
             ((HoldemHHParser)parser).PlayerChecked += new HoldemHHParser.PlayerCheckedHandler(handHistoryParser_PlayerChecked);
+            ((HoldemHHParser)parser).FoundButton += new HoldemHHParser.FoundButtonHandler(handHistoryParser_FoundButton);
+
+        }
+
+        void handHistoryParser_FoundButton(int seatNumber)
+        {
+            // The player that is seating at seatNumber gets the button
+            foreach (HoldemPlayer p in table.PlayerList)
+            {
+                if (p.SeatNumber == seatNumber)
+                {
+                    p.IsButton = true;
+                    break;
+                }            
+            }
         }
 
         void handHistoryParser_PlayerRaised(string playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)

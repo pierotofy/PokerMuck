@@ -37,6 +37,10 @@ namespace PokerMuck
         /* Check-fold */
         private MultipleValueCounter checkFolds;
 
+        /* Check-call */
+        private MultipleValueCounter checkCalls;
+
+
         /* How many times have we seen a particular street? */
         private MultipleValueCounter sawStreet;
         
@@ -55,6 +59,8 @@ namespace PokerMuck
 
         public bool IsBigBlind { get; set; }
         public bool IsSmallBlind { get; set; }
+        public bool IsButton { get; set; }
+
 
         public override PokerGameType GameType
         {
@@ -80,6 +86,7 @@ namespace PokerMuck
             raises = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checkRaises = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checkFolds = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checkCalls = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checks = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             sawStreet = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
 
@@ -115,6 +122,7 @@ namespace PokerMuck
 
             checkRaises.Reset();
             checkFolds.Reset();
+            checkCalls.Reset();
 
             PrepareStatisticsForNewRound();
         }
@@ -199,6 +207,20 @@ namespace PokerMuck
                 float checkFoldRatio = (float)checkFolds[phase].Value / (float)totalChecksSoFar;
 
                 return new StatisticsPercentageData("Check Fold", checkFoldRatio, category);
+            }
+        }
+
+        /* How many times has the player check called? */
+        public StatisticsData GetCheckCallStats(HoldemGamePhase phase, String category)
+        {
+            int totalChecksSoFar = (int)totalChecks[phase];
+
+            if (totalChecksSoFar == 0) return new StatisticsUnknownData("Check Call", category);
+            else
+            {
+                float checkCallRatio = (float)checkCalls[phase].Value / (float)totalChecksSoFar;
+
+                return new StatisticsPercentageData("Check Call", checkCallRatio, category);
             }
         }
         
@@ -288,6 +310,11 @@ namespace PokerMuck
                 }
             }
 
+            // Check call?
+            if (checks[gamePhase].WasIncremented)
+            {
+                checkCalls[gamePhase].Increment();
+            }  
 
             IncrementStatistics(totalCalls, gamePhase);
             sawStreet[gamePhase].Increment();
@@ -362,6 +389,7 @@ namespace PokerMuck
 
             IsBigBlind = false;
             IsSmallBlind = false;
+            IsButton = false;
             limps.AllowIncrement();
             voluntaryPutMoneyPreflop.AllowIncrement();
             raises.AllowIncrement();
@@ -369,6 +397,7 @@ namespace PokerMuck
 
             checkRaises.AllowIncrement();
             checkFolds.AllowIncrement();
+            checkCalls.AllowIncrement();
 
             checks.AllowIncrement();
             sawStreet.AllowIncrement();
@@ -418,6 +447,12 @@ namespace PokerMuck
             result.Set(GetCheckFoldStats(HoldemGamePhase.Flop, "Flop"));
             result.Set(GetCheckFoldStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetCheckFoldStats(HoldemGamePhase.River, "River"));
+
+            result.Set(GetCheckCallStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetCheckCallStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetCheckCallStats(HoldemGamePhase.River, "River"));
+
+
 
             return result;
         }

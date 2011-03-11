@@ -87,6 +87,15 @@ namespace PokerMuck
             if (PlayerChecked != null) PlayerChecked(playerName, gamePhase);
         }
 
+        /* We found the button */
+        public delegate void FoundButtonHandler(int seatNumber);
+        public event FoundButtonHandler FoundButton;
+
+        protected void OnFoundButton(int seatNumber)
+        {
+            if (FoundButton != null) FoundButton(seatNumber);
+        }
+
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
         {
             
@@ -238,6 +247,13 @@ namespace PokerMuck
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
                 OnFoundBigBlind(playerName, amount);
+            }
+
+            /* Find the button */
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_button"), out matchResult))
+            {
+                int seatNumber = Int32.Parse(matchResult.Groups["seatNumber"].Value);
+                OnFoundButton(seatNumber);
             }
         }
 
