@@ -9,9 +9,8 @@ namespace PokerMuck
     class StatisticsUnknownData : StatisticsData
     {
         public StatisticsUnknownData(String name, String category = "")
-            : base(name, -1, category)
+            : base(name, 0, category)
         {
-
         }
 
         public override string GetValue()

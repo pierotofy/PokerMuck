@@ -107,6 +107,7 @@
     <Compile Include="Classes\Settings\HudUserSettings.cs" />
     <Compile Include="Classes\Statistics\MultipleValueCounter.cs" />
     <Compile Include="Classes\Statistics\StatisticsData.cs" />
+    <Compile Include="Classes\Statistics\StatisticsDescriptiveData.cs" />
     <Compile Include="Classes\Statistics\StatisticsNumberData.cs" />
     <Compile Include="Classes\Statistics\StatisticsPercentageData.cs" />
     <Compile Include="Classes\Statistics\StatisticsUnknownData.cs" />

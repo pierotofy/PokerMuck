@@ -11,7 +11,7 @@ namespace PokerMuck
      * For example, if we need to keep track of raises, we might be interested into 
      * knowing the raises preflop, on the flop, on the turn, etc.
      * These represent the same value, but on different situations */
-    class MultipleValueCounter
+    class MultipleValueCounter : ICloneable
     {
         Hashtable table;
 
@@ -53,6 +53,21 @@ namespace PokerMuck
             {
                 c.AllowIncrement();
             }
+        }
+
+        /* Deep copy required */
+        public object Clone()
+        {
+            MultipleValueCounter copy = new MultipleValueCounter();
+            copy.table = new Hashtable(this.table.Keys.Count);
+
+            // Clone all members of the table
+            foreach (int domain in this.table.Keys)
+            {
+                copy.table[domain] = ((ValueCounter)this.table[domain]).Clone();
+            }
+
+            return copy;
         }
 
     }

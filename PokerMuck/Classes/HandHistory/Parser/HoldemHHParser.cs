@@ -117,29 +117,39 @@ namespace PokerMuck
             /* Detect raises, calls, folds, bets */
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_call"), out matchResult))
             {
+                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a call during an impossible game phase");
+
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["amount"].Value);
                 OnPlayerCalled(playerName, amount, currentGamePhase);
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_bet"), out matchResult))
             {
+                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a bet during an impossible game phase");
+
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["amount"].Value);
                 OnPlayerBet(playerName, amount, currentGamePhase);
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_fold"), out matchResult))
             {
+                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a fold during an impossible game phase");
+
                 String playerName = matchResult.Groups["playerName"].Value;
                 OnPlayerFolded(playerName, currentGamePhase);
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_check"), out matchResult))
             {
+                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a check during an impossible game phase");
+
                 String playerName = matchResult.Groups["playerName"].Value;
                 OnPlayerChecked(playerName, currentGamePhase);
             }
 
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_raise"), out matchResult))
             {
+                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a raise during an impossible game phase");
+
                 String playerName = matchResult.Groups["playerName"].Value;
                 float initialPot = float.Parse(matchResult.Groups["initialPot"].Value);
                 float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);

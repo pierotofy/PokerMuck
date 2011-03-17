@@ -74,7 +74,6 @@ namespace PokerMuck
                 }
 
                 PlayerRaisedTheFlopThisRound = true;
-
             }
 
             
@@ -97,6 +96,13 @@ namespace PokerMuck
         void handHistoryParser_PlayerChecked(string playerName, HoldemGamePhase gamePhase)
         {
             HoldemPlayer p = FindPlayer(playerName);
+
+            // Flop
+            if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlopThisRound && p.HasPreflopRaisedThisRound())
+            {
+                p.IncrementOpportunitiesToCBet(false);
+            }
+
             p.HasChecked(gamePhase);
         }
 
@@ -133,11 +139,12 @@ namespace PokerMuck
             // Flop
             if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlopThisRound)
             {
-                // He's the first!
-                bool playerHasCBet = p.CheckForCBet(amount);
-
-                // Was this really a cbet? 
-                if (playerHasCBet) PlayerCBetThisRound = true;
+                // Did he raised preflop?
+                if (p.HasPreflopRaisedThisRound())
+                {
+                    p.IncrementOpportunitiesToCBet(true);
+                    PlayerCBetThisRound = true;
+                }
 
                 PlayerBetTheFlopThisRound = true;
             }

@@ -124,6 +124,10 @@ namespace PokerMuck
          * string if it cannot match any pattern */
         public override String GetHandHistoryFilenameRegexPatternFromWindowTitle(String windowTitle)
         {
+            // TODO REMOVE IN PRODUCTION
+            if (windowTitle == "test.txt - Notepad") return "test.txt";
+            if (windowTitle == "test2.txt - Notepad") return "test2.txt";
+
             /* Tricky, title format is significantly different for tournaments and play money on PokerStars.it
              * so we need to make two checks */
             Regex regex = GetRegex("game_window_title_to_recognize_tournament_game_id");

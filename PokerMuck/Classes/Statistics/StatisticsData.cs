@@ -24,11 +24,11 @@ namespace PokerMuck
         }
 
         /* Returns the float value of the data */
-        public float GetFloat()
+        public float GetFloat(int precision = 0)
         {
-            return value;
+            return (float)Math.Round(value, precision);
         }
-
+        
         /* Converts the data in string percentage */
         public String GetPercentage(int precision = 0)
         {

@@ -56,8 +56,7 @@ namespace PokerMuck
             // Now we're ready
 
             /* Check each player:
-             * 1. If the player doesn't have a hud window and is playing, create a window for him
-             * 2. If the player has a window and is not playing, we need to remove the window from him
+             * If the player doesn't have a hud window and is playing, create a window for him
              */
             foreach (Player p in table.PlayerList)
             {
@@ -65,6 +64,8 @@ namespace PokerMuck
                 if (p.HudWindow == null && p.IsPlaying)
                 {
                     HudWindow window = HudWindowFactory.CreateHudWindow(table);
+
+                    Debug.Print("Create window for " + p.Name + " (" + p.SeatNumber + ")");
 
                     // We set a 1:1 association between the player and the HudWindow
                     p.HudWindow = window;
@@ -77,22 +78,12 @@ namespace PokerMuck
 
                     windowsList.Add(window);
                     window.Show(); // Without this we cannot move the windows
+
                     
                     // Move it to its proper location (if available)
                     if (positions.Count > 0)
                     {
                         window.SetAbsolutePosition(positions[p.SeatNumber - 1], table.WindowRect);
-                    }
-                }
-                else
-                {
-                    // If he's not playing and he has a window, we need to remove it
-                    if (p.HudWindow != null && !p.IsPlaying)
-                    {
-                        Debug.Print("Remove! " + p.Name);
-
-                        windowsList.Remove(p.HudWindow);
-                        p.HudWindow = null;
                     }
                 }
             }

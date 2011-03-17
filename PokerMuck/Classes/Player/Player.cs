@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace PokerMuck
 {
-    public abstract class Player
+    public class Player : ICloneable
     {
         /* Every player has a name */
         private String name;
@@ -31,6 +31,9 @@ namespace PokerMuck
         /* Is this player still playing or is he out? */
         public bool IsPlaying { get; set; }
 
+        /* What Game ID is this player playing? */
+        public String GameID { get; set; }
+        
         /* What seat # is the player seated at? 
            -1 = Unknown or none */
         public int SeatNumber { get; set; }
@@ -38,14 +41,15 @@ namespace PokerMuck
         /* What game type are we playing? */
         public virtual PokerGameType GameType { get { return PokerGameType.Unknown; } }
         
-        public Player(String name)
+        protected Player(String name)
         {
             this.name = name;
             this.HasShowedLastRound = false;
             this.HudWindow = null;
-            this.IsPlaying = true;
+            this.IsPlaying = false;
             this.HasPlayedLastRound = true;
             this.SeatNumber = -1; // Don't know
+            this.GameID = String.Empty; // Don't know
         }
 
         /* This player received the whole cards */
@@ -76,7 +80,7 @@ namespace PokerMuck
 
         /* Given the name of a category, returns an integer indicating its ordering
          * 0 = first, inf = last */
-        protected abstract int GetCategoryOrder(String category);
+        protected virtual int GetCategoryOrder(String category) { return 0; }
 
         /* How should the statistics categories be ordered? */
         protected int CompareCategories(String category1, String category2)
@@ -97,14 +101,46 @@ namespace PokerMuck
             return result;
         }
 
-        ~Player(){
-            Debug.Print("Destroying... " + Name);
-
+        public void DisposeHud()
+        {
             if (HudWindow != null)
             {
                 HudWindow.DisposeFlag = true;
                 HudWindow = null;
             }
+        }
+
+        ~Player(){
+            Debug.Print("Destroying... " + Name);
+
+            DisposeHud();
+        }
+
+        // Callers should use the typesafe clone() instead
+        object ICloneable.Clone()
+        {
+            return this.Clone();
+        }
+
+        // Overriden by derived classes
+        public virtual Player Clone()
+        {
+            return new Player(this);
+        }
+
+        protected Player(Player other)
+        {
+            Debug.Print("Cloning " + other.Name);
+
+            // Copy members here
+            this.name = other.Name;
+            this.HasShowedLastRound = other.HasShowedLastRound;
+            this.HudWindow = null;
+            this.IsPlaying = other.IsPlaying;
+            this.HasPlayedLastRound = other.HasPlayedLastRound;
+            this.SeatNumber = other.SeatNumber;
+            this.totalHandsPlayed = other.totalHandsPlayed;
+            if (other.MuckedHand != null) this.MuckedHand = (Hand)other.MuckedHand.Clone();
         }
 
     }

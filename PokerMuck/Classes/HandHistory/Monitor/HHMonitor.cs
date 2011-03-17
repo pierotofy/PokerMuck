@@ -17,6 +17,8 @@ namespace PokerMuck
         private IHHMonitorHandler handler;
         private FilesLineTracker filesLineTracker;
 
+        private Object thisLock = new Object(); // Used for thread safety synchronization
+
         public HHMonitor(String directory, IHHMonitorHandler handler)
         {
             this.handler = handler;
@@ -56,41 +58,45 @@ namespace PokerMuck
 
         private void CheckForFileChanges()
         {
-            String handHistoryFilePath = GetFullHandHistoryPath();
-            
-            /* When you first join a game the file hasn't been created yet... let's check if the files exist before 
-             * checking for changes */
-            if (File.Exists(handHistoryFilePath))
+            // You don't want multiple threads to be reading the same file at once, do you?
+            lock (thisLock)
             {
-                try
+                String handHistoryFilePath = GetFullHandHistoryPath();
+
+                /* When you first join a game the file hasn't been created yet... let's check if the files exist before 
+                 * checking for changes */
+                if (File.Exists(handHistoryFilePath))
                 {
-                    using (StreamReader reader = new StreamReader(handHistoryFilePath))
+                    try
                     {
-                        int lastLineRead = filesLineTracker.GetLineCount(handHistoryFilename);
-
-                        // If we started reading this file before, we can skip to the line of interest...
-                        if (lastLineRead > 0) SkipNLines(reader, lastLineRead);
-
-                        int linesRead = 0;
-
-                        while (!reader.EndOfStream)
+                        using (StreamReader reader = new StreamReader(handHistoryFilePath))
                         {
-                            handler.NewLineArrived(handHistoryFilename, reader.ReadLine());
-                            linesRead++;
+                            int lastLineRead = filesLineTracker.GetLineCount(handHistoryFilename);
+
+                            // If we started reading this file before, we can skip to the line of interest...
+                            if (lastLineRead > 0) SkipNLines(reader, lastLineRead);
+
+                            int linesRead = 0;
+
+                            while (!reader.EndOfStream)
+                            {
+                                handler.NewLineArrived(handHistoryFilename, reader.ReadLine());
+                                linesRead++;
+                            }
+
+                            // Raise the end of file reached event if we have read at least one line
+                            if (linesRead > 0) handler.EndOfFileReached(handHistoryFilename);
+
+                            // Update files line tracker
+                            filesLineTracker.IncreaseLineCount(handHistoryFilename, linesRead);
                         }
-
-                        // Raise the end of file reached event if we have read at least one line
-                        if (linesRead > 0) handler.EndOfFileReached(handHistoryFilename);
-
-                        // Update files line tracker
-                        filesLineTracker.IncreaseLineCount(handHistoryFilename, linesRead);
+                    }
+                    catch (IOException)
+                    {
+                        Debug.Print(String.Format("Cannot read {0}, trying again later?", handHistoryFilePath));
                     }
                 }
-                catch (IOException)
-                {
-                    Debug.Print(String.Format("Cannot read {0}, trying again later?",handHistoryFilePath));
-                }
-            }         
+            }
         }
 
         private void File_Created(object sender, FileSystemEventArgs e)

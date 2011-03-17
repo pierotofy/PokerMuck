@@ -156,8 +156,6 @@ namespace PokerMuck
 
         void pmDirector_ClearAllPlayerMuckedHands()
         {
-            Debug.Print("ClearAllPLayermuckedhands");
-
             // Thread safe
             this.Invoke((Action)delegate()
             {

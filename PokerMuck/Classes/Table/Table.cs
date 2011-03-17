@@ -90,6 +90,7 @@ namespace PokerMuck
             this.pokerClient = pokerClient;
             this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
+            this.GameID = String.Empty; // We don't know yet
             this.GameType = PokerGameType.Unknown; // We don't know
             this.statistics = new TableStatistics(this); // We don't know what specific kind
             this.playerDatabase = playerDatabase;
@@ -115,11 +116,12 @@ namespace PokerMuck
         /* Remove from the table all players who have the IsPlaying flag set to false */
         private void RemoveDeadPlayers()
         {
-            for (int i = 0; i < PlayerList.Count; i++)
-            {
-                Player p = PlayerList[i];
-                if (!p.IsPlaying) RemovePlayer(p.Name);
-            }
+            playerList.RemoveAll(
+                delegate(Player p)
+                {
+                    return !p.IsPlaying;
+                }
+            );
         }
 
         /* The user requested that all statistics get reset */
@@ -130,7 +132,7 @@ namespace PokerMuck
             foreach (Player p in PlayerList)
             {
                 p.ResetAllStatistics();
-                if (p.HudWindow != null) p.HudWindow.DisplayStatistics(p.GetStatistics());
+                if (p.HudWindow != null) p.HudWindow.DisplayStatistics(p.GetStatistics()); // TODO: is this thread safe?
             }
         }
 
@@ -138,23 +140,37 @@ namespace PokerMuck
         void handHistoryParser_PlayerMuckHandAvailable(string playerName, Hand hand)
         {
             Player player = FindPlayer(playerName);
-            Debug.Assert(player != null, "Player " + playerName + " mucked hand became available, but this player is not in our list");
-
-            player.MuckedHand = hand;
-            player.HasShowedLastRound = true;
+            if (player != null)
+            {
+                player.MuckedHand = hand;
+                player.HasShowedLastRound = true;
+            }
+            else
+            {
+                Debug.Print("Warning: Player " + playerName + " mucked hand became available, but this player is not in our list");
+            }
         }
 
         void handHistoryParser_PlayerIsSeated(string playerName, int seatNumber)
         {
             Debug.Print("Player added: {0}", playerName);
-            CreatePlayer(playerName);
+
+            // Is this player already in the table's player's list?
+            Player result = FindPlayer(playerName);
+
+            // We found a new player. Yay!
+            if (result == null) CreatePlayer(playerName);
 
             // Make sure he is still playing
             Player p = FindPlayer(playerName);
+            p.IsPlaying = true;
             p.HasPlayedLastRound = true;
 
             // Also update his seat number
             p.SeatNumber = seatNumber;
+
+            // And GameID
+            p.GameID = GameID;
         }
 
         void handHistoryParser_RoundHasTerminated()
@@ -163,8 +179,8 @@ namespace PokerMuck
 
 
             /* 1. Clear the statistics information relative to a single round
-             * 2. Any player that hasn't played last round should be flagged as non-playing
-             * 3. Set every other player's HasPlayedLastRound flag to false, as to identify who will get eliminated
+             * 2. Any player that hasn't played last round should be flagged as non-playing (and the hud window, removed)
+             * 3. Set every player's HasPlayedLastRound flag to false, as to identify who will get eliminated
              * in future rounds */
 
             for (int i = 0; i<PlayerList.Count; i++)
@@ -175,12 +191,10 @@ namespace PokerMuck
 
                 if (!p.HasPlayedLastRound)
                 {
+                    p.DisposeHud();
                     p.IsPlaying = false;
                 }
-                else
-                {
-                    p.HasPlayedLastRound = false;
-                }
+                p.HasPlayedLastRound = false;
             }
 
             /* Clear the table statistics relative to a single round */
@@ -255,18 +269,13 @@ namespace PokerMuck
                 Debug.Print("New ID: " + tableId);
 
                 // Clear the list of players (new ones are coming)
-                for (int i = 0; i < PlayerList.Count; i++)
+                foreach (Player p in PlayerList)
                 {
-                    Player p = PlayerList[i];
-                    PlayerList.Remove(p);
-
                     // If the player has a hud associated, also mark that hud as disposable
-                    if (p.HudWindow != null)
-                    {
-                        p.HudWindow.DisposeFlag = true;
-                        p.HudWindow = null;
-                    }
+                    p.DisposeHud();
                 }
+
+                PlayerList.Clear();
             }
 
             this.GameID = gameId;
@@ -281,30 +290,25 @@ namespace PokerMuck
          * from the database */
         private void CreatePlayer(String playerName)
         {
-            // Is this player already in the table's player's list?
-            Player result = FindPlayer(playerName);
+            Debug.Assert(GameID != String.Empty, "We are trying to create a player with no GameID");
 
-            // We found a new player. Yay!
-            if (result == null)
+            // Do we need to create a new one?
+            if (!playerDatabase.Contains(playerName, GameID))
             {
-                // Do we need to create a new one?
-                if (!playerDatabase.Contains(playerName, GameType))
-                {
-                    // Create a new player
-                    Player p = PlayerFactory.CreatePlayer(playerName, GameType); 
-                    playerList.Add(p);
+                // Create a new player
+                Player p = PlayerFactory.CreatePlayer(playerName, GameType); 
+                playerList.Add(p);
 
-                    // Also add it to our database
-                    playerDatabase.Store(p);
-                }
-                else
-                {
-                    // No, we have the player in our database
-                    Player p = playerDatabase.Retrieve(playerName, GameType);
-                    playerList.Add(p);
+                // Also add it to our database
+                playerDatabase.Store(p);
+            }
+            else
+            {
+                // No, we have the player in our database
+                Player p = playerDatabase.Retrieve(playerName, GameID);
+                playerList.Add(p);
 
-                    Debug.Print("Retrieved " + playerName + " from our database!");
-                }
+                Debug.Print("Retrieved " + playerName + " from our database!");
             }
         }
 

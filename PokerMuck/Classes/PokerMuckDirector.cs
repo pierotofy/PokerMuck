@@ -93,7 +93,6 @@ namespace PokerMuck
             windowsListener.StartListening();
 
             // Init hand history monitor
-            // TODO read config to find the directory to monitor
             hhMonitor = new HHMonitor(userSettings.HandHistoryDirectory, this);
             hhMonitor.StartMonitoring();
         }
@@ -276,9 +275,12 @@ namespace PokerMuck
 
                         // and add it to our list
                         tables.Add(newTable);
+
+                        Debug.Print("Created new table: " + newTable.WindowTitle);
                     }
                     else
                     {
+
                         // Yeah we have a table, but the title might have changed... make
                         // sure the table keeps track of this change!
                         table.WindowTitle = windowTitle;

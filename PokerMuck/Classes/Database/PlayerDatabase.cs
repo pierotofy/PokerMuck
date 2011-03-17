@@ -17,45 +17,52 @@ namespace PokerMuck
             players = new List<Player>();
         }
 
-        public bool Contains(String playerName, PokerGameType gameType)
+        public bool Contains(String playerName, String gameID)
         {
-            Player p = Find(playerName, gameType);
+            Player p = Find(playerName, gameID);
             return p != null;
         }
 
-        public Player Retrieve(String playerName, PokerGameType gameType)
+        public bool Contains(Player p)
         {
-            Player p = Find(playerName, gameType);
+            return Contains(p.Name, p.GameID);
+        }
+
+        public Player Retrieve(String playerName, String gameID)
+        {
+            Player p = Find(playerName, gameID);
 
             Debug.Assert(p != null, "Player " + playerName + " doesn't exist in our database");
-            return p;
+            return p.Clone(); // Return a copy
         }
 
 
         public void Store(Player player)
         {
-            // Are we just updating?
-            if (players.Contains(player))
+            if (Contains(player))
             {
-                int index = players.IndexOf(player);
-                players[index] = player;
+                // Already in our database, delete old copy
+                players.RemoveAll(
+                            delegate(Player p)
+                            {
+                                return p.Name == player.Name && p.GameID == player.GameID;
+                            }
+                );                
             }
-            else
-            {
-                // No, we need to store a new record
-                players.Add(player);
-            }
+
+            // Add a copy of the player
+            players.Add(player);
         }
 
-        /* Finds a player given its player name and type of game
+        /* Finds a player given its player name and game id
          * It could return null */
-        private Player Find(String playerName, PokerGameType gameType)
+        private Player Find(String playerName, String gameID)
         {
             // Has this player already been added?
             Player result = players.Find(
                  delegate(Player p)
                  {
-                     return p.Name == playerName && p.GameType == gameType;
+                     return p.Name == playerName && p.GameID == gameID;
                  }
             );
 
