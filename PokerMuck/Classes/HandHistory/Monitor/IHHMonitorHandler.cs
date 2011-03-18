@@ -8,7 +8,6 @@ namespace PokerMuck
     interface IHHMonitorHandler
     {
         void NewLineArrived(String filename, String line);
-        void NewFileWasCreated(String filename);
         void EndOfFileReached(String filename);
     }
 }

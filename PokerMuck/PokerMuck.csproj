@@ -93,6 +93,8 @@
     <Compile Include="Classes\Board\HoldemBoard.cs" />
     <Compile Include="Classes\Card\CardList.cs" />
     <Compile Include="Classes\Database\PlayerDatabase.cs" />
+    <Compile Include="Classes\HandHistory\Monitor\INewFilesMonitorHandler.cs" />
+    <Compile Include="Classes\HandHistory\Monitor\NewFilesMonitor.cs" />
     <Compile Include="Classes\Hud\Hud.cs" />
     <Compile Include="Classes\Hud\HudWindowFactory.cs" />
     <Compile Include="Classes\Hud\HudWindowsList.cs" />

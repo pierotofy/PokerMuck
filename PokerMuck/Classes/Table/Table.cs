@@ -151,13 +151,6 @@ namespace PokerMuck
             HandHistoryParser.ParseLine(line);
         }
 
-        /* Hand history monitor handler, a new filename has been created in our folder */
-        public void NewFileWasCreated(String filename)
-        {
-            Debug.Print("New file created: {0}", filename);
-            Debug.Print("Doing nothing");
-        }
-
         /* Hand history monitor handler, an end of file has been reached
          * this means that the UI can finally be updated. */
         public void EndOfFileReached(String filename)

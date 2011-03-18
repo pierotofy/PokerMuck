@@ -16,7 +16,7 @@ namespace PokerMuck
      * - Creates new tables
      * - etc.
      */
-    class PokerMuckDirector : IDetectWindowsChanges
+    class PokerMuckDirector : IDetectWindowsChanges, INewFilesMonitorHandler
     {
         private WindowsListener windowsListener;
         private PokerClient pokerClient;
@@ -30,6 +30,9 @@ namespace PokerMuck
         /* Configuration */
         private PokerMuckUserSettings userSettings;
         public PokerMuckUserSettings UserSettings { get { return userSettings; } }
+
+        /* NewFilesMonitor instance */
+        private NewFilesMonitor newFilesMonitor;
 
         /* Tell the UI that we need to display a hand */
         public delegate void DisplayPlayerMuckedHandHandler(Player player);
@@ -90,6 +93,10 @@ namespace PokerMuck
             windowsListener = new WindowsListener(this);
             windowsListener.ListenInterval = 200;
             windowsListener.StartListening();
+
+            // Init new files monitor
+            newFilesMonitor = new NewFilesMonitor(UserSettings.HandHistoryDirectory, this);
+            newFilesMonitor.StartMonitoring();
         }
 
         /* TEST CODE REMOVE IN PRODUCTION */
@@ -168,8 +175,19 @@ namespace PokerMuck
             }
         }
 
+        /* A new file was created! This might belong to one of the game windows */
+        public void NewFileWasCreated(String filename)
+        {
+            CreateTableFromPokerWindow(windowsListener.CurrentForegroundWindowTitle, windowsListener.CurrentForegroundWindowRect);
+        }
+
         /* Windows Listener event handler, detects when a new windows becomes the active window */
         public void NewForegroundWindow(string windowTitle, Rectangle windowRect)
+        {
+            CreateTableFromPokerWindow(windowTitle, windowRect);
+        }
+
+        public void CreateTableFromPokerWindow(string windowTitle, Rectangle windowRect)
         {
             /* We ignore any event that is caused by a window titled "HudWindow"
              * because the user might be simply interacting with our hud */
@@ -185,7 +203,7 @@ namespace PokerMuck
                 if (filename != String.Empty)
                 {
                     String filePath = UserSettings.HandHistoryDirectory + @"\" + filename;
-                    
+
                     // A valid filename was found to be associated with a window title, see if we have a table already
                     Table table = FindTableByHHFilePath(filePath);
 
@@ -197,20 +215,20 @@ namespace PokerMuck
 
                         // Set a handler that notifies us of data changes
                         newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
-                        
+
                         // Set a handler that notifies of the necessity to display the 
                         // statistics of a player
                         newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
-                        
+
                         // and add it to our list
                         tables.Add(newTable);
 
                         Debug.Print("Created new table: " + newTable.WindowTitle + " on " + newTable.HandHistoryFilePath);
 
                         OnDisplayStatus("Parsing for the first time... please wait.");
-                        
+
                         // Check for changes, now!
-                        newTable.ParseHandHistoryNow();                       
+                        newTable.ParseHandHistoryNow();
                     }
                     else
                     {
@@ -228,7 +246,7 @@ namespace PokerMuck
                 }
                 else
                 {
-                    OnDisplayStatus("New game started on window: " + windowTitle + "?");
+                    OnDisplayStatus("New game started on window: " + windowTitle);
                     Debug.Print("A valid window title was found ({0}) but no filename associated with the window could be found using pattern {1}. Is this our first hand at the table and no hand history is available?", windowTitle, pattern);
 
                 }
@@ -325,6 +343,7 @@ namespace PokerMuck
         private void Cleanup()
         {
             if (windowsListener != null) windowsListener.StopListening();
+            if (newFilesMonitor != null) newFilesMonitor.StopMonitoring();
         }
 
         /* Helper method to raise the DisplayStatus event */
@@ -340,6 +359,7 @@ namespace PokerMuck
 
             // Save configuration
             UserSettings.Save();
+
         }
 
     }

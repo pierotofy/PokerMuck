@@ -88,11 +88,6 @@ namespace PokerMuck
             }
         }
 
-        private void File_Created(object sender, FileSystemEventArgs e)
-        {
-            handler.NewFileWasCreated(e.Name);
-        }
-
         private void File_Changed(object sender, FileSystemEventArgs e){
             // Is this the file we are monitoring?
 
@@ -128,7 +123,6 @@ namespace PokerMuck
                 {
                     fwatcher = new FileSystemWatcher(directory);
                     fwatcher.Changed += new FileSystemEventHandler(File_Changed);
-                    fwatcher.Created += new FileSystemEventHandler(File_Created);
                 }
                 else
                 {
