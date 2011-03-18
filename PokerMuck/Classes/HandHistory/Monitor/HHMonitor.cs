@@ -19,27 +19,15 @@ namespace PokerMuck
 
         private Object thisLock = new Object(); // Used for thread safety synchronization
 
-        public HHMonitor(String directory, IHHMonitorHandler handler)
+        public HHMonitor(String handHistoryFilePath, IHHMonitorHandler handler)
         {
             this.handler = handler;
             this.monitoring = false;
-            this.directory = directory;
+            this.directory = Path.GetDirectoryName(handHistoryFilePath);
+            this.handHistoryFilename = Path.GetFileName(handHistoryFilePath);
             this.filesLineTracker = new FilesLineTracker();
 
             CreateSystemWatcher();
-        }
-
-        public void ChangeDirectory(String directory){
-            this.directory = directory;
-            CreateSystemWatcher();
-            fwatcher.Path = directory;
-            filesLineTracker.ResetAll();
-        }
-
-        public void ChangeHandHistoryFile(String handHistoryFilename)
-        {
-            this.handHistoryFilename = handHistoryFilename;
-            CheckForFileChanges();
         }
 
         public void StartMonitoring(){
@@ -56,9 +44,10 @@ namespace PokerMuck
             }
         }
 
-        private void CheckForFileChanges()
+        public void CheckForFileChanges()
         {
             // You don't want multiple threads to be reading the same file at once, do you?
+            // TODO: necessary?
             lock (thisLock)
             {
                 String handHistoryFilePath = GetFullHandHistoryPath();

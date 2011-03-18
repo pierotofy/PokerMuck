@@ -131,11 +131,12 @@ namespace PokerMuck
              * windowRect */
 
             List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
-            Debug.Assert(positions.Count > 0, "No positions available for shifting the hub");
-
-            foreach (Player p in table.PlayerList)
+            if (positions.Count > 0)
             {
-                if (p.HudWindow != null) p.HudWindow.SetAbsolutePosition(positions[p.SeatNumber - 1], table.WindowRect); 
+                foreach (Player p in table.PlayerList)
+                {
+                    if (p.HudWindow != null) p.HudWindow.SetAbsolutePosition(positions[p.SeatNumber - 1], table.WindowRect);
+                }
             }
         }
 

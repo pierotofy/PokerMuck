@@ -5,11 +5,15 @@ using System.Text;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
+using System.Threading;
 
 namespace PokerMuck
 {
-    class Table
+    class Table : IHHMonitorHandler
     {
+        /* Hand history monitor */
+        private HHMonitor hhMonitor;
+
         /* What client is table using? */
         private PokerClient pokerClient;
 
@@ -46,16 +50,16 @@ namespace PokerMuck
         public Rectangle WindowRect { get; set; }
 
         /* The hand history filename associated with this table */ 
-        private String handHistoryFilename;
-        public String HandHistoryFilename { get { return handHistoryFilename; } }
+        private String handHistoryFilePath;
+        public String HandHistoryFilePath { get { return handHistoryFilePath; } }
 
         /* Every table keeps a reference to the parser used to read data from them */
         private HHParser handHistoryParser;
         public HHParser HandHistoryParser { get { return handHistoryParser; } }
 
         /* Notifies the delegate that data has changed */
-        public delegate void DataHasChangedHandler(Table sender);
-        public event DataHasChangedHandler DataHasChanged;
+        public delegate void RefreshUIHandler(Table sender);
+        public event RefreshUIHandler RefreshUI;
 
         /* The statistics of a player in this table need to be displayed */
         public delegate void DisplayPlayerStatisticsHandler(Player p);
@@ -83,9 +87,9 @@ namespace PokerMuck
         }
         
 
-        public Table(String handHistoryFilename, String windowTitle, Rectangle windowRect, PokerClient pokerClient, PlayerDatabase playerDatabase)
+        public Table(String handHistoryFilePath, String windowTitle, Rectangle windowRect, PokerClient pokerClient, PlayerDatabase playerDatabase)
         {
-            this.handHistoryFilename = handHistoryFilename;
+            this.handHistoryFilePath = handHistoryFilePath;
             this.WindowTitle = windowTitle;
             this.pokerClient = pokerClient;
             this.maxSeatingCapacity = 0; // We don't know yet
@@ -104,6 +108,10 @@ namespace PokerMuck
             ((UniversalHHParser)handHistoryParser).GameTypeDiscovered += new UniversalHHParser.GameTypeDiscoveredHandler(handHistoryParser_GameTypeDiscovered);
 
             playerList = new List<Player>(10); //Usually no more than 10 players per table
+
+            // Init hand history monitor
+            hhMonitor = new HHMonitor(handHistoryFilePath, this);
+            hhMonitor.StartMonitoring();
         }
 
         /* Certain stuff needs to be done AFTER the hud is done updating.
@@ -123,6 +131,40 @@ namespace PokerMuck
                 }
             );
         }
+
+
+        /* Asynchronous, forces the table to check for changes in the hand history */
+        public void ParseHandHistoryNow()
+        {
+            // Do it in another thread so we don't stop other processing from being done
+            Thread t = new Thread
+                         (delegate()
+                         {
+                             hhMonitor.CheckForFileChanges();
+                         });
+            t.Start(); 
+        }
+
+        /* Hand history monitor handler, a new line has been read from a file */
+        public void NewLineArrived(String filename, String line)
+        {
+            HandHistoryParser.ParseLine(line);
+        }
+
+        /* Hand history monitor handler, a new filename has been created in our folder */
+        public void NewFileWasCreated(String filename)
+        {
+            Debug.Print("New file created: {0}", filename);
+            Debug.Print("Doing nothing");
+        }
+
+        /* Hand history monitor handler, an end of file has been reached
+         * this means that the UI can finally be updated. */
+        public void EndOfFileReached(String filename)
+        {
+            if (RefreshUI != null) RefreshUI(this);
+        }
+
 
         /* The user requested that all statistics get reset */
         public void window_OnResetAllStatisticsButtonPressed(HudWindow sender)
@@ -175,9 +217,6 @@ namespace PokerMuck
 
         void handHistoryParser_RoundHasTerminated()
         {
-            if (DataHasChanged != null) DataHasChanged(this);
-
-
             /* 1. Clear the statistics information relative to a single round
              * 2. Any player that hasn't played last round should be flagged as non-playing (and the hud window, removed)
              * 3. Set every player's HasPlayedLastRound flag to false, as to identify who will get eliminated
@@ -344,6 +383,7 @@ namespace PokerMuck
         public void Terminate()
         {
             PlayerList.Clear();
+            if (hhMonitor != null) hhMonitor.StopMonitoring();
         }
     }
 }

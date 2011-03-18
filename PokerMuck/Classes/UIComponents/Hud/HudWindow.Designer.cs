@@ -40,6 +40,7 @@
             // 
             // lblPlayerName
             // 
+            this.lblPlayerName.BackColor = System.Drawing.Color.Transparent;
             this.lblPlayerName.Cursor = System.Windows.Forms.Cursors.SizeAll;
             this.lblPlayerName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPlayerName.Location = new System.Drawing.Point(1, 0);
@@ -67,11 +68,7 @@
             this.resetPlayerStatisticsToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.resetPlayerStatisticsToolStripMenuItem.Text = "Reset Player\'s Statistics";
             this.resetPlayerStatisticsToolStripMenuItem.Click += new System.EventHandler(this.resetPlayerStatisticsToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(214, 6);
+
             // 
             // resetEverybodysStatisticsToolStripMenuItem
             // 
@@ -83,6 +80,7 @@
             // lblTotalHandsPlayed
             // 
             this.lblTotalHandsPlayed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTotalHandsPlayed.BackColor = System.Drawing.Color.Transparent;
             this.lblTotalHandsPlayed.Location = new System.Drawing.Point(107, 0);
             this.lblTotalHandsPlayed.Name = "lblTotalHandsPlayed";
             this.lblTotalHandsPlayed.Size = new System.Drawing.Size(22, 13);
@@ -98,17 +96,21 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.BurlyWood;
+            this.BackColor = System.Drawing.Color.Silver;
+            this.BackgroundImage = global::PokerMuck.Properties.Resources.Hud;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(127, 38);
             this.ContextMenuStrip = this.contextMenu;
             this.Controls.Add(this.lblPlayerName);
             this.Controls.Add(this.lblTotalHandsPlayed);
             this.Cursor = System.Windows.Forms.Cursors.SizeAll;
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "HudWindow";
-            this.Opacity = 0.9D;
+            this.Opacity = 0.95D;
             this.Text = "HudWindow";
             this.TopMost = true;
+            this.TransparencyKey = System.Drawing.Color.Silver;
             this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseDoubleClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.HudWindow_MouseMove);

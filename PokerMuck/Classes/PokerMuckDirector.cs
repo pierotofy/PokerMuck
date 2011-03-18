@@ -16,10 +16,9 @@ namespace PokerMuck
      * - Creates new tables
      * - etc.
      */
-    class PokerMuckDirector : IDetectWindowsChanges, IHHMonitorHandler
+    class PokerMuckDirector : IDetectWindowsChanges
     {
         private WindowsListener windowsListener;
-        private HHMonitor hhMonitor;
         private PokerClient pokerClient;
 
         /* Table list */
@@ -91,10 +90,6 @@ namespace PokerMuck
             windowsListener = new WindowsListener(this);
             windowsListener.ListenInterval = 200;
             windowsListener.StartListening();
-
-            // Init hand history monitor
-            hhMonitor = new HHMonitor(userSettings.HandHistoryDirectory, this);
-            hhMonitor.StartMonitoring();
         }
 
         /* TEST CODE REMOVE IN PRODUCTION */
@@ -105,18 +100,16 @@ namespace PokerMuck
             String filename = "test.txt";
             //String filename = "HH20110305 T371715473 No Limit Hold'em €4.46 + €0.54.txt";
             Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient, playerDatabase);
-            newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
+            newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
             newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
             tables.Add(newTable);
-            hhMonitor.ChangeHandHistoryFile(filename); // TODO REMOVE
-            
+           
         }
 
         /* Change the hand history directory */
         public void ChangeHandHistoryDirectory(String newDirectory)
         {
             UserSettings.HandHistoryDirectory = newDirectory;
-            hhMonitor.ChangeHandHistoryFile(newDirectory);
         }
 
         /* Change the poker client */
@@ -126,72 +119,7 @@ namespace PokerMuck
             pokerClient = client;
         }
 
-        /* Hand history monitor handler, a new line has been read from a file */
-        public void NewLineArrived(String filename, String line)
-        {
-            // Find the table associated with this filename (it should never be null)
-            Table table = FindTableByHHFilename(filename);
-            Debug.Assert(table != null, "A new line has arrived for a table that hasn't been created.");
-
-            OnDisplayStatus("Parsing... please wait.");
-
-            table.HandHistoryParser.ParseLine(line);
-        }
-
-        /* Hand history monitor handler, a new filename has been created in our folder, we might be interested 
-         * into monitoring it. This happens when we first begin a game: the window title is matching, but we can't
-         * figure the filename right away. */
-        public void NewFileWasCreated(String filename)
-        {
-            Debug.Print("New file created: {0}", filename);
-
-            NewForegroundWindow(windowsListener.CurrentForegroundWindowTitle, windowsListener.CurrentForegroundWindowRect);
-        }
-
-        /* Hand history monitor handler, an end of file has been reached
-         * this means that the UI can finally be updated. */
-        public void EndOfFileReached(String filename)
-        {
-            Table t = FindTableByHHFilename(filename);
-            Debug.Assert(t != null, "End of file was reached by a table not in our table list");
-
-            OnDisplayStatus("Displaying Table #" + t.TableId);
-
-            // Tell the UI to clear any previous mucked hand from the screen
-            if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
-
-            // And the final board (if any)
-            if (ClearFinalBoard != null) ClearFinalBoard();
-
-            // Flag to keep track of whether at least one mucked hand is available
-            bool muckedHandsAvailable = false;
-
-            // Check which players need to be shown
-            foreach (Player p in t.PlayerList)
-            {
-                // If it has showed and it's not us
-                if (p.HasShowedLastRound && p.Name != UserSettings.UserID)
-                {
-                    // Inform the UI
-                    if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
-
-                    muckedHandsAvailable = true;
-                }
-            }
-
-            // Display the final board (if any and if it hasn't been displayed before and if there were mucked hands)
-            if (t.FinalBoard != null && !t.FinalBoard.Displayed && muckedHandsAvailable)
-            {
-                if (DisplayFinalBoard != null) DisplayFinalBoard(t.FinalBoard);
-
-                t.FinalBoard.Displayed = true;
-            }
-
-            // Display hud information
-            if (DisplayHud != null) DisplayHud(t);
-        }
-
-
+      
         /* Windows Listener event handler, a window changed its position */
         public void ForegroundWindowPositionChanged(string windowTitle, Rectangle windowRect)
         {
@@ -256,27 +184,33 @@ namespace PokerMuck
 
                 if (filename != String.Empty)
                 {
+                    String filePath = UserSettings.HandHistoryDirectory + @"\" + filename;
+                    
                     // A valid filename was found to be associated with a window title, see if we have a table already
-                    Table table = FindTableByHHFilename(filename);
+                    Table table = FindTableByHHFilePath(filePath);
 
                     // Is there a game associated with this filename?
                     if (table == null)
                     {
                         // First time we see it, we need to create a table for this request
-                        Table newTable = new Table(filename, windowTitle, windowRect, pokerClient, playerDatabase);
+                        Table newTable = new Table(filePath, windowTitle, windowRect, pokerClient, playerDatabase);
 
                         // Set a handler that notifies us of data changes
-                        newTable.DataHasChanged += new Table.DataHasChangedHandler(table_DataHasChanged);
+                        newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
                         
                         // Set a handler that notifies of the necessity to display the 
                         // statistics of a player
                         newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
                         
-
                         // and add it to our list
                         tables.Add(newTable);
 
-                        Debug.Print("Created new table: " + newTable.WindowTitle);
+                        Debug.Print("Created new table: " + newTable.WindowTitle + " on " + newTable.HandHistoryFilePath);
+
+                        OnDisplayStatus("Parsing for the first time... please wait.");
+                        
+                        // Check for changes, now!
+                        newTable.ParseHandHistoryNow();                       
                     }
                     else
                     {
@@ -289,10 +223,8 @@ namespace PokerMuck
                         if (ShiftHud != null) ShiftHud(table);
                     }
 
-                    // Start monitoring the new file!
-                    hhMonitor.ChangeHandHistoryFile(filename);
-                    OnDisplayStatus("Now monitoring " + filename);
-                    Debug.Print(String.Format("Valid window title match! Now monitoring {0}", filename));
+                    OnDisplayStatus("Focus is on the table associated with " + filename);
+                    Debug.Print(String.Format("Valid window title match with {0}", filename));
                 }
                 else
                 {
@@ -313,19 +245,54 @@ namespace PokerMuck
             if (DisplayPlayerStatistics != null) DisplayPlayerStatistics(p);
         }
 
-        /* Data in one of the tables has changed */
-        void table_DataHasChanged(Table sender)
+        /* Data in one of the tables has changed, we can refresh the UI */
+        void table_RefreshUI(Table sender)
         {
+            Debug.Print("Refresh UI for " + sender.GameID);
 
+            OnDisplayStatus("Displaying Table #" + sender.TableId);
+
+            // Tell the UI to clear any previous mucked hand from the screen
+            if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
+
+            // And the final board (if any)
+            if (ClearFinalBoard != null) ClearFinalBoard();
+
+            // Flag to keep track of whether at least one mucked hand is available
+            bool muckedHandsAvailable = false;
+
+            // Check which players need to be shown
+            foreach (Player p in sender.PlayerList)
+            {
+                // If it has showed and it's not us
+                if (p.HasShowedLastRound && p.Name != UserSettings.UserID)
+                {
+                    // Inform the UI
+                    if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
+
+                    muckedHandsAvailable = true;
+                }
+            }
+
+            // Display the final board (if any and if it hasn't been displayed before and if there were mucked hands)
+            if (sender.FinalBoard != null && !sender.FinalBoard.Displayed && muckedHandsAvailable)
+            {
+                if (DisplayFinalBoard != null) DisplayFinalBoard(sender.FinalBoard);
+
+                sender.FinalBoard.Displayed = true;
+            }
+
+            // Display hud information
+            if (DisplayHud != null) DisplayHud(sender);
         }
 
         /* Finds a table given its hand history filename. It can be null */
-        private Table FindTableByHHFilename(String hhFilename)
+        private Table FindTableByHHFilePath(String hhFilePath)
         {
             Table result = tables.Find(
                 delegate(Table t)
                 {
-                    return t.HandHistoryFilename == hhFilename;
+                    return t.HandHistoryFilePath == hhFilePath;
                 }
             );
 
@@ -358,7 +325,6 @@ namespace PokerMuck
         private void Cleanup()
         {
             if (windowsListener != null) windowsListener.StopListening();
-            if (hhMonitor != null) hhMonitor.StopMonitoring();
         }
 
         /* Helper method to raise the DisplayStatus event */

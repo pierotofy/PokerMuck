@@ -34,10 +34,11 @@ namespace PokerMuck
         {
             base.DisplayStatistics(stats);
 
-            lblImmediateStats.Text = String.Format("VPF: {0} PFR: {1} L: {2}",
+            lblImmediateStats.Text = String.Format("VPF:{0} PFR:{1} L:{2} AF:{3}",
                 stats.Get("Voluntary Put $", "Preflop").GetPercentage(),
                 stats.Get("Raises", "Preflop").GetPercentage(),
-                stats.Get("Limp", "Preflop").GetPercentage()
+                stats.Get("Limp", "Preflop").GetPercentage(),
+                stats.Get("Aggression Frequency", "Summary").GetValue()
               );
         }
 

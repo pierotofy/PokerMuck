@@ -66,5 +66,12 @@ namespace PokerMuck.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        internal static System.Drawing.Bitmap Hud {
+            get {
+                object obj = ResourceManager.GetObject("Hud", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

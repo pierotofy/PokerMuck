@@ -127,6 +127,10 @@ namespace PokerMuck
             // TODO REMOVE IN PRODUCTION
             if (windowTitle == "test.txt - Notepad") return "test.txt";
             if (windowTitle == "test2.txt - Notepad") return "test2.txt";
+            if (windowTitle == "test3.txt - Notepad") return "test3.txt";
+            if (windowTitle == "test4.txt - Notepad") return "test4.txt";
+            if (windowTitle == "test5.txt - Notepad") return "test5.txt";
+
 
             /* Tricky, title format is significantly different for tournaments and play money on PokerStars.it
              * so we need to make two checks */
