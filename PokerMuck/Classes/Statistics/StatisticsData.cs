@@ -16,11 +16,14 @@ namespace PokerMuck
         private String category;
         public String Category { get { return category; } }
 
+        public int Order { get; set; }
+
         public StatisticsData(String name, float value, String category = "")
         {
             this.name = name;
             this.value = value;
             this.category = category;
+            this.Order = 0;
         }
 
         /* Returns the float value of the data */

@@ -260,7 +260,7 @@ namespace PokerMuck
             }
 
             /* Find the button */
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_button"), out matchResult))
+            if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_button"), out matchResult))
             {
                 int seatNumber = Int32.Parse(matchResult.Groups["seatNumber"].Value);
                 OnFoundButton(seatNumber);

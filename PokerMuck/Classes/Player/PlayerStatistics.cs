@@ -25,6 +25,7 @@ namespace PokerMuck
         /* Sets a new data statistics in our table */
         public void Set(StatisticsData data)
         {
+            data.Order = table.Count;
             table[data.Name + "_" + data.Category] = data;
         }
 
@@ -38,7 +39,9 @@ namespace PokerMuck
         }
 
 
-        /* Returns all the data pertaining to a specific category */
+        /* Returns all the data pertaining to a specific category
+         * Items are sorted by their date of entry (first elements added are
+         * displayed first ) */
         public List<StatisticsData> GetStatistics(String category)
         {
             List<StatisticsData> result = new List<StatisticsData>();
@@ -52,7 +55,8 @@ namespace PokerMuck
                 }
             }
 
-            // TODO
+            // Sort
+            result.Sort((Comparison<StatisticsData>)CompareEntries);
 
             return result;
         }
@@ -76,6 +80,14 @@ namespace PokerMuck
 
             // Return 
             return result;
+        }
+
+        /* Function to sort the statistics data entries */
+        private int CompareEntries(StatisticsData entry1, StatisticsData entry2)
+        {
+            if (entry1.Order == entry2.Order) return 0;
+            else if (entry1.Order < entry2.Order) return -1;
+            else return 1;
         }
 
         /* Returns every statistic recorded, useful for debugging */

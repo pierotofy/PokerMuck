@@ -52,10 +52,11 @@ namespace PokerMuck
                  Ex. Seat 1: stallion089 (2105 in chips) => 1,"stallion089" 
                  * It ignores those who are marked as "out of hand"
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>[^(]+) .*\([\d]+ in chips\) (?!out of hand)");
+                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\([\d]+ in chips\) (?!out of hand)");
 
                 /* Recognize mucked hands
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/
+                // TODO! What if a player has a "(" in his nickname?
                 regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^(]+) .*(showed|mucked) \[(?<cards>[\d\w ]+)\]");
 
                 /* Recognize the final board */

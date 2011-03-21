@@ -7,6 +7,9 @@ using System.Diagnostics;
 
 namespace PokerMuck
 {
+    /* Types of blinds */
+    public enum BlindType { BigBlind, SmallBlind, NoBlind };
+
     /* A holdem player has certain statistics that a five card draw player might not have */
     class HoldemPlayer : Player
     {
@@ -36,6 +39,16 @@ namespace PokerMuck
         private int foldsToACBet;
         private int callsToACBet;
         private int raisesToACBet;
+
+        /* Steal raise from the button */
+        private ValueCounter stealRaises;
+        private int opportunitiesToStealRaise;
+
+        /* Fold/call/raise to a steal raise */
+        private MultipleValueCounter foldsToAStealRaise;
+        private MultipleValueCounter callsToAStealRaise;
+        private MultipleValueCounter raisesToAStealRaise;
+        
 
         /* Checks */
         private MultipleValueCounter checks;
@@ -113,6 +126,12 @@ namespace PokerMuck
             this.IsBigBlind = other.IsBigBlind;
             this.IsSmallBlind = other.IsSmallBlind;
             this.IsButton = other.IsButton;
+            this.stealRaises = (ValueCounter)other.stealRaises.Clone();
+            this.opportunitiesToStealRaise = other.opportunitiesToStealRaise;
+            this.foldsToAStealRaise = (MultipleValueCounter)other.foldsToAStealRaise.Clone();
+            this.callsToAStealRaise = (MultipleValueCounter)other.callsToAStealRaise.Clone();
+            this.raisesToAStealRaise = (MultipleValueCounter)other.raisesToAStealRaise.Clone();
+
         }
 
         
@@ -129,18 +148,23 @@ namespace PokerMuck
             voluntaryPutMoneyPreflop = new ValueCounter();
 
             raises = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            checkRaises = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            checkFolds = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            checkCalls = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checkRaises = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checkFolds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checkCalls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checks = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             sawStreet = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             bets = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             folds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             calls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            
+
 
             cbets = new ValueCounter();
+            stealRaises = new ValueCounter();
+            foldsToAStealRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
+            callsToAStealRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
+            raisesToAStealRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
             
+
             ResetAllStatistics();
         }
 
@@ -156,10 +180,16 @@ namespace PokerMuck
             ResetStatistics(totalChecks);
 
             limps.Reset();
+            checks.Reset();
             voluntaryPutMoneyPreflop.Reset();
             raises.Reset();
             bets.Reset();
             cbets.Reset();
+            stealRaises.Reset();
+            foldsToAStealRaise.Reset();
+            callsToAStealRaise.Reset();
+            raisesToAStealRaise.Reset();
+
             folds.Reset();
             calls.Reset();
             sawStreet.Reset();
@@ -167,6 +197,8 @@ namespace PokerMuck
             callsToACBet = 0;
             foldsToACBet = 0;
             raisesToACBet = 0;
+
+            opportunitiesToStealRaise = 0;
 
 
             totalHandsPlayed = 0;
@@ -324,6 +356,36 @@ namespace PokerMuck
             }
         }
 
+
+        /* How many times has the player steal raised? */
+        public StatisticsData GetStealRaiseStats()
+        {
+            if (opportunitiesToStealRaise == 0) return new StatisticsUnknownData("Steal Raises", "Preflop");
+            else
+            {
+                float stealRaiseRatio = (float)stealRaises.Value / (float)opportunitiesToStealRaise;
+
+                return new StatisticsPercentageData("Steal Raises", stealRaiseRatio, "Preflop");
+            }
+        }
+
+        /* How many times has the player check raised? */
+        public StatisticsData GetFoldsToAStealRaiseStats(BlindType blindType)
+        {
+            int actionsToAStealRaise = (int)callsToAStealRaise[blindType].Value + (int)raisesToAStealRaise[blindType].Value + (int)foldsToAStealRaise[blindType].Value;
+            String statDescription = String.Format("Fold {0} to a Steal Raise", 
+                            (blindType == BlindType.BigBlind) ? "Big Blind" : "Small Blind");
+
+
+            if (actionsToAStealRaise == 0) return new StatisticsUnknownData(statDescription, "Preflop");
+            else
+            {
+                float foldToAStealRaiseRation = (float)foldsToAStealRaise[blindType].Value / (float)actionsToAStealRaise;
+
+                return new StatisticsPercentageData(statDescription, foldToAStealRaiseRation, "Preflop");
+            }
+        }
+
         /* Get style of play */
         public StatisticsData GetStyle()
         {
@@ -342,7 +404,7 @@ namespace PokerMuck
             else if (vpf >= 0.15 && vpf <= 0.2) tightness = "Semi-loose";
             else if (vpf > 0.2) tightness = "Loose";
 
-            if (aggressionFrequency > 0.15) aggressiveness = "Aggressive";
+            if (aggressionFrequency > 0.2) aggressiveness = "Aggressive";
             else aggressiveness = "Passive";
 
             return new StatisticsDescriptiveData("Style","Summary",String.Format("{0} {1}",tightness, aggressiveness));
@@ -387,6 +449,31 @@ namespace PokerMuck
         public void IncrementRaiseToACBet()
         {
             raisesToACBet += 1;
+        }
+
+        public void IncrementStealRaises()
+        {
+            stealRaises.Increment();
+        }
+
+        public void IncrementFoldsToAStealRaise(BlindType blindType)
+        {
+            foldsToAStealRaise[blindType].Increment();
+        }
+
+        public void IncrementCallsToAStealRaise(BlindType blindType)
+        {
+            callsToAStealRaise[blindType].Increment();
+        }
+
+        public void IncrementRaisesToAStealRaise(BlindType blindType)
+        {
+            raisesToAStealRaise[blindType].Increment();
+        }
+
+        public void IncrementOpportunitiesToStealRaise()
+        {
+            opportunitiesToStealRaise += 1;
         }
 
         /* This player has raised, increment the stats */
@@ -517,6 +604,11 @@ namespace PokerMuck
             raises.AllowIncrement();
             bets.AllowIncrement();
             cbets.AllowIncrement();
+            stealRaises.AllowIncrement();
+            foldsToAStealRaise.AllowIncrement();
+            callsToAStealRaise.AllowIncrement();
+            raisesToAStealRaise.AllowIncrement();
+
             folds.AllowIncrement();
             calls.AllowIncrement();
 
@@ -571,12 +663,36 @@ namespace PokerMuck
 
             result.Set(GetVPFStats());
             result.Set(GetLimpStats());
+
+            result.Set(GetStealRaiseStats());
+            result.Set(GetFoldsToAStealRaiseStats(BlindType.SmallBlind));
+            result.Set(GetFoldsToAStealRaiseStats(BlindType.BigBlind));
+            
+            result.Set(GetCBetStats());
+            result.Set(GetFoldToACBetStats());
+
             result.Set(GetRaiseStats(HoldemGamePhase.Preflop, "Preflop"));
             result.Set(GetRaiseStats(HoldemGamePhase.Flop, "Flop"));
             result.Set(GetRaiseStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetRaiseStats(HoldemGamePhase.River, "River"));
-            result.Set(GetCBetStats());
-            result.Set(GetFoldToACBetStats());
+            
+            result.Set(GetBetsStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetBetsStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetBetsStats(HoldemGamePhase.River, "River"));
+
+            result.Set(GetFoldsStats(HoldemGamePhase.Preflop, "Preflop"));
+            result.Set(GetFoldsStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetFoldsStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetFoldsStats(HoldemGamePhase.River, "River"));
+
+            result.Set(GetCallsStats(HoldemGamePhase.Preflop, "Preflop"));
+            result.Set(GetCallsStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetCallsStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetCallsStats(HoldemGamePhase.River, "River"));
+
+            result.Set(GetChecksStats(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetChecksStats(HoldemGamePhase.Turn, "Turn"));
+            result.Set(GetChecksStats(HoldemGamePhase.River, "River"));
 
             result.Set(GetCheckRaiseStats(HoldemGamePhase.Flop, "Flop"));
             result.Set(GetCheckRaiseStats(HoldemGamePhase.Turn, "Turn"));
@@ -590,26 +706,9 @@ namespace PokerMuck
             result.Set(GetCheckCallStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetCheckCallStats(HoldemGamePhase.River, "River"));
 
-            result.Set(GetBetsStats(HoldemGamePhase.Flop, "Flop"));
-            result.Set(GetBetsStats(HoldemGamePhase.Turn, "Turn"));
-            result.Set(GetBetsStats(HoldemGamePhase.River, "River"));
-
-            result.Set(GetChecksStats(HoldemGamePhase.Flop, "Flop"));
-            result.Set(GetChecksStats(HoldemGamePhase.Turn, "Turn"));
-            result.Set(GetChecksStats(HoldemGamePhase.River, "River"));
-
-            result.Set(GetFoldsStats(HoldemGamePhase.Preflop, "Preflop"));
-            result.Set(GetFoldsStats(HoldemGamePhase.Flop, "Flop"));
-            result.Set(GetFoldsStats(HoldemGamePhase.Turn, "Turn"));
-            result.Set(GetFoldsStats(HoldemGamePhase.River, "River"));
-
-            result.Set(GetCallsStats(HoldemGamePhase.Preflop, "Preflop"));
-            result.Set(GetCallsStats(HoldemGamePhase.Flop, "Flop"));
-            result.Set(GetCallsStats(HoldemGamePhase.Turn, "Turn"));
-            result.Set(GetCallsStats(HoldemGamePhase.River, "River"));
-
-            result.Set(GetAggressionFrequencyStats());
             result.Set(GetStyle());
+            result.Set(GetAggressionFrequencyStats());
+
 
             return result;
         }
