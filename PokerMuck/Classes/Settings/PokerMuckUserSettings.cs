@@ -22,6 +22,7 @@ namespace PokerMuck
             CurrentPokerClient = new PokerStarsIT("English");
             WindowPosition = new Point(480, 320); // We assume monitors will be bigger than this resolution
             WindowSize = new Size(209, 331); // Designer size
+            FirstExecution = true;
             UserID = "";
         }
 
@@ -47,6 +48,19 @@ namespace PokerMuck
             set
             {
                 SetSetting("player_user_id", value);
+            }
+        }
+
+        public bool FirstExecution
+        {
+            get
+            {
+                return GetBoolSetting("first_execution");
+            }
+
+            set
+            {
+                SetSetting("first_execution", value);
             }
         }
 

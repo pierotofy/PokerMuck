@@ -97,7 +97,16 @@ namespace PokerMuck
             // Init new files monitor
             newFilesMonitor = new NewFilesMonitor(UserSettings.HandHistoryDirectory, this);
             newFilesMonitor.StartMonitoring();
+
+            // First execution?
+            if (UserSettings.FirstExecution)
+            {
+                ShowFirstExecutionWizard();
+
+                //UserSettings.FirstExecution = false;
+            }
         }
+
 
         /* TEST CODE REMOVE IN PRODUCTION */
         public void Test()
@@ -111,6 +120,11 @@ namespace PokerMuck
             newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
             tables.Add(newTable);
            
+        }
+
+        private void ShowFirstExecutionWizard()
+        {
+            Debug.Print("Called");
         }
 
         /* Change the hand history directory */

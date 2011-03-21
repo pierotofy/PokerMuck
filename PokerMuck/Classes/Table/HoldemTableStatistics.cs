@@ -73,7 +73,7 @@ namespace PokerMuck
 
         void HoldemTableStatistics_HoleCardsWillBeDealt()
         {
-            Debug.Print("Holw cards will be dealt");
+            Debug.Print("Hole cards will be dealt");
             // The player that is seating at seatNumber gets the button
             foreach (HoldemPlayer p in table.PlayerList)
             {

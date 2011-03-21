@@ -109,6 +109,13 @@ namespace PokerMuck
             else return -1;
         }
 
+        /* Version to support bool */
+        public bool GetBoolSetting(String key)
+        {
+            int res = GetIntSetting(key);
+            return res != 0;
+        }
+
         /* Version to support string */
         public String GetStringSetting(String key)
         {
@@ -127,6 +134,13 @@ namespace PokerMuck
         public void SetSetting(string key, int value)
         {
             SetSetting((Object)key, (Object)value);
+        }
+
+        /* Overloaded to set bool settings */
+        public void SetSetting(String key, bool value)
+        {
+            int number = value ? 1 : 0;
+            SetSetting((Object)key, number);
         }
 
         /* Set settings method 
