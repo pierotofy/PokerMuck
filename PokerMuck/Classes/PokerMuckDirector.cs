@@ -102,8 +102,16 @@ namespace PokerMuck
             if (UserSettings.FirstExecution)
             {
                 ShowFirstExecutionWizard();
+                FrmFirstExecutionWizard firstExecutionWizard = new FrmFirstExecutionWizard();
+                firstExecutionWizard.ShowDialog();
+
+                // Reload settings
+                userSettings = new PokerMuckUserSettings();
 
                 //UserSettings.FirstExecution = false;
+
+                // Save
+                UserSettings.Save();
             }
         }
 
