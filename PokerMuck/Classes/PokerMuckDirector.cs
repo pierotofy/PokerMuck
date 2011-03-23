@@ -99,6 +99,7 @@ namespace PokerMuck
             newFilesMonitor.StartMonitoring();
 
             // First execution?
+            
             if (UserSettings.FirstExecution)
             {
                 ShowFirstExecutionWizard();
@@ -108,7 +109,7 @@ namespace PokerMuck
                 // Reload settings
                 userSettings = new PokerMuckUserSettings();
 
-                //UserSettings.FirstExecution = false;
+                UserSettings.FirstExecution = false;
 
                 // Save
                 UserSettings.Save();

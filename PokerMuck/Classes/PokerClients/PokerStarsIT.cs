@@ -35,10 +35,12 @@ namespace PokerMuck
                 regex.Add("hand_history_begin_river_phase_token", @"\*\*\* RIVER \*\*\*");
                 regex.Add("hand_history_begin_showdown_phase_token", @"\*\*\* SHOW DOWN \*\*\*");
                 regex.Add("hand_history_begin_summary_phase_token", @"\*\*\* SUMMARY \*\*\*");
-                
 
-                /* Recognize the Hand History gameID */
-                regex.Add("hand_history_game_id_token", @"PokerStars Game #(?<gameId>[\d]+):");
+
+                /* Recognize the Hand History gameID 
+                 Ex. PokerStars Game #59534069543: Tournament #377151618
+                 */
+                regex.Add("hand_history_game_id_token", @"PokerStars Game #(?<handId>[\d]+): Tournament #(?<gameId>[\d]+)");
                
                 /* Recognize the table ID and max seating capacity */
                 regex.Add("hand_history_table_token", @"Table '(?<tableId>[^(]+)' (?<tableSeatingCapacity>[\d]+)-max");

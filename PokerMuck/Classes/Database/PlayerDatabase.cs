@@ -50,7 +50,7 @@ namespace PokerMuck
                 );                
             }
 
-            // Add a copy of the player
+            // Add a reference of the player
             players.Add(player);
         }
 
