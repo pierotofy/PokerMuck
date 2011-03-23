@@ -35,6 +35,8 @@
             this.panelPageOne = new System.Windows.Forms.Panel();
             this.lblPageOneText = new System.Windows.Forms.Label();
             this.panelPageThree = new System.Windows.Forms.Panel();
+            this.pictureHandHistory = new System.Windows.Forms.PictureBox();
+            this.lblHandHistoryLanguageText = new System.Windows.Forms.Label();
             this.lblPageThreeText = new System.Windows.Forms.Label();
             this.panelPageFour = new System.Windows.Forms.Panel();
             this.txtHandHistoriesDirectory = new System.Windows.Forms.TextBox();
@@ -43,9 +45,14 @@
             this.panelPageFive = new System.Windows.Forms.Panel();
             this.lblPageFiveText = new System.Windows.Forms.Label();
             this.panelPageTwo = new System.Windows.Forms.Panel();
+            this.lblPokerClientLanguage = new System.Windows.Forms.Label();
+            this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
+            this.lblPokerClient = new System.Windows.Forms.Label();
+            this.cmbPokerClient = new System.Windows.Forms.ComboBox();
             this.lblPageTwoText = new System.Windows.Forms.Label();
             this.panelPageOne.SuspendLayout();
             this.panelPageThree.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureHandHistory)).BeginInit();
             this.panelPageFour.SuspendLayout();
             this.panelPageFive.SuspendLayout();
             this.panelPageTwo.SuspendLayout();
@@ -54,7 +61,7 @@
             // btnNext
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Location = new System.Drawing.Point(907, 666);
+            this.btnNext.Location = new System.Drawing.Point(958, 675);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(82, 32);
             this.btnNext.TabIndex = 0;
@@ -67,7 +74,7 @@
             this.lblPageNum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblPageNum.AutoSize = true;
             this.lblPageNum.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPageNum.Location = new System.Drawing.Point(7, 676);
+            this.lblPageNum.Location = new System.Drawing.Point(7, 685);
             this.lblPageNum.Name = "lblPageNum";
             this.lblPageNum.Size = new System.Drawing.Size(83, 16);
             this.lblPageNum.TabIndex = 2;
@@ -85,14 +92,12 @@
             // 
             // panelPageOne
             // 
-            this.panelPageOne.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelPageOne.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelPageOne.Controls.Add(this.lblPageOneText);
             this.panelPageOne.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.panelPageOne.Location = new System.Drawing.Point(23, 34);
+            this.panelPageOne.Location = new System.Drawing.Point(7, 33);
             this.panelPageOne.Name = "panelPageOne";
-            this.panelPageOne.Size = new System.Drawing.Size(393, 175);
+            this.panelPageOne.Size = new System.Drawing.Size(415, 191);
             this.panelPageOne.TabIndex = 4;
             // 
             // lblPageOneText
@@ -103,23 +108,44 @@
             this.lblPageOneText.Margin = new System.Windows.Forms.Padding(0);
             this.lblPageOneText.Name = "lblPageOneText";
             this.lblPageOneText.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
-            this.lblPageOneText.Size = new System.Drawing.Size(393, 175);
+            this.lblPageOneText.Size = new System.Drawing.Size(415, 191);
             this.lblPageOneText.TabIndex = 0;
             this.lblPageOneText.Text = "Welcome to PokerMuck. Please make sure you follow these quick steps in order to g" +
                 "et the program to work.";
             // 
             // panelPageThree
             // 
-            this.panelPageThree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelPageThree.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panelPageThree.Controls.Add(this.pictureHandHistory);
+            this.panelPageThree.Controls.Add(this.lblHandHistoryLanguageText);
             this.panelPageThree.Controls.Add(this.lblPageThreeText);
             this.panelPageThree.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.panelPageThree.Location = new System.Drawing.Point(23, 243);
+            this.panelPageThree.Location = new System.Drawing.Point(49, 247);
             this.panelPageThree.Name = "panelPageThree";
             this.panelPageThree.Size = new System.Drawing.Size(487, 209);
             this.panelPageThree.TabIndex = 5;
             this.panelPageThree.Visible = false;
+            // 
+            // pictureHandHistory
+            // 
+            this.pictureHandHistory.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.pictureHandHistory.Image = global::PokerMuck.Properties.Resources.HandHistorySettings;
+            this.pictureHandHistory.Location = new System.Drawing.Point(6, 109);
+            this.pictureHandHistory.Name = "pictureHandHistory";
+            this.pictureHandHistory.Size = new System.Drawing.Size(468, 326);
+            this.pictureHandHistory.TabIndex = 2;
+            this.pictureHandHistory.TabStop = false;
+            // 
+            // lblHandHistoryLanguageText
+            // 
+            this.lblHandHistoryLanguageText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHandHistoryLanguageText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHandHistoryLanguageText.Location = new System.Drawing.Point(2, 69);
+            this.lblHandHistoryLanguageText.Name = "lblHandHistoryLanguageText";
+            this.lblHandHistoryLanguageText.Size = new System.Drawing.Size(481, 37);
+            this.lblHandHistoryLanguageText.TabIndex = 1;
+            this.lblHandHistoryLanguageText.Text = "Make sure you select <lang> as the language to record the hand histories!";
             // 
             // lblPageThreeText
             // 
@@ -136,14 +162,12 @@
             // 
             // panelPageFour
             // 
-            this.panelPageFour.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelPageFour.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelPageFour.Controls.Add(this.txtHandHistoriesDirectory);
             this.panelPageFour.Controls.Add(this.btnBrowse);
             this.panelPageFour.Controls.Add(this.lblPageFourText);
             this.panelPageFour.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.panelPageFour.Location = new System.Drawing.Point(540, 243);
+            this.panelPageFour.Location = new System.Drawing.Point(566, 247);
             this.panelPageFour.Name = "panelPageFour";
             this.panelPageFour.Size = new System.Drawing.Size(449, 209);
             this.panelPageFour.TabIndex = 6;
@@ -188,12 +212,10 @@
             // 
             // panelPageFive
             // 
-            this.panelPageFive.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelPageFive.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelPageFive.Controls.Add(this.lblPageFiveText);
             this.panelPageFive.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.panelPageFive.Location = new System.Drawing.Point(23, 495);
+            this.panelPageFive.Location = new System.Drawing.Point(49, 499);
             this.panelPageFive.Name = "panelPageFive";
             this.panelPageFive.Size = new System.Drawing.Size(487, 160);
             this.panelPageFive.TabIndex = 7;
@@ -214,16 +236,64 @@
             // 
             // panelPageTwo
             // 
-            this.panelPageTwo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelPageTwo.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panelPageTwo.Controls.Add(this.lblPokerClientLanguage);
+            this.panelPageTwo.Controls.Add(this.cmbPokerClientLanguage);
+            this.panelPageTwo.Controls.Add(this.lblPokerClient);
+            this.panelPageTwo.Controls.Add(this.cmbPokerClient);
             this.panelPageTwo.Controls.Add(this.lblPageTwoText);
             this.panelPageTwo.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.panelPageTwo.Location = new System.Drawing.Point(502, 12);
+            this.panelPageTwo.Location = new System.Drawing.Point(528, 16);
             this.panelPageTwo.Name = "panelPageTwo";
             this.panelPageTwo.Size = new System.Drawing.Size(487, 209);
             this.panelPageTwo.TabIndex = 8;
             this.panelPageTwo.Visible = false;
+            // 
+            // lblPokerClientLanguage
+            // 
+            this.lblPokerClientLanguage.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.lblPokerClientLanguage.Location = new System.Drawing.Point(79, 119);
+            this.lblPokerClientLanguage.Name = "lblPokerClientLanguage";
+            this.lblPokerClientLanguage.Size = new System.Drawing.Size(166, 31);
+            this.lblPokerClientLanguage.TabIndex = 12;
+            this.lblPokerClientLanguage.Text = "Hand History Language:";
+            this.lblPokerClientLanguage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClientLanguage
+            // 
+            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClientLanguage.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.cmbPokerClientLanguage.FormattingEnabled = true;
+            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(245, 124);
+            this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
+            this.cmbPokerClientLanguage.Size = new System.Drawing.Size(177, 24);
+            this.cmbPokerClientLanguage.TabIndex = 11;
+            this.cmbPokerClientLanguage.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientLanguage_SelectionChangeCommitted);
+            // 
+            // lblPokerClient
+            // 
+            this.lblPokerClient.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.lblPokerClient.Location = new System.Drawing.Point(79, 89);
+            this.lblPokerClient.Name = "lblPokerClient";
+            this.lblPokerClient.Size = new System.Drawing.Size(52, 21);
+            this.lblPokerClient.TabIndex = 10;
+            this.lblPokerClient.Text = "Client:";
+            this.lblPokerClient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClient
+            // 
+            this.cmbPokerClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClient.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.cmbPokerClient.FormattingEnabled = true;
+            this.cmbPokerClient.Location = new System.Drawing.Point(132, 88);
+            this.cmbPokerClient.Name = "cmbPokerClient";
+            this.cmbPokerClient.Size = new System.Drawing.Size(290, 24);
+            this.cmbPokerClient.TabIndex = 9;
+            this.cmbPokerClient.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClient_SelectionChangeCommitted);
             // 
             // lblPageTwoText
             // 
@@ -236,13 +306,13 @@
             this.lblPageTwoText.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this.lblPageTwoText.Size = new System.Drawing.Size(487, 72);
             this.lblPageTwoText.TabIndex = 0;
-            this.lblPageTwoText.Text = "Select the Poker Client you are using.";
+            this.lblPageTwoText.Text = resources.GetString("lblPageTwoText.Text");
             // 
             // FrmFirstExecutionWizard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1001, 710);
+            this.ClientSize = new System.Drawing.Size(1052, 719);
             this.Controls.Add(this.panelPageTwo);
             this.Controls.Add(this.panelPageOne);
             this.Controls.Add(this.panelPageFour);
@@ -258,6 +328,7 @@
             this.Text = "Welcome to PokerMuck";
             this.panelPageOne.ResumeLayout(false);
             this.panelPageThree.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureHandHistory)).EndInit();
             this.panelPageFour.ResumeLayout(false);
             this.panelPageFour.PerformLayout();
             this.panelPageFive.ResumeLayout(false);
@@ -284,5 +355,11 @@
         private System.Windows.Forms.Label lblPageFiveText;
         private System.Windows.Forms.Panel panelPageTwo;
         private System.Windows.Forms.Label lblPageTwoText;
+        private System.Windows.Forms.Label lblPokerClientLanguage;
+        private System.Windows.Forms.ComboBox cmbPokerClientLanguage;
+        private System.Windows.Forms.Label lblPokerClient;
+        private System.Windows.Forms.ComboBox cmbPokerClient;
+        private System.Windows.Forms.Label lblHandHistoryLanguageText;
+        private System.Windows.Forms.PictureBox pictureHandHistory;
     }
 }

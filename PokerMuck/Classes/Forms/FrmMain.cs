@@ -69,6 +69,9 @@ namespace PokerMuck
 
             // Load configuration
             LoadConfigurationValues();
+
+            // Always start the view on the About tab
+            tabControl.SelectedIndex = 3;
         }
 
         void pmDirector_DisplayPlayerStatistics(Player p)
