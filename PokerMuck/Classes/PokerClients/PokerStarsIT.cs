@@ -61,6 +61,10 @@ namespace PokerMuck
                 // TODO! What if a player has a "(" in his nickname?
                 regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^(]+) .*(showed|mucked) \[(?<cards>[\d\w ]+)\]");
 
+                /* Recognize winners of a hand 
+                 * Ex. cord80 collected 40 from pot */
+                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) collected [\d]+ from pot");
+
                 /* Recognize the final board */
                 regex.Add("hand_history_detect_final_board", @"Board \[(?<cards>[\d\w ]+)\]");
 

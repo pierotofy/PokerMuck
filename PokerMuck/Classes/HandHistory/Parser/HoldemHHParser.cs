@@ -96,6 +96,15 @@ namespace PokerMuck
             if (FoundButton != null) FoundButton(seatNumber);
         }
 
+        /* We found a winner(s) for the current hand */
+        public delegate void FoundWinnerHandler(String playerName);
+        public event FoundWinnerHandler FoundWinner;
+
+        protected void OnFoundWinner(String playerName)
+        {
+            if (FoundWinner != null) FoundWinner(playerName);
+        }
+
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
         {
             
@@ -182,6 +191,16 @@ namespace PokerMuck
 
                 // Raise event
                 OnPlayerIsSeated(playerName, seatNumber);
+            }
+
+            /* Search for a winner */
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_hand_winner"), out matchResult))
+            {
+                // Retrieve player name
+                String playerName = matchResult.Groups["playerName"].Value;
+
+                // Raise event
+                OnFoundWinner(playerName);
             }
 
             /* Search for mucked hands */

@@ -65,6 +65,11 @@ namespace PokerMuck
 
         /* How many times have we seen a particular street? */
         private MultipleValueCounter sawStreet;
+
+        /* Went and won at showdown */
+        private ValueCounter wentToShowdown;
+        private ValueCounter wonAtShowdown;
+
         
 
         /* Each table is set this way:
@@ -131,6 +136,8 @@ namespace PokerMuck
             this.foldsToAStealRaise = (MultipleValueCounter)other.foldsToAStealRaise.Clone();
             this.callsToAStealRaise = (MultipleValueCounter)other.callsToAStealRaise.Clone();
             this.raisesToAStealRaise = (MultipleValueCounter)other.raisesToAStealRaise.Clone();
+            this.wentToShowdown = (ValueCounter)other.wentToShowdown.Clone();
+            this.wonAtShowdown = (ValueCounter)other.wonAtShowdown.Clone();
 
         }
 
@@ -152,7 +159,7 @@ namespace PokerMuck
             checkFolds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checkCalls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checks = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            sawStreet = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            sawStreet = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River, HoldemGamePhase.Showdown);
             bets = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             folds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             calls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
@@ -163,7 +170,9 @@ namespace PokerMuck
             foldsToAStealRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
             callsToAStealRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
             raisesToAStealRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
-            
+
+            wentToShowdown = new ValueCounter();
+            wonAtShowdown = new ValueCounter();
 
             ResetAllStatistics();
         }
@@ -208,8 +217,45 @@ namespace PokerMuck
             checkFolds.Reset();
             checkCalls.Reset();
 
+            wentToShowdown.Reset();
+            wonAtShowdown.Reset();
+
             PrepareStatisticsForNewRound();
         }
+
+        /* Certain statistics are round specific (for example a person can only limp once per round)
+         * This function should get called at the beginning of a new round */
+        public override void PrepareStatisticsForNewRound()
+        {
+            base.PrepareStatisticsForNewRound();
+
+            IsBigBlind = false;
+            IsSmallBlind = false;
+            IsButton = false;
+            limps.AllowIncrement();
+            voluntaryPutMoneyPreflop.AllowIncrement();
+            raises.AllowIncrement();
+            bets.AllowIncrement();
+            cbets.AllowIncrement();
+            stealRaises.AllowIncrement();
+            foldsToAStealRaise.AllowIncrement();
+            callsToAStealRaise.AllowIncrement();
+            raisesToAStealRaise.AllowIncrement();
+
+            folds.AllowIncrement();
+            calls.AllowIncrement();
+
+            checkRaises.AllowIncrement();
+            checkFolds.AllowIncrement();
+            checkCalls.AllowIncrement();
+
+            checks.AllowIncrement();
+            sawStreet.AllowIncrement();
+
+            wentToShowdown.AllowIncrement();
+            wonAtShowdown.AllowIncrement();
+        }
+
 
         /* Returns the limp statistics */
         public StatisticsData GetLimpStats()
@@ -384,6 +430,13 @@ namespace PokerMuck
 
                 return new StatisticsPercentageData(statDescription, foldToAStealRaiseRation, "Preflop");
             }
+        }
+
+        /* Helper function to find out whether a player went to showdown */
+        public bool WentToShowdownThisRound()
+        {
+            // In holdem you'll go to showdown if you saw the river and you didn't fold the river
+            return (sawStreet[HoldemGamePhase.River].WasIncremented && !folds[HoldemGamePhase.River].WasIncremented);
         }
 
         /* Get style of play */
@@ -584,41 +637,22 @@ namespace PokerMuck
             opportunitiesToCBet++;
         }
 
+        public void IncrementWentToShowdown()
+        {
+            wentToShowdown.Increment();
+        }
+
+        public void IncrementWonAtShowdown()
+        {
+            wonAtShowdown.Increment();
+        }
+
         /* Helper function to increment the value in one of the hash tables (calls, raises, folds, etc.) */
         private void IncrementStatistics(Hashtable table, HoldemGamePhase gamePhase)
         {
             if (table != null) table[gamePhase] = (int)table[gamePhase] + 1;
         }
 
-        /* Certain statistics are round specific (for example a person can only limp once per round)
-         * This function should get called at the beginning of a new round */
-        public override void PrepareStatisticsForNewRound()
-        {
-            base.PrepareStatisticsForNewRound();
-
-            IsBigBlind = false;
-            IsSmallBlind = false;
-            IsButton = false;
-            limps.AllowIncrement();
-            voluntaryPutMoneyPreflop.AllowIncrement();
-            raises.AllowIncrement();
-            bets.AllowIncrement();
-            cbets.AllowIncrement();
-            stealRaises.AllowIncrement();
-            foldsToAStealRaise.AllowIncrement();
-            callsToAStealRaise.AllowIncrement();
-            raisesToAStealRaise.AllowIncrement();
-
-            folds.AllowIncrement();
-            calls.AllowIncrement();
-
-            checkRaises.AllowIncrement();
-            checkFolds.AllowIncrement();
-            checkCalls.AllowIncrement();
-
-            checks.AllowIncrement();
-            sawStreet.AllowIncrement();
-        }
 
         public bool HasPreflopRaisedThisRound()
         {

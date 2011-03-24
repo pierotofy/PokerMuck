@@ -69,6 +69,27 @@ namespace PokerMuck
             ((HoldemHHParser)parser).PlayerChecked += new HoldemHHParser.PlayerCheckedHandler(handHistoryParser_PlayerChecked);
             ((HoldemHHParser)parser).FoundButton += new HoldemHHParser.FoundButtonHandler(handHistoryParser_FoundButton);
             ((HoldemHHParser)parser).HoleCardsWillBeDealt += new HHParser.HoleCardsWillBeDealtHandler(HoldemTableStatistics_HoleCardsWillBeDealt);
+            ((HoldemHHParser)parser).FoundWinner += new HoldemHHParser.FoundWinnerHandler(HoldemTableStatistics_FoundWinner);
+        
+        }
+
+        void HoldemTableStatistics_FoundWinner(string playerName)
+        {
+            HoldemPlayer winnerPlayer = FindPlayer(playerName);
+
+            foreach (HoldemPlayer p in table.PlayerList)
+            {
+                if (p.WentToShowdownThisRound())
+                {
+                    Debug.Print("Went to showdown: " + p.Name);
+                    if (winnerPlayer == p)
+                    {
+                        Debug.Print("Winner: " + p.Name);
+                        p.IncrementWonAtShowdown();
+                    }
+                    p.IncrementWentToShowdown();
+                }
+            }
         }
 
         void HoldemTableStatistics_HoleCardsWillBeDealt()
