@@ -84,7 +84,7 @@ namespace PokerMuck
                     Debug.Print("Went to showdown: " + p.Name);
                     if (winnerPlayer == p)
                     {
-                        Debug.Print("Winner: " + p.Name);
+                        Debug.Print("Winner at showdown: " + p.Name);
                         p.IncrementWonAtShowdown();
                     }
                     p.IncrementWentToShowdown();

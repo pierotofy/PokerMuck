@@ -67,6 +67,13 @@ namespace PokerMuck.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap GoldIco {
+            get {
+                object obj = ResourceManager.GetObject("GoldIco", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap HandHistorySettings {
             get {
                 object obj = ResourceManager.GetObject("HandHistorySettings", resourceCulture);
@@ -77,6 +84,20 @@ namespace PokerMuck.Properties {
         internal static System.Drawing.Bitmap Hud {
             get {
                 object obj = ResourceManager.GetObject("Hud", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap StealMaskIco {
+            get {
+                object obj = ResourceManager.GetObject("StealMaskIco", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap TelephoneIco {
+            get {
+                object obj = ResourceManager.GetObject("TelephoneIco", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

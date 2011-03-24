@@ -32,7 +32,7 @@
     <MinimumRequiredVersion>0.1.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>0.1.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -398,6 +398,9 @@
     <Content Include="License.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\TelephoneIco.png" />
+    <None Include="Resources\StealMaskIco.png" />
+    <None Include="Resources\goldIco.png" />
     <None Include="Resources\HandHistorySettings.png" />
     <None Include="Resources\Hud.png" />
     <None Include="Resources\Eagle.jpg">

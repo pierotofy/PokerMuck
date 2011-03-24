@@ -16,7 +16,7 @@ namespace PokerMuck
         {
             InitializeComponent();
 
-            /*
+            /* Create tooltips */
             ToolTip t = new ToolTip();
             t.ShowAlways = true;
 
@@ -25,9 +25,9 @@ namespace PokerMuck
             t.ReshowDelay = 0;
             t.IsBalloon = true;
 
-            t.SetToolTip(lblImmediateStats, "Test");
-             * */
-
+            t.SetToolTip(picEasySteal, "Easy blind steal");
+            t.SetToolTip(picButtonStealer, "Frequent blind stealer");
+            t.SetToolTip(picCallingStation, "Calling station");
         }
 
         public override void DisplayStatistics(PlayerStatistics stats)
@@ -40,6 +40,13 @@ namespace PokerMuck
                 stats.Get("Limp", "Preflop").GetPercentage(),
                 stats.Get("Aggression Frequency", "Summary").GetValue()
               );
+
+            DisplayIcons(stats);
+        }
+
+        public void DisplayIcons(PlayerStatistics stats)
+        {
+            
         }
 
         private void lblImmediateStats_MouseUp(object sender, MouseEventArgs e)

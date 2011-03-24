@@ -38,6 +38,7 @@ namespace PokerMuck
 
             SetStatus("Waiting for a game to start...");
 
+            
             pmDirector = new PokerMuckDirector();
             pmDirector.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
             pmDirector.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
@@ -52,6 +53,17 @@ namespace PokerMuck
             //pmDirector.Test();
 
             /* TODO remove
+
+            StatisticsNumberData p1 = new StatisticsNumberData("One", 0.5f, "Category", 2);
+            StatisticsUnknownData p2 = new StatisticsUnknownData("Two", "Category");
+            StatisticsNumberData p3 = new StatisticsNumberData("Three", 0.25f, "Category", 2);
+            StatisticsData avg1 = p2.Average("Average1", "Category", 2, p1, p3);
+
+            Debug.Print(p1.Name + ": " + p1.GetValue());
+            Debug.Print(p2.Name + ": " + p2.GetValue());
+            Debug.Print(p3.Name + ": " + p3.GetValue());
+            Debug.Print(avg1.Name + ": " + avg1.GetValue());
+             
             Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_detect_mucked_hand");
             Match m = r.Match("Seat 1: stallion089 (button) (small blind) mucked [5d 5s]");
 
@@ -60,6 +72,7 @@ namespace PokerMuck
                 Debug.Print("OOOK");
                 Debug.Print(m.Groups["playerName"].Value);
             }*/
+
 
             // Adjust size
             this.Size = pmDirector.UserSettings.WindowSize;
@@ -78,6 +91,7 @@ namespace PokerMuck
         {
             this.Invoke((Action)delegate()
             {
+                statisticsDisplay.Visible = true;
                 tabControl.SelectedIndex = 1;
                 statisticsDisplay.DisplayStatistics(p);
             });

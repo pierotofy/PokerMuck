@@ -20,5 +20,10 @@ namespace PokerMuck
         {
             return description;
         }
+
+        public override StatisticsData Average(String name, String category, int precision, params StatisticsData[] stats)
+        {
+            throw new NotImplementedException("There's no average for descriptive data.");
+        }
     }
 }

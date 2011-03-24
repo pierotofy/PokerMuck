@@ -114,6 +114,7 @@ namespace PokerMuck
                 // Save
                 UserSettings.Save();
             }
+            
         }
 
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
@@ -19,6 +20,12 @@ namespace PokerMuck
         public override string GetValue()
         {
             return GetFloat(precision).ToString();
+        }
+
+        public override StatisticsData Average(String name, String category, int precision, params StatisticsData[] stats)
+        {
+            float average = ComputeAverage(stats);
+            return new StatisticsNumberData(name, average, category, precision);
         }
     }
 }

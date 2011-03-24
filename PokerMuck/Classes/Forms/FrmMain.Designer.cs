@@ -31,9 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
-            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabStatistics = new System.Windows.Forms.TabPage();
-            this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
+            this.lblPlayerStatisticsNote = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
             this.lblPokerClientLanguage = new System.Windows.Forms.Label();
             this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
@@ -50,6 +49,8 @@
             this.lblProgramName = new System.Windows.Forms.Label();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.entityHandsContainer = new PokerMuck.ControlListContainer();
+            this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
             this.tabStatistics.SuspendLayout();
@@ -84,18 +85,10 @@
             this.tabHandsPage.Text = "Muck";
             this.tabHandsPage.UseVisualStyleBackColor = true;
             // 
-            // entityHandsContainer
-            // 
-            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
-            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
-            this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(209, 291);
-            this.entityHandsContainer.TabIndex = 4;
-            // 
             // tabStatistics
             // 
             this.tabStatistics.Controls.Add(this.statisticsDisplay);
+            this.tabStatistics.Controls.Add(this.lblPlayerStatisticsNote);
             this.tabStatistics.Location = new System.Drawing.Point(4, 22);
             this.tabStatistics.Name = "tabStatistics";
             this.tabStatistics.Size = new System.Drawing.Size(215, 297);
@@ -103,18 +96,16 @@
             this.tabStatistics.Text = "Statistics";
             this.tabStatistics.UseVisualStyleBackColor = true;
             // 
-            // statisticsDisplay
+            // lblPlayerStatisticsNote
             // 
-            this.statisticsDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.statisticsDisplay.BackColor = System.Drawing.Color.White;
-            this.statisticsDisplay.LabelSpacing = 8;
-            this.statisticsDisplay.Location = new System.Drawing.Point(0, 2);
-            this.statisticsDisplay.Name = "statisticsDisplay";
-            this.statisticsDisplay.Size = new System.Drawing.Size(215, 295);
-            this.statisticsDisplay.TabIndex = 0;
-            this.statisticsDisplay.TopMargin = 8;
+            this.lblPlayerStatisticsNote.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPlayerStatisticsNote.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPlayerStatisticsNote.Location = new System.Drawing.Point(0, 0);
+            this.lblPlayerStatisticsNote.Name = "lblPlayerStatisticsNote";
+            this.lblPlayerStatisticsNote.Size = new System.Drawing.Size(215, 297);
+            this.lblPlayerStatisticsNote.TabIndex = 1;
+            this.lblPlayerStatisticsNote.Text = "Double-Click on a Hud Window to display player\'s statistics.";
+            this.lblPlayerStatisticsNote.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabConfigurationPage
             // 
@@ -307,6 +298,29 @@
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // entityHandsContainer
+            // 
+            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
+            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
+            this.entityHandsContainer.Name = "entityHandsContainer";
+            this.entityHandsContainer.Size = new System.Drawing.Size(209, 291);
+            this.entityHandsContainer.TabIndex = 4;
+            // 
+            // statisticsDisplay
+            // 
+            this.statisticsDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.statisticsDisplay.BackColor = System.Drawing.Color.White;
+            this.statisticsDisplay.LabelSpacing = 8;
+            this.statisticsDisplay.Location = new System.Drawing.Point(0, 2);
+            this.statisticsDisplay.Name = "statisticsDisplay";
+            this.statisticsDisplay.Size = new System.Drawing.Size(215, 295);
+            this.statisticsDisplay.TabIndex = 0;
+            this.statisticsDisplay.TopMargin = 8;
+            this.statisticsDisplay.Visible = false;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -359,6 +373,7 @@
         private System.Windows.Forms.TabPage tabStatistics;
         private StatisticsDisplay statisticsDisplay;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Label lblPlayerStatisticsNote;
 
 
     }

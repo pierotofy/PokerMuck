@@ -301,6 +301,17 @@ namespace PokerMuck
             }
         }
 
+        /* How many times has a player won at showdown? */
+        public StatisticsData GetWonAtShowdownStats()
+        {
+            if (wentToShowdown.Value == 0) return new StatisticsUnknownData("Won at Showdown", "Summary");
+            else
+            {
+                float wonAtShowdownRatio = (float)wonAtShowdown.Value / (float)wentToShowdown.Value;
+                return new StatisticsPercentageData("Won at Showdown", wonAtShowdownRatio, "Summary");
+            }
+        }
+
         /* How many times has the player raised? */
         public StatisticsData GetRaiseStats(HoldemGamePhase phase, String category)
         {
@@ -701,6 +712,8 @@ namespace PokerMuck
             result.Set(GetStealRaiseStats());
             result.Set(GetFoldsToAStealRaiseStats(BlindType.SmallBlind));
             result.Set(GetFoldsToAStealRaiseStats(BlindType.BigBlind));
+
+            result.Set(GetWonAtShowdownStats());
             
             result.Set(GetCBetStats());
             result.Set(GetFoldToACBetStats());
@@ -743,6 +756,14 @@ namespace PokerMuck
             result.Set(GetStyle());
             result.Set(GetAggressionFrequencyStats());
 
+            // Calculate a few averages
+
+            // Overall calls % average across all streets
+            StatisticsData callsPreflop = result.Get("Calls", "Preflop");
+            StatisticsData callsAverage = callsPreflop.Average("Calls", "Summary", 0, result.Get("Calls", "Flop"),
+                                                                                     result.Get("Calls", "Turn"),
+                                                                                     result.Get("Calls", "River"));
+            result.Set(callsAverage);
 
             return result;
         }
