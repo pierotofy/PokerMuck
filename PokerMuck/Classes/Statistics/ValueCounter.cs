@@ -9,7 +9,7 @@ namespace PokerMuck
      * It has some useful features such as avoiding double counting
      * by setting a flag after the first count, which can be reset in the future
      * to allow for more counts */
-    class ValueCounter : ICloneable
+    public class ValueCounter : ICloneable
     {
         private int value;
         public int Value { get { return value; } }

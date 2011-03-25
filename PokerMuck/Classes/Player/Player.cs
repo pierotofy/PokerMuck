@@ -20,7 +20,7 @@ namespace PokerMuck
         public bool HasShowedLastRound { get; set; }
 
         /* Number of hands played */
-        protected int totalHandsPlayed;
+        protected ValueCounter totalHandsPlayed;
 
         /* Reference to the Hud Window (if any), can be null */
         public HudWindow HudWindow { get; set; }
@@ -50,12 +50,13 @@ namespace PokerMuck
             this.HasPlayedLastRound = true;
             this.SeatNumber = -1; // Don't know
             this.GameID = String.Empty; // Don't know
+            this.totalHandsPlayed = new ValueCounter();
         }
 
         /* This player received the whole cards */
         public void IsDealtHoleCards()
         {
-            totalHandsPlayed += 1;
+            totalHandsPlayed.Increment();
         }
 
         public void window_OnResetStatisticsButtonPressed(HudWindow sender)
@@ -67,7 +68,7 @@ namespace PokerMuck
         public virtual void ResetAllStatistics()
         {
             /* Reset the stats for a particular set */
-            totalHandsPlayed = 0;   
+            totalHandsPlayed.Reset();
         }
 
         /* Reset the statistics variables that are valid for one round only 
@@ -97,7 +98,7 @@ namespace PokerMuck
         public virtual PlayerStatistics GetStatistics()
         {
             PlayerStatistics result = new PlayerStatistics(CompareCategories);
-            result.Set(new StatisticsNumberData("Total Hands Played", totalHandsPlayed, "Summary"));
+            result.Set(new StatisticsNumberData("Total Hands Played", totalHandsPlayed.Value, "Summary"));
             return result;
         }
 
@@ -139,7 +140,7 @@ namespace PokerMuck
             this.IsPlaying = other.IsPlaying;
             this.HasPlayedLastRound = other.HasPlayedLastRound;
             this.SeatNumber = other.SeatNumber;
-            this.totalHandsPlayed = other.totalHandsPlayed;
+            this.totalHandsPlayed = (ValueCounter)other.totalHandsPlayed.Clone();
             if (other.MuckedHand != null) this.MuckedHand = (Hand)other.MuckedHand.Clone();
         }
 

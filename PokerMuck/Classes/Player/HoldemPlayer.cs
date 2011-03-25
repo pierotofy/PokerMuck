@@ -62,6 +62,8 @@ namespace PokerMuck
         /* Check-call */
         private MultipleValueCounter checkCalls;
 
+        /* How many times has the player pushed all-in? */
+        private ValueCounter totalAllIns;
 
         /* How many times have we seen a particular street? */
         private MultipleValueCounter sawStreet;
@@ -138,7 +140,7 @@ namespace PokerMuck
             this.raisesToAStealRaise = (MultipleValueCounter)other.raisesToAStealRaise.Clone();
             this.wentToShowdown = (ValueCounter)other.wentToShowdown.Clone();
             this.wonAtShowdown = (ValueCounter)other.wonAtShowdown.Clone();
-
+            this.totalAllIns = (ValueCounter)other.totalAllIns.Clone();
         }
 
         
@@ -174,6 +176,8 @@ namespace PokerMuck
             wentToShowdown = new ValueCounter();
             wonAtShowdown = new ValueCounter();
 
+            totalAllIns = new ValueCounter();
+
             ResetAllStatistics();
         }
 
@@ -208,9 +212,6 @@ namespace PokerMuck
             raisesToACBet = 0;
 
             opportunitiesToStealRaise = 0;
-
-
-            totalHandsPlayed = 0;
             opportunitiesToCBet = 0;
 
             checkRaises.Reset();
@@ -219,6 +220,8 @@ namespace PokerMuck
 
             wentToShowdown.Reset();
             wonAtShowdown.Reset();
+
+            totalAllIns.Reset();
 
             PrepareStatisticsForNewRound();
         }
@@ -254,6 +257,8 @@ namespace PokerMuck
 
             wentToShowdown.AllowIncrement();
             wonAtShowdown.AllowIncrement();
+
+            totalAllIns.AllowIncrement();
         }
 
 
@@ -262,8 +267,8 @@ namespace PokerMuck
         {
             float limpRatio = 0;
 
-            if (totalHandsPlayed == 0) limpRatio = 0;
-            else limpRatio = (float)limps.Value / (float)totalHandsPlayed;
+            if (totalHandsPlayed.Value == 0) limpRatio = 0;
+            else limpRatio = (float)limps.Value / (float)totalHandsPlayed.Value;
             
             return new StatisticsPercentageData("Limp", limpRatio, "Preflop");
         }
@@ -273,8 +278,8 @@ namespace PokerMuck
         {
             float vpfRatio = 0;
 
-            if (totalHandsPlayed == 0) vpfRatio = 0;
-            else vpfRatio = (float)voluntaryPutMoneyPreflop.Value / (float)totalHandsPlayed;
+            if (totalHandsPlayed.Value == 0) vpfRatio = 0;
+            else vpfRatio = (float)voluntaryPutMoneyPreflop.Value / (float)totalHandsPlayed.Value;
             return new StatisticsPercentageData("Voluntary Put $", vpfRatio, "Preflop");
         }
 
@@ -309,6 +314,17 @@ namespace PokerMuck
             {
                 float wonAtShowdownRatio = (float)wonAtShowdown.Value / (float)wentToShowdown.Value;
                 return new StatisticsPercentageData("Won at Showdown", wonAtShowdownRatio, "Summary");
+            }
+        }
+
+        /* How many times has the player pushed all-in? */
+        public StatisticsData GetPushedAllInStats()
+        {
+            if (totalAllIns.Value == 0) return new StatisticsUnknownData("Pushed all-in", "Summary");
+            else
+            {
+                float pushedAllInRatio = (float)totalAllIns.Value / (float)totalHandsPlayed.Value;
+                return new StatisticsPercentageData("Pushed all-in", pushedAllInRatio, "Summary");
             }
         }
 
@@ -443,11 +459,13 @@ namespace PokerMuck
             }
         }
 
-        /* Helper function to find out whether a player went to showdown */
-        public bool WentToShowdownThisRound()
+        /* Helper function to find out whether a player never folded */
+        public bool NeverFoldedThisRound()
         {
-            // In holdem you'll go to showdown if you saw the river and you didn't fold the river
-            return (sawStreet[HoldemGamePhase.River].WasIncremented && !folds[HoldemGamePhase.River].WasIncremented);
+            bool foldedAStreet = folds[HoldemGamePhase.Preflop].WasIncremented || folds[HoldemGamePhase.Flop].WasIncremented
+                                || folds[HoldemGamePhase.Turn].WasIncremented || folds[HoldemGamePhase.River].WasIncremented;
+
+            return (totalHandsPlayed.WasIncremented && !foldedAStreet);
         }
 
         /* Get style of play */
@@ -639,6 +657,13 @@ namespace PokerMuck
             sawStreet[gamePhase].Increment();
         }
 
+        /* Pushed all-in */
+        public void HasPushedAllIn(HoldemGamePhase gamePhase)
+        {
+            totalAllIns.Increment();
+            sawStreet[gamePhase].Increment();
+        }
+
 
         /* Increments the opportunitiesToCBet counter. If realCBet is true, the 
          * cbets are also incremented */
@@ -755,6 +780,8 @@ namespace PokerMuck
 
             result.Set(GetStyle());
             result.Set(GetAggressionFrequencyStats());
+
+            result.Set(GetPushedAllInStats());
 
             // Calculate a few averages
 

@@ -65,6 +65,10 @@ namespace PokerMuck
                  * Ex. cord80 collected 40 from pot */
                 regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) collected [\d]+ from pot");
 
+                /* Recognize all-ins
+                 * Ex. stallion089: raises 605 to 875 and is all-in */
+                regex.Add("hand_history_detect_all_in_push", @"(?<playerName>[^:]+): .+ is all-in");
+
                 /* Recognize the final board */
                 regex.Add("hand_history_detect_final_board", @"Board \[(?<cards>[\d\w ]+)\]");
 

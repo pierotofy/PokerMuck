@@ -70,7 +70,28 @@ namespace PokerMuck
             ((HoldemHHParser)parser).FoundButton += new HoldemHHParser.FoundButtonHandler(handHistoryParser_FoundButton);
             ((HoldemHHParser)parser).HoleCardsWillBeDealt += new HHParser.HoleCardsWillBeDealtHandler(HoldemTableStatistics_HoleCardsWillBeDealt);
             ((HoldemHHParser)parser).FoundWinner += new HoldemHHParser.FoundWinnerHandler(HoldemTableStatistics_FoundWinner);
-        
+            ((HoldemHHParser)parser).PlayerPushedAllIn += new HoldemHHParser.PlayerPushedAllInHandler(HoldemTableStatistics_PlayerPushedAllIn);
+            ((HoldemHHParser)parser).ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(HoldemTableStatistics_ShowdownWillBegin);        
+        }
+
+        void HoldemTableStatistics_ShowdownWillBegin()
+        {
+            // Every player who never folded reached the showdown
+            foreach (HoldemPlayer p in table.PlayerList)
+            {
+                if (p.NeverFoldedThisRound())
+                {
+                    Debug.Print("Went to showdown: " + p.Name);
+                    p.IncrementWentToShowdown();
+                }
+            }
+        }
+
+        void HoldemTableStatistics_PlayerPushedAllIn(string playerName, HoldemGamePhase gamePhase)
+        {
+            HoldemPlayer p = FindPlayer(playerName);
+            Debug.Print("Pushed all-in: " + p.Name);
+            p.HasPushedAllIn(gamePhase);
         }
 
         void HoldemTableStatistics_FoundWinner(string playerName)
@@ -79,15 +100,10 @@ namespace PokerMuck
 
             foreach (HoldemPlayer p in table.PlayerList)
             {
-                if (p.WentToShowdownThisRound())
+                if (winnerPlayer == p)
                 {
-                    Debug.Print("Went to showdown: " + p.Name);
-                    if (winnerPlayer == p)
-                    {
-                        Debug.Print("Winner at showdown: " + p.Name);
-                        p.IncrementWonAtShowdown();
-                    }
-                    p.IncrementWentToShowdown();
+                    Debug.Print("Winner at showdown: " + p.Name);
+                    p.IncrementWonAtShowdown();
                 }
             }
         }

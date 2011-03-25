@@ -105,6 +105,15 @@ namespace PokerMuck
             if (FoundWinner != null) FoundWinner(playerName);
         }
 
+        /* A player pushed all-in */
+        public delegate void PlayerPushedAllInHandler(String playerName, HoldemGamePhase gamePhase);
+        public event PlayerPushedAllInHandler PlayerPushedAllIn;
+
+        protected void OnPlayerPushedAllIn(String playerName, HoldemGamePhase gamePhase)
+        {
+            if (PlayerPushedAllIn != null) PlayerPushedAllIn(playerName, gamePhase);
+        }
+
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
         {
             
@@ -122,6 +131,13 @@ namespace PokerMuck
             bool gamePhaseChanged = ParseForGamePhaseChanges(line);
             if (gamePhaseChanged) return;
 
+            /* An all-in doesn't exclude a raise or a call, so it's not part of the if-elseif block
+             * Ex. Player: raises and is all-in is both an all-in and a raise */
+            if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_all_in_push"), out matchResult))
+            {
+                String playerName = matchResult.Groups["playerName"].Value;
+                OnPlayerPushedAllIn(playerName, currentGamePhase);
+            }
 
             /* Detect raises, calls, folds, bets */
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_call"), out matchResult))
