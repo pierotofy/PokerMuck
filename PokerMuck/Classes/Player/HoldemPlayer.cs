@@ -759,11 +759,17 @@ namespace PokerMuck
             // Calculate a few averages
 
             // Overall calls % average across all streets
-            StatisticsData callsPreflop = result.Get("Calls", "Preflop");
+            StatisticsData callsPreflop = result.Get("Calls", "Flop");
             StatisticsData callsAverage = callsPreflop.Average("Calls", "Summary", 0, result.Get("Calls", "Flop"),
                                                                                      result.Get("Calls", "Turn"),
                                                                                      result.Get("Calls", "River"));
             result.Set(callsAverage);
+
+            // Overall check-calls % across all streets
+            StatisticsData checkCallsFlop = result.Get("Check Call", "Flop");
+            StatisticsData checkCallsAverage = checkCallsFlop.Average("Check Call", "Summary", 0, result.Get("Check Call", "Turn"),
+                                                                                     result.Get("Check Call", "River"));
+            result.Set(checkCallsAverage);
 
             return result;
         }

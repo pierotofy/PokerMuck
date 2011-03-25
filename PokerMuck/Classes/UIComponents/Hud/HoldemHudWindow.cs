@@ -46,7 +46,23 @@ namespace PokerMuck
 
         public void DisplayIcons(PlayerStatistics stats)
         {
-            
+            StatisticsData calls = stats.Get("Calls", "Summary");
+
+            // If calls are > 40% then calling station!
+            float callingStationValue = calls.Value;
+            picCallingStation.Visible = (callingStationValue >= 0.40);
+
+            StatisticsData foldSbToSteal = stats.Get("Fold Small Blind to a Steal Raise", "Preflop");
+            StatisticsData foldBbToSteal = stats.Get("Fold Big Blind to a Steal Raise", "Preflop");
+
+            // If average of fold big blind to a steal and fold small blind to a steal > 75% then easy steal
+            float easyStealValue = foldSbToSteal.Average("Fold Small/Big Blind to a Steal Raise", "", 2, foldBbToSteal).Value;
+            picEasySteal.Visible = (easyStealValue >= 0.75);
+
+            // If a person raises more than 50% of his buttons, chances are he might be stealing
+            StatisticsData stealRaises = stats.Get("Steal Raises", "Preflop");
+            float stealerValue = stealRaises.Value;
+            picButtonStealer.Visible = (stealerValue >= 0.5);
         }
 
         private void lblImmediateStats_MouseUp(object sender, MouseEventArgs e)
