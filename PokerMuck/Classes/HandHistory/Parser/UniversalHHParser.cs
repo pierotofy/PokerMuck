@@ -33,6 +33,10 @@ namespace PokerMuck
 
                 if (GameTypeDiscovered != null) GameTypeDiscovered(gameType);
             }
+            else
+            {
+                Debug.Print("Failed to match a gameType from the universal parser: " + line);
+            }
         }
 
         /* We don't need to check for the end of a round with the universal parser

@@ -236,6 +236,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Cards.ico" />
+    <None Include="Resources\AnvilIco.png" />
     <Content Include="Resources\Cards\1_1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -100,7 +100,7 @@ namespace PokerMuck
 
             foreach (HoldemPlayer p in table.PlayerList)
             {
-                if (winnerPlayer == p)
+                if (winnerPlayer == p && winnerPlayer.WentToShowdownThisRound())
                 {
                     Debug.Print("Winner at showdown: " + p.Name);
                     p.IncrementWonAtShowdown();

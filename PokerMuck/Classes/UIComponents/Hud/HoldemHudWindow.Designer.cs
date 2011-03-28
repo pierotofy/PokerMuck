@@ -32,6 +32,8 @@
             this.picEasySteal = new System.Windows.Forms.PictureBox();
             this.picButtonStealer = new System.Windows.Forms.PictureBox();
             this.picCallingStation = new System.Windows.Forms.PictureBox();
+            this.picSolidPlayer = new System.Windows.Forms.PictureBox();
+
 
             ((System.ComponentModel.ISupportInitialize)(this.picEasySteal)).BeginInit();
             this.SuspendLayout();
@@ -86,6 +88,18 @@
             this.picCallingStation.TabStop = false;
 
             // 
+            // picSolidPlayer
+            // 
+            this.picSolidPlayer.Location = new System.Drawing.Point(58, 18);
+            this.picSolidPlayer.Cursor = System.Windows.Forms.Cursors.SizeAll;
+            this.picSolidPlayer.Name = "picSolidPlayer";
+            this.picSolidPlayer.Image = global::PokerMuck.Properties.Resources.AnvilIco;
+            this.picSolidPlayer.BackColor = System.Drawing.Color.Transparent;
+            this.picSolidPlayer.Size = new System.Drawing.Size(16, 14);
+            this.picSolidPlayer.TabIndex = 2;
+            this.picSolidPlayer.TabStop = false;
+
+            // 
             // HoldemHudWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -94,6 +108,7 @@
             this.Controls.Add(this.picEasySteal);
             this.Controls.Add(this.picButtonStealer);
             this.Controls.Add(this.picCallingStation);
+            this.Controls.Add(this.picSolidPlayer);
 
             this.Controls.Add(this.lblImmediateStats);
             this.Name = "HoldemHudWindow";
@@ -114,5 +129,7 @@
         private System.Windows.Forms.PictureBox picEasySteal;
         private System.Windows.Forms.PictureBox picButtonStealer;
         private System.Windows.Forms.PictureBox picCallingStation;
+        private System.Windows.Forms.PictureBox picSolidPlayer;
+
     }
 }

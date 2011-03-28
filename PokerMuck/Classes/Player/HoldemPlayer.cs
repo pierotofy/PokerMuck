@@ -459,6 +459,11 @@ namespace PokerMuck
             }
         }
 
+        public bool WentToShowdownThisRound()
+        {
+            return wentToShowdown.WasIncremented;
+        }
+
         /* Helper function to find out whether a player never folded */
         public bool NeverFoldedThisRound()
         {
@@ -661,7 +666,6 @@ namespace PokerMuck
         public void HasPushedAllIn(HoldemGamePhase gamePhase)
         {
             totalAllIns.Increment();
-            sawStreet[gamePhase].Increment();
         }
 
 
@@ -785,8 +789,28 @@ namespace PokerMuck
 
             // Calculate a few averages
 
+            // Overall raises % average across all streets
+            StatisticsData raisesPreflop = result.Get("Raises", "Preflop");
+            StatisticsData raisesAverage = raisesPreflop.Average("Raises", "Summary", 0, result.Get("Raises", "Flop"),
+                                                                                     result.Get("Raises", "Turn"),
+                                                                                     result.Get("Raises", "River"));
+            result.Set(raisesAverage);
+
+            // Overall bets % average across all streets
+            StatisticsData betsFlop = result.Get("Bets", "Flop");
+            StatisticsData betsAverage = betsFlop.Average("Bets", "Summary", 0, result.Get("Bets", "Turn"),
+                                                                                     result.Get("Bets", "River"));
+            result.Set(betsAverage);
+
+            // Overall folds % average across all streets
+            StatisticsData foldsPreflop = result.Get("Folds", "Preflop");
+            StatisticsData foldsAverage = foldsPreflop.Average("Folds", "Summary", 0, result.Get("Folds", "Flop"),
+                                                                                     result.Get("Folds", "Turn"),
+                                                                                     result.Get("Folds", "River"));
+            result.Set(foldsAverage);
+
             // Overall calls % average across all streets
-            StatisticsData callsPreflop = result.Get("Calls", "Flop");
+            StatisticsData callsPreflop = result.Get("Calls", "Preflop");
             StatisticsData callsAverage = callsPreflop.Average("Calls", "Summary", 0, result.Get("Calls", "Flop"),
                                                                                      result.Get("Calls", "Turn"),
                                                                                      result.Get("Calls", "River"));
@@ -797,6 +821,20 @@ namespace PokerMuck
             StatisticsData checkCallsAverage = checkCallsFlop.Average("Check Call", "Summary", 0, result.Get("Check Call", "Turn"),
                                                                                      result.Get("Check Call", "River"));
             result.Set(checkCallsAverage);
+
+            // Overall check-raises % across all streets
+            StatisticsData checkRaisesFlop = result.Get("Check Raise", "Flop");
+            StatisticsData checkRaisesAverage = checkRaisesFlop.Average("Check Raise", "Summary", 0, result.Get("Check Raise", "Turn"),
+                                                                                     result.Get("Check Raise", "River"));
+            result.Set(checkRaisesAverage);
+
+            // Overall check-fold % across all streets
+            StatisticsData checkFoldsFlop = result.Get("Check Fold", "Flop");
+            StatisticsData checkFoldsAverage = checkFoldsFlop.Average("Check Fold", "Summary", 0, result.Get("Check Fold", "Turn"),
+                                                                                     result.Get("Check Fold", "River"));
+            result.Set(checkFoldsAverage);
+
+
 
             return result;
         }

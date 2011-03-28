@@ -28,6 +28,7 @@ namespace PokerMuck
             t.SetToolTip(picEasySteal, "Easy blind steal");
             t.SetToolTip(picButtonStealer, "Frequent blind stealer");
             t.SetToolTip(picCallingStation, "Calling station");
+            t.SetToolTip(picSolidPlayer, "Solid Player");
         }
 
         public override void DisplayStatistics(PlayerStatistics stats)
@@ -63,6 +64,11 @@ namespace PokerMuck
             StatisticsData stealRaises = stats.Get("Steal Raises", "Preflop");
             float stealerValue = stealRaises.Value;
             picButtonStealer.Visible = (stealerValue >= 0.5);
+
+            // If a person wins 80% or more at showdown, he's a solid player
+            StatisticsData wonAtShowdownStats = stats.Get("Won at Showdown", "Summary");
+            float solidPlayerValue = wonAtShowdownStats.Value;
+            picSolidPlayer.Visible = (solidPlayerValue >= 0.8);
         }
 
         private void lblImmediateStats_MouseUp(object sender, MouseEventArgs e)

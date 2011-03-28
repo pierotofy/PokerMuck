@@ -76,7 +76,7 @@ namespace PokerMuck
          * this has to be counted as a single limp, not as two */
         public virtual void PrepareStatisticsForNewRound()
         {
-
+            totalHandsPlayed.AllowIncrement();
         }
 
         /* Given the name of a category, returns an integer indicating its ordering
