@@ -48,7 +48,11 @@ namespace PokerMuck
         private MultipleValueCounter foldsToAStealRaise;
         private MultipleValueCounter callsToAStealRaise;
         private MultipleValueCounter raisesToAStealRaise;
-        
+
+        /* Fold/call/raise blind to a raise preflop (steal or not) */
+        private MultipleValueCounter foldsBlindToAPreflopRaise;
+        private MultipleValueCounter callsBlindToAPreflopRaise;
+        private MultipleValueCounter raisesBlindToAPreflopRaise;
 
         /* Checks */
         private MultipleValueCounter checks;
@@ -85,9 +89,30 @@ namespace PokerMuck
         private Hashtable totalRaises;
         private Hashtable totalChecks;
 
+        private BlindType blindType;
+        public BlindType BlindType { get { return blindType; } }
 
-        public bool IsBigBlind { get; set; }
-        public bool IsSmallBlind { get; set; }
+        public bool IsBigBlind
+        {
+            get
+            {
+                return blindType == BlindType.BigBlind;
+            }
+            set
+            {
+                blindType = value ? BlindType.BigBlind : BlindType.NoBlind;
+            }
+        }
+        public bool IsSmallBlind {
+            get
+            {
+                return blindType == BlindType.SmallBlind;
+            }
+            set
+            {
+                blindType = value ? BlindType.SmallBlind : BlindType.NoBlind;
+            }
+        }
         public bool IsButton { get; set; }
 
 
@@ -109,6 +134,7 @@ namespace PokerMuck
         protected HoldemPlayer(HoldemPlayer other) :
             base(other)
         {
+            this.blindType = other.blindType;
             this.limps = (ValueCounter)other.limps.Clone();
             this.voluntaryPutMoneyPreflop = (ValueCounter)other.limps.Clone();
             this.raises = (MultipleValueCounter)other.raises.Clone();
@@ -141,12 +167,18 @@ namespace PokerMuck
             this.wentToShowdown = (ValueCounter)other.wentToShowdown.Clone();
             this.wonAtShowdown = (ValueCounter)other.wonAtShowdown.Clone();
             this.totalAllIns = (ValueCounter)other.totalAllIns.Clone();
+            this.foldsBlindToAPreflopRaise = (MultipleValueCounter)other.foldsBlindToAPreflopRaise.Clone();
+            this.callsBlindToAPreflopRaise = (MultipleValueCounter)other.callsBlindToAPreflopRaise.Clone();
+            this.raisesBlindToAPreflopRaise = (MultipleValueCounter)other.raisesBlindToAPreflopRaise.Clone();
+        
         }
 
         
         public HoldemPlayer(String playerName)
             : base(playerName)
         {
+            blindType = BlindType.NoBlind;
+
             totalCalls = new Hashtable(5);
             totalBets = new Hashtable(5);
             totalFolds = new Hashtable(5);
@@ -177,6 +209,10 @@ namespace PokerMuck
             wonAtShowdown = new ValueCounter();
 
             totalAllIns = new ValueCounter();
+
+            foldsBlindToAPreflopRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
+            callsBlindToAPreflopRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
+            raisesBlindToAPreflopRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
 
             ResetAllStatistics();
         }
@@ -223,6 +259,11 @@ namespace PokerMuck
 
             totalAllIns.Reset();
 
+            foldsBlindToAPreflopRaise.Reset();
+            callsBlindToAPreflopRaise.Reset();
+            raisesBlindToAPreflopRaise.Reset();
+
+
             PrepareStatisticsForNewRound();
         }
 
@@ -259,6 +300,10 @@ namespace PokerMuck
             wonAtShowdown.AllowIncrement();
 
             totalAllIns.AllowIncrement();
+
+            foldsBlindToAPreflopRaise.AllowIncrement();
+            callsBlindToAPreflopRaise.AllowIncrement();
+            raisesBlindToAPreflopRaise.AllowIncrement();
         }
 
 
@@ -442,7 +487,7 @@ namespace PokerMuck
             }
         }
 
-        /* How many times has the player check raised? */
+        /* How many times has the player folded the blind to a steal raise? */
         public StatisticsData GetFoldsToAStealRaiseStats(BlindType blindType)
         {
             int actionsToAStealRaise = (int)callsToAStealRaise[blindType].Value + (int)raisesToAStealRaise[blindType].Value + (int)foldsToAStealRaise[blindType].Value;
@@ -453,9 +498,26 @@ namespace PokerMuck
             if (actionsToAStealRaise == 0) return new StatisticsUnknownData(statDescription, "Preflop");
             else
             {
-                float foldToAStealRaiseRation = (float)foldsToAStealRaise[blindType].Value / (float)actionsToAStealRaise;
+                float foldToAStealRaiseRatio = (float)foldsToAStealRaise[blindType].Value / (float)actionsToAStealRaise;
 
-                return new StatisticsPercentageData(statDescription, foldToAStealRaiseRation, "Preflop");
+                return new StatisticsPercentageData(statDescription, foldToAStealRaiseRatio, "Preflop");
+            }
+        }
+
+        /* How many times has the player folded the blind to a raise (but not a reraise)? */
+        public StatisticsData GetFoldsBlindToPreflopRaise(BlindType blindType)
+        {
+            int actionsToPreflopRaise = (int)callsBlindToAPreflopRaise[blindType].Value + (int)raisesBlindToAPreflopRaise[blindType].Value + (int)foldsBlindToAPreflopRaise[blindType].Value;
+            String statDescription = String.Format("Fold {0} to a Raise",
+                            (blindType == BlindType.BigBlind) ? "Big Blind" : "Small Blind");
+
+
+            if (actionsToPreflopRaise == 0) return new StatisticsUnknownData(statDescription, "Preflop");
+            else
+            {
+                float foldBlindToPreflopRaiseRatio = (float)foldsBlindToAPreflopRaise[blindType].Value / (float)actionsToPreflopRaise;
+
+                return new StatisticsPercentageData(statDescription, foldBlindToPreflopRaiseRatio, "Preflop");
             }
         }
 
@@ -543,17 +605,17 @@ namespace PokerMuck
             stealRaises.Increment();
         }
 
-        public void IncrementFoldsToAStealRaise(BlindType blindType)
+        public void IncrementFoldsToAStealRaise()
         {
             foldsToAStealRaise[blindType].Increment();
         }
 
-        public void IncrementCallsToAStealRaise(BlindType blindType)
+        public void IncrementCallsToAStealRaise()
         {
             callsToAStealRaise[blindType].Increment();
         }
 
-        public void IncrementRaisesToAStealRaise(BlindType blindType)
+        public void IncrementRaisesToAStealRaise()
         {
             raisesToAStealRaise[blindType].Increment();
         }
@@ -561,6 +623,22 @@ namespace PokerMuck
         public void IncrementOpportunitiesToStealRaise()
         {
             opportunitiesToStealRaise += 1;
+        }
+
+        /* Increment blind folds/calls/raises to a raise preflop */
+        public void IncrementFoldsBlindToAPreflopRaise()
+        {
+            foldsBlindToAPreflopRaise[blindType].Increment();
+        }
+
+        public void IncrementCallsBlindToAPreflopRaise()
+        {
+            callsBlindToAPreflopRaise[blindType].Increment();
+        }
+
+        public void IncrementRaisesBlindToAPreflopRaise()
+        {
+            raisesBlindToAPreflopRaise[blindType].Increment();
         }
 
         /* This player has raised, increment the stats */
@@ -699,6 +777,12 @@ namespace PokerMuck
             return raises[HoldemGamePhase.Preflop].WasIncremented;
         }
 
+        /* Is he big or small blind? */
+        public bool IsBlind()
+        {
+            return IsBigBlind || IsSmallBlind;
+        }
+
         /* Returns the sum of all streets */
         private int SumStatistics(Hashtable table)
         {
@@ -741,6 +825,9 @@ namespace PokerMuck
             result.Set(GetStealRaiseStats());
             result.Set(GetFoldsToAStealRaiseStats(BlindType.SmallBlind));
             result.Set(GetFoldsToAStealRaiseStats(BlindType.BigBlind));
+
+            result.Set(GetFoldsBlindToPreflopRaise(BlindType.SmallBlind));
+            result.Set(GetFoldsBlindToPreflopRaise(BlindType.BigBlind));            
 
             result.Set(GetWonAtShowdownStats());
             

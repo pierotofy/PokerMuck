@@ -52,6 +52,10 @@ namespace PokerMuck
 
             //pmDirector.Test();
 
+            //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(".COM Play 736 (6 max) - 1/2 - No Limit Hold'em - Logged In As italystallion89");
+            //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle("$0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89");
+            //Debug.Print("Result: " + res);
+
             /* TODO remove
 
             StatisticsNumberData p1 = new StatisticsNumberData("One", 0.5f, "Category", 2);

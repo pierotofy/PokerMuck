@@ -45,7 +45,7 @@
             this.lblPlayerName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPlayerName.Location = new System.Drawing.Point(1, 0);
             this.lblPlayerName.Name = "lblPlayerName";
-            this.lblPlayerName.Size = new System.Drawing.Size(102, 13);
+            this.lblPlayerName.Size = new System.Drawing.Size(90, 13);
             this.lblPlayerName.TabIndex = 0;
             this.lblPlayerName.Text = "playerName";
             this.lblPlayerName.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblPlayerName_MouseDoubleClick);
@@ -69,7 +69,11 @@
             this.resetPlayerStatisticsToolStripMenuItem.Text = "Reset Player\'s Statistics";
             this.resetPlayerStatisticsToolStripMenuItem.Click += new System.EventHandler(this.resetPlayerStatisticsToolStripMenuItem_Click);
             // 
-
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(6, 6);
+            // 
             // resetEverybodysStatisticsToolStripMenuItem
             // 
             this.resetEverybodysStatisticsToolStripMenuItem.Name = "resetEverybodysStatisticsToolStripMenuItem";
@@ -81,9 +85,9 @@
             // 
             this.lblTotalHandsPlayed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalHandsPlayed.BackColor = System.Drawing.Color.Transparent;
-            this.lblTotalHandsPlayed.Location = new System.Drawing.Point(109, 0);
+            this.lblTotalHandsPlayed.Location = new System.Drawing.Point(97, 0);
             this.lblTotalHandsPlayed.Name = "lblTotalHandsPlayed";
-            this.lblTotalHandsPlayed.Size = new System.Drawing.Size(22, 13);
+            this.lblTotalHandsPlayed.Size = new System.Drawing.Size(34, 13);
             this.lblTotalHandsPlayed.TabIndex = 1;
             this.lblTotalHandsPlayed.Text = "(0)";
             this.lblTotalHandsPlayed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -99,7 +103,7 @@
             this.BackColor = System.Drawing.Color.Silver;
             this.BackgroundImage = global::PokerMuck.Properties.Resources.Hud;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(129, 38);
+            this.ClientSize = new System.Drawing.Size(135, 38);
             this.ContextMenuStrip = this.contextMenu;
             this.Controls.Add(this.lblPlayerName);
             this.Controls.Add(this.lblTotalHandsPlayed);

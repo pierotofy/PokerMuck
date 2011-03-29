@@ -18,17 +18,20 @@ namespace PokerMuck
         /* Somebody raised preflop */
         private bool PlayerRaisedPreflop;
 
+        /* Somebody reraised preflop */
+        private bool PlayerReRaisedPreflop;
+
         /* Somebody checked preflop */
         private bool PlayerCheckedPreflop;
 
         /* Somebody bet the flop */
-        private bool PlayerBetTheFlopThisRound;
+        private bool PlayerBetTheFlop;
 
         /* Somebody cbet the flop (which is different than simple betting) */
-        private bool PlayerCBetThisRound;
+        private bool PlayerCBet;
 
         /* Somebody raised the flop */
-        private bool PlayerRaisedTheFlopThisRound;
+        private bool PlayerRaisedTheFlop;
 
         /* Somebody steal raised */
         private bool PlayerStealRaisedPreflop;
@@ -48,14 +51,15 @@ namespace PokerMuck
         {
             base.PrepareStatisticsForNewRound();
 
-            PlayerBetTheFlopThisRound = false;
-            PlayerRaisedTheFlopThisRound = false;
-            PlayerCBetThisRound = false;
+            PlayerBetTheFlop = false;
+            PlayerRaisedTheFlop = false;
+            PlayerCBet = false;
             PlayerRaisedPreflop = false;
             PlayerLimpedPreflop = false;
             PlayerCheckedPreflop = false;
             PlayerStealRaisedPreflop = false;
             SmallBlindReraisedAStealRaise = false;
+            PlayerReRaisedPreflop = false;
         }
 
         public override void RegisterParserHandlers(HHParser parser)
@@ -130,6 +134,12 @@ namespace PokerMuck
 
             if (gamePhase == HoldemGamePhase.Preflop)
             {
+                /* If somebody already raised, this is a reraise */
+                if (PlayerRaisedPreflop)
+                {
+                    PlayerReRaisedPreflop = true;
+                }
+
                 /* If this player is the button and he raises while nobody raised or limped before him
                  * this is a good candidate for a steal raise */
                 if (p.IsButton && !PlayerRaisedPreflop && !PlayerLimpedPreflop && !PlayerCheckedPreflop)
@@ -143,12 +153,18 @@ namespace PokerMuck
                 /* re-raise to a steal raise? */
                 else if (p.IsSmallBlind && PlayerStealRaisedPreflop)
                 {
-                    p.IncrementRaisesToAStealRaise(BlindType.SmallBlind);
+                    p.IncrementRaisesToAStealRaise();
                     SmallBlindReraisedAStealRaise = true;
                 }
                 else if (p.IsBigBlind && PlayerStealRaisedPreflop && !SmallBlindReraisedAStealRaise)
                 {
-                    p.IncrementRaisesToAStealRaise(BlindType.BigBlind);
+                    p.IncrementRaisesToAStealRaise();
+                }
+
+                /* From the blind raised a raise (but NOT to a reraise) ? */
+                if (p.IsBlind() && PlayerRaisedPreflop && !PlayerReRaisedPreflop)
+                {
+                    p.IncrementRaisesBlindToAPreflopRaise();
                 }
 
                 PlayerRaisedPreflop = true;
@@ -156,12 +172,12 @@ namespace PokerMuck
             else if (gamePhase == HoldemGamePhase.Flop)
             {
                 // Has somebody cbet?
-                if (!PlayerRaisedTheFlopThisRound && PlayerCBetThisRound)
+                if (!PlayerRaisedTheFlop && PlayerCBet)
                 {
                     p.IncrementRaiseToACBet();
                 }
 
-                PlayerRaisedTheFlopThisRound = true;
+                PlayerRaisedTheFlop = true;
             }
 
             
@@ -183,15 +199,22 @@ namespace PokerMuck
                 /* Folded to a steal raise? */
                 else if (p.IsSmallBlind && PlayerStealRaisedPreflop)
                 {
-                    p.IncrementFoldsToAStealRaise(BlindType.SmallBlind);
+                    p.IncrementFoldsToAStealRaise();
                 }
                 else if (p.IsBigBlind && PlayerStealRaisedPreflop && !SmallBlindReraisedAStealRaise)
                 {
-                    p.IncrementFoldsToAStealRaise(BlindType.BigBlind);
+                    p.IncrementFoldsToAStealRaise();
+                }
+
+
+                /* Folded to a raise (but NOT to a reraise) ? */
+                if (p.IsBlind() && PlayerRaisedPreflop && !PlayerReRaisedPreflop)
+                {
+                    p.IncrementFoldsBlindToAPreflopRaise();
                 }
             }
             // Has somebody cbet?
-            else if(gamePhase == HoldemGamePhase.Flop && !PlayerRaisedTheFlopThisRound && PlayerCBetThisRound)
+            else if(gamePhase == HoldemGamePhase.Flop && !PlayerRaisedTheFlop && PlayerCBet)
             {
                 p.IncrementFoldToACBet();
             }
@@ -215,7 +238,7 @@ namespace PokerMuck
             }
 
             // Flop
-            if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlopThisRound && p.HasPreflopRaisedThisRound())
+            if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlop && p.HasPreflopRaisedThisRound())
             {
                 p.IncrementOpportunitiesToCBet(false);
             }
@@ -248,17 +271,23 @@ namespace PokerMuck
                 /* Called a steal raise? */
                 else if (p.IsSmallBlind && PlayerStealRaisedPreflop)
                 {
-                    p.IncrementCallsToAStealRaise(BlindType.SmallBlind);
+                    p.IncrementCallsToAStealRaise();
                 }
                 else if (p.IsBigBlind && PlayerStealRaisedPreflop && !SmallBlindReraisedAStealRaise)
                 {
-                    p.IncrementCallsToAStealRaise(BlindType.BigBlind);
+                    p.IncrementCallsToAStealRaise();
+                }
+
+                /* From the blind called a raise (but NOT to a reraise) ? */
+                if (p.IsBlind() && PlayerRaisedPreflop && !PlayerReRaisedPreflop)
+                {
+                    p.IncrementCallsBlindToAPreflopRaise();
                 }
             }
             else if (gamePhase == HoldemGamePhase.Flop)
             {
                 // Has somebody cbet?
-                if (!PlayerRaisedTheFlopThisRound && PlayerCBetThisRound)
+                if (!PlayerRaisedTheFlop && PlayerCBet)
                 {
                     p.IncrementCallToACBet();
                 }
@@ -272,16 +301,16 @@ namespace PokerMuck
             HoldemPlayer p = FindPlayer(playerName);
 
             // Flop
-            if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlopThisRound)
+            if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlop)
             {
                 // Did he raised preflop?
                 if (p.HasPreflopRaisedThisRound())
                 {
                     p.IncrementOpportunitiesToCBet(true);
-                    PlayerCBetThisRound = true;
+                    PlayerCBet = true;
                 }
 
-                PlayerBetTheFlopThisRound = true;
+                PlayerBetTheFlop = true;
             }
 
 

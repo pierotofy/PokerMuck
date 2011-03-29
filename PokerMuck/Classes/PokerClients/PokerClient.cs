@@ -62,8 +62,67 @@ namespace PokerMuck
         /* Given a game description in string format, it returns the corresponding PokerGameType */
         public abstract PokerGameType GetPokerGameTypeFromGameDescription(String gameDescription);
             
-        /* Given a string representing a card, returns the equivalent card object */
-        public abstract Card GenerateCardFromString(String card);
+        /* Given a string representing a card, returns the equivalent card object 
+           This seems to be a standard format across poker client.
+           Cards are represented by two chars, the first indicating the face
+         * and the second indicating the suit. Ex. Ks, Ah, etc. */
+        public virtual Card GenerateCardFromString(String card)
+        {
+            // This should never be different than 2
+            Debug.Assert(card.Length == 2, "A string representation of a card was found to be of invalid length: " + card.Length + " instead of 2");
+
+            // Uppercase to simplify checks
+            String cardValues = card.ToUpper();
+
+            // Extract components
+            Char faceComponent = cardValues[0];
+            Char suitComponent = cardValues[1];
+
+            CardFace face = CharToCardFace(faceComponent);
+            CardSuit suit = CharToCardSuit(suitComponent);
+
+            Card result = new Card(face, suit);
+            return result;
+        }
+
+        /* Helper method to convert a char into a CardFace enum value */
+        protected CardFace CharToCardFace(Char c)
+        {
+            switch (c)
+            {
+                case 'A': return CardFace.Ace;
+                case '2': return CardFace.Two;
+                case '3': return CardFace.Three;
+                case '4': return CardFace.Four;
+                case '5': return CardFace.Five;
+                case '6': return CardFace.Six;
+                case '7': return CardFace.Seven;
+                case '8': return CardFace.Eight;
+                case '9': return CardFace.Nine;
+                case 'T': return CardFace.Ten;
+                case 'J': return CardFace.Jack;
+                case 'Q': return CardFace.Queen;
+                case 'K': return CardFace.King;
+                default:
+                    Debug.Assert(false, "Invalid char detected during conversion to CardFace: " + c);
+                    return CardFace.Ace; // Never to be executed
+            }
+        }
+
+        /* Helper method to convert a char into a CardSuit enum value */
+        protected CardSuit CharToCardSuit(Char c)
+        {
+            switch (c)
+            {
+                case 'S': return CardSuit.Spades;
+                case 'C': return CardSuit.Clubs;
+                case 'D': return CardSuit.Diamonds;
+                case 'H': return CardSuit.Hearts;
+                default:
+                    Debug.Assert(false, "Invalid char detected during conversion to CardSuit: " + c);
+                    return CardSuit.Hearts; // Never to be executed
+            }
+        }
 
         /* Default constructor, initializes the regex and config hashtables */
         protected PokerClient()

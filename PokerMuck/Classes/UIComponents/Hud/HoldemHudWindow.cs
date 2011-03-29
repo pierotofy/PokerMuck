@@ -53,12 +53,12 @@ namespace PokerMuck
             float callingStationValue = calls.Value;
             picCallingStation.Visible = (callingStationValue >= 0.40);
 
-            StatisticsData foldSbToSteal = stats.Get("Fold Small Blind to a Steal Raise", "Preflop");
-            StatisticsData foldBbToSteal = stats.Get("Fold Big Blind to a Steal Raise", "Preflop");
+            StatisticsData foldSbToRaise = stats.Get("Fold Small Blind to a Raise", "Preflop");
+            StatisticsData foldBbToRaise = stats.Get("Fold Big Blind to a Raise", "Preflop");
 
-            // If average of fold big blind to a steal and fold small blind to a steal > 75% then easy steal
-            float easyStealValue = foldSbToSteal.Average("Fold Small/Big Blind to a Steal Raise", "", 2, foldBbToSteal).Value;
-            picEasySteal.Visible = (easyStealValue >= 0.75);
+            // If average of fold big blind to a raise and fold small blind to a raise > 80% then easy steal
+            float easyStealValue = foldSbToRaise.Average("Fold Small/Big Blind to a Raise", "", 2, foldBbToRaise).Value;
+            picEasySteal.Visible = (easyStealValue >= 0.80);
 
             // If a person raises more than 50% of his buttons, chances are he might be stealing
             StatisticsData stealRaises = stats.Get("Steal Raises", "Preflop");
