@@ -100,7 +100,7 @@ namespace PokerMuck
 
                 /* Detect raises 
                  * ex. zanzara za: raises 755 to 1155 and is all-in */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>[^:]+): raises (?<initialPot>[\d]+) to (?<raiseAmount>[\d]+)");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>[^:]+): raises ([\d]+) to (?<raiseAmount>[\d]+)");
 
                 /* Recognize end of round character sequence (in PokerStars.it it's
                  * a blank line */

@@ -128,7 +128,7 @@ namespace PokerMuck
             buttonSeat = seatNumber;
         }
 
-        void handHistoryParser_PlayerRaised(string playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
+        void handHistoryParser_PlayerRaised(string playerName, float raiseAmount, HoldemGamePhase gamePhase)
         {
             HoldemPlayer p = FindPlayer(playerName);
 

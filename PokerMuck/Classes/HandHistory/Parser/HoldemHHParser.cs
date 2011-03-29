@@ -70,12 +70,12 @@ namespace PokerMuck
         }
 
         /* A player raised */
-        public delegate void PlayerRaisedHandler(String playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase);
+        public delegate void PlayerRaisedHandler(String playerName, float raiseAmount, HoldemGamePhase gamePhase);
         public event PlayerRaisedHandler PlayerRaised;
 
-        protected void OnPlayerRaised(String playerName, float initialPot, float raiseAmount, HoldemGamePhase gamePhase)
+        protected void OnPlayerRaised(String playerName, float raiseAmount, HoldemGamePhase gamePhase)
         {
-            if (PlayerRaised != null) PlayerRaised(playerName, initialPot, raiseAmount, gamePhase);
+            if (PlayerRaised != null) PlayerRaised(playerName, raiseAmount, gamePhase);
         }
 
         /* A player checked */
@@ -176,9 +176,8 @@ namespace PokerMuck
                 Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a raise during an impossible game phase");
 
                 String playerName = matchResult.Groups["playerName"].Value;
-                float initialPot = float.Parse(matchResult.Groups["initialPot"].Value);
                 float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);
-                OnPlayerRaised(playerName, initialPot, raiseAmount, currentGamePhase);
+                OnPlayerRaised(playerName, raiseAmount, currentGamePhase);
             }
 
             /* Compare line to extract game id or table id */
