@@ -40,23 +40,24 @@ namespace PokerMuck
 
 
                 /* Recognize the Hand History gameID 
-                 Ex. PokerStars Game #59534069543: Tournament #377151618
+                 Ex. Full Tilt Poker Game #29428529378: $0.95 + $0.05
+                 * Full Tilt Poker Game #29427316352: Table Stewart (6 max, shallow)
+                 * Full Tilt Poker Game #29428122872: Table .COM Play 736 (6 max)
                  */
-                regex.Add("hand_history_game_id_token", @"PokerStars Game #(?<handId>[\d]+): Tournament #(?<gameId>[\d]+)");
+                regex.Add("hand_history_game_id_token", @"Full Tilt Poker Game #(?<handId>[\d]+): (?<gameId>[^,-]+) (-|,)");
 
                 /* Recognize the table ID and max seating capacity */
-                regex.Add("hand_history_table_token", @"Table '(?<tableId>.+)' (?<tableSeatingCapacity>[\d]+)-max");
+                regex.Add("hand_history_table_token", @"Table (?<tableId>[^(]+) (\((?<tableSeatingCapacity>[\d]+) max\) )?- \$?[\d]+\/\$?[\d]+ - .+ - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
-                   Note that for PokerStars.it the only valid currency is EUR (and FPP), but this might be different 
-                   on other clients. This regex works for both play money and tournaments */
-                regex.Add("hand_history_game_type_token", @"([\d]+FPP (?<gameType>[^-]+) -)|(EUR (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \([\d]+/[\d]+\))");
+                 * Full Tilt Poker Game #29428516957: $0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - 18:30:27 ET - 2011/03/28*/
+                regex.Add("hand_history_game_type_token", @"Full Tilt Poker Game #[\d]+: .+ - \$?[\d]+\/\$?[\d]+ - (?<gameType>.+) - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
 
                 /* Recognize players 
-                 Ex. Seat 1: stallion089 (2105 in chips) => 1,"stallion089" 
-                 * It ignores those who are marked as "out of hand"
+                 Ex. Seat 3: italystallion89 ($0.80)
+                 * It ignores those who are marked as ", is sitting out"
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\([\d]+ in chips\) (?!out of hand)");
+                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\(\$?[\d\.]+\)$");
 
                 /* Recognize mucked hands
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/
@@ -64,40 +65,41 @@ namespace PokerMuck
                 regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^(]+) .*(showed|mucked) \[(?<cards>[\d\w ]+)\]");
 
                 /* Recognize winners of a hand 
-                 * Ex. cord80 collected 40 from pot */
-                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) collected [\d]+ from pot");
+                 * Ex. mosby2 wins the pot (40) */
+                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) wins the pot \(\$?[\d\.]+\)");
 
                 /* Recognize all-ins
-                 * Ex. stallion089: raises 605 to 875 and is all-in */
-                regex.Add("hand_history_detect_all_in_push", @"(?<playerName>[^:]+): .+ is all-in");
+                 * Ex. mosby2 bets 400, and is all in */
+                regex.Add("hand_history_detect_all_in_push", @"(?<playerName>.+) (bets|calls|raises).+, and is all in");
 
                 /* Recognize the final board */
-                regex.Add("hand_history_detect_final_board", @"Board \[(?<cards>[\d\w ]+)\]");
+                regex.Add("hand_history_detect_final_board", @"Board: \[(?<cards>[\d\w ]+)\]");
 
                 /* Detect who is the small/big blind
-                   Ex. stallion089: posts small blind 15 */
-                regex.Add("hand_history_detect_small_blind", @"(?<playerName>[^:]+): posts small blind (?<smallBlindAmount>[\d]+)");
-                regex.Add("hand_history_detect_big_blind", @"(?<playerName>[^:]+): posts big blind (?<bigBlindAmount>[\d]+)");
+                   Ex. kan-ikkje posts the small blind of $0.01
+                 * italystallion89 posts the big blind of $0.02 */
+                regex.Add("hand_history_detect_small_blind", @"(?<playerName>.+) posts the small blind of \$?(?<smallBlindAmount>[\d\.]+)");
+                regex.Add("hand_history_detect_big_blind", @"(?<playerName>.+) posts the big blind of \$?(?<bigBlindAmount>[\d\.]+)");
 
                 /* Detect who the button is */
-                regex.Add("hand_history_detect_button", @"#(?<seatNumber>[\d]+) is the button");
+                regex.Add("hand_history_detect_button", @"The button is in seat #(?<seatNumber>[\d]+)");
 
 
                 /* Detect calls
-                 * ex. stallion089: calls 10 */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>[^:]+): calls (?<amount>[\d]+)");
+                 * ex. SILJCAR calls $0.02 */
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.]+)");
 
-                /* Detect bets 
-                   ex. stallion089: bets 20 */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>[^:]+): bets (?<amount>[\d]+)");
+                /* Detect bets
+                   ex. kan-ikkje bets $0.02 */
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.]+)");
 
                 /* Detect folds
-                 * ex. preferiti90: folds */
-                regex.Add("hand_history_detect_player_fold", @"(?<playerName>[^:]+): folds");
+                 * ex. kan-ikkje folds */
+                regex.Add("hand_history_detect_player_fold", @"(?<playerName>.+) folds");
 
                 /* Detect checks
-                 * ex. DOTTORE169: checks */
-                regex.Add("hand_history_detect_player_check", @"(?<playerName>[^:]+): checks");
+                 * ex. italystallion89 checks */
+                regex.Add("hand_history_detect_player_check", @"(?<playerName>.+) checks");
 
                 /* Detect raises 
                  * ex. SILJCAR raises to $0.04 */
@@ -115,7 +117,7 @@ namespace PokerMuck
                 config.Add("hand_history_tournament_filename_format", @"FT[0-9]+ {0}, {1}");
 
                 /* Game description (as shown in the hand history) */
-                config.Add("game_description_no_limit_holdem", "Hold'em No Limit");
+                config.Add("game_description_no_limit_holdem", "No Limit Hold'em");
 
             }
 
@@ -129,6 +131,8 @@ namespace PokerMuck
         /* Given a game description, returns the corresponding PokerGameType */
         public override PokerGameType GetPokerGameTypeFromGameDescription(string gameDescription)
         {
+            Debug.Print("Found game description: " + gameDescription);
+
             if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGameType.Holdem;
 
             return PokerGameType.Unknown; //Default

@@ -281,6 +281,9 @@ namespace PokerMuck
                     ((HoldemHHParser)handHistoryParser).FinalBoardAvailable += new HoldemHHParser.FinalBoardAvailableHandler(handHistoryParser_FinalBoardAvailable);
                     statistics.RegisterParserHandlers(handHistoryParser);
                 }
+
+                // Also, resend the last line to the new parser!
+                hhMonitor.ResendLastLine();
             }
         }
 
@@ -324,7 +327,7 @@ namespace PokerMuck
          * from the database */
         private void CreatePlayer(String playerName)
         {
-            Debug.Assert(GameID != String.Empty, "We are trying to create a player with no GameID");
+            //Debug.Assert(GameID != String.Empty, "We are trying to create a player with no GameID");
 
             // Do we need to create a new one?
             if (!playerDatabase.Contains(playerName, GameID))

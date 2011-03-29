@@ -139,6 +139,35 @@ namespace PokerMuck
                 OnPlayerPushedAllIn(playerName, currentGamePhase);
             }
 
+            /* Compare line to extract game id or table id */
+            if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_game_id_token"), out matchResult))
+            {
+                currentGameId = matchResult.Groups["gameId"].Value;
+                OnNewGameHasStarted(currentGameId);
+            }
+            
+            if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_table_token"), out matchResult))
+            {
+                currentTableId = matchResult.Groups["tableId"].Value;
+                String maxSeatingCapacity = matchResult.Groups["tableSeatingCapacity"].Value;
+
+                Debug.Print("Table: " + currentTableId);
+                Debug.Print("Max seating capacity: " + maxSeatingCapacity);
+
+                if (maxSeatingCapacity == String.Empty)
+                {
+                    maxSeatingCapacity = "2"; // TODO FIX!!!
+                    Debug.Print("Unknown max seating capacity, setting to 2");
+                }
+
+
+                if (currentGameId != String.Empty) OnNewTableHasBeenCreated(currentGameId, currentTableId, maxSeatingCapacity);
+                else
+                {
+                    Debug.Print("Table ID {0} found but no game ID has been assigned to this parser yet. Ignoring event.");
+                }
+            }
+
             /* Detect raises, calls, folds, bets */
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_call"), out matchResult))
             {
@@ -177,24 +206,10 @@ namespace PokerMuck
 
                 String playerName = matchResult.Groups["playerName"].Value;
                 float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);
+                
+                Debug.Print(playerName + " raises " + raiseAmount);
+                
                 OnPlayerRaised(playerName, raiseAmount, currentGamePhase);
-            }
-
-            /* Compare line to extract game id or table id */
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_game_id_token"), out matchResult))
-            {
-                currentGameId = matchResult.Groups["gameId"].Value;
-                OnNewGameHasStarted(currentGameId);
-            }
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_table_token"), out matchResult))
-            {
-                currentTableId = matchResult.Groups["tableId"].Value;
-                String maxSeatingCapacity = matchResult.Groups["tableSeatingCapacity"].Value;
-                if (currentGameId != String.Empty) OnNewTableHasBeenCreated(currentGameId, currentTableId, maxSeatingCapacity);
-                else
-                {
-                    Debug.Print("Table ID {0} found but no game ID has been assigned to this parser yet. Ignoring event.");
-                }
             }
 
             /* Search for table seating patterns */

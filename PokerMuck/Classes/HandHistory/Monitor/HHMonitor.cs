@@ -17,6 +17,9 @@ namespace PokerMuck
         private IHHMonitorHandler handler;
         private FilesLineTracker filesLineTracker;
 
+        /* Keeps track of the last line sent */
+        private string lastLine;
+
         private Object thisLock = new Object(); // Used for thread safety synchronization
 
         public HHMonitor(String handHistoryFilePath, IHHMonitorHandler handler)
@@ -26,6 +29,7 @@ namespace PokerMuck
             this.directory = Path.GetDirectoryName(handHistoryFilePath);
             this.handHistoryFilename = Path.GetFileName(handHistoryFilePath);
             this.filesLineTracker = new FilesLineTracker();
+            this.lastLine = String.Empty;
 
             CreateSystemWatcher();
         }
@@ -42,6 +46,12 @@ namespace PokerMuck
                 monitoring = false;
                 fwatcher.EnableRaisingEvents = false;
             }
+        }
+
+        /* Sends again to the handler the last line */
+        public void ResendLastLine()
+        {
+            if (lastLine != String.Empty) handler.NewLineArrived(handHistoryFilename, lastLine);
         }
 
         public void CheckForFileChanges()
@@ -69,7 +79,9 @@ namespace PokerMuck
 
                             while (!reader.EndOfStream)
                             {
-                                handler.NewLineArrived(handHistoryFilename, reader.ReadLine());
+                                string newLine = reader.ReadLine();
+                                lastLine = newLine;
+                                handler.NewLineArrived(handHistoryFilename, newLine);
                                 linesRead++;
                             }
 

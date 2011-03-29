@@ -156,6 +156,8 @@ namespace PokerMuck
              * we'll use the value that was previously stored in the configuration */
             List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
 
+            Debug.Assert(table.MaxSeatingCapacity != 0, "Table max seating capacity is unknown, impossible to display hud.");
+
             // If the configuration didn't return us any result, we set dummy points
             // This should occur on the first time
             if (positions.Count == 0)

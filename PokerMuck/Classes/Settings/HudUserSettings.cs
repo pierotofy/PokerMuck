@@ -83,7 +83,10 @@ namespace PokerMuck
          * Result => "PokerStars.it_9_players_hud_window_positions" */
         private String GetSettingNameForHudWindowPositions(String clientName, int maxSeats)
         {
-            return String.Format("{0}_{1}_players_hud_window_positions", clientName, maxSeats);
+            // Replace spaces with underscores
+            String escapedClientName = clientName.Replace(" ", "_");
+
+            return String.Format("{0}_{1}_players_hud_window_positions", escapedClientName, maxSeats);
         }
 
         public override string GetSettingsFilename()

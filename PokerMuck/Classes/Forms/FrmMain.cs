@@ -68,13 +68,14 @@ namespace PokerMuck
             Debug.Print(p3.Name + ": " + p3.GetValue());
             Debug.Print(avg1.Name + ": " + avg1.GetValue());
              
-            Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_detect_mucked_hand");
-            Match m = r.Match("Seat 1: stallion089 (button) (small blind) mucked [5d 5s]");
+            
+            Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_table_token");
+            Match m = r.Match("Full Tilt Poker Game #29428122872: Table .COM Play 736 (6 max) - 1/2 - No Limit Hold'em - 18:17:18 ET - 2011/03/28");
 
             if (m.Success)
             {
                 Debug.Print("OOOK");
-                Debug.Print(m.Groups["playerName"].Value);
+                Debug.Print(m.Groups["tableSeatingCapacity"].Value);
             }*/
 
 
