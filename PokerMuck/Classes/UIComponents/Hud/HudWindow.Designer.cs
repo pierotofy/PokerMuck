@@ -85,7 +85,7 @@
             // 
             this.lblTotalHandsPlayed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalHandsPlayed.BackColor = System.Drawing.Color.Transparent;
-            this.lblTotalHandsPlayed.Location = new System.Drawing.Point(97, 0);
+            this.lblTotalHandsPlayed.Location = new System.Drawing.Point(107, 0);
             this.lblTotalHandsPlayed.Name = "lblTotalHandsPlayed";
             this.lblTotalHandsPlayed.Size = new System.Drawing.Size(34, 13);
             this.lblTotalHandsPlayed.TabIndex = 1;
@@ -103,7 +103,7 @@
             this.BackColor = System.Drawing.Color.Silver;
             this.BackgroundImage = global::PokerMuck.Properties.Resources.Hud;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(135, 38);
+            this.ClientSize = new System.Drawing.Size(145, 38);
             this.ContextMenuStrip = this.contextMenu;
             this.Controls.Add(this.lblPlayerName);
             this.Controls.Add(this.lblTotalHandsPlayed);

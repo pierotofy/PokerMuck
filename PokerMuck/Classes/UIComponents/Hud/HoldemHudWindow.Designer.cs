@@ -44,7 +44,7 @@
             this.lblImmediateStats.Cursor = System.Windows.Forms.Cursors.SizeAll;
             this.lblImmediateStats.Location = new System.Drawing.Point(0, 35);
             this.lblImmediateStats.Name = "lblImmediateStats";
-            this.lblImmediateStats.Size = new System.Drawing.Size(188, 21);
+            this.lblImmediateStats.Size = new System.Drawing.Size(198, 21);
             this.lblImmediateStats.TabIndex = 1;
             this.lblImmediateStats.Text = "VPF";
             this.lblImmediateStats.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.HoldemHudWindow_MouseDoubleClick);
