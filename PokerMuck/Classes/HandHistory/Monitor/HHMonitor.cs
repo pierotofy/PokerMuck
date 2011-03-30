@@ -5,14 +5,15 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using System.Collections;
+using System.Threading;
 
 namespace PokerMuck
 {
     class HHMonitor
     {
         private bool monitoring;
-        private FileSystemWatcher fwatcher = null;
         private String handHistoryFilename;
+        private long currentFilesize;
         private String directory;
         private IHHMonitorHandler handler;
         private FilesLineTracker filesLineTracker;
@@ -30,21 +31,48 @@ namespace PokerMuck
             this.handHistoryFilename = Path.GetFileName(handHistoryFilePath);
             this.filesLineTracker = new FilesLineTracker();
             this.lastLine = String.Empty;
-
-            CreateSystemWatcher();
+            this.currentFilesize = 0;
         }
 
         public void StartMonitoring(){
-            if (!monitoring && fwatcher != null){
+            if (!monitoring){
                 monitoring = true;
-                fwatcher.EnableRaisingEvents = true;
+
+                Thread t = new Thread(MonitorLoop);
+                t.Start();
             }
         }
 
         public void StopMonitoring(){
             if (monitoring){
                 monitoring = false;
-                fwatcher.EnableRaisingEvents = false;
+            }
+        }
+
+        private void MonitorLoop()
+        {
+            String filePath = GetFullHandHistoryPath();
+
+            while (monitoring)
+            {
+                // First make sure the file exists
+                if (File.Exists(filePath))
+                {
+                    // Get file size
+                    FileInfo info = new FileInfo(filePath);
+                    long newFilesize = info.Length;
+
+                    // Different?
+                    if (newFilesize != currentFilesize)
+                    {
+                        // File changed
+                        CheckForFileChanges();
+
+                        currentFilesize = newFilesize;
+                    }
+                }
+
+                Thread.Sleep(2000);
             }
         }
 
@@ -104,21 +132,6 @@ namespace PokerMuck
                     }
                 }
             }
-
-            // TODO!!! Add temporal checks???
-        }
-
-        private void File_Changed(object sender, FileSystemEventArgs e){
-            // Is this the file we are monitoring?
-
-            if (e.Name == handHistoryFilename)
-            {
-                CheckForFileChanges();
-            }
-            else
-            {
-                Debug.Print("Change detected, but filename is different: {0} != {1}", e.Name, handHistoryFilename);
-            }
         }
 
         /* Helper methods */
@@ -133,22 +146,5 @@ namespace PokerMuck
                 s.ReadLine();
         }
 
-        /* Initializes the system watcher (if needed) */
-        private void CreateSystemWatcher()
-        {
-            if (fwatcher == null)
-            {
-                // First make sure the directory exists
-                if (Directory.Exists(directory))
-                {
-                    fwatcher = new FileSystemWatcher(directory);
-                    fwatcher.Changed += new FileSystemEventHandler(File_Changed);
-                }
-                else
-                {
-                    Debug.Print("Directory doesn't exist: {0}, skipping initialization of file system watcher.", directory);
-                }
-            }
-        }
     }
 }

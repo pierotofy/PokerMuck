@@ -368,6 +368,11 @@ namespace PokerMuck
         {
             if (windowsListener != null) windowsListener.StopListening();
             if (newFilesMonitor != null) newFilesMonitor.StopMonitoring();
+
+            foreach (Table t in tables)
+            {
+                t.Terminate();
+            }
         }
 
         /* Helper method to raise the DisplayStatus event */
