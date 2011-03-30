@@ -61,6 +61,10 @@ namespace PokerMuck
 
         /* Given a game description in string format, it returns the corresponding PokerGameType */
         public abstract PokerGameType GetPokerGameTypeFromGameDescription(String gameDescription);
+
+        /* Given the table token line, it tries to infer the maximum number of seats available
+         * (some clients' histories do not explicitly specify this value) */
+        public abstract int InferMaxSeatingCapacity(String line);
             
         /* Given a string representing a card, returns the equivalent card object 
            This seems to be a standard format across poker client.

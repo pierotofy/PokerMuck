@@ -130,6 +130,15 @@ namespace PokerMuck
             return PokerGameType.Unknown; //Default
         }
 
+        public override int InferMaxSeatingCapacity(string line)
+        {
+            // Return a common seating number (pokerstars always provides the number of seats available)
+            // So this routine should never be executed
+            Debug.Print("We had to infer the max seating capacity using PokerStars. Wrong?");
+
+            return 9;
+        }
+
         /**
          * This function matches an open window title with patterns to recognize which hand history
          * the current window refers to (if it is even a poker game window). It will return an empty

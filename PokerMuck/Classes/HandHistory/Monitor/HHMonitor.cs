@@ -68,7 +68,12 @@ namespace PokerMuck
                 {
                     try
                     {
-                        using (StreamReader reader = new StreamReader(handHistoryFilePath))
+                        FileStream fileStream = new FileStream(handHistoryFilePath,
+                                      FileMode.Open,
+                                      FileAccess.Read,
+                                      FileShare.ReadWrite);
+
+                        using (StreamReader reader = new StreamReader(fileStream))
                         {
                             int lastLineRead = filesLineTracker.GetLineCount(handHistoryFilename);
 
@@ -92,12 +97,15 @@ namespace PokerMuck
                             filesLineTracker.IncreaseLineCount(handHistoryFilename, linesRead);
                         }
                     }
-                    catch (IOException)
+                    catch (IOException e)
                     {
+                        Debug.Print(e.ToString());
                         Debug.Print(String.Format("Cannot read {0}, trying again later?", handHistoryFilePath));
                     }
                 }
             }
+
+            // TODO!!! Add temporal checks???
         }
 
         private void File_Changed(object sender, FileSystemEventArgs e){

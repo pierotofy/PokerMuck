@@ -12,7 +12,6 @@ namespace PokerMuck
     {
         public FullTilt()
         {
-            // Other init stuff?
         }
 
         public FullTilt(String language)
@@ -46,12 +45,13 @@ namespace PokerMuck
                  */
                 regex.Add("hand_history_game_id_token", @"Full Tilt Poker Game #(?<handId>[\d]+): (?<gameId>[^,-]+) (-|,)");
 
-                /* Recognize the table ID and max seating capacity */
-                regex.Add("hand_history_table_token", @"Table (?<tableId>[^(]+) (\((?<tableSeatingCapacity>[\d]+) max\) )?- \$?[\d]+\/\$?[\d]+ - .+ - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
+                /* Recognize the table ID and max seating capacity (if available) 
+                 ex. Full Tilt Poker Game #29459258249: Table Valley Of Fire (shallow) - $0.01/$0.02 - No Limit Hold'em - 19:52:33 ET - 2011/03/29 */
+                regex.Add("hand_history_table_token", @"Table (?<tableId>.+) - \$?[\d\.]+\/\$?[\d\.]+ - .+ - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * Full Tilt Poker Game #29428516957: $0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - 18:30:27 ET - 2011/03/28*/
-                regex.Add("hand_history_game_type_token", @"Full Tilt Poker Game #[\d]+: .+ - \$?[\d]+\/\$?[\d]+ - (?<gameType>.+) - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
+                regex.Add("hand_history_game_type_token", @"Full Tilt Poker Game #[\d]+: .+ - \$?[\d\.]+\/\$?[\d\.]+ - (?<gameType>.+) - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
 
                 /* Recognize players 
                  Ex. Seat 3: italystallion89 ($0.80)
@@ -138,6 +138,33 @@ namespace PokerMuck
             return PokerGameType.Unknown; //Default
         }
 
+        public override int InferMaxSeatingCapacity(string line)
+        {
+            // line = Full Tilt Poker Game #29457232449: Table Escondido (shallow) - $0.01/$0.02 - No Limit Hold'em - 18:34:48 ET - 2011/03/29
+            
+            // If we find the word "heads up" this should be a two seat table
+            if (line.IndexOf("Heads Up") != -1) return 2;
+
+            else{
+                Regex r = new Regex(@"(?<maxSeatingCapacity>[\d]+) max");
+                
+                // If we find the word "max" with a number before it, then we guess that that's the max number of seats
+                Match m = r.Match(line);
+                if (m.Success){
+                    String maxSeatingCapacity = m.Groups["maxSeatingCapacity"].Value;
+                    int maxCapacityGuess = Int32.Parse(maxSeatingCapacity);
+
+                    Debug.Print("Matched max seating capacity: " + maxSeatingCapacity + " from " + line);
+
+                    return maxCapacityGuess;
+                }else{
+
+                    // No luck, return 9 as it's a popular number of seats, hoping for the best
+                    return 9;
+                }
+            }
+        }
+
         /**
          * This function matches an open window title with patterns to recognize which hand history
          * the current window refers to (if it is even a poker game window). It will return an empty
@@ -167,6 +194,9 @@ namespace PokerMuck
                 String gameDescription = match.Groups["gameDescription"].Value;
                 String gameType = match.Groups["gameType"].Value;
 
+                // A conversion of a few characters needs to be done
+                gameDescription = StringToRegexPattern(gameDescription);
+
                 // output: FT20110328 $0.95 + $0.05 Heads Up Sit & Go (228858150), No Limit Hold'em
                 return String.Format(GetConfigString("hand_history_tournament_filename_format"), gameDescription, gameType);
             }
@@ -182,9 +212,7 @@ namespace PokerMuck
                     /* On full tilt for ring games and play money the game description
                      * pretty much matches the filename, but a conversion of a few characters needs
                      * to be done. */
-
-                    // 1. Convert / to -
-                    gameDescription = gameDescription.Replace("/", "-");
+                    gameDescription = StringToRegexPattern(gameDescription);
 
                     // Return pattern
                     return String.Format((String)GetConfig("hand_history_ring_filename_format"), gameDescription);
@@ -194,6 +222,25 @@ namespace PokerMuck
                     return String.Empty; //Could not find any valid match... must be a title we're not interested into
                 }
             }
+        }
+
+        /* Converts an input string into a format compatible with regex */
+        private String StringToRegexPattern(String str)
+        {
+            // 1. Convert / to -
+            str = str.Replace("/", "-");
+
+            // 2. Convert $ to \$
+            str = str.Replace("$", @"\$");
+
+            // 3. Convert ( to \( and ) to \)
+            str = str.Replace(")", @"\)");
+            str = str.Replace("(", @"\(");
+
+            // 4. Convert . to \.
+            str = str.Replace(".", @"\.");
+
+            return str;
         }
 
         public override String Name

@@ -68,15 +68,17 @@ namespace PokerMuck
             Debug.Print(p3.Name + ": " + p3.GetValue());
             Debug.Print(avg1.Name + ": " + avg1.GetValue());
              
-            
+            */
             Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_table_token");
-            Match m = r.Match("Full Tilt Poker Game #29428122872: Table .COM Play 736 (6 max) - 1/2 - No Limit Hold'em - 18:17:18 ET - 2011/03/28");
+            //Regex r = new Regex(@"FT[0-9]+ Escondido \(shallow\) - \$0\.01-\$0\.02 - No Limit Hold'em");
+            //Table (?<tableId>[^-]+) - \$?[\d]+\/\$?[\d]+ - .+ - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}
+            Match m = r.Match("Full Tilt Poker Game #29459258249: Table Valley Of Fire (shallow) - $0.01/$0.02 - No Limit Hold'em - 19:52:33 ET - 2011/03/29");
 
             if (m.Success)
             {
                 Debug.Print("OOOK");
-                Debug.Print(m.Groups["tableSeatingCapacity"].Value);
-            }*/
+                Debug.Print(m.Groups["gameType"].Value);
+            }
 
 
             // Adjust size

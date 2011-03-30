@@ -156,8 +156,10 @@ namespace PokerMuck
 
                 if (maxSeatingCapacity == String.Empty)
                 {
-                    maxSeatingCapacity = "2"; // TODO FIX!!!
-                    Debug.Print("Unknown max seating capacity, setting to 2");
+                    // We didn't find the exact seating capacity, ask the client to guess it
+                    maxSeatingCapacity = pokerClient.InferMaxSeatingCapacity(line).ToString();
+
+                    Debug.Print("Inferred max seating capacity: " + maxSeatingCapacity);
                 }
 
 
