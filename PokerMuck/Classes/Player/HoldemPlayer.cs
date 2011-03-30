@@ -76,7 +76,11 @@ namespace PokerMuck
         private ValueCounter wentToShowdown;
         private ValueCounter wonAtShowdown;
 
-        
+        /* Starting hands range on a limp or call */
+        private List<HoldemHand> startingHandsWithPreflopCall;
+
+        /* Starting hands range when raisor preflop */
+        private List<HoldemHand> startingHandsWithPreflopRaise;
 
         /* Each table is set this way:
          key => value
@@ -170,6 +174,8 @@ namespace PokerMuck
             this.foldsBlindToAPreflopRaise = (MultipleValueCounter)other.foldsBlindToAPreflopRaise.Clone();
             this.callsBlindToAPreflopRaise = (MultipleValueCounter)other.callsBlindToAPreflopRaise.Clone();
             this.raisesBlindToAPreflopRaise = (MultipleValueCounter)other.raisesBlindToAPreflopRaise.Clone();
+
+            // TODO clone list!!!!
         
         }
 
@@ -213,6 +219,10 @@ namespace PokerMuck
             foldsBlindToAPreflopRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
             callsBlindToAPreflopRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
             raisesBlindToAPreflopRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
+
+            startingHandsWithPreflopCall = new List<HoldemHand>();
+            startingHandsWithPreflopRaise = new List<HoldemHand>();
+
 
             ResetAllStatistics();
         }
@@ -263,9 +273,12 @@ namespace PokerMuck
             callsBlindToAPreflopRaise.Reset();
             raisesBlindToAPreflopRaise.Reset();
 
+            startingHandsWithPreflopCall.Clear();
+            startingHandsWithPreflopRaise.Clear();
 
             PrepareStatisticsForNewRound();
         }
+
 
         /* Certain statistics are round specific (for example a person can only limp once per round)
          * This function should get called at the beginning of a new round */
@@ -306,6 +319,28 @@ namespace PokerMuck
             raisesBlindToAPreflopRaise.AllowIncrement();
         }
 
+        /* A mucked hand became available for this player */
+        public override void MuckHandAvailable(Hand hand)
+        {
+            base.MuckHandAvailable(hand);
+
+            HoldemHand holdemHand = (HoldemHand)hand;
+
+            Debug.Print("Muck hand available called!");
+
+            // Has this player raised preflop with this hand?
+            if (raises[HoldemGamePhase.Preflop].WasIncremented)
+            {
+                Debug.Print("Added hand: " + hand.ToString());
+                startingHandsWithPreflopRaise.Add(holdemHand);
+            }
+
+            // Has this player just limped or called a raise with this hand?
+            else if (calls[HoldemGamePhase.Preflop].WasIncremented)
+            {
+                startingHandsWithPreflopCall.Add(holdemHand);
+            }
+        }
 
         /* Returns the limp statistics */
         public StatisticsData GetLimpStats()
@@ -533,6 +568,42 @@ namespace PokerMuck
                                 || folds[HoldemGamePhase.Turn].WasIncremented || folds[HoldemGamePhase.River].WasIncremented;
 
             return (totalHandsPlayed.WasIncremented && !foldedAStreet);
+        }
+
+        /* Get hands that the player called with preflop */
+        private StatisticsData GetStartingHandsWithPreflopCallStats()
+        {
+            if (startingHandsWithPreflopCall.Count > 0)
+            {
+                String result = String.Empty;
+                foreach (HoldemHand hand in startingHandsWithPreflopCall)
+                {
+                    result += hand.ToString() + ", ";
+                }
+                
+                // Eliminate last comma
+                result = result.Substring(0, result.Length - 2);
+                return new StatisticsDescriptiveData("Call/limp starting hands", "Summary", result);
+            }
+            else return new StatisticsUnknownData("Call/limp starting hands", "Summary");
+        }
+
+        /* Get hands that the player raised with preflop */
+        private StatisticsData GetStartingHandsWithPreflopRaiseStats()
+        {
+            if (startingHandsWithPreflopRaise.Count > 0)
+            {
+                String result = String.Empty;
+                foreach (HoldemHand hand in startingHandsWithPreflopRaise)
+                {
+                    result += hand.ToString() + ", ";
+                }
+
+                // Eliminate last comma
+                result = result.Substring(0, result.Length - 2);
+                return new StatisticsDescriptiveData("Raise starting hands", "Summary", result);
+            }
+            else return new StatisticsUnknownData("Raise starting hands", "Summary");
         }
 
         /* Get style of play */
@@ -833,6 +904,9 @@ namespace PokerMuck
             
             result.Set(GetCBetStats());
             result.Set(GetFoldToACBetStats());
+
+            result.Set(GetStartingHandsWithPreflopRaiseStats());
+            result.Set(GetStartingHandsWithPreflopCallStats());
 
             result.Set(GetRaiseStats(HoldemGamePhase.Preflop, "Preflop"));
             result.Set(GetRaiseStats(HoldemGamePhase.Flop, "Flop"));

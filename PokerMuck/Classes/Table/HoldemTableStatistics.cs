@@ -75,7 +75,7 @@ namespace PokerMuck
             ((HoldemHHParser)parser).HoleCardsWillBeDealt += new HHParser.HoleCardsWillBeDealtHandler(HoldemTableStatistics_HoleCardsWillBeDealt);
             ((HoldemHHParser)parser).FoundWinner += new HoldemHHParser.FoundWinnerHandler(HoldemTableStatistics_FoundWinner);
             ((HoldemHHParser)parser).PlayerPushedAllIn += new HoldemHHParser.PlayerPushedAllInHandler(HoldemTableStatistics_PlayerPushedAllIn);
-            ((HoldemHHParser)parser).ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(HoldemTableStatistics_ShowdownWillBegin);        
+            ((HoldemHHParser)parser).ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(HoldemTableStatistics_ShowdownWillBegin);
         }
 
         void HoldemTableStatistics_ShowdownWillBegin()
@@ -93,14 +93,14 @@ namespace PokerMuck
 
         void HoldemTableStatistics_PlayerPushedAllIn(string playerName, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
             Debug.Print("Pushed all-in: " + p.Name);
             p.HasPushedAllIn(gamePhase);
         }
 
         void HoldemTableStatistics_FoundWinner(string playerName)
         {
-            HoldemPlayer winnerPlayer = FindPlayer(playerName);
+            HoldemPlayer winnerPlayer = FindHoldemPlayer(playerName);
 
             foreach (HoldemPlayer p in table.PlayerList)
             {
@@ -130,7 +130,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerRaised(string playerName, float raiseAmount, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
 
             if (gamePhase == HoldemGamePhase.Preflop)
             {
@@ -186,7 +186,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerFolded(string playerName, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
 
             if (gamePhase == HoldemGamePhase.Preflop)
             {
@@ -224,7 +224,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerChecked(string playerName, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
 
             if (gamePhase == HoldemGamePhase.Preflop)
             {
@@ -248,7 +248,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerCalled(string playerName, float amount, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
 
             // If we are preflop
             if (gamePhase == HoldemGamePhase.Preflop)
@@ -298,7 +298,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerBet(string playerName, float amount, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
 
             // Flop
             if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlop)
@@ -323,7 +323,7 @@ namespace PokerMuck
             BigBlindAmount = amount;
 
             // Keep track of who is the big blind
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
             p.IsBigBlind = true;
         }
 
@@ -333,15 +333,14 @@ namespace PokerMuck
             SmallBlindAmount = amount;
 
             // Keep track of who is the small blind
-            HoldemPlayer p = FindPlayer(playerName);
+            HoldemPlayer p = FindHoldemPlayer(playerName);
             p.IsSmallBlind = true;
         }
 
-
-        /* Helper function to find a player */
-        private HoldemPlayer FindPlayer(String playerName)
+        protected HoldemPlayer FindHoldemPlayer(string playerName)
         {
             return (HoldemPlayer)table.FindPlayer(playerName);
         }
+
     }
 }

@@ -102,6 +102,12 @@ namespace PokerMuck
             return result;
         }
 
+        /* A mucked hand became available for this player */
+        public virtual void MuckHandAvailable(Hand hand)
+        {
+            MuckedHand = hand;
+        }
+
         public void DisposeHud()
         {
             if (HudWindow != null)

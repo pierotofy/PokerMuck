@@ -20,6 +20,18 @@ namespace PokerMuck
             cards.Add(card);
         }
 
+        public override string ToString()
+        {
+            String res = String.Empty;
+            foreach (Card c in cards)
+            {
+                res += c.ToString() + " ";
+            }
+
+            // Remove last space
+            return res.Substring(0, res.Length - 1);
+        }
+
         /* Perform a deep copy */
         public object Clone()
         {
