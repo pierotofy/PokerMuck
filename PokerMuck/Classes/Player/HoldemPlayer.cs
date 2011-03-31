@@ -326,23 +326,28 @@ namespace PokerMuck
         /* A mucked hand became available for this player */
         public override void MuckHandAvailable(Hand hand)
         {
+            bool duplicate = hand.Equals(MuckedHand);
             base.MuckHandAvailable(hand);
 
-            HoldemHand holdemHand = (HoldemHand)hand;
-
-            Debug.Print("Muck hand available called!");
-
-            // Has this player raised preflop with this hand?
-            if (raises[HoldemGamePhase.Preflop].WasIncremented)
+            // Make sure we're not handling a duplicate... the parser might send multiple mucked hands
+            if (!duplicate)
             {
-                Debug.Print("Added hand: " + hand.ToString());
-                startingHandsWithPreflopRaise.Add(holdemHand);
-            }
+                HoldemHand holdemHand = (HoldemHand)hand;
 
-            // Has this player just limped or called a raise with this hand?
-            else if (calls[HoldemGamePhase.Preflop].WasIncremented)
-            {
-                startingHandsWithPreflopCall.Add(holdemHand);
+                Debug.Print("Muck hand available called!");
+
+                // Has this player raised preflop with this hand?
+                if (raises[HoldemGamePhase.Preflop].WasIncremented)
+                {
+                    Debug.Print("Added hand: " + hand.ToString());
+                    startingHandsWithPreflopRaise.Add(holdemHand);
+                }
+
+                // Has this player just limped or called a raise with this hand?
+                else if (calls[HoldemGamePhase.Preflop].WasIncremented)
+                {
+                    startingHandsWithPreflopCall.Add(holdemHand);
+                }
             }
         }
 
@@ -587,9 +592,9 @@ namespace PokerMuck
                 
                 // Eliminate last comma
                 result = result.Substring(0, result.Length - 2);
-                return new StatisticsDescriptiveData("Call/limp starting hands", "Summary", result);
+                return new StatisticsDescriptiveData("Call/limp starting hands", "Preflop", result);
             }
-            else return new StatisticsUnknownData("Call/limp starting hands", "Summary");
+            else return new StatisticsUnknownData("Call/limp starting hands", "Preflop");
         }
 
         /* Get hands that the player raised with preflop */
@@ -605,9 +610,9 @@ namespace PokerMuck
 
                 // Eliminate last comma
                 result = result.Substring(0, result.Length - 2);
-                return new StatisticsDescriptiveData("Raise starting hands", "Summary", result);
+                return new StatisticsDescriptiveData("Raise starting hands", "Preflop", result);
             }
-            else return new StatisticsUnknownData("Raise starting hands", "Summary");
+            else return new StatisticsUnknownData("Raise starting hands", "Preflop");
         }
 
         /* Get style of play */

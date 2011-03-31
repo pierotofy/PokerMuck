@@ -33,6 +33,18 @@ namespace PokerMuck
             return CardFaceToChar(Face).ToString() + CardSuitToChar(Suit).ToString().ToLower();
         }
 
+        public override bool Equals(object obj)
+        {
+            Card otherCard = (Card)obj;
+
+            return (otherCard.Face == Face && otherCard.Suit == Suit);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         // Returns an int identifying the value of the face alone (Two = lower, Ace = higher)
         public int GetFaceValue()
         {

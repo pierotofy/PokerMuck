@@ -252,15 +252,7 @@ namespace PokerMuck
                 Card second = pokerClient.GenerateCardFromString(cards[1]);
                 Hand hand = new HoldemHand(first, second);
                 
-                // Raise event if we're at showdown
-                if (currentGamePhase == HoldemGamePhase.Summary || currentGamePhase == HoldemGamePhase.Showdown || currentGamePhase == HoldemGamePhase.Preflop)
-                {
-                    OnPlayerMuckHandAvailable(playerName, hand);
-                }
-                else
-                {
-                    Debug.Print("Muck hand detected, but we're not at showdown, summary or preflop?");
-                }
+                OnPlayerMuckHandAvailable(playerName, hand);
             }
 
             /* Search for final board */

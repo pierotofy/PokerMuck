@@ -17,7 +17,7 @@ namespace PokerMuck
         public Hand MuckedHand { get; set; }
 
         /* Has this player showed his hands last round? */
-        public bool HasShowedLastRound { get; set; }
+        public bool HasShowedThisRound { get; set; }
 
         /* Number of hands played */
         protected ValueCounter totalHandsPlayed;
@@ -44,7 +44,7 @@ namespace PokerMuck
         protected Player(String name)
         {
             this.name = name;
-            this.HasShowedLastRound = false;
+            this.HasShowedThisRound = false;
             this.HudWindow = null;
             this.IsPlaying = false;
             this.HasPlayedLastRound = true;
@@ -106,6 +106,7 @@ namespace PokerMuck
         public virtual void MuckHandAvailable(Hand hand)
         {
             MuckedHand = hand;
+            HasShowedThisRound = true;
         }
 
         public void DisposeHud()
@@ -141,7 +142,7 @@ namespace PokerMuck
 
             // Copy members here
             this.name = other.Name;
-            this.HasShowedLastRound = other.HasShowedLastRound;
+            this.HasShowedThisRound = other.HasShowedThisRound;
             this.HudWindow = null;
             this.IsPlaying = other.IsPlaying;
             this.HasPlayedLastRound = other.HasPlayedLastRound;

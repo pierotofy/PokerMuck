@@ -307,7 +307,7 @@ namespace PokerMuck
             foreach (Player p in sender.PlayerList)
             {
                 // If it has showed and it's not us
-                if (p.HasShowedLastRound && p.Name != UserSettings.UserID)
+                if (p.HasShowedThisRound && p.Name != UserSettings.UserID)
                 {
                     // Inform the UI
                     if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);

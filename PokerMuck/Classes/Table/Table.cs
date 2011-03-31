@@ -171,20 +171,6 @@ namespace PokerMuck
             }
         }
 
-        /* Find a player with playerName name and set its mucked hand */
-        void handHistoryParser_PlayerMuckHandAvailable(string playerName, Hand hand)
-        {
-            Player player = FindPlayer(playerName);
-            if (player != null)
-            {
-                player.MuckedHand = hand;
-                player.HasShowedLastRound = true;
-            }
-            else
-            {
-                Debug.Print("Warning: Player " + playerName + " mucked hand became available, but this player is not in our list");
-            }
-        }
 
         void handHistoryParser_PlayerIsSeated(string playerName, int seatNumber)
         {
@@ -235,16 +221,6 @@ namespace PokerMuck
             statistics.PrepareStatisticsForNewRound();
         }
 
-        void handHistoryParser_HoleCardsWillBeDealt()
-        {
-            // Mark every player as not having shown their hands during the last showdown
-            foreach (Player p in playerList)
-            {
-                p.HasShowedLastRound = false;
-                p.IsDealtHoleCards();
-            }
-        }
-
         private void handHistoryParser_GameTypeDiscovered(string gameType)
         {
             Debug.Print("GameType discovered! {0}",gameType);
@@ -270,11 +246,9 @@ namespace PokerMuck
             {
                 // Generic handlers (all game types)
                 handHistoryParser.PlayerIsSeated += new HHParser.PlayerIsSeatedHandler(handHistoryParser_PlayerIsSeated);
-                handHistoryParser.PlayerMuckHandAvailable += new HHParser.PlayerMuckHandAvailableHandler(handHistoryParser_PlayerMuckHandAvailable);
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
                 handHistoryParser.NewTableHasBeenCreated += new HHParser.NewTableHasBeenCreatedHandler(handHistoryParser_NewTableHasBeenCreated);
-                handHistoryParser.HoleCardsWillBeDealt += new HHParser.HoleCardsWillBeDealtHandler(handHistoryParser_HoleCardsWillBeDealt);
-
+                
                 // Game specific handlers
                 if (GameType == PokerGameType.Holdem)
                 {
