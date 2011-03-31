@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <PublishUrlHistory>ftp://ftp.pierotofy.it/application/|ftp://ftp.pierotofy.it/PokerMuck/|ftp://pierotofy.it/application/|ftp://pierotofy.it/PokerMuck/|ftp://pokermuck%40pierotofy.it/PokerMuck/</PublishUrlHistory>
+    <PublishUrlHistory>ftp://ftp.pierotofy.it/PokerMuck/|ftp://ftp.pierotofy.it/application/|ftp://pierotofy.it/application/|ftp://pierotofy.it/PokerMuck/|ftp://pokermuck%40pierotofy.it/PokerMuck/</PublishUrlHistory>
     <InstallUrlHistory>http://www.pierotofy.it/pokermuck/application/|http://www.pokermuck.pierotofy.it/application/|http://www.pokermuck.pierotofy.it/Application/|http://www.pokermuck.pierotofy.it/PokerMuck/</InstallUrlHistory>
     <SupportUrlHistory>http://www.pokermuck.pierotofy.it</SupportUrlHistory>
     <UpdateUrlHistory />

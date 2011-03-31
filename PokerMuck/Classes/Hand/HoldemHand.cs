@@ -17,11 +17,14 @@ namespace PokerMuck
          * they can both be referred to as K6s (king-six suited) */
         public override string ToString()
         {
-            CardSuit firstSuit = cards[0].Suit;
-            CardSuit secondSuit = cards[1].Suit;
+            Card firstCard = cards[0];
+            Card secondCard = cards[1];
 
-            CardFace firstFace = cards[0].Face;
-            CardFace secondFace = cards[1].Face;
+            CardSuit firstSuit = firstCard.Suit;
+            CardSuit secondSuit = secondCard.Suit;
+
+            CardFace firstFace = firstCard.Face;
+            CardFace secondFace = secondCard.Face;
 
             // Suited?
             string suited = "o"; // default to offsuit
@@ -31,7 +34,7 @@ namespace PokerMuck
             if (firstFace == secondFace) suited = "";
 
             // Swap them so that the bigger card is echoed first (A6 instead of 6A)
-            if ((int)firstFace < (int)secondFace)
+            if (firstCard.GetFaceValue() < secondCard.GetFaceValue())
             {
                 CardFace t = firstFace;
                 firstFace = secondFace;
