@@ -16,27 +16,6 @@ namespace PokerMuck
         /* Will need these functions to find the current foreground window */
         [DllImport("user32.dll")]
         static extern int GetForegroundWindow();
-        [DllImport("user32.dll")]
-        static extern int GetWindowText(int hWnd, StringBuilder text, int count); 
-
-        /* Additionally we'll need this one to find the X-Y coordinate of the window */
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowRect(int hWnd, out RECT lpRect);
-
-        /* We need also to define a RECT structure */
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left;        // x position of upper-left corner
-            public int Top;         // y position of upper-left corner
-            public int Right;       // x position of lower-right corner
-            public int Bottom;      // y position of lower-right corner
-        }
-
-        /* This one will help us detect when a window gets closed */
-        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
         /* Object that will receive the notifications when something changes */
         private IDetectWindowsChanges handler;
@@ -54,7 +33,14 @@ namespace PokerMuck
         public Rectangle CurrentForegroundWindowRect { get; set; }
 
         /* List of windows to monitor for existance. (When one of these windows is closed, a proper event is fired) */
-        private List<String> windowsListToMonitor;
+        private List<Window> windowsListToMonitor;
+
+        /* Hashtable that helps us keep track of whether we have notified the handler of a window minimize/maximize */
+        private Hashtable windowMinimizeNotificationSent;
+        private Hashtable windowMaximizeNotificationSent;
+
+        // This temporary list keeps track of which windows should be removed from our monitor list
+        List<Window> removeWindowList = new List<Window>();
 
         private bool currentWindowExists;
 
@@ -63,7 +49,10 @@ namespace PokerMuck
             this.handler = handler;
             this.ListenInterval = 1000;
             this.currentWindowExists = false;
-            this.windowsListToMonitor = new List<String>();
+            this.windowsListToMonitor = new List<Window>();
+            this.windowMinimizeNotificationSent = new Hashtable();
+            this.windowMaximizeNotificationSent = new Hashtable();
+
 
 
             // Set these the first time
@@ -86,13 +75,23 @@ namespace PokerMuck
          * duplicates will be ignored */
         public void AddToMonitorList(String windowTitle)
         {
-            if (!windowsListToMonitor.Contains(windowTitle)) windowsListToMonitor.Add(windowTitle);
+            Window w = windowsListToMonitor.Find(delegate(Window window)
+            {
+                return window.Title == windowTitle;
+            });
+
+            if (w == null) windowsListToMonitor.Add(new Window(windowTitle));
         }
 
         /* Removes a window title from the list */
         public void RemoveFromMonitorList(String windowTitle)
         {
-            windowsListToMonitor.Remove(windowTitle);
+            windowsListToMonitor.RemoveAll(
+                delegate(Window w)
+                {
+                    return w.Title == windowTitle;
+                }
+            );
         }
 
         /* Clears the monitor list */
@@ -112,8 +111,8 @@ namespace PokerMuck
                 int handle = GetForegroundWindowHandle();
 
                 // Update current foreground window title and window rect
-                CurrentForegroundWindowTitle = GetWindowTitleFromHandle(handle);
-                CurrentForegroundWindowRect = GetWindowRectFromHandle(handle);
+                CurrentForegroundWindowTitle = Window.GetWindowTitleFromHandle(handle);
+                CurrentForegroundWindowRect = Window.GetWindowRectFromHandle(handle);
 
 
                 // Title Different?
@@ -123,7 +122,7 @@ namespace PokerMuck
                     handler.NewForegroundWindow(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
 
                     // Check if the window actually exists
-                    currentWindowExists = WindowExists(CurrentForegroundWindowTitle);
+                    currentWindowExists = Window.Exists(CurrentForegroundWindowTitle);
                 }
 
                 // Rectangle different?
@@ -132,22 +131,92 @@ namespace PokerMuck
                     // Notify
                     handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
                 }
-                
-                // Check for existance of windows that are in our list
-                // TODO FIX!!!!!!!!!!!
-                int items = windowsListToMonitor.Count;
-                for (int i = 0; i < items; i++ )
-                {
-                    String windowTitle = windowsListToMonitor[i];
-                    if (!WindowExists(windowTitle))
-                    {
-                        handler.WindowClosed(windowTitle);
-                        RemoveFromMonitorList(windowTitle);
-                    }
-                }
 
+                // Check the windows that have been specifically added to our list, one by one
+                CheckWindowsMonitorList();
+
+                // Wait
                 Thread.Sleep(ListenInterval);
             }
+        }
+
+        private void CheckWindowsMonitorList()
+        {
+            // Check each of the windows that we are monitoring
+            int items = windowsListToMonitor.Count;
+            for (int i = 0; i < items; i++)
+            {
+                Window window = windowsListToMonitor[i];
+                if (!window.Exists())
+                {
+                    // Notify handler
+                    handler.WindowClosed(window.Title);
+
+                    // Add it to our remove list
+                    removeWindowList.Add(window);
+                }
+                else
+                {
+                    // Still exist... is it resized?
+                    if (window.Minimized)
+                    {
+                        // Window is minimized... allow for maximize notifications to be sent again
+                        windowMaximizeNotificationSent[window] = false;
+
+                        // Did we already notify the handler?
+                        if (!HasMinimizeNotificationBeenSent(window))
+                        {
+                            // Nop, notify
+                            handler.WindowMinimized(window.Title);
+
+                            // Set notification sent
+                            windowMinimizeNotificationSent[window] = true;
+                        }
+                    }
+                    else if (window.HasBeenMinimized)
+                    {
+                        // Window is visible... allow for minimize notifications to be sent again
+                        windowMinimizeNotificationSent[window] = false;
+
+                        // Did we already notify the handler?
+                        if (!HasMaximizeNotificationBeenSent(window))
+                        {
+                            // Nop, notify
+                            handler.WindowMaximized(window.Title);
+
+                            // Set notification sent
+                            windowMaximizeNotificationSent[window] = true;
+                        }
+                    }
+                }
+            }
+
+            // Actually remove the windows
+            foreach (Window w in removeWindowList)
+            {
+                windowsListToMonitor.Remove(w);
+            }
+
+            // Cleanup
+            removeWindowList.Clear();
+        }
+
+        /* Helper method to check whether we have sent a maximize notification to the handler about a window */
+        private bool HasMaximizeNotificationBeenSent(Window w)
+        {
+            // New item?
+            if (!windowMaximizeNotificationSent.Contains(w)) windowMaximizeNotificationSent[w] = false;
+
+            return (bool)windowMaximizeNotificationSent[w];
+        }
+
+        /* Helper method to check whether we have sent a minimize notification to the handler about a window */
+        private bool HasMinimizeNotificationBeenSent(Window w)
+        {
+            // New item?
+            if (!windowMinimizeNotificationSent.Contains(w)) windowMinimizeNotificationSent[w] = false;
+
+            return (bool)windowMinimizeNotificationSent[w];
         }
 
         /* Windows helper functions */
@@ -158,52 +227,17 @@ namespace PokerMuck
             return handle;
         }
 
-        private bool WindowExists(String windowTitle)
-        {
-            return FindWindowByCaption(IntPtr.Zero, windowTitle) != IntPtr.Zero;
-        }
-
-        private String GetWindowTitleFromHandle(int handle){
-            const int maxChars = 256;
-            StringBuilder buffer = new StringBuilder(maxChars);
-            if ( GetWindowText(handle, buffer, maxChars) > 0 )
-            {
-                return buffer.ToString();
-            }else{
-                return "";
-            }
-        }
-
         private String GetForegroundWindowTitle(){
             int handle = GetForegroundWindowHandle();
-            return GetWindowTitleFromHandle(handle);
+            return Window.GetWindowTitleFromHandle(handle);
         }
 
         private Rectangle GetForegroundWindowRect()
         {
             int handle = GetForegroundWindowHandle();
-            return GetWindowRectFromHandle(handle);
+            return Window.GetWindowRectFromHandle(handle);
         }
 
-        private Rectangle GetWindowRectFromHandle(int handle)
-        {
-            // Ok, let's figure out it's position
 
-            RECT rct; // C++ style
-            Rectangle windowRect = new Rectangle(); // C# style
-            if (GetWindowRect(handle, out rct))
-            {
-                windowRect.X = rct.Left;
-                windowRect.Y = rct.Top;
-                windowRect.Width = rct.Right - rct.Left;
-                windowRect.Height = rct.Bottom - rct.Top;
-            }
-            else
-            {
-                Debug.Print("A new window became the foreground window, but I couldn't figure out its position and size.");
-            }
-
-            return windowRect;   
-        }
     }
 }

@@ -184,6 +184,7 @@
     <Compile Include="Classes\UIComponents\EntityCardListPanel.Designer.cs">
       <DependentUpon>EntityCardListPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\WindowsListener\Window.cs" />
     <Compile Include="Classes\WindowsListener\WindowsListener.cs" />
     <Compile Include="Classes\HandHistory\Parser\HHParser.cs" />
     <Compile Include="Classes\Player\HoldemPlayer.cs" />

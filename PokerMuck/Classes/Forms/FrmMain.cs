@@ -49,6 +49,7 @@ namespace PokerMuck
             pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
             pmDirector.RemoveHud += new PokerMuckDirector.RemoveHudHandler(pmDirector_RemoveHud);
             pmDirector.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
+            pmDirector.SetHudVisible += new PokerMuckDirector.SetHudVisibleHandler(pmDirector_SetHudVisible);
 
             //pmDirector.Test();
 
@@ -94,6 +95,14 @@ namespace PokerMuck
 
             // Always start the view on the About tab
             tabControl.SelectedIndex = 3;
+        }
+
+        void pmDirector_SetHudVisible(Table t, bool visible)
+        {
+            this.Invoke((Action)delegate()
+            {
+                t.Hud.Visible = visible;
+            });
         }
 
         void pmDirector_DisplayPlayerStatistics(Player p)

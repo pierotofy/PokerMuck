@@ -20,6 +20,28 @@ namespace PokerMuck
         /* Windows List */
         private HudWindowsList windowsList;
 
+        /* Visible */
+        private bool visible;
+        public bool Visible
+        {
+            get
+            {
+                return visible;
+            }
+            set
+            {
+                this.visible = value;
+                if (visible)
+                {
+                    windowsList.Show();
+                }
+                else
+                {
+                    windowsList.Hide();
+                }
+            }
+        }
+
         public Hud(Table table)
         {
             this.table = table;

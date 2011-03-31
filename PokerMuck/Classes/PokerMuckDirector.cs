@@ -63,6 +63,11 @@ namespace PokerMuck
         public delegate void ShiftHudHandler(Table t);
         public event ShiftHudHandler ShiftHud;
 
+        /* Tell the UI to show/hide the hud */
+        public delegate void SetHudVisibleHandler(Table t, bool visible);
+        public event SetHudVisibleHandler SetHudVisible;       
+
+
         /* Tell the UI to remove a hud */
         public delegate void RemoveHudHandler(Table t);
         public event RemoveHudHandler RemoveHud;
@@ -103,8 +108,6 @@ namespace PokerMuck
             if (UserSettings.FirstExecution)
             {
                 ShowFirstExecutionWizard();
-                FrmFirstExecutionWizard firstExecutionWizard = new FrmFirstExecutionWizard();
-                firstExecutionWizard.ShowDialog();
 
                 // Reload settings
                 userSettings = new PokerMuckUserSettings();
@@ -132,9 +135,31 @@ namespace PokerMuck
            
         }
 
+        /* A window has been minimized... hide the hud associated with it */
+        public void WindowMinimized(string windowTitle)
+        {
+            Debug.Print("Minimized: " + windowTitle);
+            Table t = FindTableByWindowTitle(windowTitle);
+            if (t != null){
+                if (SetHudVisible != null) SetHudVisible(t, false);
+            }
+        }
+
+        /* A window has been maximized... show the hud */
+        public void WindowMaximized(string windowTitle)
+        {
+            Debug.Print("Maximized: " + windowTitle);
+            Table t = FindTableByWindowTitle(windowTitle);
+            if (t != null)
+            {
+                if (SetHudVisible != null) SetHudVisible(t, true);
+            }
+        }
+
         private void ShowFirstExecutionWizard()
         {
-            Debug.Print("Called");
+            FrmFirstExecutionWizard firstExecutionWizard = new FrmFirstExecutionWizard();
+            firstExecutionWizard.ShowDialog();
         }
 
         /* Change the hand history directory */
