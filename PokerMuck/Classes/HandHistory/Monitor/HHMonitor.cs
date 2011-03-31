@@ -11,6 +11,8 @@ namespace PokerMuck
 {
     class HHMonitor
     {
+        private const int CHECK_INTERVAL = 2000;
+
         private bool monitoring;
         private String handHistoryFilename;
         private long currentFilesize;
@@ -72,7 +74,7 @@ namespace PokerMuck
                     }
                 }
 
-                Thread.Sleep(2000);
+                Thread.Sleep(CHECK_INTERVAL);
             }
         }
 

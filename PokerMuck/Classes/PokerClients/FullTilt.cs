@@ -143,7 +143,7 @@ namespace PokerMuck
             // line = Full Tilt Poker Game #29457232449: Table Escondido (shallow) - $0.01/$0.02 - No Limit Hold'em - 18:34:48 ET - 2011/03/29
             
             // If we find the word "heads up" this should be a two seat table
-            if (line.IndexOf("Heads Up") != -1) return 2;
+            if (line.IndexOf("Heads Up") != -1) return MAX_SEATING_CAPACITY_HEADS_UP;
 
             else{
                 Regex r = new Regex(@"(?<maxSeatingCapacity>[\d]+) max");
@@ -159,8 +159,8 @@ namespace PokerMuck
                     return maxCapacityGuess;
                 }else{
 
-                    // No luck, return 9 as it's a popular number of seats, hoping for the best
-                    return 9;
+                    // No luck, return default value, hoping for the best
+                    return DEFAULT_MAX_SEATING_CAPACITY;
                 }
             }
         }

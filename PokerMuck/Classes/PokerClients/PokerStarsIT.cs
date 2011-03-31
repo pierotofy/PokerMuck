@@ -137,7 +137,7 @@ namespace PokerMuck
             // So this routine should never be executed
             Debug.Print("We had to infer the max seating capacity using PokerStars. Wrong?");
 
-            return 9;
+            return DEFAULT_MAX_SEATING_CAPACITY;
         }
 
         /**

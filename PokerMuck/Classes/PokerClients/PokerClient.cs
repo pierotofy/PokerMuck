@@ -16,6 +16,9 @@ namespace PokerMuck
 
     abstract class PokerClient
     {
+        protected const int DEFAULT_MAX_SEATING_CAPACITY = 9;
+        protected const int MAX_SEATING_CAPACITY_HEADS_UP = 2;
+
         protected Hashtable regex;
         protected Hashtable config;
 
