@@ -192,6 +192,8 @@ namespace PokerMuck
                 Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a fold during an impossible game phase");
 
                 String playerName = matchResult.Groups["playerName"].Value;
+
+                Debug.Print(playerName + " folds");
                 OnPlayerFolded(playerName, currentGamePhase);
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_check"), out matchResult))

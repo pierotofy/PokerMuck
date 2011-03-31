@@ -64,6 +64,8 @@ namespace PokerMuck
 
         public override void RegisterParserHandlers(HHParser parser)
         {
+            base.RegisterParserHandlers(parser);
+
             ((HoldemHHParser)parser).FoundBigBlind += new HoldemHHParser.FoundBigBlindHandler(handHistoryParser_FoundBigBlind);
             ((HoldemHHParser)parser).FoundSmallBlind += new HoldemHHParser.FoundSmallBlindHandler(handHistoryParser_FoundSmallBlind);
             ((HoldemHHParser)parser).PlayerBet += new HoldemHHParser.PlayerBetHandler(handHistoryParser_PlayerBet);
@@ -93,14 +95,14 @@ namespace PokerMuck
 
         void HoldemTableStatistics_PlayerPushedAllIn(string playerName, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindHoldemPlayer(playerName);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
             Debug.Print("Pushed all-in: " + p.Name);
             p.HasPushedAllIn(gamePhase);
         }
 
         void HoldemTableStatistics_FoundWinner(string playerName)
         {
-            HoldemPlayer winnerPlayer = FindHoldemPlayer(playerName);
+            HoldemPlayer winnerPlayer = (HoldemPlayer)FindPlayer(playerName);
 
             foreach (HoldemPlayer p in table.PlayerList)
             {
@@ -130,7 +132,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerRaised(string playerName, float raiseAmount, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindHoldemPlayer(playerName);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
 
             if (gamePhase == HoldemGamePhase.Preflop)
             {
@@ -186,8 +188,15 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerFolded(string playerName, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindHoldemPlayer(playerName);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
 
+            // On some clients, even if the player is sitting out they will make him automatically fold
+            if (p == null)
+            {
+                Debug.Print("Fold detected but the player is not in our list... is he sitting out?");
+                return;
+            }
+            
             if (gamePhase == HoldemGamePhase.Preflop)
             {
                 /* Steal raise opportunity */
@@ -224,7 +233,14 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerChecked(string playerName, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindHoldemPlayer(playerName);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            
+            // On some clients, a player who is sitting out might be automatically made to check
+            if (p == null)
+            {
+                Debug.Print("Check detected but the player is not in our list. Is he sitting out?");
+                return;
+            }
 
             if (gamePhase == HoldemGamePhase.Preflop)
             {
@@ -248,7 +264,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerCalled(string playerName, float amount, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindHoldemPlayer(playerName);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
 
             // If we are preflop
             if (gamePhase == HoldemGamePhase.Preflop)
@@ -298,7 +314,7 @@ namespace PokerMuck
 
         void handHistoryParser_PlayerBet(string playerName, float amount, HoldemGamePhase gamePhase)
         {
-            HoldemPlayer p = FindHoldemPlayer(playerName);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
 
             // Flop
             if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlop)
@@ -323,8 +339,8 @@ namespace PokerMuck
             BigBlindAmount = amount;
 
             // Keep track of who is the big blind
-            HoldemPlayer p = FindHoldemPlayer(playerName);
-            p.IsBigBlind = true;
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            if (p != null) p.IsBigBlind = true;
         }
 
         void handHistoryParser_FoundSmallBlind(String playerName, float amount)
@@ -333,13 +349,8 @@ namespace PokerMuck
             SmallBlindAmount = amount;
 
             // Keep track of who is the small blind
-            HoldemPlayer p = FindHoldemPlayer(playerName);
-            p.IsSmallBlind = true;
-        }
-
-        protected HoldemPlayer FindHoldemPlayer(string playerName)
-        {
-            return (HoldemPlayer)table.FindPlayer(playerName);
+            HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            if (p != null) p.IsSmallBlind = true;
         }
 
     }

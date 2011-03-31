@@ -24,7 +24,11 @@ namespace PokerMuck
         void parser_PlayerMuckHandAvailable(string playerName, Hand hand)
         {
             Player p = FindPlayer(playerName);
-            p.MuckHandAvailable(hand);
+
+            if (p != null)
+            {
+                p.MuckHandAvailable(hand);
+            }
         }
 
         /* We might keep track of certain data (has anybody bet on the flop this round?) that
@@ -34,7 +38,9 @@ namespace PokerMuck
 
         }
 
-        protected virtual Player FindPlayer(String playerName)
+        /* This might be null on some clients when a player is sitting out and still posts the blinds
+         * and folds */
+        protected Player FindPlayer(String playerName)
         {
             return table.FindPlayer(playerName);
         }

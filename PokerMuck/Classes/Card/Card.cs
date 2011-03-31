@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace PokerMuck
 {
-    public enum CardFace { Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King };
+    public enum CardFace { Two = 1, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace };
     public enum CardSuit { Clubs = 1, Diamonds, Hearts, Spades };
 
 	/// <summary>
@@ -30,7 +30,7 @@ namespace PokerMuck
 
         public override string ToString()
         {
-            return CardFaceToChar(Face) + " " + CardSuitToChar(Suit);
+            return CardFaceToChar(Face).ToString() + CardSuitToChar(Suit).ToString().ToLower();
         }
 
         /* Helper method to convert a char into a CardFace enum value */

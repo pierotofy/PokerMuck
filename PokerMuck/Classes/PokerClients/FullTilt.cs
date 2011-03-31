@@ -57,7 +57,7 @@ namespace PokerMuck
                  Ex. Seat 3: italystallion89 ($0.80)
                  * It ignores those who are marked as ", is sitting out"
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\(\$?[\d\.]+\)$");
+                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\(\$?[\d\.\,]+\)$");
 
                 /* Recognize mucked hands
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]*/
@@ -66,7 +66,7 @@ namespace PokerMuck
 
                 /* Recognize winners of a hand 
                  * Ex. mosby2 wins the pot (40) */
-                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) wins the pot \(\$?[\d\.]+\)");
+                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) wins the pot \(\$?[\d\.\,]+\)");
 
                 /* Recognize all-ins
                  * Ex. mosby2 bets 400, and is all in */
@@ -78,8 +78,8 @@ namespace PokerMuck
                 /* Detect who is the small/big blind
                    Ex. kan-ikkje posts the small blind of $0.01
                  * italystallion89 posts the big blind of $0.02 */
-                regex.Add("hand_history_detect_small_blind", @"(?<playerName>.+) posts the small blind of \$?(?<smallBlindAmount>[\d\.]+)");
-                regex.Add("hand_history_detect_big_blind", @"(?<playerName>.+) posts the big blind of \$?(?<bigBlindAmount>[\d\.]+)");
+                regex.Add("hand_history_detect_small_blind", @"(?<playerName>.+) posts the small blind of \$?(?<smallBlindAmount>[\d\.\,]+)");
+                regex.Add("hand_history_detect_big_blind", @"(?<playerName>.+) posts the big blind of \$?(?<bigBlindAmount>[\d\.\,]+)");
 
                 /* Detect who the button is */
                 regex.Add("hand_history_detect_button", @"The button is in seat #(?<seatNumber>[\d]+)");
@@ -87,11 +87,11 @@ namespace PokerMuck
 
                 /* Detect calls
                  * ex. SILJCAR calls $0.02 */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.]+)");
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.\,]+[\d]+)");
 
                 /* Detect bets
                    ex. kan-ikkje bets $0.02 */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.]+)");
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.\,]+[\d]+)");
 
                 /* Detect folds
                  * ex. kan-ikkje folds */
@@ -103,7 +103,7 @@ namespace PokerMuck
 
                 /* Detect raises 
                  * ex. SILJCAR raises to $0.04 */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d\.]+)");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d\.\,]+[\d]+)");
 
                 /* Recognize end of round character sequence (in Full Tilt it's
                  * a blank line */
@@ -239,6 +239,9 @@ namespace PokerMuck
 
             // 4. Convert . to \.
             str = str.Replace(".", @"\.");
+
+            // 5. Convert + to \+
+            str = str.Replace("+", @"\+");
 
             return str;
         }

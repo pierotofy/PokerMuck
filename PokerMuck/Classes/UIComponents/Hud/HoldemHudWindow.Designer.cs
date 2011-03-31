@@ -104,7 +104,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(130, 54);
+            this.ClientSize = new System.Drawing.Size(142, 54);
             this.Controls.Add(this.picEasySteal);
             this.Controls.Add(this.picButtonStealer);
             this.Controls.Add(this.picCallingStation);

@@ -175,8 +175,12 @@ namespace PokerMuck
             this.callsBlindToAPreflopRaise = (MultipleValueCounter)other.callsBlindToAPreflopRaise.Clone();
             this.raisesBlindToAPreflopRaise = (MultipleValueCounter)other.raisesBlindToAPreflopRaise.Clone();
 
-            // TODO clone list!!!!
-        
+            // Deep copy lists
+            startingHandsWithPreflopCall = new List<HoldemHand>();
+            foreach (HoldemHand h in other.startingHandsWithPreflopCall) startingHandsWithPreflopCall.Add((HoldemHand)h.Clone());
+            
+            startingHandsWithPreflopRaise = new List<HoldemHand>();
+            foreach (HoldemHand h in other.startingHandsWithPreflopRaise) startingHandsWithPreflopRaise.Add((HoldemHand)h.Clone());
         }
 
         
