@@ -53,6 +53,9 @@ namespace PokerMuck
         /* Current foreground window rectangle */
         public Rectangle CurrentForegroundWindowRect { get; set; }
 
+        /* List of windows to monitor for existance. (When one of these windows is closed, a proper event is fired) */
+        private List<String> windowsListToMonitor;
+
         private bool currentWindowExists;
 
         public WindowsListener(IDetectWindowsChanges handler)
@@ -60,7 +63,9 @@ namespace PokerMuck
             this.handler = handler;
             this.ListenInterval = 1000;
             this.currentWindowExists = false;
-            
+            this.windowsListToMonitor = new List<String>();
+
+
             // Set these the first time
             CurrentForegroundWindowTitle = GetForegroundWindowTitle();
             CurrentForegroundWindowRect = GetForegroundWindowRect();
@@ -75,6 +80,25 @@ namespace PokerMuck
 
         public void StopListening(){
             listening = false;
+        }
+
+        /* Adds a window title to the list for monitoring for window closed events
+         * duplicates will be ignored */
+        public void AddToMonitorList(String windowTitle)
+        {
+            if (!windowsListToMonitor.Contains(windowTitle)) windowsListToMonitor.Add(windowTitle);
+        }
+
+        /* Removes a window title from the list */
+        public void RemoveFromMonitorList(String windowTitle)
+        {
+            windowsListToMonitor.Remove(windowTitle);
+        }
+
+        /* Clears the monitor list */
+        public void ClearMonitorList()
+        {
+            windowsListToMonitor.Clear();
         }
 
         /* Loop method */
@@ -108,13 +132,19 @@ namespace PokerMuck
                     // Notify
                     handler.ForegroundWindowPositionChanged(CurrentForegroundWindowTitle, CurrentForegroundWindowRect);
                 }
-
-                // Previous window closed?
-                if (!WindowExists(previousForegroundWindowTitle))
+                
+                // Check for existance of windows that are in our list
+                // TODO FIX!!!!!!!!!!!
+                int items = windowsListToMonitor.Count;
+                for (int i = 0; i < items; i++ )
                 {
-                    handler.WindowClosed(previousForegroundWindowTitle);
+                    String windowTitle = windowsListToMonitor[i];
+                    if (!WindowExists(windowTitle))
+                    {
+                        handler.WindowClosed(windowTitle);
+                        RemoveFromMonitorList(windowTitle);
+                    }
                 }
-
 
                 Thread.Sleep(ListenInterval);
             }

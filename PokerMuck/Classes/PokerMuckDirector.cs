@@ -177,10 +177,6 @@ namespace PokerMuck
         /* Windows Listener event handler, detects when a window closes */
         public void WindowClosed(string windowTitle)
         {
-            /* We ignore any event that is caused by a window titled "HudWindow"
-             * because the user might be simply interacting with our hud */
-            if (windowTitle == "HudWindow") return;
-
             Debug.Print("Window closed: " + windowTitle);
 
             Table t = FindTableByWindowTitle(windowTitle);
@@ -222,8 +218,14 @@ namespace PokerMuck
             String pattern = pokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(windowTitle);
             if (pattern != String.Empty)
             {
-                String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(UserSettings.HandHistoryDirectory, pattern);
+                // Valid poker window
 
+                // We need to monitor this window for when it closes...
+                windowsListener.AddToMonitorList(windowTitle);
+                
+                // Do we have a filename matching this window?
+                String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(UserSettings.HandHistoryDirectory, pattern);
+                
                 if (filename != String.Empty)
                 {
                     String filePath = UserSettings.HandHistoryDirectory + @"\" + filename;
@@ -274,6 +276,8 @@ namespace PokerMuck
                     Debug.Print("A valid window title was found ({0}) but no filename associated with the window could be found using pattern {1}. Is this our first hand at the table and no hand history is available?", windowTitle, pattern);
 
                 }
+
+
             }
             else
             {

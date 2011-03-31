@@ -173,6 +173,7 @@ namespace PokerMuck
         {
             // TODO REMOVE IN PRODUCTION
             if (windowTitle == "test.txt - Notepad") return "test.txt";
+            if (windowTitle == "test2.txt - Notepad") return "test2.txt";
 
             /* On Full Tilt, window titles match the filename almost completely.
              * Slashes / are converted to dashes - and a prefix of the form
