@@ -233,7 +233,7 @@ namespace PokerMuck
                 {
                     t.Hud.CheckForWindowOverlay(windowTitle, windowRect);
                 },
-                  true);
+                  false);
             }
         }
 
@@ -267,8 +267,10 @@ namespace PokerMuck
         /* Windows Listener event handler, detects when a new windows becomes the active window */
         public void NewForegroundWindow(string windowTitle, Rectangle windowRect)
         {
-            CreateTableFromPokerWindow(windowTitle, windowRect);
+            if (windowTitle == "HudWindow") return; // Ignore hud windows
 
+            CreateTableFromPokerWindow(windowTitle, windowRect);
+            
             CheckForWindowsOverlaysOnHuds(windowTitle, windowRect);
         }
 

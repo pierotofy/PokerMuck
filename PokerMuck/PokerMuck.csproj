@@ -32,8 +32,8 @@
     <MinimumRequiredVersion>0.1.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>4</ApplicationRevision>
-    <ApplicationVersion>0.1.1.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.1.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -156,6 +156,12 @@
     <Compile Include="Classes\UIComponents\Hud\HoldemHudWindow.Designer.cs">
       <DependentUpon>HoldemHudWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\UIComponents\Hud\HudIcon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Hud\HudIcon.Designer.cs">
+      <DependentUpon>HudIcon.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\UIComponents\Hud\HudWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,6 +214,9 @@
     <EmbeddedResource Include="Classes\UIComponents\Hud\HoldemHudWindow.resx">
       <DependentUpon>HoldemHudWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\Hud\HudIcon.resx">
+      <DependentUpon>HudIcon.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\Hud\HudWindow.resx">
       <DependentUpon>HudWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -237,6 +246,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Cards.ico" />
+    <None Include="Resources\ForbiddenIco.png" />
     <None Include="Resources\AnvilIco.png" />
     <Content Include="Resources\Cards\1_1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

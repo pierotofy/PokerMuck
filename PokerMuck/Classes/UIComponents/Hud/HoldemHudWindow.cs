@@ -16,19 +16,6 @@ namespace PokerMuck
         {
             InitializeComponent();
 
-            /* Create tooltips */
-            ToolTip t = new ToolTip();
-            t.ShowAlways = true;
-
-            t.InitialDelay = 0;
-            t.AutoPopDelay = 0;
-            t.ReshowDelay = 0;
-            t.IsBalloon = true;
-
-            t.SetToolTip(picEasySteal, "Easy blind steal");
-            t.SetToolTip(picButtonStealer, "Frequent blind stealer");
-            t.SetToolTip(picCallingStation, "Calling station");
-            t.SetToolTip(picSolidPlayer, "Solid Player");
         }
 
         public override void DisplayStatistics(PlayerStatistics stats)
@@ -48,27 +35,27 @@ namespace PokerMuck
         public void DisplayIcons(PlayerStatistics stats)
         {
             StatisticsData calls = stats.Get("Calls", "Summary");
-
             // If calls are > 40% then calling station!
-            float callingStationValue = calls.Value;
-            picCallingStation.Visible = (callingStationValue >= 0.40);
+            picCallingStation.Visible = !(calls is StatisticsUnknownData);
+            picCallingStation.SetForbiddenSignVisible(calls.Value < 0.40);
 
             StatisticsData foldSbToRaise = stats.Get("Fold Small Blind to a Raise", "Preflop");
             StatisticsData foldBbToRaise = stats.Get("Fold Big Blind to a Raise", "Preflop");
 
             // If average of fold big blind to a raise and fold small blind to a raise > 80% then easy steal
-            float easyStealValue = foldSbToRaise.Average("Fold Small/Big Blind to a Raise", "", 2, foldBbToRaise).Value;
-            picEasySteal.Visible = (easyStealValue >= 0.80);
+            StatisticsData foldBlindAverage = foldSbToRaise.Average("Fold Small/Big Blind to a Raise", "", 2, foldBbToRaise);
+            picEasySteal.Visible = !(foldBlindAverage is StatisticsUnknownData);
+            picEasySteal.SetForbiddenSignVisible(foldBlindAverage.Value < 0.80);
 
             // If a person raises more than 50% of his buttons, chances are he might be stealing
             StatisticsData stealRaises = stats.Get("Steal Raises", "Preflop");
-            float stealerValue = stealRaises.Value;
-            picButtonStealer.Visible = (stealerValue >= 0.5);
+            picButtonStealer.Visible = !(stealRaises is StatisticsUnknownData);
+            picButtonStealer.SetForbiddenSignVisible(stealRaises.Value < 0.5);
 
-            // If a person wins 80% or more at showdown, he's a solid player
+            // If a person wins 80% or more at showdown, he's a solid player (or lucky, but this is what we have)
             StatisticsData wonAtShowdownStats = stats.Get("Won at Showdown", "Summary");
-            float solidPlayerValue = wonAtShowdownStats.Value;
-            picSolidPlayer.Visible = (solidPlayerValue >= 0.8);
+            picSolidPlayer.Visible = !(wonAtShowdownStats is StatisticsUnknownData);
+            picSolidPlayer.SetForbiddenSignVisible(wonAtShowdownStats.Value < 0.8);
         }
 
         private void lblImmediateStats_MouseUp(object sender, MouseEventArgs e)

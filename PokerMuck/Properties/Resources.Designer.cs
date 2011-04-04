@@ -74,6 +74,13 @@ namespace PokerMuck.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap ForbiddenIco {
+            get {
+                object obj = ResourceManager.GetObject("ForbiddenIco", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap GoldIco {
             get {
                 object obj = ResourceManager.GetObject("GoldIco", resourceCulture);

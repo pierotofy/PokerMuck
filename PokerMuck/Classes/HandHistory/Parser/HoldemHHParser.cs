@@ -136,6 +136,10 @@ namespace PokerMuck
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_all_in_push"), out matchResult))
             {
                 String playerName = matchResult.Groups["playerName"].Value;
+
+                // Make sure that the game phase is a valid one (being all-in because the blinds force us to is not really a push)
+                if (currentGamePhase == HoldemGamePhase.Preflop || currentGamePhase == HoldemGamePhase.Flop ||
+                    currentGamePhase == HoldemGamePhase.Turn || currentGamePhase == HoldemGamePhase.River)
                 OnPlayerPushedAllIn(playerName, currentGamePhase);
             }
 

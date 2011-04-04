@@ -170,7 +170,7 @@ namespace PokerMuck
         public void CheckForWindowOverlay(String windowTitle, Rectangle windowRect)
         {
             // Proceed only if this is not our table window and the hud is visible
-            if (windowTitle != table.WindowTitle && this.Visible)
+            if (windowTitle != table.WindowTitle && Visible)
             {
                 windowsList.HideWindowsIntersectingWith(windowRect);
                 windowsList.ShowWindowsAwayFrom(windowRect);
@@ -179,7 +179,7 @@ namespace PokerMuck
             // If the window is the our table window, make sure we are displaying it!
             else if (windowTitle == table.WindowTitle)
             {
-                this.Visible = true;
+                Visible = true;
             }
         }
 

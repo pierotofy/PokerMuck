@@ -355,18 +355,18 @@ namespace PokerMuck
                 if (raises[HoldemGamePhase.Preflop].WasIncremented)
                 {
                     startingHandsWithPreflopRaise.Add(holdemHand);
+
+                    // Has this player pushed all in preflop with this hand?
+                    if (pushedAllIn[HoldemGamePhase.Preflop].WasIncremented)
+                    {
+                        startingHandsWithPreflopAllIn.Add(holdemHand);
+                    }
                 }
 
                 // Has this player just limped or called a raise with this hand?
                 else if (calls[HoldemGamePhase.Preflop].WasIncremented)
                 {
                     startingHandsWithPreflopCall.Add(holdemHand);
-                }
-
-                // Has this player pushed all in preflop with this hand?
-                if (pushedAllIn[HoldemGamePhase.Preflop].WasIncremented)
-                {
-                    startingHandsWithPreflopAllIn.Add(holdemHand);
                 }
             }
         }
