@@ -46,17 +46,12 @@ namespace PokerMuck
         {
             this.table = table;
             this.settings = new HudUserSettings();
+            this.windowsList = new HudWindowsList();
+            this.visible = true;
         }
 
         public void DisplayAndUpdate(){
             bool setupInitialWindowPositions = false; //Default
-
-            // Have we ever took care of this table?
-            if (windowsList == null)
-            {
-                // First timer, we need to create the appropriate window list
-                windowsList = new HudWindowsList();
-           }
 
             // Do we have user specified positions?
             List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
@@ -168,6 +163,24 @@ namespace PokerMuck
             StoreHudWindowPositions();
 
             windowsList.RemoveAll();
+        }
+
+        /* Checks whether this window is overlapping the view of one of the hud windows
+         * it this is the case, then we need to hide that particular hud window */
+        public void CheckForWindowOverlay(String windowTitle, Rectangle windowRect)
+        {
+            // Proceed only if this is not our table window and the hud is visible
+            if (windowTitle != table.WindowTitle && this.Visible)
+            {
+                windowsList.HideWindowsIntersectingWith(windowRect);
+                windowsList.ShowWindowsAwayFrom(windowRect);
+            }
+
+            // If the window is the our table window, make sure we are displaying it!
+            else if (windowTitle == table.WindowTitle)
+            {
+                this.Visible = true;
+            }
         }
 
         /* Save the position of the hud windows associated with this table */

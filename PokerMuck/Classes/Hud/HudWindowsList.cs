@@ -80,6 +80,34 @@ namespace PokerMuck
             windowsList.Clear();
         }
 
+        public void HideWindowsIntersectingWith(Rectangle rect)
+        {
+            foreach (HudWindow w in windowsList)
+            {
+                // Computes the rectangle relative to the screen of each window hud
+                Rectangle windowRect = w.RectangleToScreen(w.DisplayRectangle);
+                
+                if (windowRect.IntersectsWith(rect))
+                {
+                    w.Hide();
+                }
+            }
+        }
+
+        public void ShowWindowsAwayFrom(Rectangle rect)
+        {
+            foreach (HudWindow w in windowsList)
+            {
+                // Computes the rectangle relative to the screen of each window hud
+                Rectangle windowRect = w.RectangleToScreen(w.DisplayRectangle);
+
+                if (!windowRect.IntersectsWith(rect))
+                {
+                    w.Show();
+                }
+            }
+        }
+
         /* Hides all windows hud instances in the collection */
         public void Hide()
         {

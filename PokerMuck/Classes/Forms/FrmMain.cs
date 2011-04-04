@@ -40,16 +40,14 @@ namespace PokerMuck
 
             
             pmDirector = new PokerMuckDirector();
+            pmDirector.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(pmDirector_RunGUIRoutine);
             pmDirector.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
             pmDirector.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
             pmDirector.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
             pmDirector.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
             pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
             pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
-            pmDirector.ShiftHud += new PokerMuckDirector.ShiftHudHandler(pmDirector_ShiftHud);
-            pmDirector.RemoveHud += new PokerMuckDirector.RemoveHudHandler(pmDirector_RemoveHud);
             pmDirector.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
-            pmDirector.SetHudVisible += new PokerMuckDirector.SetHudVisibleHandler(pmDirector_SetHudVisible);
 
             //pmDirector.Test();
 
@@ -97,12 +95,10 @@ namespace PokerMuck
             tabControl.SelectedIndex = 3;
         }
 
-        void pmDirector_SetHudVisible(Table t, bool visible)
+        void pmDirector_RunGUIRoutine(Action d, Boolean asynchronous)
         {
-            this.Invoke((Action)delegate()
-            {
-                t.Hud.Visible = visible;
-            });
+            if (asynchronous) this.BeginInvoke(d);
+            else this.Invoke(d);
         }
 
         void pmDirector_DisplayPlayerStatistics(Player p)
@@ -112,23 +108,6 @@ namespace PokerMuck
                 statisticsDisplay.Visible = true;
                 tabControl.SelectedIndex = 1;
                 statisticsDisplay.DisplayStatistics(p);
-            });
-        }
-
-        void pmDirector_RemoveHud(Table t)
-        {
-            this.Invoke((Action)delegate()
-            {
-                t.Hud.RemoveHud();
-            });
-        }
-
-        /* Shift the position of the hud */
-        void pmDirector_ShiftHud(Table t)
-        {
-            this.BeginInvoke((Action)delegate()
-            {
-                t.Hud.Shift();
             });
         }
 

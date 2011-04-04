@@ -34,6 +34,12 @@ namespace PokerMuck
         /* NewFilesMonitor instance */
         private NewFilesMonitor newFilesMonitor;
 
+        /* Tells the UI to run a specific routine (certain actions like the creation of new windows cannot be performed
+         * from different threads).
+         * @param asychronous Specify whether the routine should be executed synchronously or asynchronously*/
+        public delegate void RunGUIRoutineHandler(Action d, Boolean asynchronous);
+        public event RunGUIRoutineHandler RunGUIRoutine;
+
         /* Tell the UI that we need to display a hand */
         public delegate void DisplayPlayerMuckedHandHandler(Player player);
         public event DisplayPlayerMuckedHandHandler DisplayPlayerMuckedHand;
@@ -58,19 +64,6 @@ namespace PokerMuck
         /* Tell the UI to display hud information */
         public delegate void DisplayHudHandler(Table t);
         public event DisplayHudHandler DisplayHud;
-
-        /* Tell the UI to shift the position of the hud */
-        public delegate void ShiftHudHandler(Table t);
-        public event ShiftHudHandler ShiftHud;
-
-        /* Tell the UI to show/hide the hud */
-        public delegate void SetHudVisibleHandler(Table t, bool visible);
-        public event SetHudVisibleHandler SetHudVisible;       
-
-
-        /* Tell the UI to remove a hud */
-        public delegate void RemoveHudHandler(Table t);
-        public event RemoveHudHandler RemoveHud;
 
         /* Tell the UI to display the statistics of this player */
         public delegate void DisplayPlayerStatisticsHandler(Player p);
@@ -135,13 +128,41 @@ namespace PokerMuck
            
         }
 
+        private void SetHudVisible(Table t, bool visible)
+        {
+            RunGUIRoutine((Action)delegate()
+            {
+                t.Hud.Visible = visible;
+            }, 
+            true);
+        }
+
+        void RemoveHud(Table t)
+        {
+            RunGUIRoutine((Action)delegate()
+            {
+                t.Hud.RemoveHud();
+            }, 
+            false);
+        }
+
+        /* Shift the position of the hud */
+        void ShiftHud(Table t)
+        {
+            RunGUIRoutine((Action)delegate()
+            {
+                t.Hud.Shift();
+            },
+            true);
+        }
+
         /* A window has been minimized... hide the hud associated with it */
         public void WindowMinimized(string windowTitle)
         {
             Debug.Print("Minimized: " + windowTitle);
             Table t = FindTableByWindowTitle(windowTitle);
             if (t != null){
-                if (SetHudVisible != null) SetHudVisible(t, false);
+                SetHudVisible(t, false);
             }
         }
 
@@ -152,7 +173,7 @@ namespace PokerMuck
             Table t = FindTableByWindowTitle(windowTitle);
             if (t != null)
             {
-                if (SetHudVisible != null) SetHudVisible(t, true);
+                SetHudVisible(t, true);
             }
         }
 
@@ -194,9 +215,26 @@ namespace PokerMuck
                 t.WindowRect = windowRect;
 
                 // Inform the UI that we might need to shift the hud
-                if (ShiftHud != null) ShiftHud(t);
+                RunGUIRoutine((Action)delegate()
+                                {
+                                    t.Hud.Shift();
+                                }, true);
             }
 
+            CheckForWindowsOverlaysOnHuds(windowTitle, windowRect);
+        }
+
+        private void CheckForWindowsOverlaysOnHuds(String windowTitle, Rectangle windowRect)
+        {
+            // Check for windows overlays on huds
+            foreach (Table t in tables)
+            {
+                RunGUIRoutine((Action)delegate()
+                {
+                    t.Hud.CheckForWindowOverlay(windowTitle, windowRect);
+                },
+                  true);
+            }
         }
 
         /* Windows Listener event handler, detects when a window closes */
@@ -212,7 +250,7 @@ namespace PokerMuck
                 DialogResult result = MessageBox.Show("Close the hud?", "PokerMuck", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes){
 
-                    if (RemoveHud != null) RemoveHud(t);
+                    RemoveHud(t);
                     t.Terminate();
                     tables.Remove(t);
 
@@ -230,9 +268,11 @@ namespace PokerMuck
         public void NewForegroundWindow(string windowTitle, Rectangle windowRect)
         {
             CreateTableFromPokerWindow(windowTitle, windowRect);
+
+            CheckForWindowsOverlaysOnHuds(windowTitle, windowRect);
         }
 
-        public void CreateTableFromPokerWindow(string windowTitle, Rectangle windowRect)
+        private void CreateTableFromPokerWindow(string windowTitle, Rectangle windowRect)
         {
             /* We ignore any event that is caused by a window titled "HudWindow"
              * because the user might be simply interacting with our hud */
@@ -289,7 +329,7 @@ namespace PokerMuck
                         table.WindowTitle = windowTitle;
 
                         // Inform the UI that we might need to shift the hud
-                        if (ShiftHud != null) ShiftHud(table);
+                        ShiftHud(table);
                     }
 
                     OnDisplayStatus("Focus is on the table associated with " + filename);
