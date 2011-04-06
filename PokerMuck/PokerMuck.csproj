@@ -246,6 +246,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Cards.ico" />
+    <None Include="Resources\QuestionIco.png" />
     <None Include="Resources\ForbiddenIco.png" />
     <None Include="Resources\AnvilIco.png" />
     <Content Include="Resources\Cards\1_1.png">

@@ -36,26 +36,26 @@ namespace PokerMuck
         {
             StatisticsData calls = stats.Get("Calls", "Summary");
             // If calls are > 40% then calling station!
-            picCallingStation.Visible = !(calls is StatisticsUnknownData);
-            picCallingStation.SetForbiddenSignVisible(calls.Value < 0.40);
+            picCallingStation.Visible = (calls.Value >= 0.40) || (calls is StatisticsUnknownData);
+            picCallingStation.SetQuestionSignVisible(calls is StatisticsUnknownData);
 
             StatisticsData foldSbToRaise = stats.Get("Fold Small Blind to a Raise", "Preflop");
             StatisticsData foldBbToRaise = stats.Get("Fold Big Blind to a Raise", "Preflop");
 
             // If average of fold big blind to a raise and fold small blind to a raise > 80% then easy steal
             StatisticsData foldBlindAverage = foldSbToRaise.Average("Fold Small/Big Blind to a Raise", "", 2, foldBbToRaise);
-            picEasySteal.Visible = !(foldBlindAverage is StatisticsUnknownData);
-            picEasySteal.SetForbiddenSignVisible(foldBlindAverage.Value < 0.80);
+            picEasySteal.Visible = (foldBlindAverage.Value >= 0.80) || (foldBlindAverage is StatisticsUnknownData);
+            picEasySteal.SetQuestionSignVisible(foldBlindAverage is StatisticsUnknownData);
 
             // If a person raises more than 50% of his buttons, chances are he might be stealing
             StatisticsData stealRaises = stats.Get("Steal Raises", "Preflop");
-            picButtonStealer.Visible = !(stealRaises is StatisticsUnknownData);
-            picButtonStealer.SetForbiddenSignVisible(stealRaises.Value < 0.5);
+            picButtonStealer.Visible = (stealRaises.Value >= 0.5) || (stealRaises is StatisticsUnknownData);
+            picButtonStealer.SetQuestionSignVisible(stealRaises is StatisticsUnknownData);
 
             // If a person wins 80% or more at showdown, he's a solid player (or lucky, but this is what we have)
             StatisticsData wonAtShowdownStats = stats.Get("Won at Showdown", "Summary");
-            picSolidPlayer.Visible = !(wonAtShowdownStats is StatisticsUnknownData);
-            picSolidPlayer.SetForbiddenSignVisible(wonAtShowdownStats.Value < 0.8);
+            picSolidPlayer.Visible = (wonAtShowdownStats.Value >= 0.8) || (wonAtShowdownStats is StatisticsUnknownData);
+            picSolidPlayer.SetQuestionSignVisible(wonAtShowdownStats is StatisticsUnknownData);
         }
 
         private void lblImmediateStats_MouseUp(object sender, MouseEventArgs e)

@@ -12,7 +12,7 @@ namespace PokerMuck
 {
     public partial class HudIcon : UserControl
     {
-        private Image forbiddenIcon;
+        private Image questionIcon;
         private Image originalIcon;
         private ToolTip toolTipMaker = null; // Might be null
         private String toolTipMessage;
@@ -29,9 +29,8 @@ namespace PokerMuck
             // Set icon
             picIcon.Image = icon;
 
-            // Create forbidden image
-            forbiddenIcon = MergeImages(icon, global::PokerMuck.Properties.Resources.ForbiddenIco);
-
+            // Set question icon
+            questionIcon = global::PokerMuck.Properties.Resources.QuestionIco;
 
             // Initialize tooltip
             if (toolTipMessage != "")
@@ -51,18 +50,18 @@ namespace PokerMuck
         }
 
         /* Displays/Hides a forbidden sign on top of the icon */
-        public void SetForbiddenSignVisible(bool visibleFlag)
+        public void SetQuestionSignVisible(bool visibleFlag)
         {
             // Remove all tooltips (we will create new ones)
             toolTipMaker.RemoveAll();
 
             if (visibleFlag)
             {
-                picIcon.Image = forbiddenIcon;
+                picIcon.Image = questionIcon;
 
                 if (toolTipMaker != null)
                 {
-                    toolTipMaker.SetToolTip(picIcon, "Not " + toolTipMessage);
+                    toolTipMaker.SetToolTip(picIcon, "Don't know if player is a " + toolTipMessage);
                 }
             }
             else

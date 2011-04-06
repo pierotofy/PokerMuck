@@ -136,6 +136,9 @@
   <data name="Hud" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Hud.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="QuestionIco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\QuestionIco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="StealMaskIco" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\StealMaskIco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

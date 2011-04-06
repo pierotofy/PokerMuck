@@ -97,8 +97,11 @@ namespace PokerMuck
 
         void pmDirector_RunGUIRoutine(Action d, Boolean asynchronous)
         {
-            if (asynchronous) this.BeginInvoke(d);
-            else this.Invoke(d);
+            if (this != null)
+            {
+                if (asynchronous) this.BeginInvoke(d);
+                else this.Invoke(d);
+            }
         }
 
         void pmDirector_DisplayPlayerStatistics(Player p)
