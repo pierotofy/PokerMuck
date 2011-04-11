@@ -35,9 +35,10 @@ namespace PokerMuck
         public void DisplayIcons(PlayerStatistics stats)
         {
             StatisticsData calls = stats.Get("Calls", "Summary");
-            // If calls are > 40% then calling station!
-            picCallingStation.Visible = (calls.Value >= 0.40) || (calls is StatisticsUnknownData);
-            picCallingStation.SetQuestionSignVisible(calls is StatisticsUnknownData);
+            StatisticsData checkCall = stats.Get("Check Call", "Summary");
+            // If calls are > 40% or check calls are more than 66% then calling station!
+            picCallingStation.Visible = (calls.Value >= 0.40 || checkCall.Value >= 0.66) || (calls is StatisticsUnknownData && checkCall is StatisticsUnknownData);
+            picCallingStation.SetQuestionSignVisible(calls is StatisticsUnknownData && checkCall is StatisticsUnknownData);
 
             StatisticsData foldSbToRaise = stats.Get("Fold Small Blind to a Raise", "Preflop");
             StatisticsData foldBbToRaise = stats.Get("Fold Big Blind to a Raise", "Preflop");
