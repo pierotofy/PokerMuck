@@ -103,7 +103,7 @@ namespace PokerMuck
         /* Read the values from the configuration and puts them into the UI */
         private void LoadConfigurationValues()
         {
-            txtHandHistoriesDirectory.Text = userSettings.HandHistoryDirectory;
+            txtHandHistoriesDirectory.Text = userSettings.StoredHandHistoryDirectory;
 
             // Load poker client list
             LoadPokerClientList();
@@ -141,7 +141,7 @@ namespace PokerMuck
             if (result == DialogResult.OK)
             {
                 txtHandHistoriesDirectory.Text = browserDialog.SelectedPath;
-                userSettings.HandHistoryDirectory = browserDialog.SelectedPath;
+                userSettings.StoredHandHistoryDirectory = browserDialog.SelectedPath;
             }
         }
 

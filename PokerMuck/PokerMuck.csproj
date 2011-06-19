@@ -113,6 +113,7 @@
     <Compile Include="Classes\Player\Player.cs" />
     <Compile Include="Classes\Player\PlayerFactory.cs" />
     <Compile Include="Classes\Player\PlayerStatistics.cs" />
+    <Compile Include="Classes\PokerClients\PartyPoker.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
     <Compile Include="Classes\Ranking\PostSubmitter.cs" />
     <Compile Include="Classes\Ranking\Rank.cs" />

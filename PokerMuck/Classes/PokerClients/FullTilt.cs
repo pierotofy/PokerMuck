@@ -225,6 +225,11 @@ namespace PokerMuck
             }
         }
 
+        public override String GetCurrentHandHistorySubdirectory()
+        {
+            return String.Empty; //Not necessary for FTP
+        }
+
         /* Converts an input string into a format compatible with regex */
         private String StringToRegexPattern(String str)
         {
@@ -252,6 +257,13 @@ namespace PokerMuck
             get
             {
                 return "Full Tilt Poker";
+            }
+        }
+
+        public override string XmlName
+        {
+            get {
+                return "Full_Tilt_Poker";
             }
         }
 

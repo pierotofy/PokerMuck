@@ -186,7 +186,13 @@ namespace PokerMuck
         /* Change the hand history directory */
         public void ChangeHandHistoryDirectory(String newDirectory)
         {
-            UserSettings.HandHistoryDirectory = newDirectory;
+            UserSettings.StoredHandHistoryDirectory = newDirectory;
+
+            // We need to create a new monitor
+            newFilesMonitor = new NewFilesMonitor(UserSettings.HandHistoryDirectory, this);
+            newFilesMonitor.StartMonitoring();
+
+            Debug.Print("Changing hand history directory: " + UserSettings.HandHistoryDirectory);
         }
 
         /* Change the poker client */
@@ -194,6 +200,9 @@ namespace PokerMuck
         {
             UserSettings.CurrentPokerClient = client;
             pokerClient = client;
+
+            // Also change directory
+            ChangeHandHistoryDirectory(UserSettings.StoredHandHistoryDirectory);
         }
 
       
@@ -432,6 +441,7 @@ namespace PokerMuck
         {
             PokerClientsList.Add(new FullTilt());
             PokerClientsList.Add(new PokerStarsIT());
+            PokerClientsList.Add(new PartyPoker());
         }
 
         // Cleanup stuff

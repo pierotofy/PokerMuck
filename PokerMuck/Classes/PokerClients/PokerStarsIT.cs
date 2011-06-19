@@ -189,10 +189,22 @@ namespace PokerMuck
             }
         }
 
+        public override String GetCurrentHandHistorySubdirectory()
+        {
+            return String.Empty; //Not necessary for PokerStars
+        }
+
         public override String Name {
             get
             {
                 return "PokerStars.IT";
+            }
+        }
+
+        public override string XmlName
+        {
+            get {
+                return "PokerStars_IT";
             }
         }
 

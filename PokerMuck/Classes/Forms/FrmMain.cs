@@ -226,7 +226,7 @@ namespace PokerMuck
         /* Read the values from the configuration and puts them into the UI */
         private void LoadConfigurationValues()
         {
-            txtHandHistoryDirectory.Text = pmDirector.UserSettings.HandHistoryDirectory;
+            txtHandHistoryDirectory.Text = pmDirector.UserSettings.StoredHandHistoryDirectory;
             txtUserId.Text = pmDirector.UserSettings.UserID;
 
             // Load poker client list
@@ -285,6 +285,9 @@ namespace PokerMuck
 
             pmDirector.ChangePokerClient(client);
             LoadPokerClientLanguages(client);
+
+            // Refresh hand history directory
+            txtHandHistoryDirectory.Text = pmDirector.UserSettings.StoredHandHistoryDirectory;
         }
 
         /* Pokerclient language has changed, initialize the new config */

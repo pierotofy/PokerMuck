@@ -247,6 +247,14 @@ namespace PokerMuck
                 // Retrieve player name and hand
                 String playerName = matchResult.Groups["playerName"].Value;
                 String cardsText = matchResult.Groups["cards"].Value;
+
+                // Some clients add a comma between the cards... we can safely remove it
+                int commaPosition = cardsText.IndexOf(',');
+                if (commaPosition != -1) cardsText = cardsText.Remove(commaPosition, 1);
+
+                // Also trim
+                cardsText = cardsText.Trim();
+
                 String[] cards = cardsText.Split(' ');
 
                 // Now that we have the string representation of the cards, we need to convert the string into an Hand object

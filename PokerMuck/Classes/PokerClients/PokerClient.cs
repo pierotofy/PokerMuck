@@ -43,6 +43,8 @@ namespace PokerMuck
         protected abstract void InitializeData();
 
         public abstract String Name { get; }
+        public abstract String XmlName { get; }
+            
         public abstract ArrayList SupportedLanguages { get; }
         public abstract ArrayList SupportedGameModes { get; }
 
@@ -58,9 +60,12 @@ namespace PokerMuck
         
         protected abstract RegexOptions regexOptions { get; }
 
-        
         /* Given the title of the game window, this method returns the hand history equivalent filename regex */
         public abstract String GetHandHistoryFilenameRegexPatternFromWindowTitle(String windowTitle);
+
+        /* Simply returns a directory that might be in between the main hand history directory and the hand history files
+         * (For example on PartyPoker we have subdirectories in the main directory organized day by day) */
+        public abstract String GetCurrentHandHistorySubdirectory();
 
         /* Given a game description in string format, it returns the corresponding PokerGameType */
         public abstract PokerGameType GetPokerGameTypeFromGameDescription(String gameDescription);
@@ -68,7 +73,7 @@ namespace PokerMuck
         /* Given the table token line, it tries to infer the maximum number of seats available
          * (some clients' histories do not explicitly specify this value) */
         public abstract int InferMaxSeatingCapacity(String line);
-            
+
         /* Given a string representing a card, returns the equivalent card object 
            This seems to be a standard format across poker client.
            Cards are represented by two chars, the first indicating the face

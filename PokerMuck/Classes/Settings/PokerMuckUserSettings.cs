@@ -18,24 +18,11 @@ namespace PokerMuck
 
         protected override void InitializeDefaultValues()
         {
-            HandHistoryDirectory = "";
             CurrentPokerClient = new PokerStarsIT("English");
             WindowPosition = new Point(480, 320); // We assume monitors will be bigger than this resolution
             WindowSize = new Size(209, 331); // Designer size
             FirstExecution = true;
             UserID = "";
-        }
-
-        public String HandHistoryDirectory
-        {
-            get
-            {
-                return GetStringSetting("hand_history_directory");
-            }
-
-            set{
-                SetSetting("hand_history_directory", value);
-            }
         }
 
         public String UserID
@@ -61,6 +48,53 @@ namespace PokerMuck
             set
             {
                 SetSetting("first_execution", value);
+            }
+        }
+
+        public String GetHandHistoryDirectoryFor(PokerClient client)
+        {
+            String key = client.XmlName + "_hand_history_directory";
+            // Has the user ever specified a directory for this client?
+            if (HasSetting(key))
+            {
+                return (String)GetSetting(key);
+            }
+            else return String.Empty;
+        }
+
+        public void SetHandHistoryDirectoryFor(PokerClient client, String directory)
+        {
+            String key = client.XmlName + "_hand_history_directory";
+            SetSetting(key, directory);
+        }
+
+        /* This is the actual location of the hand history files (includes dynamic subdirectories) */
+        public String HandHistoryDirectory
+        {
+            get
+            {
+                PokerClient currentClient = CurrentPokerClient;
+                Debug.Assert(currentClient != null, "Current poker client is null but hand history directory was accessed.");
+                return StoredHandHistoryDirectory + @"\" + currentClient.GetCurrentHandHistorySubdirectory() + @"\";
+            }
+        }
+
+        /* Returns the hand history directory of the current poker client
+         * (NOT including dynamic subdirectories, see PartyPoker) */
+        public String StoredHandHistoryDirectory
+        {
+            get
+            {
+                PokerClient currentClient = CurrentPokerClient;
+                Debug.Assert(currentClient != null, "Current poker client is null but stored hand history directory was accessed.");
+                return GetHandHistoryDirectoryFor(currentClient);
+            }
+
+            set
+            {
+                PokerClient currentClient = CurrentPokerClient;
+                Debug.Assert(currentClient != null, "Current poker client is null but stored hand history directory was set.");
+                SetHandHistoryDirectoryFor(currentClient, value);
             }
         }
 

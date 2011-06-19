@@ -39,12 +39,14 @@ namespace PokerMuck
 
         public void StartMonitoring()
         {
-            fwatcher.EnableRaisingEvents = true;
+            if (fwatcher != null)
+                fwatcher.EnableRaisingEvents = true;
         }
 
         public void StopMonitoring()
         {
-            fwatcher.EnableRaisingEvents = false;
+            if (fwatcher != null)
+                fwatcher.EnableRaisingEvents = false;
         }
     }
 }
