@@ -25,15 +25,14 @@ namespace PokerMuck
             {
                 /* To recognize a valid party poker game window
                   * ex. Turbo #2341732 -  NL  Hold'em - €3 Buy-in */
-                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>[\w]+[\s]+#?[0-9]+) - ");
+                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>.+) - ");
                 
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"\*\* Dealing down cards \*\*");
-                regex.Add("hand_history_begin_flop_phase_token", @"\*\* Dealing Flop \*\*");
-                regex.Add("hand_history_begin_turn_phase_token", @"\*\* Dealing Turn \*\*");
-                regex.Add("hand_history_begin_river_phase_token", @"\*\* Dealing River \*\*");
-                regex.Add("hand_history_begin_showdown_phase_token", @"\*\* SHOW DOWN \*\*"); // TODO!!!
-                regex.Add("hand_history_begin_summary_phase_token", @"\*\* SUMMARY \*\*"); // TODO!!!!
+                regex.Add("hand_history_begin_flop_phase_token", @"\*\* Dealing Flop \*\* \[(?<flopCards>[\d\w \,]+)\]");
+                regex.Add("hand_history_begin_turn_phase_token", @"\*\* Dealing Turn \*\* \[(?<turnCard>[\d\w \,]+)\]");
+                regex.Add("hand_history_begin_river_phase_token", @"\*\* Dealing River \*\* \[(?<riverCard>[\d\w \,]+)\]");
+                regex.Add("hand_history_begin_summary_phase_token", @" Game #[0-9]+ starts\."); // It's not exactly a summary indicator, but it tells us that the hand ended
 
 
                 /* Recognize the Hand History gameID 
@@ -46,9 +45,12 @@ namespace PokerMuck
                  ex. Table Table  185503 (Real Money) */
                 regex.Add("hand_history_table_token", @"Table .+ (?<tableId>[0-9]+) \(");
 
+                /* Recognize the maximum number of seats available */
+                regex.Add("hand_history_max_seating_capacity", @"Total number of players : ([\d]+)/(?<tableSeatingCapacity>[\d]+)");
+
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011 */
-                regex.Add("hand_history_game_type_token", @"(?<gameType>.+) .[\d\.\,]+ (EUR|USD) Buy\-in"); //TODO more currencies, points...?
+                regex.Add("hand_history_game_type_token", @"(?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in"); //TODO: Works with points?
 
                 /* Recognize players 
                  Ex. Seat 1: Renik87 ( 2,000 )
@@ -58,24 +60,15 @@ namespace PokerMuck
 
                 /* Recognize mucked hands
                  Ex. lucianoasso shows [ As, Js ]high card Ace.*/
-                regex.Add("hand_history_detect_mucked_hand", @"(?<playerName>.+) shows \[(?<cards>[\d\w \,]+)\]");
+                regex.Add("hand_history_detect_mucked_hand", @"(?<playerName>.+) (shows|doesn't show) \[(?<cards>[\d\w \,]+)\]");
 
                 /* Recognize winners of a hand 
                  * Ex. Renik87 wins 2,480 chips */
-                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) wins \(\$?[\d\.\,]+\) chips");
+                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) wins \$?[\d\.\,]+ chips");
 
                 /* Recognize all-ins
                  * Ex. stallion089 is all-In  [1,440] */
                 regex.Add("hand_history_detect_all_in_push", @"(?<playerName>.+) is all-In");
-
-                /* Recognize the final board */
-                regex.Add("hand_history_detect_final_board", @"Board: \[(?<cards>[\d\w ]+)\]"); //TODO!!!
-
-                /* Detect who is the small/big blind
-                   Ex. kan-ikkje posts the small blind of $0.01
-                 * italystallion89 posts the big blind of $0.02 */ // TODO!!!!
-                regex.Add("hand_history_detect_small_blind", @"(?<playerName>.+) posts the small blind of \$?(?<smallBlindAmount>[\d\.\,]+)");
-                regex.Add("hand_history_detect_big_blind", @"(?<playerName>.+) posts the big blind of \$?(?<bigBlindAmount>[\d\.\,]+)");
 
                 /* Detect who the button is
                  * Seat 2 is the button */
@@ -147,7 +140,7 @@ namespace PokerMuck
         {
             // TODO REMOVE IN PRODUCTION
             if (windowTitle == "test.txt - Notepad") return "test.txt";
-           // if (windowTitle == "test2.txt - Notepad") return "test2.txt";
+            if (windowTitle == "test2.txt - Notepad") return "test2.txt";
 
             /* On Party Poker, we have subdirectories within the hand history directory. 
                ex. stallion089\20110617\{TODAY'S FILES} (2011 = year, 06 = month, 17 = day) 

@@ -57,13 +57,23 @@ namespace PokerMuck
         }
 
         /* A new table has been created for a game */
-        public delegate void NewTableHasBeenCreatedHandler(String gameId, String tableId, String maxSeatingCapacity);
+        public delegate void NewTableHasBeenCreatedHandler(String gameId, String tableId);
         public event NewTableHasBeenCreatedHandler NewTableHasBeenCreated;
 
-        protected void OnNewTableHasBeenCreated(String gameId, String tableId, String maxSeatingCapacity)
+        protected void OnNewTableHasBeenCreated(String gameId, String tableId)
         {
-            if (NewTableHasBeenCreated != null) NewTableHasBeenCreated(gameId, tableId, maxSeatingCapacity);
+            if (NewTableHasBeenCreated != null) NewTableHasBeenCreated(gameId, tableId);
         }
+
+        /* We found the max seating capacity for a table */
+        public delegate void FoundTableMaxSeatingCapacityHandler(int maxSeatingCapacity);
+        public event FoundTableMaxSeatingCapacityHandler FoundTableMaxSeatingCapacity;
+
+        protected void OnFoundTableMaxSeatingCapacity(int maxSeatingCapacity)
+        {
+            if (FoundTableMaxSeatingCapacity != null) FoundTableMaxSeatingCapacity(maxSeatingCapacity);
+        }
+
 
         /* A round has just terminated */
         public delegate void RoundHasTerminatedHandler();

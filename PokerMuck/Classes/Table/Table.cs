@@ -248,7 +248,8 @@ namespace PokerMuck
                 handHistoryParser.PlayerIsSeated += new HHParser.PlayerIsSeatedHandler(handHistoryParser_PlayerIsSeated);
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
                 handHistoryParser.NewTableHasBeenCreated += new HHParser.NewTableHasBeenCreatedHandler(handHistoryParser_NewTableHasBeenCreated);
-                
+                handHistoryParser.FoundTableMaxSeatingCapacity += new HHParser.FoundTableMaxSeatingCapacityHandler(handHistoryParser_FoundTableMaxSeatingCapacity);
+
                 // Game specific handlers
                 if (GameType == PokerGameType.Holdem)
                 {
@@ -270,7 +271,12 @@ namespace PokerMuck
 
         /* Generic handlers */
 
-        void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId, String maxSeatingCapacity)
+        void handHistoryParser_FoundTableMaxSeatingCapacity(int maxSeatingCapacity)
+        {
+            this.maxSeatingCapacity = maxSeatingCapacity;
+        }
+
+        void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
         {
             if (this.TableId != String.Empty && this.TableId != tableId)
             {
@@ -291,7 +297,7 @@ namespace PokerMuck
 
             this.GameID = gameId;
             this.TableId = tableId;
-            this.maxSeatingCapacity = Int32.Parse(maxSeatingCapacity);
+            this.maxSeatingCapacity = 0; // Don't know yet
         }
 
 

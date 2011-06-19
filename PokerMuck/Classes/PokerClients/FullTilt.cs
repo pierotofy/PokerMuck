@@ -31,9 +31,9 @@ namespace PokerMuck
 
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"\*\*\* HOLE CARDS \*\*\*");
-                regex.Add("hand_history_begin_flop_phase_token", @"\*\*\* FLOP \*\*\*");
-                regex.Add("hand_history_begin_turn_phase_token", @"\*\*\* TURN \*\*\*");
-                regex.Add("hand_history_begin_river_phase_token", @"\*\*\* RIVER \*\*\*");
+                regex.Add("hand_history_begin_flop_phase_token", @"\*\*\* FLOP \*\*\* \[(?<flopCards>[\d\w ]+)\]");
+                regex.Add("hand_history_begin_turn_phase_token", @"\*\*\* TURN \*\*\* \[([\d\w ]+)\] \[(?<turnCard>[\d\w ]+)\]");
+                regex.Add("hand_history_begin_river_phase_token", @"\*\*\* RIVER \*\*\* \[([\d\w ]+)\] \[(?<riverCard>[\d\w ]+)\]");
                 regex.Add("hand_history_begin_showdown_phase_token", @"\*\*\* SHOW DOWN \*\*\*");
                 regex.Add("hand_history_begin_summary_phase_token", @"\*\*\* SUMMARY \*\*\*");
 

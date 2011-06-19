@@ -105,6 +105,11 @@ namespace PokerMuck
 
         }
 
+        public bool HasRegex(String key)
+        {
+            return regex.ContainsKey(key);
+        }
+
         public Regex GetRegex(String key){
             Debug.Assert(regex.ContainsKey(key),String.Format("The derived PokerClient class does not include the regex key: " + key));
             
