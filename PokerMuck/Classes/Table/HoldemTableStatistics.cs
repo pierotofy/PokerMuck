@@ -68,6 +68,9 @@ namespace PokerMuck
 
             ((HoldemHHParser)parser).FoundBigBlind += new HoldemHHParser.FoundBigBlindHandler(handHistoryParser_FoundBigBlind);
             ((HoldemHHParser)parser).FoundSmallBlind += new HoldemHHParser.FoundSmallBlindHandler(handHistoryParser_FoundSmallBlind);
+            ((HoldemHHParser)parser).FoundBigBlindAmount += new HoldemHHParser.FoundBigBlindAmountHandler(HoldemTableStatistics_FoundBigBlindAmount);
+            ((HoldemHHParser)parser).FoundSmallBlindAmount += new HoldemHHParser.FoundSmallBlindAmountHandler(HoldemTableStatistics_FoundSmallBlindAmount);
+
             ((HoldemHHParser)parser).PlayerBet += new HoldemHHParser.PlayerBetHandler(handHistoryParser_PlayerBet);
             ((HoldemHHParser)parser).PlayerCalled += new HoldemHHParser.PlayerCalledHandler(handHistoryParser_PlayerCalled);
             ((HoldemHHParser)parser).PlayerFolded += new HoldemHHParser.PlayerFoldedHandler(handHistoryParser_PlayerFolded);
@@ -337,24 +340,30 @@ namespace PokerMuck
             p.HasBet(gamePhase);
         }
 
-        void handHistoryParser_FoundBigBlind(String playerName, float amount)
+        void handHistoryParser_FoundBigBlind(String playerName)
         {
-            // Save current blind
-            BigBlindAmount = amount;
-
             // Keep track of who is the big blind
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
             if (p != null) p.IsBigBlind = true;
         }
 
-        void handHistoryParser_FoundSmallBlind(String playerName, float amount)
+        void HoldemTableStatistics_FoundBigBlindAmount(float amount)
         {
             // Save current blind
-            SmallBlindAmount = amount;
+            BigBlindAmount = amount;
+        }
 
+        void handHistoryParser_FoundSmallBlind(String playerName)
+        {
             // Keep track of who is the small blind
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
             if (p != null) p.IsSmallBlind = true;
+        }
+
+        void HoldemTableStatistics_FoundSmallBlindAmount(float amount)
+        {
+            // Save current blind
+            SmallBlindAmount = amount;
         }
 
     }

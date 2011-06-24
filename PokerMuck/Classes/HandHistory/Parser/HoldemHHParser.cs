@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace PokerMuck
 {
@@ -26,6 +27,11 @@ namespace PokerMuck
          * from flop, turn and river cards */
         private List<Card> boardCards;
 
+        /* Some poker clients do not tell explicitly who the blinds are. So we need to keep track of the player
+         * seats and the button. Then from the button we infere who the big/small blind is. */
+        private Hashtable playerSeats; // Key = seat number, Value = player name
+        private int lastButtonSeatNumber;
+
         /* The final board is available */
         public delegate void FinalBoardAvailableHandler(Board board);
         public event FinalBoardAvailableHandler FinalBoardAvailable;
@@ -35,22 +41,39 @@ namespace PokerMuck
             if (FinalBoardAvailable != null) FinalBoardAvailable(board);
         }
 
-        /* We found who the big/small blind is (and the amount of it, if available, -1 means it wasn't available) */
-        public delegate void FoundSmallBlindHandler(String playerName, float amount);
+        /* We found who the big/small blind is */
+        public delegate void FoundSmallBlindHandler(String playerName);
         public event FoundSmallBlindHandler FoundSmallBlind;
 
-        protected void OnFoundSmallBlind(String playerName, float amount)
+        protected void OnFoundSmallBlind(String playerName)
         {
-            if (FoundSmallBlind != null) FoundSmallBlind(playerName, amount);
+            if (FoundSmallBlind != null) FoundSmallBlind(playerName);
         }
 
-        public delegate void FoundBigBlindHandler(String playerName, float amount);
+        public delegate void FoundBigBlindHandler(String playerName);
         public event FoundBigBlindHandler FoundBigBlind;
 
-        protected void OnFoundBigBlind(String playerName, float amount)
+        protected void OnFoundBigBlind(String playerName)
         {
-            if (FoundBigBlind != null) FoundBigBlind(playerName, amount);
+            if (FoundBigBlind != null) FoundBigBlind(playerName);
         } 
+
+        /* We found how much the blinds are */
+        public delegate void FoundSmallBlindAmountHandler(float amount);
+        public event FoundSmallBlindAmountHandler FoundSmallBlindAmount;
+
+        protected void OnFoundSmallBlindAmount(float amount)
+        {
+            if (FoundSmallBlindAmount != null) FoundSmallBlindAmount(amount);
+        }
+
+        public delegate void FoundBigBlindAmountHandler(float amount);
+        public event FoundBigBlindAmountHandler FoundBigBlindAmount;
+
+        protected void OnFoundBigBlindAmount(float amount)
+        {
+            if (FoundBigBlindAmount != null) FoundBigBlindAmount(amount);
+        }
 
         /* A player bet */
         public delegate void PlayerBetHandler(String playerName, float amount, HoldemGamePhase gamePhase);
@@ -126,9 +149,25 @@ namespace PokerMuck
 
         public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
         {
+            // Initialize vars
             PlayerHasShowedThisRound = false;
             ShowdownEventRaised = false;
             boardCards = new List<Card>(5);
+
+            playerSeats = new Hashtable(); 
+            lastButtonSeatNumber = 0;
+
+            // Setup handler from parent class that detects the end of a round
+            base.RoundHasTerminated += new RoundHasTerminatedHandler(HoldemHHParser_RoundHasTerminated);
+
+            // Also call it the first time from here
+            SetupNewRound();
+        }
+
+        // At the end of the round, we setup variables for a new round
+        void HoldemHHParser_RoundHasTerminated()
+        {
+            SetupNewRound();
         }
 
         private void SetupNewRound()
@@ -136,6 +175,7 @@ namespace PokerMuck
             PlayerHasShowedThisRound = false;
             ShowdownEventRaised = false;
             boardCards.Clear();
+            playerSeats.Clear();
         }
 
         public override void ParseLine(string line)
@@ -168,7 +208,6 @@ namespace PokerMuck
                 currentGameId = matchResult.Groups["gameId"].Value;
                 OnNewGameHasStarted(currentGameId);
 
-                SetupNewRound(); // We use this token as the indicator of beginning of a new round
             }
             
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_table_token"), out matchResult))
@@ -218,6 +257,18 @@ namespace PokerMuck
                 Debug.Print("Found certain max seating capacity from regex: " + maxSeatingCapacity);
 
                 OnFoundTableMaxSeatingCapacity(Int32.Parse(maxSeatingCapacity));
+            }
+
+            /* Detect the exact blind amounts */
+            if (pokerClient.HasRegex("hand_history_blind_amounts") && (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_blind_amounts"), out matchResult)))
+            {
+                float bigBlindAmount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
+                float smallBlindAmount = float.Parse(matchResult.Groups["smallBlindAmount"].Value);
+
+                Debug.Print("Found certain blind amounts: ({0}/{1})", smallBlindAmount, bigBlindAmount);
+
+                OnFoundBigBlindAmount(bigBlindAmount);
+                OnFoundSmallBlindAmount(smallBlindAmount);
             }
 
             /* Detect raises, calls, folds, bets */
@@ -275,6 +326,9 @@ namespace PokerMuck
 
                 // Raise event
                 OnPlayerIsSeated(playerName, seatNumber);
+
+                // Save
+                playerSeats.Add(seatNumber, playerName);
             }
 
             /* Search for a winner */
@@ -322,13 +376,15 @@ namespace PokerMuck
             {
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["smallBlindAmount"].Value);
-                OnFoundSmallBlind(playerName, amount);          
+                OnFoundSmallBlind(playerName);
+                OnFoundSmallBlindAmount(amount);
             }
             else if (pokerClient.HasRegex("hand_history_detect_big_blind") && (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_big_blind"), out matchResult)))
             {
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
-                OnFoundBigBlind(playerName, amount);
+                OnFoundBigBlind(playerName);
+                OnFoundBigBlindAmount(amount);
             }
 
             /* Find the button */
@@ -337,11 +393,7 @@ namespace PokerMuck
                 int seatNumber = Int32.Parse(matchResult.Groups["seatNumber"].Value);
                 OnFoundButton(seatNumber);
 
-                // If we don't have a more reliable way to find the blinds, we can infere it from the button
-                if (!pokerClient.HasRegex("hand_history_detect_big_blind"))
-                {
-
-                }
+                lastButtonSeatNumber = seatNumber; // Save
             }
         }
 
@@ -372,6 +424,99 @@ namespace PokerMuck
             return result;
         }
 
+        /* Given the button's seat number, we deduce who the blinds are. 
+         * This will give the wrong results when the table is skipping a blind. 
+         * But without any extra information this has to be our best guess */
+        private void InfereBlindsFromButton(int buttonSeatNumber)
+        {
+            if (buttonSeatNumber != 0)
+            {
+                int numPlayers = playerSeats.Count;               
+
+                // Need at least two players to figure out who is the BB and SB
+                if (numPlayers >= 2)
+                {
+                    // Convert our hash table into an array
+                    int[] seatNumbers = new int[numPlayers];
+                    playerSeats.Keys.CopyTo(seatNumbers, 0);
+
+                    // Reverse it so that the lower seat #s are closer to the 0 index
+                    Array.Reverse(seatNumbers);
+
+                    // Find button's index in the array
+                    int buttonIndex = -1;
+                    for (int i = 0; i < numPlayers; i++)
+                    {
+                        if (seatNumbers[i] == lastButtonSeatNumber)
+                        {
+                            buttonIndex = i;
+                            break;
+                        }
+                    }
+                    Debug.Assert(buttonIndex != -1, "Button Index was not found while searching for the blinds. This should have not happened");
+
+                    int bigBlindIndex = -1;
+                    int smallBlindIndex = -1;
+
+                    // Case 1: there are only two players in game
+                    if (numPlayers == 2)
+                    {
+                        // The button is also the small blind
+                        smallBlindIndex = buttonIndex;
+
+                        // The big blind is the other player
+                        bigBlindIndex = buttonIndex == 0 ? 1 : 0;
+                    }
+
+                    // Case 2: in the list we have two or more players after of the button
+                    else if (numPlayers - buttonIndex - 1 >= 2)
+                    {
+                        // The the BB and SB are the ones directly after him
+                        smallBlindIndex = buttonIndex + 1;
+                        bigBlindIndex = buttonIndex + 2;
+                    }
+
+                    // Case 3: in the list we have only one player after the button
+                    else if (buttonIndex == numPlayers - 2)
+                    {
+                        // The small blind is the one after him
+                        smallBlindIndex = buttonIndex + 1;
+
+                        // The big blind is the first element of the list
+                        bigBlindIndex = 0;
+                    }
+
+                    // Case 4: the button is the last player of the list
+                    else if (buttonIndex == numPlayers - 1)
+                    {
+                        // Small blind is the first player of the list, bib blind is the second player
+                        smallBlindIndex = 0;
+                        bigBlindIndex = 1;
+                    }
+                    else
+                    {
+                        Debug.Assert(false, "The button index seem to be out of the possible cases. Have we missed something?");
+                    }
+
+                    String bigBlindPlayerName = (String)playerSeats[seatNumbers[bigBlindIndex]];
+                    String smallBlindPlayerName = (String)playerSeats[seatNumbers[smallBlindIndex]];
+                    Debug.Print("Inferred from button small blind ({0}) and big blind ({1})",smallBlindPlayerName, bigBlindPlayerName);
+
+                    // Raise events
+                    OnFoundBigBlind(bigBlindPlayerName);
+                    OnFoundSmallBlind(smallBlindPlayerName);
+                }
+                else
+                {
+                    Debug.Print("I couldn't figure out who the blinds are because I don't have enough seats information (but I have the button #).");
+                }
+            }
+            else
+            {
+                Debug.Print("I couldn't figure out who the blinds are because the button was not specified.");
+            }
+        }
+
         /* Will modify the value of currentGamePhase 
            and it might raise a ShowdownWillBegin event */
         private bool ParseForGamePhaseChanges(String line)
@@ -384,6 +529,12 @@ namespace PokerMuck
             {
                 currentGamePhase = HoldemGamePhase.Preflop;
                 OnHoleCardsWillBeDealt();
+
+                // If we don't have a more reliable way to find the blinds, we can infere it from the button
+                if (!pokerClient.HasRegex("hand_history_detect_big_blind"))
+                {
+                    InfereBlindsFromButton(lastButtonSeatNumber);
+                }
             }
             else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_flop_phase_token"), out matchResult))
             {

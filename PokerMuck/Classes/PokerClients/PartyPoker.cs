@@ -25,7 +25,7 @@ namespace PokerMuck
             {
                 /* To recognize a valid party poker game window
                   * ex. Turbo #2341732 -  NL  Hold'em - €3 Buy-in */
-                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>.+) - ");
+                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>[^-]+) - .+Buy-in");
                 
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"\*\* Dealing down cards \*\*");
@@ -43,7 +43,7 @@ namespace PokerMuck
 
                 /* Recognize the table ID and max seating capacity (if available) 
                  ex. Table Table  185503 (Real Money) */
-                regex.Add("hand_history_table_token", @"Table .+ (?<tableId>[0-9]+) \(");
+                regex.Add("hand_history_table_token", @"Table .+(?<tableId>[0-9]+) \(");
 
                 /* Recognize the maximum number of seats available */
                 regex.Add("hand_history_max_seating_capacity", @"Total number of players : ([\d]+)/(?<tableSeatingCapacity>[\d]+)");
@@ -93,7 +93,11 @@ namespace PokerMuck
 
                 /* Detect raises 
                  * ex. Renik87 raises [140] */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises \[(?<raiseAmount>[\d\.\,]+)\]");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) (raises|is all-In)[ ]+\[(?<raiseAmount>[\d\.\,]+)\]");
+
+                /* Detect blind amounts 
+                 * ex. Trny: 61674977 Level: 1 Blinds(20/40) */
+                regex.Add("hand_history_blind_amounts", @"Blinds\((?<smallBlindAmount>[\d\.\,]+)\/(?<bigBlindAmount>[\d\.\,]+)\)");
 
                 /* Recognize end of round character sequence (in PartyPoker it's
                  * a blank line */
@@ -160,6 +164,9 @@ namespace PokerMuck
                 // gameDescription = Turbo #2341732
                 // gameType = No Limit Hold'em
                 String gameDescription = match.Groups["gameDescription"].Value;
+
+                // Convert the characters to regex-valid format
+                gameDescription = StringToRegexPattern(gameDescription);
 
                 // output: Turbo #2341732_[0-9]+
                 return String.Format(GetConfigString("hand_history_filename_format"), gameDescription);

@@ -230,28 +230,6 @@ namespace PokerMuck
             return String.Empty; //Not necessary for FTP
         }
 
-        /* Converts an input string into a format compatible with regex */
-        private String StringToRegexPattern(String str)
-        {
-            // 1. Convert / to -
-            str = str.Replace("/", "-");
-
-            // 2. Convert $ to \$
-            str = str.Replace("$", @"\$");
-
-            // 3. Convert ( to \( and ) to \)
-            str = str.Replace(")", @"\)");
-            str = str.Replace("(", @"\(");
-
-            // 4. Convert . to \.
-            str = str.Replace(".", @"\.");
-
-            // 5. Convert + to \+
-            str = str.Replace("+", @"\+");
-
-            return str;
-        }
-
         public override String Name
         {
             get

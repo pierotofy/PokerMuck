@@ -34,20 +34,28 @@ namespace PokerMuck
                 // Create regex
                 Regex regex = new Regex(pattern);
 
-                String[] files = System.IO.Directory.GetFiles(directory);
-
-                // Sorts the files by creation date DESC (newer first)
-                IComparer fileComparer = new CompareFileByDate();
-                Array.Sort(files, fileComparer);
-
-                foreach (String file in files)
+                try
                 {
-                    Match match = regex.Match(file);
-                    if (match.Success)
+                    String[] files = System.IO.Directory.GetFiles(directory);
+
+                    // Sorts the files by creation date DESC (newer first)
+                    IComparer fileComparer = new CompareFileByDate();
+                    Array.Sort(files, fileComparer);
+
+                    foreach (String file in files)
                     {
-                        // Found a filename that corresponds to the pattern
-                        return Path.GetFileName(file);
+                        Match match = regex.Match(file);
+                        if (match.Success)
+                        {
+                            // Found a filename that corresponds to the pattern
+                            return Path.GetFileName(file);
+                        }
                     }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Debug.Print("Directory doesn't exist: {0}. Trying again later?", directory);
+                    return String.Empty;
                 }
             }
 

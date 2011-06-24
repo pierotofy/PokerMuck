@@ -97,6 +97,28 @@ namespace PokerMuck
             return result;
         }
 
+        /* Converts an input string into a format compatible with regex */
+        protected String StringToRegexPattern(String str)
+        {
+            // 1. Convert / to -
+            str = str.Replace("/", "-");
+
+            // 2. Convert $ to \$
+            str = str.Replace("$", @"\$");
+
+            // 3. Convert ( to \( and ) to \)
+            str = str.Replace(")", @"\)");
+            str = str.Replace("(", @"\(");
+
+            // 4. Convert . to \.
+            str = str.Replace(".", @"\.");
+
+            // 5. Convert + to \+
+            str = str.Replace("+", @"\+");
+
+            return str;
+        }
+
         /* Default constructor, initializes the regex and config hashtables */
         protected PokerClient()
         {
