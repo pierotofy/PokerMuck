@@ -32,7 +32,7 @@ namespace PokerMuck
                 regex.Add("hand_history_begin_flop_phase_token", @"\*\* Dealing Flop \*\* \[(?<flopCards>[\d\w \,]+)\]");
                 regex.Add("hand_history_begin_turn_phase_token", @"\*\* Dealing Turn \*\* \[(?<turnCard>[\d\w \,]+)\]");
                 regex.Add("hand_history_begin_river_phase_token", @"\*\* Dealing River \*\* \[(?<riverCard>[\d\w \,]+)\]");
-                regex.Add("hand_history_begin_summary_phase_token", @" Game #[0-9]+ starts\."); // It's not exactly a summary indicator, but it tells us that the hand ended
+                regex.Add("hand_history_begin_summary_phase_token", @"^( $| Game #[0-9]+ starts\.$)"); // It's not exactly a summary indicator, but it tells us that the hand ended
 
 
                 /* Recognize the Hand History gameID 
@@ -183,10 +183,10 @@ namespace PokerMuck
             // Format: 20110617\{TODAY'S FILES} (2011 = year, 06 = month, 17 = day) 
             
             // TODO: save timezone information somewhere? (If you play in a different country you can specify manually the server's timezone)
-            DateTime now = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time"));
+            //DateTime now = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time"));
             
             // Uncomment in production (works for 99% of the users)
-            //DateTime now = DateTime.Now;
+            DateTime now = DateTime.Now;
 
             return String.Format(@"{0}{1}{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
         }

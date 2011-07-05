@@ -97,7 +97,7 @@ namespace PokerMuck
 
         void pmDirector_RunGUIRoutine(Action d, Boolean asynchronous)
         {
-            if (this != null && !this.IsDisposed)
+            if (this != null)
             {
                 if (asynchronous) this.BeginInvoke(d);
                 else this.Invoke(d);

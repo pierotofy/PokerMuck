@@ -176,6 +176,7 @@ namespace PokerMuck
             ShowdownEventRaised = false;
             boardCards.Clear();
             playerSeats.Clear();
+            currentGamePhase = HoldemGamePhase.Preflop;
         }
 
         public override void ParseLine(string line)
@@ -324,11 +325,15 @@ namespace PokerMuck
                 String playerName = matchResult.Groups["playerName"].Value;
                 int seatNumber = Int32.Parse(matchResult.Groups["seatNumber"].Value);
 
-                // Raise event
-                OnPlayerIsSeated(playerName, seatNumber);
+                // Some poker clients rewrite the list of players at the summary, but we don't need this extra information
+                if (currentGamePhase != HoldemGamePhase.Summary)
+                {
+                    // Raise event
+                    OnPlayerIsSeated(playerName, seatNumber);
 
-                // Save
-                playerSeats.Add(seatNumber, playerName);
+                    // Save
+                    playerSeats.Add(seatNumber, playerName);
+                }
             }
 
             /* Search for a winner */
@@ -568,16 +573,16 @@ namespace PokerMuck
                 foreach (Card card in cards) boardCards.Add(card);
 
                 currentGamePhase = HoldemGamePhase.River;
-            }
-            else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_summary_phase_token")))
-            {
-                currentGamePhase = HoldemGamePhase.Summary;
 
                 // Call handleFinalBoard this way only if we don't have a more reliable way to find the board
                 if (!pokerClient.HasRegex("hand_history_detect_final_board"))
                 {
                     HandleFinalBoard(boardCards);
                 }
+            }
+            else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_summary_phase_token")))
+            {
+                currentGamePhase = HoldemGamePhase.Summary;
             }
 
 
@@ -614,15 +619,7 @@ namespace PokerMuck
             {
                 Board board = new HoldemBoard(cards[0], cards[1], cards[2], cards[3], cards[4]);
 
-                // Raise event if we're at summary
-                if (currentGamePhase == HoldemGamePhase.Summary)
-                {
-                    OnFinalBoardAvailable(board);
-                }
-                else
-                {
-                    Debug.Print("Board detected, but we're not at the summary?");
-                }
+                OnFinalBoardAvailable(board);
             }
             else
             {
