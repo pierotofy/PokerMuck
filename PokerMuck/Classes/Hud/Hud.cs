@@ -57,6 +57,10 @@ namespace PokerMuck
             List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
             if (positions.Count > 0)
             {
+                if (table.PlayerSeatingPositionIsRelative)
+                {
+                    positions = GetEffectivePositions(positions, table.PlayerList, table.UserID, table.MaxSeatingCapacity);
+                }
                 Debug.Assert(positions.Count == table.MaxSeatingCapacity, "The number of available user defined hud positions is different that what we expected");
             }
             else
@@ -150,6 +154,11 @@ namespace PokerMuck
             List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
             if (positions.Count > 0)
             {
+                if (table.PlayerSeatingPositionIsRelative)
+                {
+                    positions = GetEffectivePositions(positions, table.PlayerList, table.UserID, table.MaxSeatingCapacity);
+                }
+
                 foreach (Player p in table.PlayerList)
                 {
                     if (p.HudWindow != null) p.HudWindow.SetAbsolutePosition(positions[p.SeatNumber - 1], table.WindowRect);
@@ -186,13 +195,17 @@ namespace PokerMuck
         /* Save the position of the hud windows associated with this table */
         private void StoreHudWindowPositions()
         {
+            Debug.Assert(table.MaxSeatingCapacity != 0, "Table max seating capacity is unknown, impossible to display hud.");
+
             /* Foreach player, we need to find the position of the associated window
              * Note that if a seat is empty (ex. table with 9 seats and 3 players)
              * we'll use the value that was previously stored in the configuration */
             List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
-
-            Debug.Assert(table.MaxSeatingCapacity != 0, "Table max seating capacity is unknown, impossible to display hud.");
-
+            if (table.PlayerSeatingPositionIsRelative)
+            {
+                positions = GetEffectivePositions(positions, table.PlayerList, table.UserID, table.MaxSeatingCapacity);
+            }
+            
             // If the configuration didn't return us any result, we set dummy points
             // This should occur on the first time
             if (positions.Count == 0)
@@ -204,7 +217,8 @@ namespace PokerMuck
                 }
             }
 
-            foreach (Player p in table.PlayerList)
+            List<Player> playerList = table.PlayerList;
+            foreach (Player p in playerList)
             {
                 if (p.HudWindow != null)
                 {
@@ -212,8 +226,102 @@ namespace PokerMuck
                 }
             }
 
+            if (table.PlayerSeatingPositionIsRelative)
+            {
+                positions = GetTransposedPositions(positions, playerList, table.UserID, table.MaxSeatingCapacity);
+            }
+
             // Finally, store the new positions in the settings!
             settings.StoreHudWindowPositions(table.PokerClientName, positions);
+        }
+
+        /* @param userID nickname of the player that the list of players is to be moved around
+         *      the player with that nickname will gain seat #1 and all the other players positions will be assigned
+         *      a seat # relative to him */
+        private List<Point> GetTransposedPositions(List<Point> effectivePositions, List<Player> playerList, String userID, int maxSeatingCapacity)
+        {
+            // If there are no players, we can't do any transposition
+            if (playerList.Count == 0) return effectivePositions;
+
+            List<Point> result = new List<Point>(effectivePositions.Count);
+            foreach (Point p in effectivePositions)
+            {
+                result.Add(p);
+            }
+            int heroSeat = FindHeroSeat(playerList, userID);
+            
+            // Reassign seat numbers
+            foreach (Player p in playerList)
+            {
+                int actualSeat = GetRelativeSeat(p.SeatNumber, heroSeat, maxSeatingCapacity);
+                Point originalPoint = effectivePositions[p.SeatNumber - 1];
+                result[actualSeat - 1] = originalPoint;
+            }
+
+            return result;
+        }
+
+        /* Given a list of transposed positions, it returns the effective positions
+         * @param userID nickname of the user that is at the center (same as indicated in GetTransposedPlayerList) */
+        private List<Point> GetEffectivePositions(List<Point> transposedPositions, List<Player> playerList, String userID, int maxSeatingCapacity)
+        {
+            // If there are no players, we can't do any transposition
+            if (playerList.Count == 0) return transposedPositions;
+
+            List<Point> result = new List<Point>(transposedPositions.Count);
+            foreach (Point p in transposedPositions)
+            {
+                result.Add(p);
+            }
+
+            int heroSeat = FindHeroSeat(playerList, userID);
+
+            // Transpose points
+            foreach (Player p in playerList)
+            {
+                int actualSeat = GetRelativeSeat(p.SeatNumber, heroSeat, maxSeatingCapacity);
+                Point originalPoint = transposedPositions[actualSeat - 1];
+                result[p.SeatNumber - 1] = originalPoint;
+            }
+
+            return result;
+        }
+
+        /* Returns the seat number of a player relative to hero */
+        private int GetRelativeSeat(int playerSeat, int heroSeat, int maxSeatingCapacity)
+        {
+            if (playerSeat == heroSeat)
+            {
+                return 1;
+            }
+            else if (playerSeat < heroSeat)
+            {
+                return maxSeatingCapacity - (heroSeat - 1) + playerSeat;
+            }
+            else if (playerSeat > heroSeat)
+            {
+                return playerSeat - heroSeat + 1;
+            }
+
+            return -1; // Never to be executed
+        }
+
+        private int FindHeroSeat(List<Player> playerList, String userID)
+        {
+            int heroSeat = -1;
+
+            // Find where the user is seating
+            foreach (Player p in playerList)
+            {
+                if (p.Name == userID)
+                {
+                    heroSeat = p.SeatNumber;
+                    break;
+                }
+            }
+            Debug.Assert(heroSeat != -1, "Failed to find hero seat, seat number was not found");
+
+            return heroSeat;
         }
 
         private void DisposeFlaggedWindows()
@@ -244,8 +352,6 @@ namespace PokerMuck
         // Cleanup
         ~Hud()
         {
-            StoreHudWindowPositions();
-
             // Commit to file
             settings.Save();
         }

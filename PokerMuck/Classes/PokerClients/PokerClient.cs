@@ -74,6 +74,11 @@ namespace PokerMuck
          * (some clients' histories do not explicitly specify this value) */
         public abstract int InferMaxSeatingCapacity(String line);
 
+        /* Certain poker clients display players on screen centered relative to our hero
+         * if this is the case, child classes should return true
+         * This is needed in order to decide how to store the hud window positions on file */
+        public abstract bool PlayerSeatingPositionIsRelative { get; }
+
         /* Given a string representing a card, returns the equivalent card object 
            This seems to be a standard format across poker client.
            Cards are represented by two chars, the first indicating the face

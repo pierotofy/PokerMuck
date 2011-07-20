@@ -85,13 +85,31 @@ namespace PokerMuck
                 return pokerClient.Name;
             }
         }
-        
 
-        public Table(String handHistoryFilePath, String windowTitle, Rectangle windowRect, PokerClient pokerClient, PlayerDatabase playerDatabase)
+        /* Player's nickname at the table? */
+        private String userID;
+        public String UserID
+        {
+            get
+            {
+                return userID;
+            }
+        }
+
+        public bool PlayerSeatingPositionIsRelative
+        {
+            get
+            {
+                return pokerClient.PlayerSeatingPositionIsRelative;
+            }
+        }
+
+        public Table(String handHistoryFilePath, String windowTitle, Rectangle windowRect, PokerClient pokerClient, PlayerDatabase playerDatabase, String userID)
         {
             this.handHistoryFilePath = handHistoryFilePath;
             this.WindowTitle = windowTitle;
             this.pokerClient = pokerClient;
+            this.userID = userID;
             this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
             this.GameID = String.Empty; // We don't know yet
@@ -297,7 +315,7 @@ namespace PokerMuck
 
             this.GameID = gameId;
             this.TableId = tableId;
-            this.maxSeatingCapacity = 0; // Don't know yet
+            //this.maxSeatingCapacity = 0;
         }
 
 

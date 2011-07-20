@@ -10,6 +10,8 @@ namespace PokerMuck
 {
     class GDPoker : PokerClient
     {
+        public const int MAX_SEATING = 10;
+
         public GDPoker()
         {
         }
@@ -123,29 +125,10 @@ namespace PokerMuck
 
         public override int InferMaxSeatingCapacity(string line)
         {
-            // If we find the word "heads up" this should be a two seat table
-            if (line.IndexOf("Heads Up") != -1) return MAX_SEATING_CAPACITY_HEADS_UP;
-
-            else{
-                /* TODO!!!!
-                Regex r = new Regex(@"(?<maxSeatingCapacity>[\d]+) max");
-                
-                // If we find the word "max" with a number before it, then we guess that that's the max number of seats
-                Match m = r.Match(line);
-                if (m.Success){
-                    String maxSeatingCapacity = m.Groups["maxSeatingCapacity"].Value;
-                    int maxCapacityGuess = Int32.Parse(maxSeatingCapacity);
-
-                    Debug.Print("Matched max seating capacity: " + maxSeatingCapacity + " from " + line);
-
-                    return maxCapacityGuess;
-                }else{
-                 */
-
-                    // No luck, return default value, hoping for the best
-                return 10;//DEFAULT_MAX_SEATING_CAPACITY;
-                //}
-            }
+           // On GB Poker, seats are relative to the player (view is always centered reative to the player position)
+           // So for hud positioning purposes, we just say that there are always MAX_SEATING seats
+            // the layout of the table doesn't change depending on the number of players
+            return MAX_SEATING;
         }
 
         /**
@@ -179,6 +162,11 @@ namespace PokerMuck
         public override String GetCurrentHandHistorySubdirectory()
         {
             return "Tournaments";
+        }
+
+        public override bool PlayerSeatingPositionIsRelative
+        {
+            get { return true; }
         }
 
         public override String Name

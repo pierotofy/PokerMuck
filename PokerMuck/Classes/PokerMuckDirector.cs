@@ -121,7 +121,7 @@ namespace PokerMuck
 
             String filename = "test.txt";
             //String filename = "HH20110305 T371715473 No Limit Hold'em €4.46 + €0.54.txt";
-            Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient, playerDatabase);
+            Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient, playerDatabase, userSettings.UserID);
             newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
             newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
             tables.Add(newTable);
@@ -313,7 +313,7 @@ namespace PokerMuck
                     if (table == null)
                     {
                         // First time we see it, we need to create a table for this request
-                        Table newTable = new Table(filePath, windowTitle, windowRect, pokerClient, playerDatabase);
+                        Table newTable = new Table(filePath, windowTitle, windowRect, pokerClient, playerDatabase, userSettings.UserID);
 
                         // Set a handler that notifies us of data changes
                         newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);

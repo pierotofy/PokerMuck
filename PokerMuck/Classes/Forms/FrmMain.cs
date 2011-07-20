@@ -99,8 +99,15 @@ namespace PokerMuck
         {
             if (this != null)
             {
-                if (asynchronous) this.BeginInvoke(d);
-                else this.Invoke(d);
+                try
+                {
+                    if (asynchronous) this.BeginInvoke(d);
+                    else this.Invoke(d);
+                }
+                catch (Exception e)
+                {
+                    Debug.Print("Error while running GUI Routine from FrmMain: " + e.Message);
+                }
             }
         }
 

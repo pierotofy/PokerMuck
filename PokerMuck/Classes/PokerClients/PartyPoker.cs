@@ -191,6 +191,11 @@ namespace PokerMuck
             return String.Format(@"{0}{1}{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
         }
 
+        public override bool PlayerSeatingPositionIsRelative
+        {
+            get { return false; }
+        }
+
         public override String Name
         {
             get

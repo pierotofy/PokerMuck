@@ -230,6 +230,11 @@ namespace PokerMuck
             return String.Empty; //Not necessary for FTP
         }
 
+        public override bool PlayerSeatingPositionIsRelative
+        {
+            get { return false; }
+        }
+
         public override String Name
         {
             get
