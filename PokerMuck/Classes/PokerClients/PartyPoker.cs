@@ -50,7 +50,7 @@ namespace PokerMuck
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011 */
-                regex.Add("hand_history_game_type_token", @"(?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in"); //TODO: Works with points?
+                regex.Add("hand_history_game_token", @"(?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in"); //TODO: Works with points?
 
                 /* Recognize players 
                  Ex. Seat 1: Renik87 ( 2,000 )
@@ -119,14 +119,14 @@ namespace PokerMuck
 
         }
 
-        /* Given a game description, returns the corresponding PokerGameType */
-        public override PokerGameType GetPokerGameTypeFromGameDescription(string gameDescription)
+        /* Given a game description, returns the corresponding PokerGame */
+        public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
             Debug.Print("Found game description: " + gameDescription);
 
-            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGameType.Holdem;
+            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
 
-            return PokerGameType.Unknown; //Default
+            return PokerGame.Unknown; //Default
         }
 
         public override int InferMaxSeatingCapacity(string line)
@@ -191,9 +191,14 @@ namespace PokerMuck
             return String.Format(@"{0}{1}{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
         }
 
-        public override bool PlayerSeatingPositionIsRelative
+        public override bool IsPlayerSeatingPositionRelative(PokerGameType gameType)
         {
-            get { return false; }
+            return false;
+        }
+
+        public override PokerGameType GetPokerGameTypeFromWindowTitle(string windowTitle)
+        {
+            return PokerGameType.Unknown; // It doesn't make a difference to know the game type
         }
 
         public override String Name

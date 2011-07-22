@@ -10,11 +10,11 @@ namespace PokerMuck
     static class PlayerFactory
     {
         /* Factory method for creating new instances of player classes */
-        public static Player CreatePlayer(String playerName, PokerGameType gameType)
+        public static Player CreatePlayer(String playerName, PokerGame gameType)
         {
             switch (gameType)
             {
-                case PokerGameType.Holdem:
+                case PokerGame.Holdem:
                     return new HoldemPlayer(playerName);
             }
 

@@ -115,6 +115,8 @@ namespace PokerMuck
                             while (!reader.EndOfStream)
                             {
                                 string newLine = reader.ReadLine();
+                                newLine = newLine.Replace('�', '€');
+                                
                                 lastLine = newLine;
                                 handler.NewLineArrived(handHistoryFilename, newLine);
                                 linesRead++;

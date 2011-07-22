@@ -12,13 +12,13 @@ namespace PokerMuck
         private Regex reGameType;
 
         /* We found what kind of game this file uses! The delegate can then select a more specialized HHParser */
-        public delegate void GameTypeDiscoveredHandler(String gameType);
-        public event GameTypeDiscoveredHandler GameTypeDiscovered;
+        public delegate void GameDiscoveredHandler(String gameType);
+        public event GameDiscoveredHandler GameDiscovered;
 
         public UniversalHHParser(PokerClient pokerClient)
             : base(pokerClient)
         {
-            reGameType = pokerClient.GetRegex("hand_history_game_type_token");
+            reGameType = pokerClient.GetRegex("hand_history_game_token");
         }
 
         public override void ParseLine(string line)
@@ -31,7 +31,7 @@ namespace PokerMuck
             {
                 String gameType = match.Groups["gameType"].Value;
 
-                if (GameTypeDiscovered != null) GameTypeDiscovered(gameType);
+                if (GameDiscovered != null) GameDiscovered(gameType);
             }
             else
             {

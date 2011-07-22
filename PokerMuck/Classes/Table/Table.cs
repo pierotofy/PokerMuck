@@ -30,6 +30,10 @@ namespace PokerMuck
         private Board finalBoard;
         public Board FinalBoard { get { return finalBoard; } }
 
+        /* Game Type */
+        private PokerGameType gameType;
+        public PokerGameType GameType { get { return gameType; } }
+
         /* Game ID associated with this table */
         public String GameID { get; set; }
 
@@ -41,7 +45,7 @@ namespace PokerMuck
         public int MaxSeatingCapacity { get { return maxSeatingCapacity; } }
 
         /* Game type of the table */
-        public PokerGameType GameType { get; set; }
+        public PokerGame Game { get; set; }
 
         /* The playing window's title currently associated with this table */
         public String WindowTitle { get; set; }
@@ -100,7 +104,7 @@ namespace PokerMuck
         {
             get
             {
-                return pokerClient.PlayerSeatingPositionIsRelative;
+                return pokerClient.IsPlayerSeatingPositionRelative(this.GameType);
             }
         }
 
@@ -113,7 +117,7 @@ namespace PokerMuck
             this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
             this.GameID = String.Empty; // We don't know yet
-            this.GameType = PokerGameType.Unknown; // We don't know
+            this.gameType = pokerClient.GetPokerGameTypeFromWindowTitle(windowTitle);
             this.statistics = new TableStatistics(this); // We don't know what specific kind
             this.playerDatabase = playerDatabase;
             this.WindowRect = windowRect;
@@ -123,7 +127,7 @@ namespace PokerMuck
             handHistoryParser = new UniversalHHParser(pokerClient);
 
             // But as soon as we find what kind of game we're using, we're going to update our parser */
-            ((UniversalHHParser)handHistoryParser).GameTypeDiscovered += new UniversalHHParser.GameTypeDiscoveredHandler(handHistoryParser_GameTypeDiscovered);
+            ((UniversalHHParser)handHistoryParser).GameDiscovered += new UniversalHHParser.GameDiscoveredHandler(handHistoryParser_GameDiscovered);
 
             playerList = new List<Player>(10); //Usually no more than 10 players per table
 
@@ -239,24 +243,24 @@ namespace PokerMuck
             statistics.PrepareStatisticsForNewRound();
         }
 
-        private void handHistoryParser_GameTypeDiscovered(string gameType)
+        private void handHistoryParser_GameDiscovered(string game)
         {
-            Debug.Print("GameType discovered! {0}",gameType);
+            Debug.Print("Game discovered! {0}",game);
 
-            // Find to what game this gametype string corresponds
-            GameType = pokerClient.GetPokerGameTypeFromGameDescription(gameType);
+            // Find to what game this game string corresponds
+            Game = pokerClient.GetPokerGameFromGameDescription(game);
 
             bool foundParser = false;
 
             // Holdem?
-            if (foundParser = (GameType == PokerGameType.Holdem))
+            if (foundParser = (Game == PokerGame.Holdem))
             {
                 handHistoryParser = new HoldemHHParser(pokerClient);
                 statistics = new HoldemTableStatistics(this);
             }
-            else if (GameType == PokerGameType.Unknown)
+            else if (Game == PokerGame.Unknown)
             {
-                Debug.Print("We weren't able to find a better parser for this GameType");
+                Debug.Print("We weren't able to find a better parser for this Game");
             }
 
             // If we replaced our parser, we need to register the event handlers
@@ -269,7 +273,7 @@ namespace PokerMuck
                 handHistoryParser.FoundTableMaxSeatingCapacity += new HHParser.FoundTableMaxSeatingCapacityHandler(handHistoryParser_FoundTableMaxSeatingCapacity);
 
                 // Game specific handlers
-                if (GameType == PokerGameType.Holdem)
+                if (Game == PokerGame.Holdem)
                 {
                     ((HoldemHHParser)handHistoryParser).FinalBoardAvailable += new HoldemHHParser.FinalBoardAvailableHandler(handHistoryParser_FinalBoardAvailable);
                     statistics.RegisterParserHandlers(handHistoryParser);
@@ -331,7 +335,7 @@ namespace PokerMuck
             if (!playerDatabase.Contains(playerName, GameID))
             {
                 // Create a new player
-                Player p = PlayerFactory.CreatePlayer(playerName, GameType); 
+                Player p = PlayerFactory.CreatePlayer(playerName, Game); 
                 playerList.Add(p);
 
                 // Also add it to our database

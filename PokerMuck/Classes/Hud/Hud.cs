@@ -54,7 +54,7 @@ namespace PokerMuck
             bool setupInitialWindowPositions = false; //Default
 
             // Do we have user specified positions?
-            List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
+            List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity, table.GameType);
             if (positions.Count > 0)
             {
                 if (table.PlayerSeatingPositionIsRelative)
@@ -151,7 +151,7 @@ namespace PokerMuck
             /* Simply move the windows according to their relative position to the table 
              * windowRect */
 
-            List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
+            List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity, table.GameType);
             if (positions.Count > 0)
             {
                 if (table.PlayerSeatingPositionIsRelative)
@@ -200,7 +200,7 @@ namespace PokerMuck
             /* Foreach player, we need to find the position of the associated window
              * Note that if a seat is empty (ex. table with 9 seats and 3 players)
              * we'll use the value that was previously stored in the configuration */
-            List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity);
+            List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity, table.GameType);
             if (table.PlayerSeatingPositionIsRelative)
             {
                 positions = GetEffectivePositions(positions, table.PlayerList, table.UserID, table.MaxSeatingCapacity);
@@ -232,7 +232,7 @@ namespace PokerMuck
             }
 
             // Finally, store the new positions in the settings!
-            settings.StoreHudWindowPositions(table.PokerClientName, positions);
+            settings.StoreHudWindowPositions(table.PokerClientName, positions, table.GameType);
         }
 
         /* @param userID nickname of the player that the list of players is to be moved around
@@ -241,7 +241,7 @@ namespace PokerMuck
         private List<Point> GetTransposedPositions(List<Point> effectivePositions, List<Player> playerList, String userID, int maxSeatingCapacity)
         {
             // If there are no players, we can't do any transposition
-            if (playerList.Count == 0) return effectivePositions;
+            if (playerList.Count == 0 || effectivePositions.Count == 0) return effectivePositions;
 
             List<Point> result = new List<Point>(effectivePositions.Count);
             foreach (Point p in effectivePositions)
@@ -266,7 +266,7 @@ namespace PokerMuck
         private List<Point> GetEffectivePositions(List<Point> transposedPositions, List<Player> playerList, String userID, int maxSeatingCapacity)
         {
             // If there are no players, we can't do any transposition
-            if (playerList.Count == 0) return transposedPositions;
+            if (playerList.Count == 0 || transposedPositions.Count == 0) return transposedPositions;
 
             List<Point> result = new List<Point>(transposedPositions.Count);
             foreach (Point p in transposedPositions)

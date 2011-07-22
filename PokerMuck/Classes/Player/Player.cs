@@ -39,7 +39,7 @@ namespace PokerMuck
         public int SeatNumber { get; set; }
 
         /* What game type are we playing? */
-        public virtual PokerGameType GameType { get { return PokerGameType.Unknown; } }
+        public virtual PokerGame GameType { get { return PokerGame.Unknown; } }
         
         protected Player(String name)
         {

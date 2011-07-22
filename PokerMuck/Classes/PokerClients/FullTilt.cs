@@ -51,7 +51,7 @@ namespace PokerMuck
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * Full Tilt Poker Game #29428516957: $0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - 18:30:27 ET - 2011/03/28*/
-                regex.Add("hand_history_game_type_token", @"Full Tilt Poker Game #[\d]+: .+ - \$?[\d\.]+\/\$?[\d\.]+ - (?<gameType>.+) - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
+                regex.Add("hand_history_game_token", @"Full Tilt Poker Game #[\d]+: .+ - \$?[\d\.]+\/\$?[\d\.]+ - (?<gameType>.+) - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}");
 
                 /* Recognize players 
                  Ex. Seat 3: italystallion89 ($0.80)
@@ -128,14 +128,14 @@ namespace PokerMuck
 
         }
 
-        /* Given a game description, returns the corresponding PokerGameType */
-        public override PokerGameType GetPokerGameTypeFromGameDescription(string gameDescription)
+        /* Given a game description, returns the corresponding PokerGame */
+        public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
             Debug.Print("Found game description: " + gameDescription);
 
-            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGameType.Holdem;
+            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
 
-            return PokerGameType.Unknown; //Default
+            return PokerGame.Unknown; //Default
         }
 
         public override int InferMaxSeatingCapacity(string line)
@@ -230,9 +230,14 @@ namespace PokerMuck
             return String.Empty; //Not necessary for FTP
         }
 
-        public override bool PlayerSeatingPositionIsRelative
+        public override bool IsPlayerSeatingPositionRelative(PokerGameType gameType)
         {
-            get { return false; }
+            return false;
+        }
+
+        public override PokerGameType GetPokerGameTypeFromWindowTitle(string windowTitle)
+        {
+            return PokerGameType.Unknown; // It doesn't make a difference to know the game type
         }
 
         public override String Name

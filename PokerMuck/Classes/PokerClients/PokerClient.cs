@@ -9,9 +9,14 @@ using System.Text.RegularExpressions;
 namespace PokerMuck
 {
     /* This enumerates the types of poker game */
-    public enum PokerGameType
+    public enum PokerGame
     {
         Holdem, Omaha, FiveCardStud, Unknown
+    }
+
+    public enum PokerGameType
+    {
+        Tournament, Ring, Unknown
     }
 
     abstract class PokerClient
@@ -67,8 +72,11 @@ namespace PokerMuck
          * (For example on PartyPoker we have subdirectories in the main directory organized day by day) */
         public abstract String GetCurrentHandHistorySubdirectory();
 
-        /* Given a game description in string format, it returns the corresponding PokerGameType */
-        public abstract PokerGameType GetPokerGameTypeFromGameDescription(String gameDescription);
+        /* Given a game description in string format, it returns the corresponding PokerGame */
+        public abstract PokerGame GetPokerGameFromGameDescription(String gameDescription);
+
+        /* Given a window title, it returns what kind of game this is */
+        public abstract PokerGameType GetPokerGameTypeFromWindowTitle(String windowTitle);
 
         /* Given the table token line, it tries to infer the maximum number of seats available
          * (some clients' histories do not explicitly specify this value) */
@@ -77,7 +85,13 @@ namespace PokerMuck
         /* Certain poker clients display players on screen centered relative to our hero
          * if this is the case, child classes should return true
          * This is needed in order to decide how to store the hud window positions on file */
-        public abstract bool PlayerSeatingPositionIsRelative { get; }
+        public abstract bool IsPlayerSeatingPositionRelative(PokerGameType gameType);
+
+        /* Execute certain operations before a game is to start */
+        public virtual void DoPregameProcessing(String storedHandHistoryDirectory){}
+
+        /* Execute certain operations when the application starts */
+        public virtual void DoStartupProcessing(String storedHandHistoryDirectory){}
 
         /* Given a string representing a card, returns the equivalent card object 
            This seems to be a standard format across poker client.

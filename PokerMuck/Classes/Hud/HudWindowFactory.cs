@@ -12,7 +12,7 @@ namespace PokerMuck
     {
         public static HudWindow CreateHudWindow(Table t)
         {
-            if (t.GameType == PokerGameType.Holdem)
+            if (t.Game == PokerGame.Holdem)
             {
                 return new HoldemHudWindow();
             }

@@ -26,12 +26,12 @@ namespace PokerMuck
          * x1,y1;x2,y2; ... ;xn,yn 
          * Where x1,y1 is the position of Seat #1
          */
-        public List<Point> RetrieveHudWindowPositions(String clientName, int maxSeats)
+        public List<Point> RetrieveHudWindowPositions(String clientName, int maxSeats, PokerGameType gameType)
         {
             List<Point> hudWindowPositions = new List<Point>();
 
             // Is the configuration here?
-            String settingName = GetSettingNameForHudWindowPositions(clientName, maxSeats);
+            String settingName = GetSettingNameForHudWindowPositions(clientName, maxSeats, gameType);
             if (HasSetting(settingName))
             {
                 // Bingo! Retrieve the positions
@@ -59,7 +59,7 @@ namespace PokerMuck
             return hudWindowPositions;
         }
 
-        public void StoreHudWindowPositions(String clientName, List<Point> positions)
+        public void StoreHudWindowPositions(String clientName, List<Point> positions, PokerGameType gameType)
         {
             // Convert the list of positions into a string format
             // x1,y1;x2,y2;...
@@ -73,7 +73,7 @@ namespace PokerMuck
             // Remove last ;
             result.Remove(result.Length - 1, 1);
 
-            String settingName = GetSettingNameForHudWindowPositions(clientName, positions.Count);
+            String settingName = GetSettingNameForHudWindowPositions(clientName, positions.Count, gameType);
             SetSetting(settingName, result.ToString());
         }
 
@@ -81,12 +81,15 @@ namespace PokerMuck
          * for a particular client and the max seating capacity.
          * Ex. client = "PokerStars.it" and maxSeats = 9
          * Result => "PokerStars.it_9_players_hud_window_positions" */
-        private String GetSettingNameForHudWindowPositions(String clientName, int maxSeats)
+        private String GetSettingNameForHudWindowPositions(String clientName, int maxSeats, PokerGameType gameType)
         {
             // Replace spaces with underscores
             String escapedClientName = clientName.Replace(" ", "_");
 
-            return String.Format("{0}_{1}_players_hud_window_positions", escapedClientName, maxSeats);
+            // Convert enum to string
+            String readableGameType = gameType.ToString("g");
+
+            return String.Format("{0}_{1}_{2}_players_hud_window_positions", escapedClientName, maxSeats, readableGameType);
         }
 
         public override string GetSettingsFilename()

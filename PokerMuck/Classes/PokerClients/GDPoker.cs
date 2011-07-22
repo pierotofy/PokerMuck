@@ -5,12 +5,18 @@ using System.Text;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace PokerMuck
 {
     class GDPoker : PokerClient
     {
-        public const int MAX_SEATING = 10;
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern bool CreateHardLink(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);
+
+        private const int MAX_SEATING = 10;
+        private const string CASH_GAME_FILENAME = "handhistory0";
 
         public GDPoker()
         {
@@ -28,7 +34,9 @@ namespace PokerMuck
                 /* To recognize a valid full tilt poker game window
                   * ex.Table #1, TURBO €  3 Normandia    Heads Up, No-limit Texas Hold'em, €3 (real money), 10/20 [ID=T5-43557381-0][S-1556-758114] */
                 regex.Add("game_window_title_to_recognize_games", @"^.+\[(?<gameId>.+)\]$");
-                
+
+                regex.Add("game_window_title_to_recognize_ring_games", @"\((€|\$)?[\d\.]+\/(€|\$)?[\d\.]+\)");
+
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"Dealing pocket cards");
                 regex.Add("hand_history_begin_flop_phase_token", @"--- Dealing flop \[(?<flopCards>[\d\w, ]+)\]");
@@ -44,24 +52,24 @@ namespace PokerMuck
 
                 /* Recognize the table ID and max seating capacity (if available) 
                  ex. Table: Table #1 [43557381] (NO_LIMIT TEXAS_HOLDEM 10/20, Chips) */
-                regex.Add("hand_history_table_token", @"Table: Table (?<tableId>.+) \[");
+                regex.Add("hand_history_table_token", @"Table: (Table )?(?<tableId>.+) \[");
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * Table: Table #1 [43557381] (NO_LIMIT TEXAS_HOLDEM 10/20, Chips) */
-                regex.Add("hand_history_game_type_token", @"Table: Table .+ \[.+\] \((?<gameType>[^\d]+) [\d]+\/[\d]+, .+\)");
+                regex.Add("hand_history_game_token", @"Table: (Table )?.+ \[.+\] \((?<gameType>[^\d]+) (€|\$)?[\d\.]+\/(€|\$)?[\d\.]+, .+\)");
 
                 /* Recognize players 
                  Ex. Seat 6: millino (1590)
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) \([\d]+\)$");
+                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) \((€|\$)?[\d\.]+\)$");
 
                 /* Recognize mucked hands
                  Ex. Seat 8: stallion089 (1900), net: +90, [6s, Th] (PAIR SIX) */
                 regex.Add("hand_history_detect_mucked_hand", @"Seat [\d]+: (?<playerName>[^(]+) .* \[(?<cards>[\d\w, ]+)\]");
 
-                /* Recognize winners of a hand 
+                /* Recognize winners of a hand
                  * Ex. Main pot: 180 won by stallion089 (180) */
-                regex.Add("hand_history_detect_hand_winner", @": .+ won by (?<playerName>.+) \([\d\.\,]+\)");
+                regex.Add("hand_history_detect_hand_winner", @": .+ won by (?<playerName>.+) \((€|\$)?[\d\.\,]+\)");
 
                 /* Recognize all-ins
                  * Ex. millino raises 1250 to 1350 [all in] */
@@ -70,8 +78,8 @@ namespace PokerMuck
                 /* Detect who is the small/big blind
                    Ex. stallion089 posts small blind (75)
                         millino posts big blind (150) */
-                regex.Add("hand_history_detect_small_blind", @"(?<playerName>.+) posts small blind \((?<smallBlindAmount>[\d\.\,]+)\)");
-                regex.Add("hand_history_detect_big_blind", @"(?<playerName>.+) posts big blind \((?<bigBlindAmount>[\d\.\,]+)\)");
+                regex.Add("hand_history_detect_small_blind", @"(?<playerName>.+) posts small blind \((€|\$)?(?<smallBlindAmount>[\d\.\,]+)\)");
+                regex.Add("hand_history_detect_big_blind", @"(?<playerName>.+) posts big blind \((€|\$)?(?<bigBlindAmount>[\d\.\,]+)\)");
 
                 /* Detect who the button is 
                    Button: seat 8 */
@@ -80,11 +88,11 @@ namespace PokerMuck
 
                 /* Detect calls
                  * ex. stallion089 calls 75 */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls (?<amount>[\d\.\,]+)");
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls (€|\$)?(?<amount>[\d\.\,]+)");
 
                 /* Detect bets
                    ex. stallion089 bets 150 */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets (?<amount>[\d\.\,]+)");
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets (€|\$)?(?<amount>[\d\.\,]+)");
 
                 /* Detect folds
                  * ex. millino folds */
@@ -96,7 +104,7 @@ namespace PokerMuck
 
                 /* Detect raises 
                  * ex. millino raises 2050 to 2125 [all in] */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises ([\d]+) to (?<raiseAmount>[\d]+)");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises (€|\$)?([\d\.]+) to (€|\$)?(?<raiseAmount>[\d\.]+)");
 
                 /* Recognize end of round character sequence (on GDPoker is a pattern) */
                 regex.Add("hand_history_detect_end_of_round", @"\*\*\*\*\* End of hand .+ \*\*\*\*\*");
@@ -113,14 +121,27 @@ namespace PokerMuck
 
         }
 
-        /* Given a game description, returns the corresponding PokerGameType */
-        public override PokerGameType GetPokerGameTypeFromGameDescription(string gameDescription)
+        /* Given a game description, returns the corresponding PokerGame */
+        public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
             Debug.Print("Found game description: " + gameDescription);
 
-            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGameType.Holdem;
+            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
 
-            return PokerGameType.Unknown; //Default
+            return PokerGame.Unknown; //Default
+        }
+
+        public override PokerGameType GetPokerGameTypeFromWindowTitle(string windowTitle)
+        {
+            Match ringMatch = GetRegex("game_window_title_to_recognize_ring_games").Match(windowTitle);
+            if (ringMatch.Success)
+            {
+                return PokerGameType.Ring;
+            }
+            else
+            {
+                return PokerGameType.Tournament;
+            }
         }
 
         public override int InferMaxSeatingCapacity(string line)
@@ -149,8 +170,18 @@ namespace PokerMuck
                 // gameId = R-880-81
                 String gameId = match.Groups["gameId"].Value;
 
-                // GDPoker's filenames are just the gameId.txt. Easy!
-                return gameId;
+                /* If this is a cash game, the filename is always handhistory0.txt
+                 * otherwise it's just gameId.txt */
+
+                Match ringMatch = GetRegex("game_window_title_to_recognize_ring_games").Match(windowTitle);
+                if (ringMatch.Success)
+                {
+                    return CASH_GAME_FILENAME;
+                }
+                else
+                {
+                    return gameId;
+                }
             }
             else
             {
@@ -159,14 +190,65 @@ namespace PokerMuck
 
         }
 
+        public override void DoStartupProcessing(string storedHandHistoryDirectory)
+        {
+            base.DoStartupProcessing(storedHandHistoryDirectory);
+
+            /* The hard link we created for the cash games might need to be refreshed... so if it exists, we delete 
+             * (we'll recreate it anyway later) */
+            String file = storedHandHistoryDirectory + @"\" + GetCurrentHandHistorySubdirectory() + @"\" + CASH_GAME_FILENAME + ".txt";
+            if (File.Exists(file))
+            {
+                try
+                {
+                    File.Delete(file);
+                    Debug.Print("Deleted " + file);
+                }
+                catch (IOException)
+                {
+                    Debug.Print("Failed to delete: " + file + ". Is it being used?");
+                }
+
+            }
+        }
+
+        public override void DoPregameProcessing(string storedHandHistoryDirectory)
+        {
+            base.DoPregameProcessing(storedHandHistoryDirectory);
+
+            /* GD Poker stores cash games hand history in the root hand history directory, rather than in a subdirectory
+             * this is an issue because it screws up our hand history monitor. So we make a hard link of it in the appropriate
+             * subdirectory (symbolic links need administrator privileges... yikes!) */
+            String fileToCreate = storedHandHistoryDirectory + @"\" + GetCurrentHandHistorySubdirectory() + @"\" + CASH_GAME_FILENAME + ".txt";
+            String fileToLink = storedHandHistoryDirectory + @"\" + CASH_GAME_FILENAME + ".txt";
+
+            if (!File.Exists(fileToCreate) && File.Exists(fileToLink))
+            {
+                if (CreateHardLink(fileToCreate, fileToLink, IntPtr.Zero))
+                {
+                    Debug.Print("Created hard link for " + fileToLink + ".txt");
+                }
+                else
+                {
+                    Debug.Print("Failed to create hard link for " + fileToLink + ".txt");
+                }
+              
+            }
+        }
+
         public override String GetCurrentHandHistorySubdirectory()
         {
             return "Tournaments";
         }
 
-        public override bool PlayerSeatingPositionIsRelative
-        {
-            get { return true; }
+        public override bool IsPlayerSeatingPositionRelative(PokerGameType gameType){
+            if (gameType == PokerGameType.Tournament) return true;
+            else if (gameType == PokerGameType.Ring) return false;
+            else
+            {
+                Debug.Print("Asked about player seating position relativity, but game type is unknown, guessing...");
+                return true;
+            }
         }
 
         public override String Name

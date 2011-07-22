@@ -46,10 +46,10 @@ namespace PokerMuck
                 /* Recognize the table ID and max seating capacity */
                 regex.Add("hand_history_table_token", @"Table '(?<tableId>.+)' (?<tableSeatingCapacity>[\d]+)-max");
 
-                /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
+                /* Recognize game (Hold'em, Omaha, No-limit, limit, etc.) 
                    Note that for PokerStars.it the only valid currency is EUR (and FPP), but this might be different 
                    on other clients. This regex works for both play money and tournaments */
-                regex.Add("hand_history_game_type_token", @"([\d]+FPP (?<gameType>[^-]+) -)|(EUR (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \([\d]+/[\d]+\))");
+                regex.Add("hand_history_game_token", @"([\d]+FPP (?<gameType>[^-]+) -)|(EUR (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \([\d]+/[\d]+\))");
 
                 /* Recognize players 
                  Ex. Seat 1: stallion089 (2105 in chips) => 1,"stallion089" 
@@ -123,12 +123,12 @@ namespace PokerMuck
 
         }
 
-        /* Given a game description, returns the corresponding PokerGameType */
-        public override PokerGameType GetPokerGameTypeFromGameDescription(string gameDescription)
+        /* Given a game description, returns the corresponding PokerGame */
+        public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
-            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGameType.Holdem;
+            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
 
-            return PokerGameType.Unknown; //Default
+            return PokerGame.Unknown; //Default
         }
 
         public override int InferMaxSeatingCapacity(string line)
@@ -194,9 +194,14 @@ namespace PokerMuck
             return String.Empty; //Not necessary for PokerStars
         }
 
-        public override bool PlayerSeatingPositionIsRelative
+        public override bool IsPlayerSeatingPositionRelative(PokerGameType gameType)
         {
-            get { return false; }
+            return false;
+        }
+
+        public override PokerGameType GetPokerGameTypeFromWindowTitle(string windowTitle)
+        {
+            return PokerGameType.Unknown; // It doesn't make a difference to know the game type
         }
 
         public override String Name {

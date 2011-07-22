@@ -125,11 +125,11 @@ namespace PokerMuck
         public bool IsButton { get; set; }
 
 
-        public override PokerGameType GameType
+        public override PokerGame GameType
         {
             get
             {
-                return PokerGameType.Holdem;
+                return PokerGame.Holdem;
             }
         }
 

@@ -69,7 +69,7 @@ namespace PokerMuck
         public delegate void DisplayPlayerStatisticsHandler(Player p);
         public event DisplayPlayerStatisticsHandler DisplayPlayerStatistics;
 
-
+        private Object createTableLock = new Object(); // Used for thread safety synchronization
 
         public PokerMuckDirector()
         {
@@ -83,9 +83,6 @@ namespace PokerMuck
 
             // Initialize the user configuration 
             userSettings = new PokerMuckUserSettings();
-
-            // Get the poker client from the user settings
-            ChangePokerClient(userSettings.CurrentPokerClient);
 
             // Init windows listener
             windowsListener = new WindowsListener(this);
@@ -110,7 +107,9 @@ namespace PokerMuck
                 // Save
                 UserSettings.Save();
             }
-            
+
+            // Get the poker client from the user settings
+            ChangePokerClient(userSettings.CurrentPokerClient);
         }
 
 
@@ -203,6 +202,9 @@ namespace PokerMuck
 
             // Also change directory
             ChangeHandHistoryDirectory(UserSettings.StoredHandHistoryDirectory);
+
+            // On load certain operations might need to be done by the client
+            userSettings.CurrentPokerClient.DoStartupProcessing(userSettings.StoredHandHistoryDirectory);
         }
 
       
@@ -294,66 +296,70 @@ namespace PokerMuck
             String pattern = pokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(windowTitle);
             if (pattern != String.Empty)
             {
-                // Valid poker window
-
-                // We need to monitor this window for when it closes...
-                windowsListener.AddToMonitorList(windowTitle);
-                
-                // Do we have a filename matching this window?
-                String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(UserSettings.HandHistoryDirectory, pattern);
-                
-                if (filename != String.Empty)
+                // If multiple events call this function while a table is added, multiple (non-expected) copies of a table will appear
+                lock (createTableLock)
                 {
-                    String filePath = UserSettings.HandHistoryDirectory + @"\" + filename;
+                    // Valid poker window
 
-                    // A valid filename was found to be associated with a window title, see if we have a table already
-                    Table table = FindTableByHHFilePath(filePath);
+                    pokerClient.DoPregameProcessing(userSettings.StoredHandHistoryDirectory);
 
-                    // Is there a game associated with this filename?
-                    if (table == null)
+                    // We need to monitor this window for when it closes...
+                    windowsListener.AddToMonitorList(windowTitle);
+
+                    // Do we have a filename matching this window?
+                    String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(UserSettings.HandHistoryDirectory, pattern);
+
+                    if (filename != String.Empty)
                     {
-                        // First time we see it, we need to create a table for this request
-                        Table newTable = new Table(filePath, windowTitle, windowRect, pokerClient, playerDatabase, userSettings.UserID);
+                        String filePath = UserSettings.HandHistoryDirectory + @"\" + filename;
 
-                        // Set a handler that notifies us of data changes
-                        newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
+                        // A valid filename was found to be associated with a window title, see if we have a table already
+                        Table table = FindTableByHHFilePath(filePath);
 
-                        // Set a handler that notifies of the necessity to display the 
-                        // statistics of a player
-                        newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
+                        // Is there a game associated with this filename?
+                        if (table == null)
+                        {
+                            // First time we see it, we need to create a table for this request
+                            Table newTable = new Table(filePath, windowTitle, windowRect, pokerClient, playerDatabase, userSettings.UserID);
 
-                        // and add it to our list
-                        tables.Add(newTable);
+                            // Set a handler that notifies us of data changes
+                            newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
 
-                        Debug.Print("Created new table: " + newTable.WindowTitle + " on " + newTable.HandHistoryFilePath);
+                            // Set a handler that notifies of the necessity to display the 
+                            // statistics of a player
+                            newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
 
-                        OnDisplayStatus("Parsing for the first time... please wait.");
+                            // and add it to our list
+                            tables.Add(newTable);
 
-                        // Check for changes, now!
-                        newTable.ParseHandHistoryNow();
+                            Debug.Print("Created new table: " + newTable.WindowTitle + " on " + newTable.HandHistoryFilePath);
+
+                            OnDisplayStatus("Parsing for the first time... please wait.");
+
+                            // Check for changes, now!
+                            newTable.ParseHandHistoryNow();
+                        }
+                        else
+                        {
+
+                            // Yeah we have a table, but the title might have changed... make
+                            // sure the table keeps track of this change!
+                            table.WindowTitle = windowTitle;
+
+                            // Inform the UI that we might need to shift the hud
+                            ShiftHud(table);
+                        }
+
+                        OnDisplayStatus("Focus is on the table associated with " + filename);
+                        Debug.Print(String.Format("Valid window title match with {0}", filename));
                     }
                     else
                     {
+                        OnDisplayStatus("New game started on window: " + windowTitle);
+                        Debug.Print("A valid window title was found ({0}) but no filename associated with the window could be found using pattern {1}. Is this our first hand at the table and no hand history is available?", windowTitle, pattern);
 
-                        // Yeah we have a table, but the title might have changed... make
-                        // sure the table keeps track of this change!
-                        table.WindowTitle = windowTitle;
-
-                        // Inform the UI that we might need to shift the hud
-                        ShiftHud(table);
                     }
-
-                    OnDisplayStatus("Focus is on the table associated with " + filename);
-                    Debug.Print(String.Format("Valid window title match with {0}", filename));
                 }
-                else
-                {
-                    OnDisplayStatus("New game started on window: " + windowTitle);
-                    Debug.Print("A valid window title was found ({0}) but no filename associated with the window could be found using pattern {1}. Is this our first hand at the table and no hand history is available?", windowTitle, pattern);
-
-                }
-
-
             }
             else
             {
