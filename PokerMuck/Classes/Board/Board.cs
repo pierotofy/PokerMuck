@@ -6,7 +6,7 @@ using System.Text;
 namespace PokerMuck
 {
     /* A board can be seen as a list of cards */
-    abstract class Board : CardList
+    public abstract class Board : CardList
     {
         /* Every board has an associated description */
         private String description;

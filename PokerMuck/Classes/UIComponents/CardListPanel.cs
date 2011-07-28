@@ -70,7 +70,7 @@ namespace PokerMuck
             if (cardListToDisplay != null)
             {
                 // Generate the card picture boxes for each card in the hand
-                foreach (Card c in cardListToDisplay.Cards)
+                foreach (Card c in cardListToDisplay)
                 {
                     CardPictureBox pictureBox = new CardPictureBox(c);
                     cardPictures.Add(pictureBox);

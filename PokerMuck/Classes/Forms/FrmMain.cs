@@ -51,6 +51,19 @@ namespace PokerMuck
 
             //pmDirector.Test();
 
+            HoldemHand h1 = new HoldemHand(new Card(CardFace.Jack, CardSuit.Clubs), new Card(CardFace.Queen, CardSuit.Diamonds));
+            HoldemBoard b = new HoldemBoard(new Card(CardFace.Seven, CardSuit.Clubs),
+                                            new Card(CardFace.Two, CardSuit.Diamonds),
+                                            new Card(CardFace.Ace, CardSuit.Diamonds),
+                                            new Card(CardFace.Ten, CardSuit.Clubs),
+                                            new Card(CardFace.Three, CardSuit.Diamonds));
+            
+            HoldemHand.Classification classification = h1.GetClassification(HoldemGamePhase.River, b);
+            Debug.Print(classification.Hand.ToString() + " " + classification.Kicker.ToString());
+            
+
+            return;
+
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(".COM Play 736 (6 max) - 1/2 - No Limit Hold'em - Logged In As italystallion89");
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle("$0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89");
             //Debug.Print("Result: " + res);

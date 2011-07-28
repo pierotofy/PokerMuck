@@ -32,7 +32,7 @@ namespace PokerMuck
             bool equal = true;
             for (int i = 0; i < cards.Count; i++)
             {
-                if (!cards[i].Equals(otherHand.Cards[i]))
+                if (!cards[i].Equals(otherHand.cards[i]))
                 {
                     equal = false;
                     break;

@@ -2,22 +2,127 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
     /* Represents a series of cards */
     public class CardList : ICloneable
     {
+        public enum SortUsing { AceHigh, AceLow }
         protected List<Card> cards;
-        public List<Card> Cards { get { return cards; } }
 
-        public CardList()
+        public Card this[object enumIndex]
         {
-            cards = new List<Card>(5);
+            get
+            {
+                int index = (int)enumIndex;
+                return cards[index];
+            }
         }
 
-        protected void AddCard(Card card){
+        public CardList() : this(5)
+        {
+
+        }
+        public CardList(int count)
+        {
+            cards = new List<Card>(count);
+        }
+
+        public void AddCard(Card card){
             cards.Add(card);
+        }
+
+        public void Sort(SortUsing method)
+        {
+            bool countAceAsHigh = (method == SortUsing.AceHigh);
+            cards.Sort(delegate(Card c1, Card c2)
+            {
+                return c1.GetFaceValue(countAceAsHigh).CompareTo(c2.GetFaceValue(countAceAsHigh));
+            });
+        }
+
+        public Card Last
+        {
+            get
+            {
+                Debug.Assert(this.Count > 0, "Cannot retrieve last card from an empty list");
+                return cards.Last();
+            }
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return cards.GetEnumerator();
+        }
+
+        public int Count{
+            get
+            {
+                return cards.Count;
+            }
+        }
+
+
+        public bool HaveIdenticalFaces(int numIdenticalFaces)
+        {
+            Card matching;
+            return HaveIdenticalFaces(numIdenticalFaces, out matching);
+        }
+
+
+        /* @param matching points to a card in the set of identical ones (if any) */
+        public bool HaveIdenticalFaces(int numIdenticalFaces, out Card matching)
+        {
+            matching = null;
+
+            for (int i = 0; i < cards.Count; i++)
+            {
+                int facesCount = 0;
+                for (int j = i + 1; j < cards.Count; j++)
+                {
+                    if (cards[i].Face == cards[j].Face)
+                    {
+                        facesCount++;
+                    }
+                }
+
+                if (facesCount >= numIdenticalFaces - 1)
+                {
+                    matching = cards[i];
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool AreConsecutive(bool countAceAsHigh, bool mustBeAllSameSuit, int numCards)
+        {
+            if (countAceAsHigh) Sort(SortUsing.AceHigh);
+            else Sort(SortUsing.AceLow);
+
+            int numConsecutiveCardsInSequence = 0;
+            for (int i = 1; i < cards.Count; i++)
+            {
+                // Skip cards in the sequence that have the same face (ex. 1233456, skip element "3")
+                if (cards[i - 1].Face == cards[i].Face) continue;
+
+                if ((cards[i - 1].GetFaceValue(countAceAsHigh) + 1 == cards[i].GetFaceValue(countAceAsHigh)) &&
+                    (cards[i - 1].Suit == cards[i].Suit || !mustBeAllSameSuit))
+                {
+                    numConsecutiveCardsInSequence++;
+                    if (numConsecutiveCardsInSequence >= numCards - 1) break;
+                }
+                else
+                {
+                    numConsecutiveCardsInSequence = 0;
+                }
+            }
+
+            return numConsecutiveCardsInSequence >= numCards - 1;
         }
 
         public override string ToString()
@@ -38,7 +143,7 @@ namespace PokerMuck
             CardList cardList = (CardList)this.MemberwiseClone();
             cardList.cards = new List<Card>(5);
 
-            foreach (Card c in Cards)
+            foreach (Card c in cards)
             {
                 cardList.AddCard((Card)c.Clone());
             }

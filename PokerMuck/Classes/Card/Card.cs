@@ -46,10 +46,14 @@ namespace PokerMuck
         }
 
         // Returns an int identifying the value of the face alone (Two = lower, Ace = higher)
-        public int GetFaceValue()
+        public int GetFaceValue(bool countAceAsHigh = true)
         {
             if (Face != CardFace.Ace) return (int)Face;
-            else return 14;
+            else
+            {
+                if (countAceAsHigh) return 14;
+                else return 1;
+            }
         }
 
         /* Helper method to convert a char into a CardFace enum value */
