@@ -11,8 +11,8 @@ namespace PokerMuck
     {
         private int precision;
 
-        public StatisticsNumberData(String name, float value, String category = "", int precision = 0)
-            : base(name, value, category)
+        public StatisticsNumberData(String name, float value, int precision = 0)
+            : base(name, value)
         {
             this.precision = precision;
         }
@@ -22,10 +22,10 @@ namespace PokerMuck
             return GetFloat(precision).ToString();
         }
 
-        public override StatisticsData Average(String name, String category, int precision, params StatisticsData[] stats)
+        public override StatisticsData Average(String name, int precision, params StatisticsData[] stats)
         {
             float average = ComputeAverage(stats);
-            return new StatisticsNumberData(name, average, category, precision);
+            return new StatisticsNumberData(name, average, precision);
         }
     }
 }

@@ -122,6 +122,7 @@
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
     <Compile Include="Classes\Settings\HudUserSettings.cs" />
     <Compile Include="Classes\Statistics\MultipleValueCounter.cs" />
+    <Compile Include="Classes\Statistics\Statistic.cs" />
     <Compile Include="Classes\Statistics\StatisticsData.cs" />
     <Compile Include="Classes\Statistics\StatisticsDescriptiveData.cs" />
     <Compile Include="Classes\Statistics\StatisticsNumberData.cs" />

@@ -98,7 +98,7 @@ namespace PokerMuck
         public virtual PlayerStatistics GetStatistics()
         {
             PlayerStatistics result = new PlayerStatistics(CompareCategories);
-            result.Set(new StatisticsNumberData("Total Hands Played", totalHandsPlayed.Value, "Summary"));
+            result.Set(new Statistic(new StatisticsNumberData("Total Hands Played", totalHandsPlayed.Value), "Summary"));
             return result;
         }
 

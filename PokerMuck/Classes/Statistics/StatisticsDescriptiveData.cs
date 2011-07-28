@@ -10,8 +10,8 @@ namespace PokerMuck
     {
         private String description;
 
-        public StatisticsDescriptiveData(String name, String category, String description)
-            : base(name, 0, category)
+        public StatisticsDescriptiveData(String name, String description)
+            : base(name, 0)
         {
             this.description = description;
         }
@@ -21,7 +21,7 @@ namespace PokerMuck
             return description;
         }
 
-        public override StatisticsData Average(String name, String category, int precision, params StatisticsData[] stats)
+        public override StatisticsData Average(String name, int precision, params StatisticsData[] stats)
         {
             throw new NotImplementedException("There's no average for descriptive data.");
         }

@@ -123,8 +123,10 @@ namespace PokerMuck
                 TabPage tp = FindTabPage(category);
 
                 // For each data in that category
-                foreach (StatisticsData data in statistics.GetStatistics(category))
+                foreach (Statistic stat in statistics.GetStatistics(category))
                 {
+                    StatisticsData data = stat.MainData;
+
                     // Create the proper label for it
                     Label label = new Label();
                     

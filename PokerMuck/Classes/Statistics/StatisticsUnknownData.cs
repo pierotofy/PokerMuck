@@ -9,8 +9,8 @@ namespace PokerMuck
     /* Represents a statistics data that we don't know */
     class StatisticsUnknownData : StatisticsData
     {
-        public StatisticsUnknownData(String name, String category = "")
-            : base(name, 0, category)
+        public StatisticsUnknownData(String name)
+            : base(name, 0)
         {
         }
 
@@ -19,7 +19,7 @@ namespace PokerMuck
             return "?";
         }
 
-        public override StatisticsData Average(String name, String category, int precision, params StatisticsData[] stats)
+        public override StatisticsData Average(String name, int precision, params StatisticsData[] stats)
         {
             Debug.Assert(stats.Length > 0, "Cannot compute the average of zero elements.");
 
@@ -35,7 +35,7 @@ namespace PokerMuck
                 }
             }
 
-            if (allUnknown) return new StatisticsUnknownData(name, category);
+            if (allUnknown) return new StatisticsUnknownData(name);
             else
             {
                 // This statistics does not know its value, so we take the first element in the other statistics
@@ -49,7 +49,7 @@ namespace PokerMuck
                 }
                 newParams[i] = this;
 
-                return stats[0].Average(name, category, precision, newParams);
+                return stats[0].Average(name, precision, newParams);
             }
         }
     }

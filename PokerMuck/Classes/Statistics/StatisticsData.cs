@@ -15,17 +15,10 @@ namespace PokerMuck
         private float value;
         public float Value { get { return value; } }
 
-        private String category;
-        public String Category { get { return category; } }
-
-        public int Order { get; set; }
-
-        public StatisticsData(String name, float value, String category = "")
+        public StatisticsData(String name, float value)
         {
             this.name = name;
             this.value = value;
-            this.category = category;
-            this.Order = 0;
         }
 
         /* Returns the float value of the data */
@@ -46,12 +39,12 @@ namespace PokerMuck
         /* To String override */
         public override String ToString()
         {
-            return String.Format("{0}: {1} ({2})", Name, value, category);
+            return String.Format("{0}: {1}", Name, value);
         }
 
         /* Computes the average of the current object with one more statistics data objects
          * They need to be of the same type */
-        public abstract StatisticsData Average(String name, String category, int precision, params StatisticsData[] stats);
+        public abstract StatisticsData Average(String name, int precision, params StatisticsData[] stats);
 
         /* Shared function to compute the average of multiple statistics data */
         protected float ComputeAverage(params StatisticsData[] stats)

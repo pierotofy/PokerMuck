@@ -23,10 +23,10 @@ namespace PokerMuck
             base.DisplayStatistics(stats);
 
             lblImmediateStats.Text = String.Format("VPF:{0} PFR:{1} L:{2} AF:{3}",
-                stats.Get("Voluntary Put $", "Preflop").GetPercentage(),
-                stats.Get("Raises", "Preflop").GetPercentage(),
-                stats.Get("Limp", "Preflop").GetPercentage(),
-                stats.Get("Aggression Frequency", "Summary").GetValue()
+                stats.Get("Voluntary Put $", "Preflop").MainData.GetPercentage(),
+                stats.Get("Raises", "Preflop").MainData.GetPercentage(),
+                stats.Get("Limp", "Preflop").MainData.GetPercentage(),
+                stats.Get("Aggression Frequency", "Summary").MainData.GetValue()
               );
 
             DisplayIcons(stats);
@@ -34,27 +34,27 @@ namespace PokerMuck
 
         public void DisplayIcons(PlayerStatistics stats)
         {
-            StatisticsData calls = stats.Get("Calls", "Summary");
+            StatisticsData calls = stats.Get("Calls", "Summary").MainData;
             StatisticsData checkCall = stats.Get("Check Call", "Summary");
             // If calls are > 40% or check calls are more than 66% then calling station!
             picCallingStation.Visible = (calls.Value >= 0.40 || checkCall.Value >= 0.66) || (calls is StatisticsUnknownData && checkCall is StatisticsUnknownData);
             picCallingStation.SetQuestionSignVisible(calls is StatisticsUnknownData && checkCall is StatisticsUnknownData);
 
-            StatisticsData foldSbToRaise = stats.Get("Fold Small Blind to a Raise", "Preflop");
-            StatisticsData foldBbToRaise = stats.Get("Fold Big Blind to a Raise", "Preflop");
+            StatisticsData foldSbToRaise = stats.Get("Fold Small Blind to a Raise", "Preflop").MainData;
+            StatisticsData foldBbToRaise = stats.Get("Fold Big Blind to a Raise", "Preflop").MainData;
 
             // If average of fold big blind to a raise and fold small blind to a raise > 80% then easy steal
-            StatisticsData foldBlindAverage = foldSbToRaise.Average("Fold Small/Big Blind to a Raise", "", 2, foldBbToRaise);
+            StatisticsData foldBlindAverage = foldSbToRaise.Average("Fold Small/Big Blind to a Raise", 2, foldBbToRaise);
             picEasySteal.Visible = (foldBlindAverage.Value >= 0.80) || (foldBlindAverage is StatisticsUnknownData);
             picEasySteal.SetQuestionSignVisible(foldBlindAverage is StatisticsUnknownData);
 
             // If a person raises more than 50% of his buttons, chances are he might be stealing
-            StatisticsData stealRaises = stats.Get("Steal Raises", "Preflop");
+            StatisticsData stealRaises = stats.Get("Steal Raises", "Preflop").MainData;
             picButtonStealer.Visible = (stealRaises.Value >= 0.5) || (stealRaises is StatisticsUnknownData);
             picButtonStealer.SetQuestionSignVisible(stealRaises is StatisticsUnknownData);
 
             // If a person wins 80% or more at showdown, he's a solid player (or lucky, but this is what we have)
-            StatisticsData wonAtShowdownStats = stats.Get("Won at Showdown", "Summary");
+            StatisticsData wonAtShowdownStats = stats.Get("Won at Showdown", "Summary").MainData;
             picSolidPlayer.Visible = (wonAtShowdownStats.Value >= 0.8) || (wonAtShowdownStats is StatisticsUnknownData);
             picSolidPlayer.SetQuestionSignVisible(wonAtShowdownStats is StatisticsUnknownData);
         }

@@ -372,117 +372,118 @@ namespace PokerMuck
         }
 
         /* Returns the limp statistics */
-        public StatisticsData GetLimpStats()
+        public Statistic GetLimpStats()
         {
             float limpRatio = 0;
 
             if (totalHandsPlayed.Value == 0) limpRatio = 0;
             else limpRatio = (float)limps.Value / (float)totalHandsPlayed.Value;
-            
-            return new StatisticsPercentageData("Limp", limpRatio, "Preflop");
+
+            return new Statistic(new StatisticsPercentageData("Limp", limpRatio), "Preflop");
         }
 
         /* How many times has the player put money in preflop? */
-        public StatisticsData GetVPFStats()
+        public Statistic GetVPFStats()
         {
             float vpfRatio = 0;
 
             if (totalHandsPlayed.Value == 0) vpfRatio = 0;
             else vpfRatio = (float)voluntaryPutMoneyPreflop.Value / (float)totalHandsPlayed.Value;
-            return new StatisticsPercentageData("Voluntary Put $", vpfRatio, "Preflop");
+
+            return new Statistic(new StatisticsPercentageData("Voluntary Put $", vpfRatio), "Preflop");
         }
 
         /* How many times has the player made a continuation bet following a preflop raise? */
-        public StatisticsData GetCBetStats()
+        public Statistic GetCBetStats()
         {
-            if (opportunitiesToCBet == 0) return new StatisticsUnknownData("Continuation bets", "Flop");
+            if (opportunitiesToCBet == 0) return Statistic.CreateUnknown("Continuation bets", "Flop");
 
             float cbetsRatio = (float)cbets.Value / (float)opportunitiesToCBet;
-            return new StatisticsPercentageData("Continuation bets", cbetsRatio, "Flop");
+            return new Statistic(new StatisticsPercentageData("Continuation bets", cbetsRatio), "Flop");
         }
 
         /* How many times has a player folded to a continuation bet? */
-        public StatisticsData GetFoldToACBetStats()
+        public Statistic GetFoldToACBetStats()
         {
             float actionsToACbet = foldsToACBet + raisesToACBet + callsToACBet;
 
-            if (actionsToACbet == 0) return new StatisticsUnknownData("Folds to a continuation bet", "Flop");
+            if (actionsToACbet == 0) return Statistic.CreateUnknown("Folds to a continuation bet", "Flop");
             else
             {
-                return new StatisticsPercentageData("Folds to a continuation bet",
-                    (float)foldsToACBet / (float)(raisesToACBet + callsToACBet + foldsToACBet),
+                return new Statistic(new StatisticsPercentageData("Folds to a continuation bet",
+                    (float)foldsToACBet / (float)(raisesToACBet + callsToACBet + foldsToACBet)),
                     "Flop");
             }
         }
 
         /* How many times has a player won at showdown? */
-        public StatisticsData GetWonAtShowdownStats()
+        public Statistic GetWonAtShowdownStats()
         {
-            if (wentToShowdown.Value == 0) return new StatisticsUnknownData("Won at Showdown", "Summary");
+            if (wentToShowdown.Value == 0) return Statistic.CreateUnknown("Won at Showdown", "Summary");
             else
             {
                 float wonAtShowdownRatio = (float)wonAtShowdown.Value / (float)wentToShowdown.Value;
-                return new StatisticsPercentageData("Won at Showdown", wonAtShowdownRatio, "Summary");
+                return new Statistic(new StatisticsPercentageData("Won at Showdown", wonAtShowdownRatio), "Summary");
             }
         }
 
         /* How many times has the player pushed all-in? */
-        public StatisticsData GetPushedAllInStats()
+        public Statistic GetPushedAllInStats()
         {
-            if (totalAllIns.Value == 0) return new StatisticsUnknownData("Pushed all-in", "Summary");
+            if (totalAllIns.Value == 0) return Statistic.CreateUnknown("Pushed all-in", "Summary");
             else
             {
                 float pushedAllInRatio = (float)totalAllIns.Value / (float)totalHandsPlayed.Value;
-                return new StatisticsPercentageData("Pushed all-in", pushedAllInRatio, "Summary");
+                return new Statistic(new StatisticsPercentageData("Pushed all-in", pushedAllInRatio), "Summary");
             }
         }
 
         /* How many times has the player raised? */
-        public StatisticsData GetRaiseStats(HoldemGamePhase phase, String category)
+        public Statistic GetRaiseStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return new StatisticsUnknownData("Raises", category);
+            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Raises", category);
             else
             {
                 float raiseRatio =  (float)raises[phase].Value / (float)sawStreet[phase].Value;
-                return new StatisticsPercentageData("Raises", raiseRatio, category);
+                return new Statistic(new StatisticsPercentageData("Raises", raiseRatio), category);
             }
         }
 
         /* How many times has the player bet? */
-        public StatisticsData GetBetsStats(HoldemGamePhase phase, String category)
+        public Statistic GetBetsStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return new StatisticsUnknownData("Bets", category);
+            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Bets", category);
             else
             {
                 float betsRatio = (float)bets[phase].Value / (float)sawStreet[phase].Value;
-                return new StatisticsPercentageData("Bets", betsRatio, category);
+                return new Statistic(new StatisticsPercentageData("Bets", betsRatio), category);
             }
         }
 
         /* How many times has the player called? */
-        public StatisticsData GetCallsStats(HoldemGamePhase phase, String category)
+        public Statistic GetCallsStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return new StatisticsUnknownData("Calls", category);
+            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Calls", category);
             else
             {
                 float callsRatio = (float)calls[phase].Value / (float)sawStreet[phase].Value;
-                return new StatisticsPercentageData("Calls", callsRatio, category);
+                return new Statistic(new StatisticsPercentageData("Calls", callsRatio), category);
             }
         }
 
         /* How many times has the player checked? */
-        public StatisticsData GetChecksStats(HoldemGamePhase phase, String category)
+        public Statistic GetChecksStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return new StatisticsUnknownData("Checks", category);
+            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Checks", category);
             else
             {
                 float checksRatio = (float)checks[phase].Value / (float)sawStreet[phase].Value;
-                return new StatisticsPercentageData("Checks", checksRatio, category);
+                return new Statistic(new StatisticsPercentageData("Checks", checksRatio), category);
             }
         }
 
         /* Calculate aggression frequency factor */
-        public StatisticsData GetAggressionFrequencyStats()
+        public Statistic GetAggressionFrequencyStats()
         {
             int totRaises = SumStatistics(totalRaises);
             int totBets = SumStatistics(totalBets);
@@ -491,97 +492,97 @@ namespace PokerMuck
             //int totFolds = SumStatistics(totalFolds);
             int totalActions = totRaises + totBets + totChecks + totCalls;
 
-            if (totalActions == 0) return new StatisticsUnknownData("Aggression Frequency", "Summary");
+            if (totalActions == 0) return Statistic.CreateUnknown("Aggression Frequency", "Summary");
             else
             {
                 float aggressionFrequency = ((float)totRaises + (float)totBets) / (float)totalActions;
-                return new StatisticsNumberData("Aggression Frequency", aggressionFrequency, "Summary", 1);
+                return new Statistic(new StatisticsNumberData("Aggression Frequency", aggressionFrequency, 1), "Summary");
             }
         }
 
         /* How many times has the player folded? */
-        public StatisticsData GetFoldsStats(HoldemGamePhase phase, String category)
+        public Statistic GetFoldsStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return new StatisticsUnknownData("Folds", category);
+            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Folds", category);
             else
             {
                 float foldsRatio = (float)folds[phase].Value / (float)sawStreet[phase].Value;
-                return new StatisticsPercentageData("Folds", foldsRatio, category);
+                return new Statistic(new StatisticsPercentageData("Folds", foldsRatio), category);
             }
         }
 
         /* How many times has the player check raised? */
-        public StatisticsData GetCheckRaiseStats(HoldemGamePhase phase, String category)
+        public Statistic GetCheckRaiseStats(HoldemGamePhase phase, String category)
         {
             int checkActions = (int)checkRaises[phase].Value + (int)checkCalls[phase].Value + (int)checkFolds[phase].Value;
 
-            if (checkActions == 0) return new StatisticsUnknownData("Check Raise", category);
+            if (checkActions == 0) return Statistic.CreateUnknown("Check Raise", category);
             else
             {
                 float checkRaiseRatio = (float)checkRaises[phase].Value / (float)checkActions;
 
-                return new StatisticsPercentageData("Check Raise", checkRaiseRatio, category);
+                return new Statistic(new StatisticsPercentageData("Check Raise", checkRaiseRatio), category);
             }
         }
 
         /* How many times has the player check folded? */
-        public StatisticsData GetCheckFoldStats(HoldemGamePhase phase, String category)
+        public Statistic GetCheckFoldStats(HoldemGamePhase phase, String category)
         {
             int checkActions = (int)checkRaises[phase].Value + (int)checkCalls[phase].Value + (int)checkFolds[phase].Value;
 
-            if (checkActions == 0) return new StatisticsUnknownData("Check Fold", category);
+            if (checkActions == 0) return Statistic.CreateUnknown("Check Fold", category);
             else
             {
                 float checkFoldRatio = (float)checkFolds[phase].Value / (float)checkActions;
 
-                return new StatisticsPercentageData("Check Fold", checkFoldRatio, category);
+                return new Statistic(new StatisticsPercentageData("Check Fold", checkFoldRatio), category);
             }
         }
 
 
         /* How many times has the player steal raised? */
-        public StatisticsData GetStealRaiseStats()
+        public Statistic GetStealRaiseStats()
         {
-            if (opportunitiesToStealRaise == 0) return new StatisticsUnknownData("Steal Raises", "Preflop");
+            if (opportunitiesToStealRaise == 0) return Statistic.CreateUnknown("Steal Raises", "Preflop");
             else
             {
                 float stealRaiseRatio = (float)stealRaises.Value / (float)opportunitiesToStealRaise;
 
-                return new StatisticsPercentageData("Steal Raises", stealRaiseRatio, "Preflop");
+                return new Statistic(new StatisticsPercentageData("Steal Raises", stealRaiseRatio), "Preflop");
             }
         }
 
         /* How many times has the player folded the blind to a steal raise? */
-        public StatisticsData GetFoldsToAStealRaiseStats(BlindType blindType)
+        public Statistic GetFoldsToAStealRaiseStats(BlindType blindType)
         {
             int actionsToAStealRaise = (int)callsToAStealRaise[blindType].Value + (int)raisesToAStealRaise[blindType].Value + (int)foldsToAStealRaise[blindType].Value;
             String statDescription = String.Format("Fold {0} to a Steal Raise", 
                             (blindType == BlindType.BigBlind) ? "Big Blind" : "Small Blind");
 
 
-            if (actionsToAStealRaise == 0) return new StatisticsUnknownData(statDescription, "Preflop");
+            if (actionsToAStealRaise == 0) return Statistic.CreateUnknown(statDescription, "Preflop");
             else
             {
                 float foldToAStealRaiseRatio = (float)foldsToAStealRaise[blindType].Value / (float)actionsToAStealRaise;
 
-                return new StatisticsPercentageData(statDescription, foldToAStealRaiseRatio, "Preflop");
+                return new Statistic(new StatisticsPercentageData(statDescription, foldToAStealRaiseRatio), "Preflop");
             }
         }
 
         /* How many times has the player folded the blind to a raise (but not a reraise)? */
-        public StatisticsData GetFoldsBlindToPreflopRaise(BlindType blindType)
+        public Statistic GetFoldsBlindToPreflopRaise(BlindType blindType)
         {
             int actionsToPreflopRaise = (int)callsBlindToAPreflopRaise[blindType].Value + (int)raisesBlindToAPreflopRaise[blindType].Value + (int)foldsBlindToAPreflopRaise[blindType].Value;
             String statDescription = String.Format("Fold {0} to a Raise",
                             (blindType == BlindType.BigBlind) ? "Big Blind" : "Small Blind");
 
 
-            if (actionsToPreflopRaise == 0) return new StatisticsUnknownData(statDescription, "Preflop");
+            if (actionsToPreflopRaise == 0) return Statistic.CreateUnknown(statDescription, "Preflop");
             else
             {
                 float foldBlindToPreflopRaiseRatio = (float)foldsBlindToAPreflopRaise[blindType].Value / (float)actionsToPreflopRaise;
 
-                return new StatisticsPercentageData(statDescription, foldBlindToPreflopRaiseRatio, "Preflop");
+                return new Statistic(new StatisticsPercentageData(statDescription, foldBlindToPreflopRaiseRatio), "Preflop");
             }
         }
 
@@ -599,7 +600,7 @@ namespace PokerMuck
             return (totalHandsPlayed.WasIncremented && !foldedAStreet);
         }
 
-        private StatisticsData GetStartingHandsStatistics(List<HoldemHand> handList, String statName, String category)
+        private Statistic GetStartingHandsStatistics(List<HoldemHand> handList, String statName, String category)
         {
             if (handList.Count > 0)
             {
@@ -611,39 +612,39 @@ namespace PokerMuck
 
                 // Eliminate last comma
                 result = result.Substring(0, result.Length - 2);
-                return new StatisticsDescriptiveData(statName, category, result);
+                return new Statistic(new StatisticsDescriptiveData(statName, result), category);
             }
-            else return new StatisticsUnknownData(statName, category);
+            else return Statistic.CreateUnknown(statName, category);
         }
 
         /* Get hands that the player pushed all-in with preflop */
-        private StatisticsData GetStartingHandsWithPreflopAllInStats()
+        private Statistic GetStartingHandsWithPreflopAllInStats()
         {
             return GetStartingHandsStatistics(startingHandsWithPreflopAllIn, "All-in hands", "Preflop");
         }
 
         /* Get hands that the player called with preflop */
-        private StatisticsData GetStartingHandsWithPreflopCallStats()
+        private Statistic GetStartingHandsWithPreflopCallStats()
         {
             return GetStartingHandsStatistics(startingHandsWithPreflopCall, "Call/limp starting hands", "Preflop");
         }
 
         /* Get hands that the player raised with preflop */
-        private StatisticsData GetStartingHandsWithPreflopRaiseStats()
+        private Statistic GetStartingHandsWithPreflopRaiseStats()
         {
             return GetStartingHandsStatistics(startingHandsWithPreflopRaise, "Raise starting hands", "Preflop");
         }
 
         /* Get style of play */
-        public StatisticsData GetStyle()
+        public Statistic GetStyle()
         {
             /* Is this player tight, semi-loose or loose?
              * Depends on his VPF ratio */
-            float vpf = GetVPFStats().GetFloat(2);
+            float vpf = GetVPFStats().MainData.GetFloat(2);
 
             /* Is this player aggressive or passive? 
              * Depends on the aggression frequency */
-            float aggressionFrequency = GetAggressionFrequencyStats().GetFloat(2);
+            float aggressionFrequency = GetAggressionFrequencyStats().MainData.GetFloat(2);
 
             String tightness = String.Empty;
             String aggressiveness = String.Empty;
@@ -655,20 +656,20 @@ namespace PokerMuck
             if (aggressionFrequency > 0.2) aggressiveness = "Aggressive";
             else aggressiveness = "Passive";
 
-            return new StatisticsDescriptiveData("Style","Summary",String.Format("{0} {1}",tightness, aggressiveness));
+            return new Statistic(new StatisticsDescriptiveData("Style",String.Format("{0} {1}",tightness, aggressiveness)), "Summary");
         }
 
         /* How many times has the player check called? */
-        public StatisticsData GetCheckCallStats(HoldemGamePhase phase, String category)
+        public Statistic GetCheckCallStats(HoldemGamePhase phase, String category)
         {
             int checkActions = (int)checkRaises[phase].Value + (int)checkCalls[phase].Value + (int)checkFolds[phase].Value;
 
-            if (checkActions == 0) return new StatisticsUnknownData("Check Call", category);
+            if (checkActions == 0) return Statistic.CreateUnknown("Check Call", category);
             else
             {
                 float checkCallRatio = (float)checkCalls[phase].Value / (float)checkActions;
 
-                return new StatisticsPercentageData("Check Call", checkCallRatio, category);
+                return new Statistic(new StatisticsPercentageData("Check Call", checkCallRatio), category);
             }
         }
         
@@ -982,47 +983,47 @@ namespace PokerMuck
             // Calculate a few averages
 
             // Overall raises % average across all streets
-            StatisticsData raisesPreflop = result.Get("Raises", "Preflop");
-            StatisticsData raisesAverage = raisesPreflop.Average("Raises", "Summary", 0, result.Get("Raises", "Flop"),
+            Statistic raisesPreflop = result.Get("Raises", "Preflop");
+            Statistic raisesAverage = raisesPreflop.Average("Summary", 0, result.Get("Raises", "Flop"),
                                                                                      result.Get("Raises", "Turn"),
                                                                                      result.Get("Raises", "River"));
             result.Set(raisesAverage);
 
             // Overall bets % average across all streets
-            StatisticsData betsFlop = result.Get("Bets", "Flop");
-            StatisticsData betsAverage = betsFlop.Average("Bets", "Summary", 0, result.Get("Bets", "Turn"),
+            Statistic betsFlop = result.Get("Bets", "Flop");
+            Statistic betsAverage = betsFlop.Average("Summary", 0, result.Get("Bets", "Turn"),
                                                                                      result.Get("Bets", "River"));
             result.Set(betsAverage);
 
             // Overall folds % average across all streets
-            StatisticsData foldsPreflop = result.Get("Folds", "Preflop");
-            StatisticsData foldsAverage = foldsPreflop.Average("Folds", "Summary", 0, result.Get("Folds", "Flop"),
+            Statistic foldsPreflop = result.Get("Folds", "Preflop");
+            Statistic foldsAverage = foldsPreflop.Average("Summary", 0, result.Get("Folds", "Flop"),
                                                                                      result.Get("Folds", "Turn"),
                                                                                      result.Get("Folds", "River"));
             result.Set(foldsAverage);
 
             // Overall calls % average across all streets
-            StatisticsData callsPreflop = result.Get("Calls", "Preflop");
-            StatisticsData callsAverage = callsPreflop.Average("Calls", "Summary", 0, result.Get("Calls", "Flop"),
+            Statistic callsPreflop = result.Get("Calls", "Preflop");
+            Statistic callsAverage = callsPreflop.Average("Summary", 0, result.Get("Calls", "Flop"),
                                                                                      result.Get("Calls", "Turn"),
                                                                                      result.Get("Calls", "River"));
             result.Set(callsAverage);
 
             // Overall check-calls % across all streets
-            StatisticsData checkCallsFlop = result.Get("Check Call", "Flop");
-            StatisticsData checkCallsAverage = checkCallsFlop.Average("Check Call", "Summary", 0, result.Get("Check Call", "Turn"),
+            Statistic checkCallsFlop = result.Get("Check Call", "Flop");
+            Statistic checkCallsAverage = checkCallsFlop.Average("Summary", 0, result.Get("Check Call", "Turn"),
                                                                                      result.Get("Check Call", "River"));
             result.Set(checkCallsAverage);
 
             // Overall check-raises % across all streets
-            StatisticsData checkRaisesFlop = result.Get("Check Raise", "Flop");
-            StatisticsData checkRaisesAverage = checkRaisesFlop.Average("Check Raise", "Summary", 0, result.Get("Check Raise", "Turn"),
+            Statistic checkRaisesFlop = result.Get("Check Raise", "Flop");
+            Statistic checkRaisesAverage = checkRaisesFlop.Average("Summary", 0, result.Get("Check Raise", "Turn"),
                                                                                      result.Get("Check Raise", "River"));
             result.Set(checkRaisesAverage);
 
             // Overall check-fold % across all streets
-            StatisticsData checkFoldsFlop = result.Get("Check Fold", "Flop");
-            StatisticsData checkFoldsAverage = checkFoldsFlop.Average("Check Fold", "Summary", 0, result.Get("Check Fold", "Turn"),
+            Statistic checkFoldsFlop = result.Get("Check Fold", "Flop");
+            Statistic checkFoldsAverage = checkFoldsFlop.Average("Summary", 0, result.Get("Check Fold", "Turn"),
                                                                                      result.Get("Check Fold", "River"));
             result.Set(checkFoldsAverage);
 

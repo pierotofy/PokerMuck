@@ -63,7 +63,7 @@ namespace PokerMuck
          * game specific layout */
         public virtual void DisplayStatistics(PlayerStatistics stats)
         {
-            lblTotalHandsPlayed.Text = stats.Get("Total Hands Played", "Summary").GetFloat().ToString();
+            lblTotalHandsPlayed.Text = stats.Get("Total Hands Played", "Summary").MainData.GetFloat().ToString();
         }
 
         protected void HudWindow_MouseDown(object sender, MouseEventArgs e)

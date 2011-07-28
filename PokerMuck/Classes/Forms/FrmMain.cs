@@ -51,6 +51,21 @@ namespace PokerMuck
 
             //pmDirector.Test();
 
+            Statistic preflop = new Statistic(new StatisticsPercentageData("Raise", 2.5f), "Preflop");
+            preflop.AddSubStatistic(new StatisticsPercentageData("For value", 0.2f));
+            preflop.AddSubStatistic(new StatisticsPercentageData("Bluff", 0.2f));
+
+            Statistic flop = new Statistic(new StatisticsNumberData("Raise", 0.25f), "Flop");
+            flop.AddSubStatistic(new StatisticsPercentageData("For value", 0.5f));
+            
+            Statistic turn = new Statistic(new StatisticsPercentageData("Raise", 0.25f), "Turn");
+            turn.AddSubStatistic(new StatisticsPercentageData("For value", 0.8f));
+            turn.AddSubStatistic(new StatisticsPercentageData("Bluff", 0.0f));
+
+            Statistic average = preflop.Average("Summary", 2, flop, turn);
+
+            Debug.Print("Average: " + average.ToString());
+            
             HoldemHand h1 = new HoldemHand(new Card(CardFace.Jack, CardSuit.Clubs), new Card(CardFace.Queen, CardSuit.Diamonds));
             HoldemBoard b = new HoldemBoard(new Card(CardFace.Seven, CardSuit.Clubs),
                                             new Card(CardFace.Two, CardSuit.Diamonds),

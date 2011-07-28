@@ -22,17 +22,17 @@ namespace PokerMuck
         }
 
         
-        /* Sets a new data statistics in our table */
-        public void Set(StatisticsData data)
+        /* Sets a new statistic in our table */
+        public void Set(Statistic stat)
         {
-            data.Order = table.Count;
-            table[data.Name + "_" + data.Category] = data;
+            stat.Order = table.Count;
+            table[stat.Name + "_" + stat.Category] = stat;
         }
 
-        public StatisticsData Get(String name, String category)
+        public Statistic Get(String name, String category)
         {
             String key = name + "_" + category;
-            StatisticsData result = (StatisticsData)table[key];
+            Statistic result = (Statistic)table[key];
             Debug.Assert(result != null, "Trying to access a statistics value that doesn't exist. " + key);
 
             return result;
@@ -42,12 +42,12 @@ namespace PokerMuck
         /* Returns all the data pertaining to a specific category
          * Items are sorted by their date of entry (first elements added are
          * displayed first ) */
-        public List<StatisticsData> GetStatistics(String category)
+        public List<Statistic> GetStatistics(String category)
         {
-            List<StatisticsData> result = new List<StatisticsData>();
+            List<Statistic> result = new List<Statistic>();
 
             // For every data in our table
-            foreach (StatisticsData value in table.Values)
+            foreach (Statistic value in table.Values)
             {
                 if (value.Category == category)
                 {
@@ -56,7 +56,7 @@ namespace PokerMuck
             }
 
             // Sort
-            result.Sort((Comparison<StatisticsData>)CompareEntries);
+            result.Sort((Comparison<Statistic>)CompareEntries);
 
             return result;
         }
@@ -67,7 +67,7 @@ namespace PokerMuck
             List<String> result = new List<String>();
 
             // For every statistical data in our table
-            foreach (StatisticsData value in table.Values)
+            foreach (Statistic value in table.Values)
             {
                 // Check if we have added the category in our result
                 if (!result.Contains(value.Category)){
@@ -83,7 +83,7 @@ namespace PokerMuck
         }
 
         /* Function to sort the statistics data entries */
-        private int CompareEntries(StatisticsData entry1, StatisticsData entry2)
+        private int CompareEntries(Statistic entry1, Statistic entry2)
         {
             if (entry1.Order == entry2.Order) return 0;
             else if (entry1.Order < entry2.Order) return -1;
@@ -95,7 +95,7 @@ namespace PokerMuck
         {
             String result = String.Empty;
 
-            foreach (StatisticsData value in table.Values)
+            foreach (Statistic value in table.Values)
             {
                 result += value.ToString();
             }
