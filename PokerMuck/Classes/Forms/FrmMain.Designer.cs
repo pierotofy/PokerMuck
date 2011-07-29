@@ -31,7 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
+            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabStatistics = new System.Windows.Forms.TabPage();
+            this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
             this.lblPlayerStatisticsNote = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
             this.lblPokerClientLanguage = new System.Windows.Forms.Label();
@@ -49,8 +51,6 @@
             this.lblProgramName = new System.Windows.Forms.Label();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.entityHandsContainer = new PokerMuck.ControlListContainer();
-            this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
             this.tabStatistics.SuspendLayout();
@@ -61,9 +61,9 @@
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabHandsPage);
             this.tabControl.Controls.Add(this.tabStatistics);
             this.tabControl.Controls.Add(this.tabConfigurationPage);
@@ -85,6 +85,15 @@
             this.tabHandsPage.Text = "Muck";
             this.tabHandsPage.UseVisualStyleBackColor = true;
             // 
+            // entityHandsContainer
+            // 
+            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
+            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
+            this.entityHandsContainer.Name = "entityHandsContainer";
+            this.entityHandsContainer.Size = new System.Drawing.Size(209, 291);
+            this.entityHandsContainer.TabIndex = 4;
+            // 
             // tabStatistics
             // 
             this.tabStatistics.Controls.Add(this.statisticsDisplay);
@@ -95,6 +104,20 @@
             this.tabStatistics.TabIndex = 3;
             this.tabStatistics.Text = "Statistics";
             this.tabStatistics.UseVisualStyleBackColor = true;
+            // 
+            // statisticsDisplay
+            // 
+            this.statisticsDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.statisticsDisplay.BackColor = System.Drawing.Color.White;
+            this.statisticsDisplay.Location = new System.Drawing.Point(0, 2);
+            this.statisticsDisplay.Name = "statisticsDisplay";
+            this.statisticsDisplay.Size = new System.Drawing.Size(215, 295);
+            this.statisticsDisplay.StatisticsSpacing = 2;
+            this.statisticsDisplay.TabIndex = 0;
+            this.statisticsDisplay.TopMargin = 8;
+            this.statisticsDisplay.Visible = false;
             // 
             // lblPlayerStatisticsNote
             // 
@@ -136,8 +159,8 @@
             // 
             // cmbPokerClientLanguage
             // 
-            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClientLanguage.FormattingEnabled = true;
             this.cmbPokerClientLanguage.Location = new System.Drawing.Point(82, 156);
@@ -157,8 +180,8 @@
             // 
             // cmbPokerClient
             // 
-            this.cmbPokerClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClient.FormattingEnabled = true;
             this.cmbPokerClient.Location = new System.Drawing.Point(49, 124);
@@ -169,8 +192,8 @@
             // 
             // txtUserId
             // 
-            this.txtUserId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUserId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUserId.Location = new System.Drawing.Point(82, 8);
             this.txtUserId.Name = "txtUserId";
             this.txtUserId.Size = new System.Drawing.Size(125, 20);
@@ -179,8 +202,8 @@
             // 
             // lblUserId
             // 
-            this.lblUserId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblUserId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblUserId.AutoSize = true;
             this.lblUserId.Location = new System.Drawing.Point(8, 10);
             this.lblUserId.Name = "lblUserId";
@@ -190,8 +213,8 @@
             // 
             // btnChangeHandHistory
             // 
-            this.btnChangeHandHistory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnChangeHandHistory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnChangeHandHistory.Location = new System.Drawing.Point(8, 78);
             this.btnChangeHandHistory.Name = "btnChangeHandHistory";
             this.btnChangeHandHistory.Size = new System.Drawing.Size(199, 23);
@@ -202,8 +225,8 @@
             // 
             // txtHandHistoryDirectory
             // 
-            this.txtHandHistoryDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtHandHistoryDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtHandHistoryDirectory.Location = new System.Drawing.Point(8, 52);
             this.txtHandHistoryDirectory.Name = "txtHandHistoryDirectory";
             this.txtHandHistoryDirectory.ReadOnly = true;
@@ -226,8 +249,8 @@
             // 
             // btnDonate
             // 
-            this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDonate.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDonate.Location = new System.Drawing.Point(11, 139);
             this.btnDonate.Name = "btnDonate";
@@ -239,8 +262,8 @@
             // 
             // lblDonate
             // 
-            this.lblDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDonate.Location = new System.Drawing.Point(3, 28);
             this.lblDonate.Name = "lblDonate";
             this.lblDonate.Size = new System.Drawing.Size(204, 108);
@@ -250,8 +273,8 @@
             // 
             // lblPieroTofyLink
             // 
-            this.lblPieroTofyLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPieroTofyLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPieroTofyLink.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPieroTofyLink.Location = new System.Drawing.Point(3, 268);
             this.lblPieroTofyLink.Name = "lblPieroTofyLink";
@@ -264,8 +287,8 @@
             // 
             // lblProgramName
             // 
-            this.lblProgramName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblProgramName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProgramName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblProgramName.Location = new System.Drawing.Point(8, 8);
             this.lblProgramName.Name = "lblProgramName";
@@ -297,29 +320,6 @@
             this.lblStatus.TabIndex = 4;
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // entityHandsContainer
-            // 
-            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
-            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
-            this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(209, 291);
-            this.entityHandsContainer.TabIndex = 4;
-            // 
-            // statisticsDisplay
-            // 
-            this.statisticsDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.statisticsDisplay.BackColor = System.Drawing.Color.White;
-            this.statisticsDisplay.LabelSpacing = 8;
-            this.statisticsDisplay.Location = new System.Drawing.Point(0, 2);
-            this.statisticsDisplay.Name = "statisticsDisplay";
-            this.statisticsDisplay.Size = new System.Drawing.Size(215, 295);
-            this.statisticsDisplay.TabIndex = 0;
-            this.statisticsDisplay.TopMargin = 8;
-            this.statisticsDisplay.Visible = false;
             // 
             // FrmMain
             // 

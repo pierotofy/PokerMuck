@@ -12,25 +12,25 @@ namespace PokerMuck
 {
     public partial class StatisticsDisplay : UserControl
     {
-        private int labelSpacing;
+        private int statisticsSpacing;
         [Description("Sets the spacing between labels"),
          Category("Values"),
          DefaultValue(3)]
-        public int LabelSpacing
+        public int StatisticsSpacing
         {
             get
             {
-                return labelSpacing;
+                return statisticsSpacing;
             }
 
             set
             {
-                labelSpacing = value;
+                statisticsSpacing = value;
             }
         }
 
         private int topMargin;
-        [Description("Sets the margin of labels from the top"),
+        [Description("Sets the margin of statistics from the top"),
          Category("Values"),
          DefaultValue(3)]
         public int TopMargin
@@ -113,6 +113,7 @@ namespace PokerMuck
 
         private void FillStatistics(PlayerStatistics statistics)
         {
+            //this.SuspendLayout();
 
             // For each statistic category
             foreach (String category in statistics.GetCategories())
@@ -125,28 +126,29 @@ namespace PokerMuck
                 // For each data in that category
                 foreach (Statistic stat in statistics.GetStatistics(category))
                 {
-                    StatisticsData data = stat.MainData;
+                    // TODO remove
+                    if (stat.Name == "Raises")
+                    {
+                        stat.AddSubStatistic(new StatisticsNumberData("For value", 0.5f));
+                        stat.AddSubStatistic(new StatisticsNumberData("Bluff", 0.5f));
+                    }
+                    // Create the proper control for it
+                    StatisticItem item = new StatisticItem(stat, this);
 
-                    // Create the proper label for it
-                    Label label = new Label();
-                    
+                    // Initialize properties FIRST!
+                    item.Top = positionX;
+                    item.Width = this.ClientSize.Width - 1;
+                    item.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+
                     // Add the label to the tab page
-                    tp.Controls.Add(label);
-
-                    label.BackColor = Color.Transparent;
-                    label.AutoSize = true;
-                    label.Top = positionX;
+                    tp.Controls.Add(item);
 
                     // Increment the top position
-                    positionX += label.Height + labelSpacing;
-
-                    // Set the label text to the value of the data
-                    label.Text = String.Format("{0}: {1}",data.Name, data.GetValue());
-
-
+                    positionX += item.Height + statisticsSpacing;
                 }
             }
 
+            //this.ResumeLayout();
         }
 
         // Helper to get a reference to a particular tab
@@ -158,6 +160,19 @@ namespace PokerMuck
 
             Debug.Assert(false, "I couldn't find a tab page for " + name);
             return null;
+        }
+
+        private void StatisticsDisplay_SizeChanged(object sender, EventArgs e)
+        {
+            // We need to refresh the size of the statistics items
+
+            foreach (TabPage tp in tabControl.TabPages)
+            {
+                foreach (StatisticItem item in tp.Controls)
+                {
+                    item.AdjustControls();
+                }
+            }
         }
     }
 }

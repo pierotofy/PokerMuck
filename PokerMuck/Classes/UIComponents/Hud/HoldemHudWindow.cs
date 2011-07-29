@@ -35,7 +35,7 @@ namespace PokerMuck
         public void DisplayIcons(PlayerStatistics stats)
         {
             StatisticsData calls = stats.Get("Calls", "Summary").MainData;
-            StatisticsData checkCall = stats.Get("Check Call", "Summary");
+            StatisticsData checkCall = stats.Get("Check Call", "Summary").MainData;
             // If calls are > 40% or check calls are more than 66% then calling station!
             picCallingStation.Visible = (calls.Value >= 0.40 || checkCall.Value >= 0.66) || (calls is StatisticsUnknownData && checkCall is StatisticsUnknownData);
             picCallingStation.SetQuestionSignVisible(calls is StatisticsUnknownData && checkCall is StatisticsUnknownData);

@@ -50,7 +50,7 @@ namespace PokerMuck
             pmDirector.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
 
             //pmDirector.Test();
-
+            /*
             Statistic preflop = new Statistic(new StatisticsPercentageData("Raise", 2.5f), "Preflop");
             preflop.AddSubStatistic(new StatisticsPercentageData("For value", 0.2f));
             preflop.AddSubStatistic(new StatisticsPercentageData("Bluff", 0.2f));
@@ -78,7 +78,7 @@ namespace PokerMuck
             
 
             return;
-
+            */
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(".COM Play 736 (6 max) - 1/2 - No Limit Hold'em - Logged In As italystallion89");
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle("$0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89");
             //Debug.Print("Result: " + res);

@@ -34,9 +34,15 @@ namespace PokerMuck
             this.subData = subData;
         }
 
+
         public static Statistic CreateUnknown(String name, string category)
         {
             return new Statistic(new StatisticsUnknownData(name), category);
+        }
+
+        public bool HasSubStatistics()
+        {
+            return subData.Count > 0;
         }
 
         public void AddSubStatistic(StatisticsData subStatistic){
