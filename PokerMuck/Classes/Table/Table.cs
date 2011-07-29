@@ -220,15 +220,16 @@ namespace PokerMuck
         {
             Debug.Print("Round has terminated");
 
-            /* 1. Clear the statistics information relative to a single round
-             * 2. Any player that hasn't played last round should be flagged as non-playing (and the hud window, removed)
-             * 3. Set every player's HasPlayedLastRound flag to false, as to identify who will get eliminated
+            /* 1. Perform last statistics calculations
+             * 2. Clear the statistics information relative to a single round
+             * 3. Any player that hasn't played last round should be flagged as non-playing (and the hud window, removed)
+             * 4. Set every player's HasPlayedLastRound flag to false, as to identify who will get eliminated
              * in future rounds */
 
             for (int i = 0; i<PlayerList.Count; i++)
             {
                 Player p = PlayerList[i];
-
+                p.CalculateEndOfRoundStatistics();
                 p.PrepareStatisticsForNewRound();
 
                 if (!p.HasPlayedLastRound)

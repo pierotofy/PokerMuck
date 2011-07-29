@@ -15,6 +15,11 @@ namespace PokerMuck
     {
         Hashtable table;
 
+        // We need a limit for the number of domains for the multiple domain index calculation
+        const int MAX_DOMAINS = 256;
+
+        private object[] subdomains; // Can be null if there are no subdomains
+
         public ValueCounter this[object enumIndex]
         {
             get
@@ -26,8 +31,27 @@ namespace PokerMuck
             }
         }
 
+        public ValueCounter this[object primaryEnumIndex, object secondaryEnumIndex]
+        {
+            get
+            {
+                int index = CalculateIndex((int)primaryEnumIndex, (int)secondaryEnumIndex);
+                Debug.Assert(table.ContainsKey(index), "Invalid multiplevaluecounter category requested.");
+
+                return (ValueCounter)table[index];
+            }
+        }
+
+        private int CalculateIndex(int domain, int subdomain)
+        {
+            return domain + (subdomain * MAX_DOMAINS);
+        }
+
         public MultipleValueCounter(params object[] domains)
         {
+            Debug.Assert(domains.Length <= MAX_DOMAINS, "You cannot initialize a multiplevaluecounter with more than " + MAX_DOMAINS + " domains");
+
+            subdomains = null;
             table = new Hashtable(domains.Length);
 
             // Initialize
@@ -35,6 +59,40 @@ namespace PokerMuck
             {
                 table[domain] = new ValueCounter();
             }
+        }
+
+        public MultipleValueCounter(object[] domains, object[] subdomains){
+            Debug.Assert(domains.Length <= MAX_DOMAINS, "You cannot initialize a multiplevaluecounter with more than " + MAX_DOMAINS + " domains");
+
+            table = new Hashtable(domains.Length * subdomains.Length);
+            this.subdomains = subdomains;
+
+            // Initialize
+            foreach (int domain in domains)
+            {
+                foreach (int subdomain in subdomains)
+                {
+                    table[CalculateIndex(domain, subdomain)] = new ValueCounter();
+                }
+            }
+        }
+
+        public float GetSumOfAllValuesIn(object domain)
+        {
+            float sum = 0;
+            if (subdomains != null)
+            {
+                foreach (int subdomain in subdomains)
+                {
+                    sum += this[domain, subdomain].Value;
+                }
+            }
+            else
+            {
+                sum = this[domain].Value;
+            }
+
+            return sum;
         }
 
         /* Resets all members */

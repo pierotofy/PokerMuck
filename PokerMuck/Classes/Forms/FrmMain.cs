@@ -65,17 +65,21 @@ namespace PokerMuck
             Statistic average = preflop.Average("Summary", 2, flop, turn);
 
             Debug.Print("Average: " + average.ToString());
-            
+           
             HoldemHand h1 = new HoldemHand(new Card(CardFace.Jack, CardSuit.Clubs), new Card(CardFace.Queen, CardSuit.Diamonds));
-            HoldemBoard b = new HoldemBoard(new Card(CardFace.Seven, CardSuit.Clubs),
+            HoldemBoard b = new HoldemBoard(new Card(CardFace.Jack, CardSuit.Clubs),
                                             new Card(CardFace.Two, CardSuit.Diamonds),
-                                            new Card(CardFace.Ace, CardSuit.Diamonds),
-                                            new Card(CardFace.Ten, CardSuit.Clubs),
+                                            new Card(CardFace.Three, CardSuit.Diamonds),
+                                            new Card(CardFace.Jack, CardSuit.Clubs),
                                             new Card(CardFace.Three, CardSuit.Diamonds));
             
-            HoldemHand.Classification classification = h1.GetClassification(HoldemGamePhase.River, b);
-            Debug.Print(classification.Hand.ToString() + " " + classification.Kicker.ToString());
-            
+            HoldemHand.Classification classification = h1.GetClassification(HoldemGamePhase.Flop, b);
+            Debug.Print(classification.Hand.ToString() + " " + classification.Kicker.ToString() + " " + classification.Pair.ToString() + " - " + classification.GetRating().ToString());
+
+            classification = h1.GetClassification(HoldemGamePhase.Turn, b);
+            Debug.Print(classification.Hand.ToString() + " " + classification.Kicker.ToString() + " " + classification.Pair.ToString() + " - " + classification.GetRating().ToString());
+            classification = h1.GetClassification(HoldemGamePhase.River, b);
+            Debug.Print(classification.Hand.ToString() + " " + classification.Kicker.ToString() + " " + classification.Pair.ToString() + " - " + classification.GetRating().ToString());
 
             return;
             */

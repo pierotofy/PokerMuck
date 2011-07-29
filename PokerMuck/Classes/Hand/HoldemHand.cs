@@ -11,14 +11,60 @@ namespace PokerMuck
         public class Classification {
             public enum HandType { Unknown, HighCard, Pair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, RoyalFlush }
             public enum KickerType { Unknown, Irrelevant, Low, Middle, High }
+            public enum PairType { Irrelevant, Bottom, Middle, Top }
 
             public HandType Hand { get; set; }
             public KickerType Kicker { get; set; }
+            public PairType Pair { get; set; }
 
             public Classification(HandType hand, KickerType kicker)
             {
                 this.Hand = hand;
                 this.Kicker = kicker;
+                this.Pair = PairType.Irrelevant;
+            }
+
+            public Classification(HandType hand, KickerType kicker, PairType pair)
+                : this(hand, kicker)
+            {
+                this.Pair = pair;
+            }
+
+            public Rating GetRating(){
+                if (Hand == HandType.HighCard)
+                {
+                    return Rating.Nothing;
+                }
+                else if (Hand == HandType.Pair)
+                {
+                    if ((Pair == PairType.Bottom) ||
+                       ((Pair == PairType.Middle && Kicker == KickerType.Low)))
+                    {
+                        return Rating.Weak;
+                    }
+
+                    if ((Pair == PairType.Middle && (Kicker == KickerType.Middle || Kicker == KickerType.High)) ||
+                         (Pair == PairType.Top && (Kicker == KickerType.Low || Kicker == KickerType.Middle)))
+                    {
+                        return Rating.Mediocre;
+                    }
+
+                    if ((Pair == PairType.Top && (Kicker == KickerType.High)))
+                    {
+                        return Rating.Strong;
+                    }
+                }
+                else if (Hand == HandType.TwoPair || Hand == HandType.ThreeOfAKind)
+                {
+                    return Rating.Strong;
+                }
+                
+                return Rating.Monster;
+            }
+
+            public override string ToString()
+            {
+                return Hand.ToString() + ", " + Kicker.ToString() + " kicker, " + Pair.ToString() + " pair - " + GetRating().ToString();
             }
         }
 
@@ -73,19 +119,18 @@ namespace PokerMuck
             return firstFaceStr + secondFaceStr + suited;
         }
 
+        public HoldemHand.Rating GetHandRating(HoldemGamePhase phase, HoldemBoard board)
+        {
+            HoldemHand.Classification classification = GetClassification(phase, board);
+            Debug.Print(String.Format("Rating hand [{0}] for {1} on board [{2}]: {3}", base.ToString(), phase.ToString(), board.ToString(), classification.ToString()));
+            return classification.GetRating();
+        }
+
         /* Calculates the type of the hand given a board
          * during a game phase */
         public HoldemHand.Classification GetClassification(HoldemGamePhase phase, HoldemBoard board)
         {
-            return CalculateClassification(board);
-
-
-            return new Classification(Classification.HandType.RoyalFlush, Classification.KickerType.Irrelevant);
-        }
-
-        public HoldemHand.Rating GetHandRating(HoldemGamePhase phase, HoldemBoard board)
-        {
-            return Rating.Nothing;
+            return CalculateClassification(board.GetBoardAt(phase));
         }
 
         private HoldemHand.Classification CalculateClassification(CardList communityCards)
@@ -175,7 +220,8 @@ namespace PokerMuck
                 }
 
                 Classification.KickerType kickerType = GetKickerTypeFromCard(kicker);
-                return new Classification(Classification.HandType.Pair, kickerType);
+                Classification.PairType pairType = GetPairType(communityCards, matching);
+                return new Classification(Classification.HandType.Pair, kickerType, pairType);
             }
 
             // -- High card
@@ -183,6 +229,30 @@ namespace PokerMuck
             Card highCard = cards.Last;
             
             return new Classification(Classification.HandType.HighCard, GetKickerTypeFromCard(highCard));
+        }
+
+        /* cards must be sorted before calling this method */
+        private Classification.PairType GetPairType(CardList communityCards, Card matching)
+        {
+            communityCards.Sort(SortUsing.AceHigh);
+
+            Card firstCard = this.GetFirstCard();
+            Card secondCard = this.GetSecondCard();
+
+            // Pocket pair
+            if (firstCard.Face == secondCard.Face)
+            {
+                if (firstCard.GetFaceValue() >= communityCards.Last.GetFaceValue()) return Classification.PairType.Top;
+                else if (firstCard.GetFaceValue() <= communityCards[0].GetFaceValue()) return Classification.PairType.Bottom;
+                else return Classification.PairType.Middle;
+            }
+            else
+            {
+                // Matched the board
+                if (matching.Face == communityCards.Last.Face) return Classification.PairType.Top;
+                else if (matching.Face == communityCards[0].Face) return Classification.PairType.Bottom;
+                else return Classification.PairType.Middle;
+            }
         }
 
         private Classification.KickerType GetKickerTypeFromCard(Card c)

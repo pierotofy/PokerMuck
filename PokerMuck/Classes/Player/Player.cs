@@ -71,6 +71,13 @@ namespace PokerMuck
             totalHandsPlayed.Reset();
         }
 
+        /* Certain statistics need to be calculated at the end of the round
+         * because we might receive certain data in mixed order */
+        public virtual void CalculateEndOfRoundStatistics()
+        {
+
+        }
+
         /* Reset the statistics variables that are valid for one round only 
          * ex. We count only one call preflop as a limp, if a player raises and the first player calls again
          * this has to be counted as a single limp, not as two */

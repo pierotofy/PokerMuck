@@ -26,6 +26,7 @@ namespace PokerMuck
             {
                 StatisticItem item = new StatisticItem(data, this);
                 item.HighlightOnMouseOver = false;
+                item.Clickable = false;
                 item.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
                 item.AutoSize = true;
                 item.Top = positionX;

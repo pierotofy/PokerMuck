@@ -18,7 +18,7 @@ namespace PokerMuck
 
         private Color COLOR_HIGHLIGHT = Color.FromArgb(255, 220, 176, 121);
         private Color COLOR_SELECTED = Color.FromArgb(255, 215, 127, 18);
-        const int EXTENDED_PANEL_MARGIN_RIGHT = 3;
+        const int EXTENDED_PANEL_MARGIN_RIGHT = 9;
 
         private bool highlightOnMouseOver;
         [Description("Turn on/off hightlight on mouse over"),
@@ -37,6 +37,23 @@ namespace PokerMuck
             }
         }
 
+        private bool clickable;
+        [Description("Turn on/off whether this item can be selected"),
+         Category("Values"),
+         DefaultValue(true)]
+        public bool Clickable
+        {
+            get
+            {
+                return clickable;
+            }
+
+            set
+            {
+                clickable = value;
+            }
+        }
+
         // Wrap around
         public StatisticItem(StatisticsData statisticToDispay, Control parent)
             : this(new Statistic(statisticToDispay, ""), parent)
@@ -49,6 +66,7 @@ namespace PokerMuck
             this.statisticToDisplay = statisticToDisplay;
             this.parent = parent;
             this.highlightOnMouseOver = true;
+            this.clickable = true;
             this.itemIsSelected = false;
             InitializeComponent();
 
@@ -121,6 +139,8 @@ namespace PokerMuck
 
         private void StatisticItem_MouseClick(object sender, EventArgs e)
         {
+            if (!clickable) return;
+
             itemIsSelected = !itemIsSelected;
 
             if (itemIsSelected)
@@ -136,6 +156,11 @@ namespace PokerMuck
         private void lblName_Click(object sender, EventArgs e)
         {
             StatisticItem_MouseClick(sender, e);
+        }
+
+        private void StatisticItem_SizeChanged(object sender, EventArgs e)
+        {
+            AdjustControls();
         }
     }
 }

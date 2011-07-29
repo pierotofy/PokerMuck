@@ -52,6 +52,7 @@
             this.Name = "StatisticItem";
             this.Size = new System.Drawing.Size(173, 20);
             this.Load += new System.EventHandler(this.StatisticItem_Load);
+            this.SizeChanged += new System.EventHandler(this.StatisticItem_SizeChanged);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.StatisticItem_MouseClick);
             this.MouseEnter += new System.EventHandler(this.StatisticsItem_MouseEnter);
             this.MouseLeave += new System.EventHandler(this.StatisticsItem_MouseLeave);

@@ -69,6 +69,8 @@ namespace PokerMuck
             GenerateTabPages(statistics.GetCategories());
 
             FillStatistics(statistics);
+
+            AdjustControls();
         }
 
         /* Simply update the statistics of the last player we displayed */
@@ -126,14 +128,8 @@ namespace PokerMuck
                 // For each data in that category
                 foreach (Statistic stat in statistics.GetStatistics(category))
                 {
-                    // TODO remove
-                    if (stat.Name == "Raises")
-                    {
-                        stat.AddSubStatistic(new StatisticsNumberData("For value", 0.5f));
-                        stat.AddSubStatistic(new StatisticsNumberData("Bluff", 0.5f));
-                    }
                     // Create the proper control for it
-                    StatisticItem item = new StatisticItem(stat, this);
+                    StatisticItem item = new StatisticItem(stat, tp);
 
                     // Initialize properties FIRST!
                     item.Top = positionX;
@@ -162,17 +158,22 @@ namespace PokerMuck
             return null;
         }
 
-        private void StatisticsDisplay_SizeChanged(object sender, EventArgs e)
+        public void AdjustControls()
         {
             // We need to refresh the size of the statistics items
 
             foreach (TabPage tp in tabControl.TabPages)
             {
-                foreach (StatisticItem item in tp.Controls)
+                foreach (Control item in tp.Controls)
                 {
-                    item.AdjustControls();
+                    if (item is StatisticItem) ((StatisticItem)item).AdjustControls();
                 }
             }
+        }
+
+        private void StatisticsDisplay_SizeChanged(object sender, EventArgs e)
+        {
+            AdjustControls();
         }
     }
 }

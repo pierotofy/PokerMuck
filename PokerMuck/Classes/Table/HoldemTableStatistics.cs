@@ -81,6 +81,15 @@ namespace PokerMuck
             ((HoldemHHParser)parser).FoundWinner += new HoldemHHParser.FoundWinnerHandler(HoldemTableStatistics_FoundWinner);
             ((HoldemHHParser)parser).PlayerPushedAllIn += new HoldemHHParser.PlayerPushedAllInHandler(HoldemTableStatistics_PlayerPushedAllIn);
             ((HoldemHHParser)parser).ShowdownWillBegin += new HHParser.ShowdownWillBeginHandler(HoldemTableStatistics_ShowdownWillBegin);
+            ((HoldemHHParser)parser).FinalBoardAvailable += new HoldemHHParser.FinalBoardAvailableHandler(HoldemTableStatistics_FinalBoardAvailable);
+        }
+
+        void HoldemTableStatistics_FinalBoardAvailable(Board board)
+        {
+            foreach (HoldemPlayer p in table.PlayerList)
+            {
+                p.BoardAvailable((HoldemBoard)board);
+            }
         }
 
         void HoldemTableStatistics_ShowdownWillBegin()
