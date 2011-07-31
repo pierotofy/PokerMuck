@@ -25,13 +25,15 @@ namespace PokerMuck
 
         /* Bets */
         private MultipleValueCounter bets;
+        private MultipleValueCounter betsDetails;
 
         /* Folds */
         private MultipleValueCounter folds;
 
         /* Calls */
         private MultipleValueCounter calls;
-        
+        private MultipleValueCounter callsDetails;
+
         /* C Bets */ 
         private int opportunitiesToCBet;
 
@@ -57,6 +59,7 @@ namespace PokerMuck
 
         /* Checks */
         private MultipleValueCounter checks;
+        private MultipleValueCounter checksDetails;
 
         /* Check-raise */
         private MultipleValueCounter checkRaises;
@@ -152,14 +155,17 @@ namespace PokerMuck
             this.raises = (MultipleValueCounter)other.raises.Clone();
             this.raisesDetails = (MultipleValueCounter)other.raisesDetails.Clone();
             this.bets = (MultipleValueCounter)other.bets.Clone();
+            this.betsDetails = (MultipleValueCounter)other.betsDetails.Clone();
             this.calls = (MultipleValueCounter)other.calls.Clone();
-            this.folds = (MultipleValueCounter)other.calls.Clone();
+            this.callsDetails = (MultipleValueCounter)other.callsDetails.Clone();
+            this.folds = (MultipleValueCounter)other.folds.Clone();
             this.opportunitiesToCBet = other.opportunitiesToCBet;
             this.cbets = (ValueCounter)other.cbets.Clone();
             this.foldsToACBet = other.foldsToACBet;
             this.callsToACBet = other.callsToACBet;
             this.raisesToACBet = other.raisesToACBet;
             this.checks = (MultipleValueCounter)other.checks.Clone();
+            this.checksDetails = (MultipleValueCounter)other.checksDetails.Clone(); 
             this.checkRaises = (MultipleValueCounter)other.checkRaises.Clone();
             this.checkFolds = (MultipleValueCounter)other.checkFolds.Clone();
             this.checkCalls = (MultipleValueCounter)other.checkCalls.Clone();
@@ -219,11 +225,17 @@ namespace PokerMuck
             checkFolds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checkCalls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checks = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checksDetails = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+                new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             sawStreet = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River, HoldemGamePhase.Showdown);
             bets = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            betsDetails = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+                new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             folds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             calls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-
+            callsDetails = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+                new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
+            
 
             cbets = new ValueCounter();
             stealRaises = new ValueCounter();
@@ -262,10 +274,12 @@ namespace PokerMuck
 
             limps.Reset();
             checks.Reset();
+            checksDetails.Reset();
             voluntaryPutMoneyPreflop.Reset();
             raises.Reset();
             raisesDetails.Reset();
             bets.Reset();
+            betsDetails.Reset();
             cbets.Reset();
             stealRaises.Reset();
             foldsToAStealRaise.Reset();
@@ -274,6 +288,7 @@ namespace PokerMuck
 
             folds.Reset();
             calls.Reset();
+            callsDetails.Reset();
             sawStreet.Reset();
 
             callsToACBet = 0;
@@ -313,18 +328,31 @@ namespace PokerMuck
                 // Sweet, we have a board and we have a hand
                 Debug.Print("Board and hand available, calculating hand strength for " + Name);
 
-                HoldemHand.Rating flopRating = ((HoldemHand)MuckedHand).GetHandRating(HoldemGamePhase.Flop, lastFinalBoard);
-                HoldemHand.Rating turnRating = ((HoldemHand)MuckedHand).GetHandRating(HoldemGamePhase.Turn, lastFinalBoard);
-                HoldemHand.Rating riverRating = ((HoldemHand)MuckedHand).GetHandRating(HoldemGamePhase.River, lastFinalBoard);
-
-                for (HoldemGamePhase phase = HoldemGamePhase.Flop; phase != HoldemGamePhase.River; phase++)
+                for (HoldemGamePhase phase = HoldemGamePhase.Preflop; phase <= HoldemGamePhase.River; phase++)
                 {
+                    HoldemHand.Rating rating = ((HoldemHand)MuckedHand).GetHandRating(phase, lastFinalBoard);
+                
                     if (raises[phase].WasIncremented)
                     {
-                        raisesDetails[phase, flopRating].Increment();
+                        raisesDetails[phase, rating].Increment();
                     }
 
-                    // TODO MORE
+                    // There are no bets preflop (only calls and raises)
+                    if (phase != HoldemGamePhase.Preflop && bets[phase].WasIncremented)
+                    {
+                        betsDetails[phase, rating].Increment();
+                    }
+
+                    if (calls[phase].WasIncremented)
+                    {
+                        callsDetails[phase, rating].Increment();
+                    }
+
+                    if (checks[phase].WasIncremented)
+                    {
+                        checksDetails[phase, rating].Increment();
+                    }
+
                 }
             }
         }
@@ -344,6 +372,7 @@ namespace PokerMuck
             raises.AllowIncrement();
             raisesDetails.AllowIncrement();
             bets.AllowIncrement();
+            betsDetails.AllowIncrement();
             cbets.AllowIncrement();
             stealRaises.AllowIncrement();
             foldsToAStealRaise.AllowIncrement();
@@ -352,12 +381,15 @@ namespace PokerMuck
 
             folds.AllowIncrement();
             calls.AllowIncrement();
+            callsDetails.AllowIncrement();
 
             checkRaises.AllowIncrement();
             checkFolds.AllowIncrement();
             checkCalls.AllowIncrement();
 
             checks.AllowIncrement();
+            checksDetails.AllowIncrement();
+
             sawStreet.AllowIncrement();
 
             wentToShowdown.AllowIncrement();
@@ -479,23 +511,42 @@ namespace PokerMuck
             }
         }
 
+        private void AppendActionsSubstatistics(HoldemGamePhase phase, Statistic statistic, MultipleValueCounter details)
+        {
+            float sum = (float)details.GetSumOfAllValuesIn(phase);
+
+            foreach (HoldemHand.Rating rating in Enum.GetValues(typeof(HoldemHand.Rating)))
+            {
+                if (sum == 0) statistic.AddSubStatistic(new StatisticsUnknownData(rating.ToString()));
+                else
+                {
+                    float ratio = (float)details[phase, rating].Value / sum;
+                    statistic.AddSubStatistic(new StatisticsPercentageData(rating.ToString(), ratio));
+                }
+            }
+        }
+
+
+        private Statistic CreateUnknownActionStatistic(String name, String category)
+        {
+            Statistic ret = Statistic.CreateUnknown(name, category);
+            foreach (HoldemHand.Rating rating in Enum.GetValues(typeof(HoldemHand.Rating)))
+            {
+                ret.AddSubStatistic(new StatisticsUnknownData(rating.ToString()));
+            }
+            return ret;
+        }
+
         /* How many times has the player raised? */
         public Statistic GetRaiseStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Raises", category);
+            if (sawStreet[phase].Value == 0) return CreateUnknownActionStatistic("Raises", category);
             else
             {
-                float raiseRatio =  (float)raises[phase].Value / (float)sawStreet[phase].Value;
+                float raiseRatio = (float)raises[phase].Value / (float)sawStreet[phase].Value;
                 Statistic ret = new Statistic(new StatisticsPercentageData("Raises", raiseRatio), category);
 
-                foreach(HoldemHand.Rating rating in Enum.GetValues(typeof(HoldemHand.Rating))){
-                    float sum = (float)raisesDetails.GetSumOfAllValuesIn(phase);
-                    if (sum == 0) ret.AddSubStatistic(new StatisticsUnknownData(rating.ToString()));
-                    else{
-                        float ratio = (float)raisesDetails[phase, rating].Value / sum;
-                        ret.AddSubStatistic(new StatisticsPercentageData(rating.ToString(), ratio)); 
-                    }
-                }
+                AppendActionsSubstatistics(phase, ret, raisesDetails);
 
                 return ret;
             }
@@ -504,33 +555,45 @@ namespace PokerMuck
         /* How many times has the player bet? */
         public Statistic GetBetsStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Bets", category);
+            if (sawStreet[phase].Value == 0) return CreateUnknownActionStatistic("Bets", category);
             else
             {
                 float betsRatio = (float)bets[phase].Value / (float)sawStreet[phase].Value;
-                return new Statistic(new StatisticsPercentageData("Bets", betsRatio), category);
+                Statistic ret = new Statistic(new StatisticsPercentageData("Bets", betsRatio), category);
+
+                AppendActionsSubstatistics(phase, ret, betsDetails);
+
+                return ret;
             }
         }
 
         /* How many times has the player called? */
         public Statistic GetCallsStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Calls", category);
+            if (sawStreet[phase].Value == 0) return CreateUnknownActionStatistic("Calls", category);
             else
             {
                 float callsRatio = (float)calls[phase].Value / (float)sawStreet[phase].Value;
-                return new Statistic(new StatisticsPercentageData("Calls", callsRatio), category);
+                Statistic ret = new Statistic(new StatisticsPercentageData("Calls", callsRatio), category);
+
+                AppendActionsSubstatistics(phase, ret, callsDetails);
+
+                return ret;
             }
         }
 
         /* How many times has the player checked? */
         public Statistic GetChecksStats(HoldemGamePhase phase, String category)
         {
-            if (sawStreet[phase].Value == 0) return Statistic.CreateUnknown("Checks", category);
+            if (sawStreet[phase].Value == 0) return CreateUnknownActionStatistic("Checks", category);
             else
             {
                 float checksRatio = (float)checks[phase].Value / (float)sawStreet[phase].Value;
-                return new Statistic(new StatisticsPercentageData("Checks", checksRatio), category);
+                Statistic ret = new Statistic(new StatisticsPercentageData("Checks", checksRatio), category);
+
+                AppendActionsSubstatistics(phase, ret, checksDetails);
+
+                return ret;
             }
         }
 
@@ -1011,6 +1074,7 @@ namespace PokerMuck
             result.Set(GetCallsStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetCallsStats(HoldemGamePhase.River, "River"));
 
+            result.Set(GetChecksStats(HoldemGamePhase.Preflop, "Preflop"));
             result.Set(GetChecksStats(HoldemGamePhase.Flop, "Flop"));
             result.Set(GetChecksStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetChecksStats(HoldemGamePhase.River, "River"));
@@ -1040,7 +1104,7 @@ namespace PokerMuck
                                                                                      result.Get("Raises", "Turn"),
                                                                                      result.Get("Raises", "River"));
             result.Set(raisesAverage);
-
+            
             // Overall bets % average across all streets
             Statistic betsFlop = result.Get("Bets", "Flop");
             Statistic betsAverage = betsFlop.Average("Summary", 0, result.Get("Bets", "Turn"),
@@ -1061,6 +1125,14 @@ namespace PokerMuck
                                                                                      result.Get("Calls", "River"));
             result.Set(callsAverage);
 
+            // Overall checks % average across all streets
+            Statistic checksPreflop = result.Get("Checks", "Preflop");
+            Statistic checksAverage = checksPreflop.Average("Summary", 0, result.Get("Checks", "Flop"),
+                                                                                     result.Get("Checks", "Turn"),
+                                                                                     result.Get("Checks", "River"));
+            result.Set(checksAverage);
+            
+            
             // Overall check-calls % across all streets
             Statistic checkCallsFlop = result.Get("Check Call", "Flop");
             Statistic checkCallsAverage = checkCallsFlop.Average("Summary", 0, result.Get("Check Call", "Turn"),

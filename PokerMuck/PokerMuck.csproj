@@ -125,6 +125,7 @@
     <Compile Include="Classes\Statistics\Statistic.cs" />
     <Compile Include="Classes\Statistics\StatisticsData.cs" />
     <Compile Include="Classes\Statistics\StatisticsDescriptiveData.cs" />
+    <Compile Include="Classes\Statistics\StatisticsLineData.cs" />
     <Compile Include="Classes\Statistics\StatisticsNumberData.cs" />
     <Compile Include="Classes\Statistics\StatisticsPercentageData.cs" />
     <Compile Include="Classes\Statistics\StatisticsUnknownData.cs" />

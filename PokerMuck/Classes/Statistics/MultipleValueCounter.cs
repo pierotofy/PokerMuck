@@ -125,6 +125,9 @@ namespace PokerMuck
                 copy.table[domain] = ((ValueCounter)this.table[domain]).Clone();
             }
 
+            // Copy a reference of the subdomains (if available)
+            if (this.subdomains != null) copy.subdomains = this.subdomains; 
+
             return copy;
         }
 

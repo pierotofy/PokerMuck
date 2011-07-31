@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.lblName = new System.Windows.Forms.Label();
+            this.lblLine = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblName
@@ -44,11 +45,22 @@
             this.lblName.MouseEnter += new System.EventHandler(this.lblName_MouseEnter);
             this.lblName.MouseLeave += new System.EventHandler(this.lblName_MouseLeave);
             // 
+            // lblLine
+            // 
+            this.lblLine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblLine.Location = new System.Drawing.Point(3, 10);
+            this.lblLine.Name = "lblLine";
+            this.lblLine.Size = new System.Drawing.Size(167, 2);
+            this.lblLine.TabIndex = 1;
+            this.lblLine.Visible = false;
+            // 
             // StatisticItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.lblName);
+            this.Controls.Add(this.lblLine);
             this.Name = "StatisticItem";
             this.Size = new System.Drawing.Size(173, 20);
             this.Load += new System.EventHandler(this.StatisticItem_Load);
@@ -64,5 +76,6 @@
         #endregion
 
         private System.Windows.Forms.Label lblName;
+        private System.Windows.Forms.Label lblLine;
     }
 }

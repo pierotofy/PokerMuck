@@ -47,7 +47,6 @@ namespace PokerMuck
 
         public void AddSubStatistic(StatisticsData subStatistic){
             subData.Add(subStatistic);
-
             // TODO sort?
         }
 

@@ -15,6 +15,7 @@ namespace PokerMuck
         private ExtendedStatisticsPanel extendedPanel = null;
         private Control parent;
         private bool itemIsSelected;
+        private bool itemIsALine;
 
         private Color COLOR_HIGHLIGHT = Color.FromArgb(255, 220, 176, 121);
         private Color COLOR_SELECTED = Color.FromArgb(255, 215, 127, 18);
@@ -68,10 +69,19 @@ namespace PokerMuck
             this.highlightOnMouseOver = true;
             this.clickable = true;
             this.itemIsSelected = false;
+            this.itemIsALine = false;
             InitializeComponent();
+
+            if (statisticToDisplay.MainData is StatisticsLineData)
+            {
+                this.itemIsALine = true;
+                this.lblName.Hide();
+                this.lblLine.Show();
+            }
 
             this.lblName.Text = String.Format("{0}: {1}",
                 statisticToDisplay.MainData.Name, statisticToDisplay.MainData.GetValue());
+
         }
 
         public void AdjustControls()
@@ -85,7 +95,7 @@ namespace PokerMuck
 
         private void StatisticsItem_MouseEnter(object sender, EventArgs e)
         {
-            if (HighlightOnMouseOver && !itemIsSelected)
+            if (HighlightOnMouseOver && !itemIsSelected && !itemIsALine)
             {
                 this.BackColor = COLOR_HIGHLIGHT;
             }
@@ -100,7 +110,7 @@ namespace PokerMuck
 
         private void StatisticsItem_MouseLeave(object sender, EventArgs e)
         {
-            if (HighlightOnMouseOver && !itemIsSelected)
+            if (HighlightOnMouseOver && !itemIsSelected && !itemIsALine)
             {
                 this.BackColor = Color.Transparent;
             }
@@ -139,7 +149,7 @@ namespace PokerMuck
 
         private void StatisticItem_MouseClick(object sender, EventArgs e)
         {
-            if (!clickable) return;
+            if (!clickable || itemIsALine) return;
 
             itemIsSelected = !itemIsSelected;
 

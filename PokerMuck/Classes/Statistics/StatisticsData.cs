@@ -10,7 +10,7 @@ namespace PokerMuck
     public abstract class StatisticsData
     {
         private String name;
-        public String Name { get { return name; } }
+        public String Name { get { return name; } } // TODO REMOVE SET
 
         private float value;
         public float Value { get { return value; } }
