@@ -111,7 +111,7 @@
             this.lblPageOneText.Size = new System.Drawing.Size(415, 191);
             this.lblPageOneText.TabIndex = 0;
             this.lblPageOneText.Text = "Welcome to PokerMuck. Please make sure you follow these quick steps in order to g" +
-                "et the program to work.";
+    "et the program to work.";
             // 
             // panelPageThree
             // 
@@ -138,8 +138,8 @@
             // 
             // lblHandHistoryLanguageText
             // 
-            this.lblHandHistoryLanguageText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHandHistoryLanguageText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblHandHistoryLanguageText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHandHistoryLanguageText.Location = new System.Drawing.Point(2, 69);
             this.lblHandHistoryLanguageText.Name = "lblHandHistoryLanguageText";
@@ -149,8 +149,8 @@
             // 
             // lblPageThreeText
             // 
-            this.lblPageThreeText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPageThreeText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPageThreeText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPageThreeText.Location = new System.Drawing.Point(0, 0);
             this.lblPageThreeText.Margin = new System.Windows.Forms.Padding(0);
@@ -175,8 +175,8 @@
             // 
             // txtHandHistoriesDirectory
             // 
-            this.txtHandHistoriesDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtHandHistoriesDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtHandHistoriesDirectory.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.txtHandHistoriesDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtHandHistoriesDirectory.Location = new System.Drawing.Point(5, 111);
@@ -199,8 +199,8 @@
             // 
             // lblPageFourText
             // 
-            this.lblPageFourText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPageFourText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPageFourText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPageFourText.Location = new System.Drawing.Point(0, 0);
             this.lblPageFourText.Margin = new System.Windows.Forms.Padding(0);
@@ -223,8 +223,8 @@
             // 
             // lblPageFiveText
             // 
-            this.lblPageFiveText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPageFiveText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPageFiveText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPageFiveText.Location = new System.Drawing.Point(0, 0);
             this.lblPageFiveText.Margin = new System.Windows.Forms.Padding(0);
@@ -261,8 +261,8 @@
             // 
             // cmbPokerClientLanguage
             // 
-            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClientLanguage.Font = new System.Drawing.Font("Verdana", 9.75F);
             this.cmbPokerClientLanguage.FormattingEnabled = true;
@@ -284,8 +284,8 @@
             // 
             // cmbPokerClient
             // 
-            this.cmbPokerClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClient.Font = new System.Drawing.Font("Verdana", 9.75F);
             this.cmbPokerClient.FormattingEnabled = true;
@@ -297,8 +297,8 @@
             // 
             // lblPageTwoText
             // 
-            this.lblPageTwoText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPageTwoText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPageTwoText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPageTwoText.Location = new System.Drawing.Point(0, 0);
             this.lblPageTwoText.Margin = new System.Windows.Forms.Padding(0);

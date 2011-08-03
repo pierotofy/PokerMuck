@@ -446,9 +446,11 @@ namespace PokerMuck
         private void InitializeSupportedPokerClientList()
         {
             PokerClientsList.Add(new FullTilt());
-            PokerClientsList.Add(new PokerStarsIT());
+            PokerClientsList.Add(new PokerStars());
             PokerClientsList.Add(new PartyPoker());
             PokerClientsList.Add(new GDPoker());
+
+            PokerClientsList.SetDefault(new PokerStars());
         }
 
         // Cleanup stuff

@@ -25,7 +25,7 @@ namespace PokerMuck
             {
                 /* To recognize a valid party poker game window
                   * ex. Turbo #2341732 -  NL  Hold'em - €3 Buy-in */
-                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>[^-]+) - .+Buy-in");
+                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>[^-]+) - .+(Buy-in|.[\d\.]+\/.[\d\.]+)");
                 
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"\*\* Dealing down cards \*\*");
@@ -39,7 +39,7 @@ namespace PokerMuck
                  Ex. NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011
                  * NL Texas Hold'em €3 EUR Buy-in Trny: 61534554 Level: 1  Blinds(20/40) - Friday, June 17, 
                  */
-                regex.Add("hand_history_game_id_token", @": (?<gameId>[0-9]+) Level: ");
+                regex.Add("hand_history_game_id_token", @": (?<gameId>[0-9]+)( Level: )?");
 
                 /* Recognize the table ID and max seating capacity (if available) 
                  ex. Table Table  185503 (Real Money) */
@@ -49,14 +49,15 @@ namespace PokerMuck
                 regex.Add("hand_history_max_seating_capacity", @"Total number of players : ([\d]+)/(?<tableSeatingCapacity>[\d]+)");
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
-                 * NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011 */
-                regex.Add("hand_history_game_token", @"(?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in"); //TODO: Works with points?
+                 * NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011
+                 * €2 EUR NL Texas Hold'em - Monday, August 01, 21:27:54 CEST 2011 */
+                regex.Add("hand_history_game_token", @"(((?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in)|((\$|€)[\d]+ [A-Z]{3} (?<gameType>.+) - ))");
 
                 /* Recognize players 
                  Ex. Seat 1: Renik87 ( 2,000 )
                  * It ignores those who are marked as ", is sitting out"
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\( [\d\.\,]+ \)$");
+                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\( (€|\$)?[\d\.\,]+( [\w]{3})? \)$");
 
                 /* Recognize mucked hands
                  Ex. lucianoasso shows [ As, Js ]high card Ace.*/
@@ -64,7 +65,7 @@ namespace PokerMuck
 
                 /* Recognize winners of a hand 
                  * Ex. Renik87 wins 2,480 chips */
-                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) wins \$?[\d\.\,]+ chips");
+                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) wins (\$|€)?[\d\.\,]+ chips");
 
                 /* Recognize all-ins
                  * Ex. stallion089 is all-In  [1,440] */
@@ -77,11 +78,11 @@ namespace PokerMuck
 
                 /* Detect calls
                  * ex. stallion089 calls [120] */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \[(?<amount>[\d\.\,]+)\]");
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \[(\$|€)?(?<amount>[\d\.\,]+)( [\w]{3})?\]");
 
                 /* Detect bets
                    ex. stallion089 bets [160] */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \[(?<amount>[\d\.\,]+)\]");
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \[(\$|€)?(?<amount>[\d\.\,]+)( [\w]{3})?\]");
 
                 /* Detect folds
                  * ex. stallion089 folds */
@@ -93,11 +94,17 @@ namespace PokerMuck
 
                 /* Detect raises 
                  * ex. Renik87 raises [140] */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) (raises|is all-In)[ ]+\[(?<raiseAmount>[\d\.\,]+)\]");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) (raises|is all-In)[ ]+\[(\$|€)?(?<raiseAmount>[\d\.\,]+)( [\w]{3})?\]");
 
-                /* Detect blind amounts 
+                /* Detect blind amounts (tournaments only)
                  * ex. Trny: 61674977 Level: 1 Blinds(20/40) */
                 regex.Add("hand_history_blind_amounts", @"Blinds\((?<smallBlindAmount>[\d\.\,]+)\/(?<bigBlindAmount>[\d\.\,]+)\)");
+
+                /* Detect who is the small/big blind (cash games)
+                   Ex. stallion089: posts small blind 15 */
+                regex.Add("hand_history_detect_small_blind", @"(?<playerName>.+) posts small blind \[(\$|€)?(?<smallBlindAmount>[\d\.\,]+)( [\w]{3})?\]");
+                regex.Add("hand_history_detect_big_blind", @"(?<playerName>.+) posts big blind \[(\$|€)?(?<bigBlindAmount>[\d\.\,]+)( [\w]{3})?\]");
+
 
                 /* Recognize end of round character sequence (in PartyPoker it's
                  * a blank line */
@@ -151,10 +158,6 @@ namespace PokerMuck
                Additionally, each filename is composed by a first part which reflects the window title
                and a second part that has some extra information (which we do not care about)
                */
-
-            /* There are two different kind of formats:
-             * 1 for tournaments and 1 for ring games/play money
-             * We'll take care of tournaments first */
 
             Regex regex = GetRegex("game_window_title_to_recognize_games");
             Match match = regex.Match(windowTitle);

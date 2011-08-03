@@ -32,8 +32,8 @@
     <MinimumRequiredVersion>0.1.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>0.1.3.%2a</ApplicationVersion>
+    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationVersion>0.1.4.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -70,10 +70,15 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>PokerMuck.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Cards.ico</ApplicationIcon>
+    <ApplicationIcon>PokerMuck.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -116,6 +121,7 @@
     <Compile Include="Classes\PokerClients\GDPoker.cs" />
     <Compile Include="Classes\PokerClients\PartyPoker.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
+    <Compile Include="Classes\PokerClients\PokerStars.cs" />
     <Compile Include="Classes\Ranking\PostSubmitter.cs" />
     <Compile Include="Classes\Ranking\Rank.cs" />
     <Compile Include="Classes\Ranking\RankScanner.cs" />
@@ -193,7 +199,6 @@
     <Compile Include="Classes\WindowsListener\IDetectWindowsChanges.cs" />
     <Compile Include="Classes\Card\Card.cs" />
     <Compile Include="Classes\PokerClients\PokerClient.cs" />
-    <Compile Include="Classes\PokerClients\PokerStarsIT.cs" />
     <Compile Include="Classes\UIComponents\CardListPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -271,6 +276,7 @@
     <None Include="Resources\QuestionIco.png" />
     <None Include="Resources\ForbiddenIco.png" />
     <None Include="Resources\AnvilIco.png" />
+    <Content Include="PokerMuck.ico" />
     <Content Include="Resources\Cards\1_1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

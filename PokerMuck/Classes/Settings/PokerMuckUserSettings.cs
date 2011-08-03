@@ -18,7 +18,7 @@ namespace PokerMuck
 
         protected override void InitializeDefaultValues()
         {
-            CurrentPokerClient = new PokerStarsIT("English");
+            CurrentPokerClient = new PokerStars("English");
             WindowPosition = new Point(480, 320); // We assume monitors will be bigger than this resolution
             WindowSize = new Size(209, 331); // Designer size
             FirstExecution = true;

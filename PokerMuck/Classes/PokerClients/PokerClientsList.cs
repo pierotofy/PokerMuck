@@ -13,6 +13,7 @@ namespace PokerMuck
     {
         private static Hashtable clientList = new Hashtable();
         public static Hashtable ClientList { get { return clientList; } }
+        private static PokerClient defaultClient;
         
         /* Adds a poker client to the list of supported clients */
         public static void Add(PokerClient client)
@@ -20,11 +21,24 @@ namespace PokerMuck
             clientList.Add(client.Name, client);
         }
 
+        public static void SetDefault(PokerClient client)
+        {
+            defaultClient = client;
+        }
+
         public static PokerClient Find(String name)
         {
-            Debug.Assert(clientList.ContainsKey(name), "No valid poker client was found: " + name);
-           
-            return (PokerClient)clientList[name];
+            Debug.Assert(defaultClient != null, "Trying to find a poker client before the default client has been set");
+
+            if (clientList.ContainsKey(name))
+            {
+                return (PokerClient)clientList[name];
+            }
+            else
+            {
+                Debug.Print("Could not find client: " + name + ", defaulting to " + defaultClient.Name);
+                return defaultClient;
+            }           
         }
 
     }

@@ -69,8 +69,6 @@ namespace PokerMuck
             GenerateTabPages(statistics.GetCategories());
 
             FillStatistics(statistics);
-
-            AdjustControls();
         }
 
         /* Simply update the statistics of the last player we displayed */
@@ -115,8 +113,6 @@ namespace PokerMuck
 
         private void FillStatistics(PlayerStatistics statistics)
         {
-            //this.SuspendLayout();
-
             // For each statistic category
             foreach (String category in statistics.GetCategories())
             {
@@ -144,7 +140,7 @@ namespace PokerMuck
                 }
             }
 
-            //this.ResumeLayout();
+            AdjustControls();
         }
 
         // Helper to get a reference to a particular tab

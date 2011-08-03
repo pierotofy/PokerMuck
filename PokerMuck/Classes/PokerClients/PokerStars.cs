@@ -8,13 +8,13 @@ using System.Diagnostics;
 
 namespace PokerMuck
 {
-    class PokerStarsIT : PokerClient
+    class PokerStars : PokerClient
     {
-        public PokerStarsIT(){
+        public PokerStars(){
             // Other init stuff?
         }
 
-        public PokerStarsIT(String language)
+        public PokerStars(String language)
         {
             InitializeLanguage(language);
         }
@@ -24,9 +24,11 @@ namespace PokerMuck
             if (CurrentLanguage == "English")
             {
                 /* To recognize the Game ID given the table window (including any prefixes such as T for tournament)
-                * ex. T1234567990 from €2.60+€0.40 EUR Hold'em No Limit [Heads-up Turbo] - Tournament 1234567990 - 1 on 1 - ...*/
+                * ex. T1234567990 from €2.60+€0.40 EUR Hold'em No Limit [Heads-up Turbo] - Tournament 1234567990 - 1 on 1 - ...
+                  ex. California X - €0.01/€0.02 EUR - No Limit Hold'em [AAMS ID: M2BCE3000C59C5PF] */
                 regex.Add("game_window_title_to_recognize_tournament_game_id", @"]? - (?<tournamentId>[^ ]+ [0-9]+) [^$]+$");
                 regex.Add("game_window_title_to_recognize_play_money_game_description", @"(?<gameDescription>[^-]+)-[^-]+ Play Money");
+                regex.Add("game_window_title_to_recognize_cash_game_description", @"(?<gameDescription>.+) - .[\d\.]+\/.[\d\.]+ [\w]{3} - ");
 
 
                 /* Recognize the Hand History game phases */
@@ -41,7 +43,7 @@ namespace PokerMuck
                 /* Recognize the Hand History gameID 
                  Ex. PokerStars Game #59534069543: Tournament #377151618
                  */
-                regex.Add("hand_history_game_id_token", @"PokerStars Game #(?<handId>[\d]+): Tournament #(?<gameId>[\d]+)");
+                regex.Add("hand_history_game_id_token", @"PokerStars Game #(?<handId>[\d]+): (Tournament #(?<gameId>[\d]+)|(?<gameId>.+ \(.[\d\.]+\/.[\d\.]+\)))");
                
                 /* Recognize the table ID and max seating capacity */
                 regex.Add("hand_history_table_token", @"Table '(?<tableId>.+)' (?<tableSeatingCapacity>[\d]+)-max");
@@ -49,13 +51,13 @@ namespace PokerMuck
                 /* Recognize game (Hold'em, Omaha, No-limit, limit, etc.) 
                    Note that for PokerStars.it the only valid currency is EUR (and FPP), but this might be different 
                    on other clients. This regex works for both play money and tournaments */
-                regex.Add("hand_history_game_token", @"([\d]+FPP (?<gameType>[^-]+) -)|(EUR (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \([\d]+/[\d]+\))");
+                regex.Add("hand_history_game_token", @"([\d]+FPP (?<gameType>[^-]+) -)|((EUR|USD) (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \(.?[\d\.]+\/.?[\d\.]+ [\w]{3}\))");
 
                 /* Recognize players 
                  Ex. Seat 1: stallion089 (2105 in chips) => 1,"stallion089" 
                  * It ignores those who are marked as "out of hand"
                  */
-                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\([\d]+ in chips\) (?!out of hand)");
+                regex.Add("hand_history_detect_player_in_game", @"Seat (?<seatNumber>[\d]+): (?<playerName>.+) .*\(.?[\d\.]+ in chips\) (?!out of hand)");
 
                 /* Recognize mucked hands
                  Ex. Seat 1: stallion089 (button) (small blind) mucked [5d 5s]
@@ -65,7 +67,7 @@ namespace PokerMuck
 
                 /* Recognize winners of a hand 
                  * Ex. cord80 collected 40 from pot */
-                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) collected [\d]+ from pot");
+                regex.Add("hand_history_detect_hand_winner", @"(?<playerName>.+) collected .?[\d\.]+ from pot");
 
                 /* Recognize all-ins
                  * Ex. stallion089: raises 605 to 875 and is all-in */
@@ -76,8 +78,8 @@ namespace PokerMuck
 
                 /* Detect who is the small/big blind
                    Ex. stallion089: posts small blind 15 */
-                regex.Add("hand_history_detect_small_blind", @"(?<playerName>[^:]+): posts small blind (?<smallBlindAmount>[\d]+)");
-                regex.Add("hand_history_detect_big_blind", @"(?<playerName>[^:]+): posts big blind (?<bigBlindAmount>[\d]+)");
+                regex.Add("hand_history_detect_small_blind", @"(?<playerName>[^:]+): posts small blind .?(?<smallBlindAmount>[\d\.]+)");
+                regex.Add("hand_history_detect_big_blind", @"(?<playerName>[^:]+): posts big blind .?(?<bigBlindAmount>[\d\.]+)");
 
                 /* Detect who the button is */
                 regex.Add("hand_history_detect_button", @"#(?<seatNumber>[\d]+) is the button");
@@ -85,11 +87,11 @@ namespace PokerMuck
 
                 /* Detect calls
                  * ex. stallion089: calls 10 */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>[^:]+): calls (?<amount>[\d]+)");
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>[^:]+): calls .?(?<amount>[\d\.]+)");
 
                 /* Detect bets 
                    ex. stallion089: bets 20 */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>[^:]+): bets (?<amount>[\d]+)");
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>[^:]+): bets .?(?<amount>[\d\.]+)");
 
                 /* Detect folds
                  * ex. preferiti90: folds */
@@ -101,7 +103,7 @@ namespace PokerMuck
 
                 /* Detect raises 
                  * ex. zanzara za: raises 755 to 1155 and is all-in */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>[^:]+): raises ([\d]+) to (?<raiseAmount>[\d]+)");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>[^:]+): raises .?([\d\.]+) to .?(?<raiseAmount>[\d\.]+)");
 
                 /* Recognize end of round character sequence (in PokerStars.it it's
                  * a blank line */
@@ -109,7 +111,7 @@ namespace PokerMuck
 
                 /* Hand history file format. Example: HH20111216 T123456789 ... .txt */
                 config.Add("hand_history_tournament_filename_format", "HH[0-9]+ {0}{1}");
-                config.Add("hand_history_play_money_filename_format", "HH[0-9]+ {0}");
+                config.Add("hand_history_play_and_real_money_filename_format", "HH[0-9]+ {0}");
 
                 /* Game description (as shown in the hand history) */
                 config.Add("game_description_no_limit_holdem", "Hold'em No Limit");
@@ -180,11 +182,25 @@ namespace PokerMuck
                     string gameDescription = match.Groups["gameDescription"].Value;
                     
                     // We matched a play money game window, need to convert the description into a filename friendly format
-                    return String.Format(GetConfigString("hand_history_play_money_filename_format"),gameDescription);
+                    return String.Format(GetConfigString("hand_history_play_and_real_money_filename_format"), gameDescription);
                 }
                 else
                 {
-                    return String.Empty; //Could not find any valid match... must be a title we're not interested into
+
+                    // No luck again, try with cash games
+                    regex = GetRegex("game_window_title_to_recognize_cash_game_description");
+                    match = regex.Match(windowTitle);
+                    if (match.Success)
+                    {
+                        string gameDescription = match.Groups["gameDescription"].Value;
+
+                        // We matched a real money game window, need to convert the description into a filename friendly format
+                        return String.Format(GetConfigString("hand_history_play_and_real_money_filename_format"), gameDescription);
+                    }
+                    else
+                    {
+                        return String.Empty; //Could not find any valid match... must be a title we're not interested into
+                    }
                 }
             }
         }
@@ -207,14 +223,14 @@ namespace PokerMuck
         public override String Name {
             get
             {
-                return "PokerStars.IT";
+                return "Poker Stars";
             }
         }
 
         public override string XmlName
         {
             get {
-                return "PokerStars_IT";
+                return "Poker_Stars";
             }
         }
 

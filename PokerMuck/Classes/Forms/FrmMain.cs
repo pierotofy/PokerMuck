@@ -66,7 +66,7 @@ namespace PokerMuck
             Statistic average = preflop.Average("Summary", 2, flop, turn);
 
             Debug.Print("Average: " + average.ToString());
-           */
+          
 
 
             HoldemHand h1 = new HoldemHand(new Card(CardFace.Jack, CardSuit.Clubs), new Card(CardFace.Queen, CardSuit.Diamonds));
@@ -86,7 +86,7 @@ namespace PokerMuck
             Debug.Print(classification.ToString());
             classification = h1.GetClassification(HoldemGamePhase.River, b);
             Debug.Print(classification.ToString());
-
+             */
 
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(".COM Play 736 (6 max) - 1/2 - No Limit Hold'em - Logged In As italystallion89");
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle("$0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89");
@@ -105,17 +105,17 @@ namespace PokerMuck
             Debug.Print(avg1.Name + ": " + avg1.GetValue());
              
             
-            Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_table_token");
-            //Regex r = new Regex(@"FT[0-9]+ Escondido \(shallow\) - \$0\.01-\$0\.02 - No Limit Hold'em");
-            //Table (?<tableId>[^-]+) - \$?[\d]+\/\$?[\d]+ - .+ - [\d]{2}:[\d]{2}:[\d]{2} .* - [\d]{4}\/[\d]{2}\/[\d]{2}
-            Match m = r.Match("Full Tilt Poker Game #29459258249: Table Valley Of Fire (shallow) - $0.01/$0.02 - No Limit Hold'em - 19:52:33 ET - 2011/03/29");
+            Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_game_token");
 
+            //Match m = r.Match("NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011");
+            Match m = r.Match("€2 EUR NL Texas Hold'em - Monday, August 01, 21:45:12 CEST 2011");
+            //(((?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in)|((\$|€)[\d]+ [A-Z]{3} (?<gameType>) - ))
             if (m.Success)
             {
                 Debug.Print("OOOK");
                 Debug.Print(m.Groups["gameType"].Value);
-            }*/
-
+            }
+            */
             //pmDirector.NewForegroundWindow("$0.95 + $0.05 Heads Up Sit & Go (229273428), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89", Rectangle.Empty);
 
 
