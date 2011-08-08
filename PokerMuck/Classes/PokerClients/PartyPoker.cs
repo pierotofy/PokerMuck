@@ -51,7 +51,7 @@ namespace PokerMuck
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011
                  * €2 EUR NL Texas Hold'em - Monday, August 01, 21:27:54 CEST 2011 */
-                regex.Add("hand_history_game_token", @"(((?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in)|((\$|€)[\d]+ [A-Z]{3} (?<gameType>.+) - ))");
+                regex.Add("hand_history_game_token", @"(((?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in)|((\$|€)[\d\.]+ [A-Z]{3} (?<gameType>.+) - ))");
 
                 /* Recognize players 
                  Ex. Seat 1: Renik87 ( 2,000 )
@@ -115,7 +115,7 @@ namespace PokerMuck
                 config.Add("hand_history_filename_format", @"{0}_[0-9]+");
 
                 /* Game description (as shown in the hand history) */
-                config.Add("game_description_no_limit_holdem", "NL Texas Hold'em");
+                regex.Add("game_description_holdem", "(NL Texas Hold'em|FL Texas Hold'em)");
 
             }
 
@@ -131,7 +131,11 @@ namespace PokerMuck
         {
             Debug.Print("Found game description: " + gameDescription);
 
-            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
+            Match match = GetRegex("game_description_holdem").Match(gameDescription);
+            if (match.Success)
+            {
+                return PokerGame.Holdem;
+            }
 
             return PokerGame.Unknown; //Default
         }

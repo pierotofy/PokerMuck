@@ -15,27 +15,31 @@ namespace PokerMuck
     {
         /* Limp */
         private ValueCounter limps;
+        private MultipleValueCounter limpsDetails;
 
         /* VPF */
         private ValueCounter voluntaryPutMoneyPreflop;
 
         /* Raises */
         private MultipleValueCounter raises;
-        private MultipleValueCounter raisesDetails;
+        private MultipleValueCounter raisesRatings;
 
         /* Bets */
         private MultipleValueCounter bets;
-        private MultipleValueCounter betsDetails;
+        private MultipleValueCounter betsRatings;
 
         /* Folds */
         private MultipleValueCounter folds;
 
         /* Calls */
         private MultipleValueCounter calls;
-        private MultipleValueCounter callsDetails;
+        private MultipleValueCounter callsRatings;
 
         /* C Bets */ 
         private int opportunitiesToCBet;
+
+        /* Draws */
+        private MultipleValueCounter draws;
 
         private ValueCounter cbets;
 
@@ -59,16 +63,19 @@ namespace PokerMuck
 
         /* Checks */
         private MultipleValueCounter checks;
-        private MultipleValueCounter checksDetails;
+        private MultipleValueCounter checksRatings;
 
         /* Check-raise */
         private MultipleValueCounter checkRaises;
+        private MultipleValueCounter checksRaisesRatings;
 
         /* Check-fold */
         private MultipleValueCounter checkFolds;
+        private MultipleValueCounter checksFoldsRatings;
 
         /* Check-call */
         private MultipleValueCounter checkCalls;
+        private MultipleValueCounter checksCallsRatings;
 
         /* How many times has the player pushed all-in? */
         private MultipleValueCounter pushedAllIn; // Also keeps track of the street
@@ -151,13 +158,14 @@ namespace PokerMuck
         {
             this.blindType = other.blindType;
             this.limps = (ValueCounter)other.limps.Clone();
+            this.limpsDetails = (MultipleValueCounter)other.limpsDetails.Clone();
             this.voluntaryPutMoneyPreflop = (ValueCounter)other.limps.Clone();
             this.raises = (MultipleValueCounter)other.raises.Clone();
-            this.raisesDetails = (MultipleValueCounter)other.raisesDetails.Clone();
+            this.raisesRatings = (MultipleValueCounter)other.raisesRatings.Clone();
             this.bets = (MultipleValueCounter)other.bets.Clone();
-            this.betsDetails = (MultipleValueCounter)other.betsDetails.Clone();
+            this.betsRatings = (MultipleValueCounter)other.betsRatings.Clone();
             this.calls = (MultipleValueCounter)other.calls.Clone();
-            this.callsDetails = (MultipleValueCounter)other.callsDetails.Clone();
+            this.callsRatings = (MultipleValueCounter)other.callsRatings.Clone();
             this.folds = (MultipleValueCounter)other.folds.Clone();
             this.opportunitiesToCBet = other.opportunitiesToCBet;
             this.cbets = (ValueCounter)other.cbets.Clone();
@@ -165,10 +173,13 @@ namespace PokerMuck
             this.callsToACBet = other.callsToACBet;
             this.raisesToACBet = other.raisesToACBet;
             this.checks = (MultipleValueCounter)other.checks.Clone();
-            this.checksDetails = (MultipleValueCounter)other.checksDetails.Clone(); 
+            this.checksRatings = (MultipleValueCounter)other.checksRatings.Clone(); 
             this.checkRaises = (MultipleValueCounter)other.checkRaises.Clone();
+            this.checksRaisesRatings = (MultipleValueCounter)other.checksRaisesRatings.Clone();
             this.checkFolds = (MultipleValueCounter)other.checkFolds.Clone();
+            this.checksFoldsRatings = (MultipleValueCounter)other.checksFoldsRatings.Clone();
             this.checkCalls = (MultipleValueCounter)other.checkCalls.Clone();
+            this.checksCallsRatings = (MultipleValueCounter)other.checksCallsRatings.Clone();
             this.sawStreet = (MultipleValueCounter)other.sawStreet.Clone();
             this.totalCalls = (Hashtable)other.totalCalls.Clone();
             this.totalBets = (Hashtable)other.totalBets.Clone();
@@ -190,6 +201,7 @@ namespace PokerMuck
             this.foldsBlindToAPreflopRaise = (MultipleValueCounter)other.foldsBlindToAPreflopRaise.Clone();
             this.callsBlindToAPreflopRaise = (MultipleValueCounter)other.callsBlindToAPreflopRaise.Clone();
             this.raisesBlindToAPreflopRaise = (MultipleValueCounter)other.raisesBlindToAPreflopRaise.Clone();
+            this.draws = (MultipleValueCounter)other.draws.Clone();
 
             // Deep copy lists
             startingHandsWithPreflopCall = new List<HoldemHand>();
@@ -200,7 +212,6 @@ namespace PokerMuck
 
             startingHandsWithPreflopAllIn = new List<HoldemHand>();
             foreach (HoldemHand h in other.startingHandsWithPreflopAllIn) startingHandsWithPreflopAllIn.Add((HoldemHand)h.Clone());
-            
         }
 
         
@@ -216,27 +227,37 @@ namespace PokerMuck
             totalChecks = new Hashtable(5);
 
             limps = new ValueCounter();
+            limpsDetails = new MultipleValueCounter(HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster);
+            
             voluntaryPutMoneyPreflop = new ValueCounter();
 
             raises = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            raisesDetails = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+            raisesRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
                 new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             checkRaises = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checksRaisesRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+                new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             checkFolds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checksFoldsRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+                new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             checkCalls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
+            checksCallsRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+                new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             checks = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            checksDetails = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+            checksRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
                 new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             sawStreet = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River, HoldemGamePhase.Showdown);
             bets = new MultipleValueCounter(HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            betsDetails = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+            betsRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
                 new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             folds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             calls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            callsDetails = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
+            callsRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
                 new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
-            
 
+            draws = new MultipleValueCounter(new object[] { HoldemGamePhase.Flop, HoldemGamePhase.Turn },
+                new object[] { HoldemPlayerAction.Bet, HoldemPlayerAction.Call, HoldemPlayerAction.Check, HoldemPlayerAction.CheckCall, HoldemPlayerAction.CheckFold, HoldemPlayerAction.CheckRaise, HoldemPlayerAction.Fold, HoldemPlayerAction.Raise });
+            
             cbets = new ValueCounter();
             stealRaises = new ValueCounter();
             foldsToAStealRaise = new MultipleValueCounter(BlindType.BigBlind, BlindType.SmallBlind);
@@ -273,13 +294,14 @@ namespace PokerMuck
             ResetStatistics(totalChecks);
 
             limps.Reset();
+            limpsDetails.Reset();
             checks.Reset();
-            checksDetails.Reset();
+            checksRatings.Reset();
             voluntaryPutMoneyPreflop.Reset();
             raises.Reset();
-            raisesDetails.Reset();
+            raisesRatings.Reset();
             bets.Reset();
-            betsDetails.Reset();
+            betsRatings.Reset();
             cbets.Reset();
             stealRaises.Reset();
             foldsToAStealRaise.Reset();
@@ -288,7 +310,7 @@ namespace PokerMuck
 
             folds.Reset();
             calls.Reset();
-            callsDetails.Reset();
+            callsRatings.Reset();
             sawStreet.Reset();
 
             callsToACBet = 0;
@@ -298,9 +320,14 @@ namespace PokerMuck
             opportunitiesToStealRaise = 0;
             opportunitiesToCBet = 0;
 
+            draws.Reset();
+
             checkRaises.Reset();
+            checksRaisesRatings.Reset();
             checkFolds.Reset();
+            checksFoldsRatings.Reset();
             checkCalls.Reset();
+            checksCallsRatings.Reset();
 
             wentToShowdown.Reset();
             wonAtShowdown.Reset();
@@ -319,6 +346,59 @@ namespace PokerMuck
             PrepareStatisticsForNewRound();
         }
 
+        /* Certain statistics are round specific (for example a person can only limp once per round)
+         * This function should get called at the beginning of a new round */
+        public override void PrepareStatisticsForNewRound()
+        {
+            base.PrepareStatisticsForNewRound();
+
+            IsBigBlind = false;
+            IsSmallBlind = false;
+            IsButton = false;
+            limps.AllowIncrement();
+            limpsDetails.AllowIncrement();
+            voluntaryPutMoneyPreflop.AllowIncrement();
+            raises.AllowIncrement();
+            raisesRatings.AllowIncrement();
+            bets.AllowIncrement();
+            betsRatings.AllowIncrement();
+            cbets.AllowIncrement();
+            stealRaises.AllowIncrement();
+            foldsToAStealRaise.AllowIncrement();
+            callsToAStealRaise.AllowIncrement();
+            raisesToAStealRaise.AllowIncrement();
+
+            folds.AllowIncrement();
+            calls.AllowIncrement();
+            callsRatings.AllowIncrement();
+
+            checkRaises.AllowIncrement();
+            checksRaisesRatings.AllowIncrement();
+            checkFolds.AllowIncrement();
+            checksFoldsRatings.AllowIncrement();
+            checkCalls.AllowIncrement();
+            checksCallsRatings.AllowIncrement();
+
+            checks.AllowIncrement();
+            checksRatings.AllowIncrement();
+
+            sawStreet.AllowIncrement();
+
+            wentToShowdown.AllowIncrement();
+            wonAtShowdown.AllowIncrement();
+
+            pushedAllIn.AllowIncrement();
+            totalAllIns.AllowIncrement();
+
+            draws.AllowIncrement();
+
+            foldsBlindToAPreflopRaise.AllowIncrement();
+            callsBlindToAPreflopRaise.AllowIncrement();
+            raisesBlindToAPreflopRaise.AllowIncrement();
+
+            lastFinalBoard = null;
+        }
+
         public override void CalculateEndOfRoundStatistics()
         {
             base.CalculateEndOfRoundStatistics();
@@ -330,80 +410,78 @@ namespace PokerMuck
 
                 for (HoldemGamePhase phase = HoldemGamePhase.Preflop; phase <= HoldemGamePhase.River; phase++)
                 {
-                    HoldemHand.Rating rating = ((HoldemHand)MuckedHand).GetHandRating(phase, lastFinalBoard);
-                
+                    HoldemHand.Classification classification = ((HoldemHand)MuckedHand).GetHandClassification(phase, lastFinalBoard);
+                    HoldemHand.Rating rating = classification.GetRating();
+
+                    // Increment ratings 
+
                     if (raises[phase].WasIncremented)
                     {
-                        raisesDetails[phase, rating].Increment();
+                        raisesRatings[phase, rating].Increment();
                     }
 
                     // There are no bets preflop (only calls and raises)
                     if (phase != HoldemGamePhase.Preflop && bets[phase].WasIncremented)
                     {
-                        betsDetails[phase, rating].Increment();
+                        betsRatings[phase, rating].Increment();
                     }
 
                     if (calls[phase].WasIncremented)
                     {
-                        callsDetails[phase, rating].Increment();
+                        callsRatings[phase, rating].Increment();
                     }
 
                     if (checks[phase].WasIncremented)
                     {
-                        checksDetails[phase, rating].Increment();
+                        checksRatings[phase, rating].Increment();
                     }
 
+                    if (checkRaises[phase].WasIncremented)
+                    {
+                        checksRaisesRatings[phase, rating].Increment();
+                    }
+
+                    if (checkFolds[phase].WasIncremented)
+                    {
+                        checksFoldsRatings[phase, rating].Increment();
+                    }
+
+                    if (checkCalls[phase].WasIncremented)
+                    {
+                        checksCallsRatings[phase, rating].Increment();
+                    }
+
+                    // Increment Draws (only on flop and turn)
+                    if (phase == HoldemGamePhase.Flop || phase == HoldemGamePhase.Turn){
+                        HoldemHand.ClassificationPostflop classificationPostFlop = (HoldemHand.ClassificationPostflop)classification;
+
+                        if (classificationPostFlop.HasADraw())
+                        {
+                            HoldemPlayerAction action = HoldemPlayerAction.Fold;
+
+                            if (calls[phase].WasIncremented) action = HoldemPlayerAction.Call;
+                            else if (raises[phase].WasIncremented) action = HoldemPlayerAction.Raise;
+                            else if (bets[phase].WasIncremented) action = HoldemPlayerAction.Bet;
+                            else if (folds[phase].WasIncremented) action = HoldemPlayerAction.Fold;
+                            else if (checks[phase].WasIncremented) action = HoldemPlayerAction.Check;
+
+                            if (checkRaises[phase].WasIncremented) action = HoldemPlayerAction.CheckRaise;
+                            else if (checkCalls[phase].WasIncremented) action = HoldemPlayerAction.CheckCall;
+                            else if (checkFolds[phase].WasIncremented) action = HoldemPlayerAction.CheckFold;
+
+                            draws[phase, action].Increment();
+                        }
+                    }
+                }
+
+                if (limps.WasIncremented)
+                {
+                    HoldemHand.Rating rating = ((HoldemHand)MuckedHand).GetHandClassification(HoldemGamePhase.Preflop, lastFinalBoard).GetRating();
+                    limpsDetails[rating].Increment();
                 }
             }
         }
 
-
-        /* Certain statistics are round specific (for example a person can only limp once per round)
-         * This function should get called at the beginning of a new round */
-        public override void PrepareStatisticsForNewRound()
-        {
-            base.PrepareStatisticsForNewRound();
-
-            IsBigBlind = false;
-            IsSmallBlind = false;
-            IsButton = false;
-            limps.AllowIncrement();
-            voluntaryPutMoneyPreflop.AllowIncrement();
-            raises.AllowIncrement();
-            raisesDetails.AllowIncrement();
-            bets.AllowIncrement();
-            betsDetails.AllowIncrement();
-            cbets.AllowIncrement();
-            stealRaises.AllowIncrement();
-            foldsToAStealRaise.AllowIncrement();
-            callsToAStealRaise.AllowIncrement();
-            raisesToAStealRaise.AllowIncrement();
-
-            folds.AllowIncrement();
-            calls.AllowIncrement();
-            callsDetails.AllowIncrement();
-
-            checkRaises.AllowIncrement();
-            checkFolds.AllowIncrement();
-            checkCalls.AllowIncrement();
-
-            checks.AllowIncrement();
-            checksDetails.AllowIncrement();
-
-            sawStreet.AllowIncrement();
-
-            wentToShowdown.AllowIncrement();
-            wonAtShowdown.AllowIncrement();
-
-            pushedAllIn.AllowIncrement();
-            totalAllIns.AllowIncrement();
-
-            foldsBlindToAPreflopRaise.AllowIncrement();
-            callsBlindToAPreflopRaise.AllowIncrement();
-            raisesBlindToAPreflopRaise.AllowIncrement();
-
-            lastFinalBoard = null;
-        }
 
         /* The final board became available */
         public void BoardAvailable(HoldemBoard board)
@@ -452,7 +530,21 @@ namespace PokerMuck
             if (totalHandsPlayed.Value == 0) limpRatio = 0;
             else limpRatio = (float)limps.Value / (float)totalHandsPlayed.Value;
 
-            return new Statistic(new StatisticsPercentageData("Limp", limpRatio), "Preflop");
+            Statistic ret = new Statistic(new StatisticsPercentageData("Limp", limpRatio), "Preflop");
+
+            // Advanced statistics
+            float sum = (float)limpsDetails.GetSumOfAllValues();
+            foreach (HoldemHand.Rating rating in Enum.GetValues(typeof(HoldemHand.Rating)))
+            {
+                if (sum == 0) ret.AddSubStatistic(new StatisticsUnknownData(rating.ToString()));
+                else
+                {
+                    float ratio = (float)limpsDetails[rating].Value / sum;
+                    ret.AddSubStatistic(new StatisticsPercentageData(rating.ToString(), ratio));
+                }
+            }
+
+            return ret;
         }
 
         /* How many times has the player put money in preflop? */
@@ -511,6 +603,38 @@ namespace PokerMuck
             }
         }
 
+        private Statistic GetDrawStatistics(HoldemGamePhase phase, String category)
+        {
+            List<StatisticsData> subData = new List<StatisticsData>(10);
+            float sum = (float)draws.GetSumOfAllValuesIn(phase);
+            float max = 0;
+            HoldemPlayerAction mostCommonAction = (HoldemPlayerAction)(-1);
+
+            for (HoldemPlayerAction action = HoldemPlayerAction.Call; action <= HoldemPlayerAction.CheckFold; action++)
+            {
+                if (sum == 0) subData.Add(new StatisticsUnknownData(action.ToString()));
+                else
+                {
+                    float value = draws[phase, action].Value / sum;
+
+                    // Keep track of the max value as to put a quick description on the statistic indicating
+                    // which is the most common action taken by the player
+                    // Note: in case of equality, the first element is used
+                    if (value > max){
+                        max = value;
+                        mostCommonAction = action;
+                    }
+                    subData.Add(new StatisticsPercentageData(action.ToString(), value));
+                }
+            }
+
+            String description = "?";
+            if (mostCommonAction != (HoldemPlayerAction)(-1)) description = "Mostly " + mostCommonAction.ToString().ToLower();
+
+            Statistic ret = new Statistic(new StatisticsDescriptiveData("On a straight/flush draw", description), category, subData);
+            return ret;
+        }
+
         private void AppendActionsSubstatistics(HoldemGamePhase phase, Statistic statistic, MultipleValueCounter details)
         {
             float sum = (float)details.GetSumOfAllValuesIn(phase);
@@ -546,7 +670,7 @@ namespace PokerMuck
                 float raiseRatio = (float)raises[phase].Value / (float)sawStreet[phase].Value;
                 Statistic ret = new Statistic(new StatisticsPercentageData("Raises", raiseRatio), category);
 
-                AppendActionsSubstatistics(phase, ret, raisesDetails);
+                AppendActionsSubstatistics(phase, ret, raisesRatings);
 
                 return ret;
             }
@@ -561,7 +685,7 @@ namespace PokerMuck
                 float betsRatio = (float)bets[phase].Value / (float)sawStreet[phase].Value;
                 Statistic ret = new Statistic(new StatisticsPercentageData("Bets", betsRatio), category);
 
-                AppendActionsSubstatistics(phase, ret, betsDetails);
+                AppendActionsSubstatistics(phase, ret, betsRatings);
 
                 return ret;
             }
@@ -576,7 +700,7 @@ namespace PokerMuck
                 float callsRatio = (float)calls[phase].Value / (float)sawStreet[phase].Value;
                 Statistic ret = new Statistic(new StatisticsPercentageData("Calls", callsRatio), category);
 
-                AppendActionsSubstatistics(phase, ret, callsDetails);
+                AppendActionsSubstatistics(phase, ret, callsRatings);
 
                 return ret;
             }
@@ -591,7 +715,7 @@ namespace PokerMuck
                 float checksRatio = (float)checks[phase].Value / (float)sawStreet[phase].Value;
                 Statistic ret = new Statistic(new StatisticsPercentageData("Checks", checksRatio), category);
 
-                AppendActionsSubstatistics(phase, ret, checksDetails);
+                AppendActionsSubstatistics(phase, ret, checksRatings);
 
                 return ret;
             }
@@ -626,32 +750,38 @@ namespace PokerMuck
             }
         }
 
-        /* How many times has the player check raised? */
-        public Statistic GetCheckRaiseStats(HoldemGamePhase phase, String category)
+        private Statistic GetCheckActionStats(HoldemGamePhase phase, String name, String category, MultipleValueCounter values, MultipleValueCounter details)
         {
             int checkActions = (int)checkRaises[phase].Value + (int)checkCalls[phase].Value + (int)checkFolds[phase].Value;
 
-            if (checkActions == 0) return Statistic.CreateUnknown("Check Raise", category);
+            if (checkActions == 0) return CreateUnknownActionStatistic(name, category);
             else
             {
-                float checkRaiseRatio = (float)checkRaises[phase].Value / (float)checkActions;
+                float ratio = (float)values[phase].Value / (float)checkActions;
+                Statistic ret = new Statistic(new StatisticsPercentageData(name, ratio), category);
 
-                return new Statistic(new StatisticsPercentageData("Check Raise", checkRaiseRatio), category);
+                AppendActionsSubstatistics(phase, ret, details);
+
+                return ret;
             }
+        }
+
+        /* How many times has the player check raised? */
+        public Statistic GetCheckRaiseStats(HoldemGamePhase phase, String category)
+        {
+            return GetCheckActionStats(phase, "Check Raise", category, checkRaises, checksRaisesRatings);
+        }
+
+        /* How many times has the player check called? */
+        public Statistic GetCheckCallStats(HoldemGamePhase phase, String category)
+        {
+            return GetCheckActionStats(phase, "Check Call", category, checkCalls, checksCallsRatings);
         }
 
         /* How many times has the player check folded? */
         public Statistic GetCheckFoldStats(HoldemGamePhase phase, String category)
         {
-            int checkActions = (int)checkRaises[phase].Value + (int)checkCalls[phase].Value + (int)checkFolds[phase].Value;
-
-            if (checkActions == 0) return Statistic.CreateUnknown("Check Fold", category);
-            else
-            {
-                float checkFoldRatio = (float)checkFolds[phase].Value / (float)checkActions;
-
-                return new Statistic(new StatisticsPercentageData("Check Fold", checkFoldRatio), category);
-            }
+            return GetCheckActionStats(phase, "Check Fold", category, checkFolds, checksFoldsRatings);
         }
 
 
@@ -774,20 +904,6 @@ namespace PokerMuck
             return new Statistic(new StatisticsDescriptiveData("Style",String.Format("{0} {1}",tightness, aggressiveness)), "Summary");
         }
 
-        /* How many times has the player check called? */
-        public Statistic GetCheckCallStats(HoldemGamePhase phase, String category)
-        {
-            int checkActions = (int)checkRaises[phase].Value + (int)checkCalls[phase].Value + (int)checkFolds[phase].Value;
-
-            if (checkActions == 0) return Statistic.CreateUnknown("Check Call", category);
-            else
-            {
-                float checkCallRatio = (float)checkCalls[phase].Value / (float)checkActions;
-
-                return new Statistic(new StatisticsPercentageData("Check Call", checkCallRatio), category);
-            }
-        }
-        
         /* Has limped */
         public void CheckForLimp()
         {
@@ -1090,6 +1206,9 @@ namespace PokerMuck
             result.Set(GetCheckCallStats(HoldemGamePhase.Flop, "Flop"));
             result.Set(GetCheckCallStats(HoldemGamePhase.Turn, "Turn"));
             result.Set(GetCheckCallStats(HoldemGamePhase.River, "River"));
+
+            result.Set(GetDrawStatistics(HoldemGamePhase.Flop, "Flop"));
+            result.Set(GetDrawStatistics(HoldemGamePhase.Turn, "Turn"));
 
             result.Set(GetStyle());
             result.Set(GetAggressionFrequencyStats());

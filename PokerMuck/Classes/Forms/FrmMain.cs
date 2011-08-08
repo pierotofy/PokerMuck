@@ -68,13 +68,12 @@ namespace PokerMuck
             Debug.Print("Average: " + average.ToString());
           
 
-
             HoldemHand h1 = new HoldemHand(new Card(CardFace.Jack, CardSuit.Clubs), new Card(CardFace.Queen, CardSuit.Diamonds));
-            HoldemBoard b = new HoldemBoard(new Card(CardFace.Jack, CardSuit.Clubs),
-                                            new Card(CardFace.Two, CardSuit.Diamonds),
-                                            new Card(CardFace.Three, CardSuit.Diamonds),
-                                            new Card(CardFace.Jack, CardSuit.Clubs),
-                                            new Card(CardFace.Three, CardSuit.Diamonds));
+            HoldemBoard b = new HoldemBoard(new Card(CardFace.King, CardSuit.Clubs),
+                                            new Card(CardFace.King, CardSuit.Diamonds),
+                                            new Card(CardFace.Five, CardSuit.Diamonds),
+                                            new Card(CardFace.Three, CardSuit.Clubs),
+                                            new Card(CardFace.Jack, CardSuit.Hearts));
 
             HoldemHand.Classification classification = h1.GetClassification(HoldemGamePhase.Preflop, b);
             Debug.Print(classification.ToString());
@@ -86,7 +85,7 @@ namespace PokerMuck
             Debug.Print(classification.ToString());
             classification = h1.GetClassification(HoldemGamePhase.River, b);
             Debug.Print(classification.ToString());
-             */
+             //*/
 
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(".COM Play 736 (6 max) - 1/2 - No Limit Hold'em - Logged In As italystallion89");
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle("$0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89");

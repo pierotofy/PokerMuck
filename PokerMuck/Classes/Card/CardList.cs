@@ -35,6 +35,12 @@ namespace PokerMuck
             cards.Add(card);
         }
 
+        public void Sort(bool countAceAsHigh)
+        {
+            if (countAceAsHigh) Sort(SortUsing.AceHigh);
+            else Sort(SortUsing.AceLow);
+        }
+
         public void Sort(SortUsing method)
         {
             bool countAceAsHigh = (method == SortUsing.AceHigh);
@@ -64,7 +70,6 @@ namespace PokerMuck
                 return cards.Count;
             }
         }
-
 
         public bool HaveIdenticalFaces(int numIdenticalFaces)
         {

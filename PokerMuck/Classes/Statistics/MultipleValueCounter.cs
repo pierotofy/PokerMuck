@@ -77,6 +77,16 @@ namespace PokerMuck
             }
         }
 
+        public float GetSumOfAllValues()
+        {
+            float sum = 0;
+            foreach (int index in table.Keys)
+            {
+                sum += ((ValueCounter)table[index]).Value;
+            }
+            return sum;
+        }
+
         public float GetSumOfAllValuesIn(object domain)
         {
             float sum = 0;

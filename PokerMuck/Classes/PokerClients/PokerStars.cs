@@ -114,7 +114,7 @@ namespace PokerMuck
                 config.Add("hand_history_play_and_real_money_filename_format", "HH[0-9]+ {0}");
 
                 /* Game description (as shown in the hand history) */
-                config.Add("game_description_no_limit_holdem", "Hold'em No Limit");
+                regex.Add("game_description_holdem", "(Hold'em No Limit|Hold'em Limit)");
 
             }
 
@@ -128,7 +128,13 @@ namespace PokerMuck
         /* Given a game description, returns the corresponding PokerGame */
         public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
-            if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
+            Debug.Print("Found game description: " + gameDescription);
+
+            Match match = GetRegex("game_description_holdem").Match(gameDescription);
+            if (match.Success)
+            {
+                return PokerGame.Holdem;
+            }
 
             return PokerGame.Unknown; //Default
         }
@@ -249,6 +255,8 @@ namespace PokerMuck
             get {
                 ArrayList supportedGameModes = new ArrayList();
                 supportedGameModes.Add("No Limit Hold'em"); //TODO CHECK
+                supportedGameModes.Add("Limit Hold'em");
+
 
                 return supportedGameModes;
             }

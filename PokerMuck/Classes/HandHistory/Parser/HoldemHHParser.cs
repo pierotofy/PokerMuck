@@ -10,7 +10,10 @@ namespace PokerMuck
 {
     /* Enum of the possible game phases in a Hold'em game */
     public enum HoldemGamePhase { Preflop, Flop, Turn, River, Showdown, Summary };
-        
+
+    /* Enum of the possible player actions in a Hold'em game */
+    public enum HoldemPlayerAction { Call, Bet, Raise, Fold, Check, CheckRaise, CheckCall, CheckFold };
+    
 
     /* Hold'em Hand History Parser */
     class HoldemHHParser : HHParser
@@ -270,6 +273,8 @@ namespace PokerMuck
 
                 OnFoundBigBlindAmount(bigBlindAmount);
                 OnFoundSmallBlindAmount(smallBlindAmount);
+
+                InfereBlindsFromButton(lastButtonSeatNumber);
             }
 
             /* Detect raises, calls, folds, bets */
@@ -534,12 +539,6 @@ namespace PokerMuck
             {
                 currentGamePhase = HoldemGamePhase.Preflop;
                 OnHoleCardsWillBeDealt();
-
-                // If we don't have a more reliable way to find the blinds, we can infere it from the button
-                if (!pokerClient.HasRegex("hand_history_detect_big_blind"))
-                {
-                    InfereBlindsFromButton(lastButtonSeatNumber);
-                }
             }
             else if (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_flop_phase_token"), out matchResult))
             {

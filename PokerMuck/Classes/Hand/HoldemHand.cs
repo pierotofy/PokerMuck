@@ -9,6 +9,8 @@ namespace PokerMuck
 {
     public class HoldemHand : Hand
     {
+        public enum Rating { Nothing, Weak, Mediocre, Strong, Monster }
+
         #region Hand Percentiles Hash Table 
         private static Hashtable preflopPercentiles = new Hashtable()
         {
@@ -341,6 +343,8 @@ namespace PokerMuck
         }
         #endregion
 
+        #region Classification classes
+
         public abstract class Classification
         {
             public abstract Rating GetRating();
@@ -348,8 +352,6 @@ namespace PokerMuck
 
         public class ClassificationPreflop : Classification
         {
-            //public enum HandType { Unknown, PocketPair, SuitedConnectors, Connectors, TwoHighCards, ... }
-
             /* Between 0 and 1 (0% - 100%) indicates the percentile of the hand preflop */
             private float percentile;
 
@@ -388,41 +390,175 @@ namespace PokerMuck
             public enum HandType { Unknown, HighCard, Pair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, RoyalFlush }
             public enum KickerType { Unknown, Irrelevant, Low, Middle, High }
             public enum PairType { Irrelevant, Bottom, Middle, Top }
-            
-            private HandType hand { get; set; }
-            private KickerType kicker { get; set; }
-            private PairType pair { get; set; }
+            public enum DrawType { Irrelevant, None, Flush, Straight, FlushAndStraight }
 
-            public ClassificationPostflop(HandType hand, KickerType kicker)
+            private HandType hand;
+            private KickerType kicker;
+            private PairType pair;
+            private DrawType draw;
+            public DrawType Draw { get { return draw; } }
+
+            public ClassificationPostflop(HoldemHand hand, HoldemGamePhase phase, HoldemBoard board)
             {
-                this.hand = hand;
-                this.kicker = kicker;
+                CardList communityCards = board.GetBoardAt(phase);
+
+                // Default
+                this.hand = HandType.Unknown;
+                this.kicker = KickerType.Unknown;
                 this.pair = PairType.Irrelevant;
+                this.draw = DrawType.Irrelevant;
+
+                Debug.Assert(communityCards.Count > 0, "Cannot classificate an empty list of community cards.");
+
+                // Create a new list including the board cards and the cards from the hand
+                CardList cards = new CardList(communityCards.Count + 2);
+                foreach (Card c in communityCards) cards.AddCard(c);
+                cards.AddCard(hand.GetFirstCard());
+                cards.AddCard(hand.GetSecondCard());
+
+                // --- Royal flush
+                if (IsRoyalFlush(cards))
+                {
+                    this.hand = HandType.RoyalFlush;
+                    this.kicker = KickerType.Irrelevant;
+                    return;
+                }
+
+                // -- Four of a kind
+                if (cards.HaveIdenticalFaces(4))
+                {
+                    this.hand = HandType.FourOfAKind;
+                    this.kicker = KickerType.Irrelevant;
+                    return;
+                }
+
+                // -- Full House
+                // If we have three of a kind and two pair at the same time, we have a full house
+                bool isThreeOfAKind = cards.HaveIdenticalFaces(3);
+                bool isTwoPair = IsTwoPair(cards);
+                if (isThreeOfAKind && isTwoPair)
+                {
+                    this.hand = HandType.FullHouse;
+                    this.kicker = KickerType.Irrelevant;
+                    return;
+                }
+
+                // -- Flush
+                for (int i = 0; i < cards.Count; i++)
+                {
+                    int numCardsSameSuit = 0;
+                    for (int j = i + 1; j < cards.Count; j++)
+                    {
+                        if (cards[i].Suit == cards[j].Suit)
+                        {
+                            numCardsSameSuit++;
+                        }
+                    }
+
+                    if (numCardsSameSuit >= 4)
+                    {
+                        this.hand = HandType.Flush;
+                        this.kicker = KickerType.Irrelevant;
+                        return;
+                    }
+                }
+
+                // -- Straight
+                if (IsStraight(cards))
+                {
+                    this.hand = HandType.Straight;
+                    this.kicker = KickerType.Irrelevant;
+                    return;
+                }
+
+                // Calculate draws (if we got until here, there might be some)
+                // Also, no draws are possible at the river
+                if (phase == HoldemGamePhase.River) draw = DrawType.Irrelevant;
+                else draw = GetDrawType(cards);
+
+                // -- Trips
+                if (isThreeOfAKind)
+                {
+                    this.hand = HandType.ThreeOfAKind;
+                    this.kicker = KickerType.Irrelevant;
+                    return;
+                }
+
+                // -- Two pair
+                if (isTwoPair)
+                {
+                    this.hand = HandType.TwoPair;
+                    this.kicker = KickerType.Irrelevant;
+                    return;
+                }
+
+                // -- Pair
+                Card matching;
+                if (cards.HaveIdenticalFaces(2, out matching))
+                {
+                    // Sort list by face value (ace high first)
+                    cards.Sort(SortUsing.AceHigh);
+
+                    // Find kicker (check from end of the list where face values are higher)
+                    Card kicker = cards[0];
+                    for (int i = cards.Count - 1; i >= 0; i--)
+                    {
+                        if (cards[i].Face != matching.Face)
+                        {
+                            kicker = cards[i];
+                            break;
+                        }
+                    }
+
+
+                    this.hand = HandType.Pair;
+                    this.kicker = GetKickerTypeFromCard(kicker);
+                    this.pair = GetPairType(communityCards, matching, hand.GetFirstCard(), hand.GetSecondCard());
+                    return;
+                }
+
+                // -- High card
+                cards.Sort(SortUsing.AceHigh);
+                Card highCard = cards.Last;
+
+                this.hand = HandType.HighCard;
+                this.kicker = GetKickerTypeFromCard(highCard);
             }
 
-            public ClassificationPostflop(HandType hand, KickerType kicker, PairType pair)
-                : this(hand, kicker)
+            public bool HasADraw()
             {
-                this.pair = pair;
+                return isADraw(this.draw);
             }
 
-            public override Rating GetRating(){
-                if (hand == HandType.HighCard)
+            private bool isADraw(DrawType draw)
+            {
+                return (draw == DrawType.Flush || draw == DrawType.Straight || draw == DrawType.FlushAndStraight);
+            }
+
+            public override Rating GetRating()
+            {
+                if (hand == HandType.HighCard && draw == DrawType.None)
                 {
                     return Rating.Nothing;
+                }
+                else if (hand == HandType.HighCard && isADraw(draw))
+                {
+                    return Rating.Weak;
                 }
                 else if (hand == HandType.Pair)
                 {
                     if ((pair == PairType.Bottom) ||
                        ((pair == PairType.Middle && kicker == KickerType.Low)))
                     {
-                        return Rating.Weak;
+                        if (isADraw(draw)) return Rating.Mediocre;
+                        else return Rating.Weak;
                     }
 
                     if ((pair == PairType.Middle && (kicker == KickerType.Middle || kicker == KickerType.High)) ||
                          (pair == PairType.Top && (kicker == KickerType.Low || kicker == KickerType.Middle)))
                     {
-                        return Rating.Mediocre;
+                        if (pair == PairType.Top && isADraw(draw)) return Rating.Strong;
+                        else return Rating.Mediocre;
                     }
 
                     if ((pair == PairType.Top && (kicker == KickerType.High)))
@@ -430,15 +566,181 @@ namespace PokerMuck
                         return Rating.Strong;
                     }
                 }
-                else if (hand == HandType.TwoPair || hand == HandType.ThreeOfAKind)
+                else if (hand == HandType.TwoPair)
                 {
                     return Rating.Strong;
                 }
-                
+
                 return Rating.Monster;
             }
 
-            public static PairType GetPairType(CardList communityCards, Card matching, Card firstCard, Card secondCard)
+
+            private bool IsTwoPair(CardList cards)
+            {
+                // Keep track of which pair face we have already found
+                int firstPairFace = -1;
+                bool foundFirstPair = false;
+                bool foundSecondPair = false;
+
+                for (int i = 0; i < cards.Count; i++)
+                {
+                    for (int j = i + 1; j < cards.Count; j++)
+                    {
+                        // firstPairFace is always != face the first set of iterations
+                        if (cards[i].Face == cards[j].Face &&
+                            ((int)cards[i].Face != firstPairFace))
+                        {
+                            if (foundFirstPair)
+                            {
+                                foundSecondPair = true;
+                            }
+                            else
+                            {
+                                foundFirstPair = true;
+                                firstPairFace = (int)cards[i].Face;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                return foundSecondPair;
+            }
+
+
+
+            private bool IsStraight(CardList cards)
+            {
+                if (cards.AreConsecutive(true, false, 5))
+                {
+                    return true;
+                }
+
+                if (cards.AreConsecutive(false, false, 5))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            private bool IsRoyalFlush(CardList cards)
+            {
+                if (cards.AreConsecutive(true, true, 5))
+                {
+                    return true;
+                }
+
+                if (cards.AreConsecutive(false, true, 5))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+
+            private DrawType GetDrawType(CardList cardList)
+            {
+                bool foundStraightDraw = false, foundFlushDraw = false;
+
+                foundFlushDraw = IsFlushDraw(cardList);
+                foundStraightDraw = IsStraightDraw(cardList);
+
+                if (foundFlushDraw && !foundStraightDraw) return DrawType.Flush;
+                else if (!foundFlushDraw && foundStraightDraw) return DrawType.Straight;
+                else if (foundFlushDraw && foundStraightDraw) return DrawType.FlushAndStraight;
+                else return DrawType.None;
+            }
+
+            private bool IsStraightDraw(CardList cardList)
+            {
+                if (cardList.Count < 4) return false;
+
+                // Case 1: 4 cards to a straight (open ended straight draw)
+                if (cardList.AreConsecutive(true, false, 4) || cardList.AreConsecutive(false, false, 4))
+                {
+                    return true;
+                }
+
+                // Case 2: inside straight draw
+                if (IsInsideStraightDraw(cardList, true) || IsInsideStraightDraw(cardList, false))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            private bool IsInsideStraightDraw(CardList cardList, bool countAceAsHigh)
+            {
+                if (cardList.Count < 4) return false;
+
+                cardList.Sort(countAceAsHigh);
+
+                // Case 1: 1 card, missing, 3 straight
+                for (int i = 0; i < (cardList.Count - 3); i++)
+                {
+                    int faceValue = cardList[i].GetFaceValue(countAceAsHigh);
+                    if (cardList[i + 1].GetFaceValue(countAceAsHigh) == faceValue + 2 &&
+                        cardList[i + 2].GetFaceValue(countAceAsHigh) == faceValue + 3 &&
+                        cardList[i + 3].GetFaceValue(countAceAsHigh) == faceValue + 4)
+                    {
+                        return true;
+                    } 
+                }
+
+                // Case 2: 2 straight, missing, 2 straight
+                for (int i = 1; i < (cardList.Count - 2); i++)
+                {
+                    int faceValue = cardList[i].GetFaceValue(countAceAsHigh);
+                    if (cardList[i - 1].GetFaceValue(countAceAsHigh) == faceValue - 1 &&
+                        cardList[i + 1].GetFaceValue(countAceAsHigh) == faceValue + 2 &&
+                        cardList[i + 2].GetFaceValue(countAceAsHigh) == faceValue + 3)
+                    {
+                        return true;
+                    }
+                }
+
+                // Case 3: 3 straight, missing, 1 card
+                for (int i = 2; i < (cardList.Count - 1); i++)
+                {
+                    int faceValue = cardList[i].GetFaceValue(countAceAsHigh);
+                    if (cardList[i - 2].GetFaceValue(countAceAsHigh) == faceValue - 2 &&
+                        cardList[i - 1].GetFaceValue(countAceAsHigh) == faceValue - 1 &&
+                        cardList[i + 1].GetFaceValue(countAceAsHigh) == faceValue + 2)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private bool IsFlushDraw(CardList cardList)
+            {
+                // Flush draw
+                for (int i = 0; i < cardList.Count; i++)
+                {
+                    int numCardsSameSuit = 1;
+                    for (int j = i + 1; j < cardList.Count; j++)
+                    {
+                        if (cardList[i].Suit == cardList[j].Suit)
+                        {
+                            numCardsSameSuit++;
+                        }
+                    }
+
+                    if (numCardsSameSuit == 4)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private PairType GetPairType(CardList communityCards, Card matching, Card firstCard, Card secondCard)
             {
                 communityCards.Sort(SortUsing.AceHigh);
 
@@ -458,7 +760,7 @@ namespace PokerMuck
                 }
             }
 
-            public static KickerType GetKickerTypeFromCard(Card c)
+            private KickerType GetKickerTypeFromCard(Card c)
             {
                 switch (c.Face)
                 {
@@ -486,11 +788,10 @@ namespace PokerMuck
 
             public override string ToString()
             {
-                return hand.ToString() + ", " + kicker.ToString() + " kicker, " + pair.ToString() + " pair - " + GetRating().ToString();
+                return hand.ToString() + ", " + kicker.ToString() + " kicker, " + pair.ToString() + " pair, " + draw.ToString() + " draw - " + GetRating().ToString();
             }
         }
-
-        public enum Rating { Nothing, Weak, Mediocre, Strong, Monster }
+        #endregion
 
         public HoldemHand(Card first, Card second) : base()
         {
@@ -541,11 +842,11 @@ namespace PokerMuck
             return firstFaceStr + secondFaceStr + suited;
         }
 
-        public HoldemHand.Rating GetHandRating(HoldemGamePhase phase, HoldemBoard board)
+        public HoldemHand.Classification GetHandClassification(HoldemGamePhase phase, HoldemBoard board)
         {
             HoldemHand.Classification classification = GetClassification(phase, board);
             Debug.Print(String.Format("Rating hand [{0}] for {1} on board [{2}]: {3}", base.ToString(), phase.ToString(), board.ToString(), classification.ToString()));
-            return classification.GetRating();
+            return classification;
         }
 
         /* Calculates the type of the hand given a board
@@ -558,171 +859,10 @@ namespace PokerMuck
             }
             else
             {
-                return CalculatePostflopClassification(board.GetBoardAt(phase));
+                return new ClassificationPostflop(this, phase, board);
             }
-        }
-
-        private HoldemHand.Classification CalculatePostflopClassification(CardList communityCards)
-        {
-            Debug.Assert(communityCards.Count > 0, "Cannot classificate an empty list of community cards.");
-
-            // Create a new list including the board cards and the cards from the hand
-            CardList cards = new CardList(communityCards.Count + 2);
-            foreach (Card c in communityCards) cards.AddCard(c);
-            cards.AddCard(this.GetFirstCard());
-            cards.AddCard(this.GetSecondCard());
-
-            // --- Royal flush
-
-            if (IsRoyalFlush(cards))
-            {
-                return new ClassificationPostflop(ClassificationPostflop.HandType.RoyalFlush, ClassificationPostflop.KickerType.Irrelevant);
-            }
-
-            // -- Four of a kind
-            if (cards.HaveIdenticalFaces(4))
-            {
-                return new ClassificationPostflop(ClassificationPostflop.HandType.FourOfAKind, ClassificationPostflop.KickerType.Irrelevant);
-            }
-
-            // -- Full House
-            // If we have three of a kind and two pair at the same time, we have a full house
-            bool isThreeOfAKind = cards.HaveIdenticalFaces(3);
-            bool isTwoPair = IsTwoPair(cards);
-            if (isThreeOfAKind && isTwoPair)
-            {
-                return new ClassificationPostflop(ClassificationPostflop.HandType.FullHouse, ClassificationPostflop.KickerType.Irrelevant);
-            }
-
-            // -- Flush
-            for (int i = 0; i < cards.Count; i++)
-            {
-                int numCardsSameSuit = 0;
-                for (int j = i + 1; j < cards.Count; j++)
-                {
-                    if (cards[i].Suit == cards[j].Suit)
-                    {
-                        numCardsSameSuit++;
-                    }
-                }
-
-                if (numCardsSameSuit >= 4)
-                {
-                    return new ClassificationPostflop(ClassificationPostflop.HandType.Flush, ClassificationPostflop.KickerType.Irrelevant);
-                }
-            }
-
-            // -- Straight
-            if (IsStraight(cards))
-            {
-                return new ClassificationPostflop(ClassificationPostflop.HandType.Straight, ClassificationPostflop.KickerType.Irrelevant);
-            }
-
-            // -- Trips
-            if (isThreeOfAKind)
-            {
-                return new ClassificationPostflop(ClassificationPostflop.HandType.ThreeOfAKind, ClassificationPostflop.KickerType.Irrelevant);
-            }
-
-            // -- Two pair
-            if (isTwoPair)
-            {
-                return new ClassificationPostflop(ClassificationPostflop.HandType.TwoPair, ClassificationPostflop.KickerType.Irrelevant);
-            }
-
-            // -- Pair
-            Card matching;
-            if (cards.HaveIdenticalFaces(2, out matching))
-            {
-                // Sort list by face value (ace high first)
-                cards.Sort(SortUsing.AceHigh);
-                
-                // Find kicker (check from end of the list where face values are higher)
-                Card kicker = cards[0];
-                for (int i = cards.Count - 1; i >= 0; i--)
-                {
-                    if (cards[i].Face != matching.Face)
-                    {
-                        kicker = cards[i];
-                        break;
-                    }
-                }
-
-                ClassificationPostflop.KickerType kickerType = ClassificationPostflop.GetKickerTypeFromCard(kicker);
-                ClassificationPostflop.PairType pairType = ClassificationPostflop.GetPairType(communityCards, matching, this.GetFirstCard(), this.GetSecondCard());
-                return new ClassificationPostflop(ClassificationPostflop.HandType.Pair, kickerType, pairType);
-            }
-
-            // -- High card
-            cards.Sort(SortUsing.AceHigh);
-            Card highCard = cards.Last;
-
-            return new ClassificationPostflop(ClassificationPostflop.HandType.HighCard, ClassificationPostflop.GetKickerTypeFromCard(highCard));
         }
 
         
-        private bool IsTwoPair(CardList cards)
-        {
-            // Keep track of which pair face we have already found
-            int firstPairFace = -1;
-            bool foundFirstPair = false;
-            bool foundSecondPair = false;
-
-            for (int i = 0; i < cards.Count; i++)
-            {
-                for (int j = i + 1; j < cards.Count; j++)
-                {
-                    // firstPairFace is always != face the first set of iterations
-                    if (cards[i].Face == cards[j].Face && 
-                        ((int)cards[i].Face != firstPairFace))
-                    {
-                        if (foundFirstPair)
-                        {
-                            foundSecondPair = true;
-                        }
-                        else
-                        {
-                            foundFirstPair = true;
-                            firstPairFace = (int)cards[i].Face;
-                        }
-                        break;
-                    }
-                }
-            }
-
-            return foundSecondPair;
-        }
-
-
-
-        private bool IsStraight(CardList cards)
-        {
-            if (cards.AreConsecutive(true, false, 5))
-            {
-                return true;
-            }
-
-            if (cards.AreConsecutive(false, false, 5))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool IsRoyalFlush(CardList cards)
-        {
-            if (cards.AreConsecutive(true, true, 5))
-            {
-                return true;
-            }
-
-            if (cards.AreConsecutive(false, true, 5))
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }

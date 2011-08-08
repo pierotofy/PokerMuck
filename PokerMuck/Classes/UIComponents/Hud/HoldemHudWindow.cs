@@ -53,10 +53,49 @@ namespace PokerMuck
             picButtonStealer.Visible = (stealRaises.Value >= 0.5) || (stealRaises is StatisticsUnknownData);
             picButtonStealer.SetQuestionSignVisible(stealRaises is StatisticsUnknownData);
 
-            // If a person wins 80% or more at showdown, he's a solid player (or lucky, but this is what we have)
-            StatisticsData wonAtShowdownStats = stats.Get("Won at Showdown", "Summary").MainData;
-            picSolidPlayer.Visible = (wonAtShowdownStats.Value >= 0.8) || (wonAtShowdownStats is StatisticsUnknownData);
-            picSolidPlayer.SetQuestionSignVisible(wonAtShowdownStats is StatisticsUnknownData);
+
+            toggleIsSolidIcon(stats);
+        }
+
+        private void toggleIsSolidIcon(PlayerStatistics stats)
+        {
+            // If a player raises and bets with value hands, he's solid (80% of bets and raises are value?)
+            StatisticsData strongBets = stats.Get("Bets", "Summary").FindSubStatistic(HoldemHand.Rating.Strong.ToString());
+            StatisticsData monsterBets = stats.Get("Bets", "Summary").FindSubStatistic(HoldemHand.Rating.Monster.ToString());
+
+            StatisticsData strongRaises = stats.Get("Raises", "Summary").FindSubStatistic(HoldemHand.Rating.Strong.ToString());
+            StatisticsData monsterRaises = stats.Get("Raises", "Summary").FindSubStatistic(HoldemHand.Rating.Monster.ToString());
+
+            StatisticsData strongCheckRaises = stats.Get("Check Raise", "Summary").FindSubStatistic(HoldemHand.Rating.Strong.ToString());
+            StatisticsData monsterCheckRaises = stats.Get("Check Raise", "Summary").FindSubStatistic(HoldemHand.Rating.Monster.ToString());
+
+
+            float valueSums = strongBets.Value + monsterBets.Value +
+                              strongRaises.Value + monsterRaises.Value +
+                              strongCheckRaises.Value + monsterCheckRaises.Value;
+
+            // To compute an average, we first have to see if the values are known (or are set to zero just because they are unknown)
+            float divideBy = 0;
+            if (!(strongRaises is StatisticsUnknownData && monsterRaises is StatisticsUnknownData))
+            {
+                divideBy += 1.0f;
+            }
+            if (!(strongBets is StatisticsUnknownData && monsterBets is StatisticsUnknownData))
+            {
+                divideBy += 1.0f;
+            }
+            if (!(strongCheckRaises is StatisticsUnknownData && monsterCheckRaises is StatisticsUnknownData))
+            {
+                divideBy += 1.0f;
+            }
+            bool noInformation = (divideBy == 0);
+
+            float valueAverage;
+            if (noInformation) valueAverage = 0;
+            else valueAverage = valueSums / divideBy;
+
+            picSolidPlayer.Visible = (valueAverage >= 0.8) || noInformation;
+            picSolidPlayer.SetQuestionSignVisible(noInformation);
         }
 
         private void lblImmediateStats_MouseUp(object sender, MouseEventArgs e)

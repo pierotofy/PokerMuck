@@ -45,9 +45,21 @@ namespace PokerMuck
             return subData.Count > 0;
         }
 
+        public StatisticsData FindSubStatistic(String name)
+        {
+            foreach (StatisticsData data in subData)
+            {
+                if (data.Name == name)
+                {
+                    return data;
+                }
+            }
+
+            return null;
+        }
+
         public void AddSubStatistic(StatisticsData subStatistic){
             subData.Add(subStatistic);
-            // TODO sort?
         }
 
         public Statistic Average(String category, int precision, params Statistic[] stats)
