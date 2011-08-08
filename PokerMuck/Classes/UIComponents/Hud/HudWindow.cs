@@ -23,22 +23,29 @@ namespace PokerMuck
 
 
         /* Notifies that the statistics of this hud need to be reset */
-        public delegate void OnResetStatisticsButtonPressedHandler(HudWindow sender);
-        public event OnResetStatisticsButtonPressedHandler OnResetStatisticsButtonPressed;
+        private delegate void OnResetStatisticsButtonPressedHandler(HudWindow sender);
+        private event OnResetStatisticsButtonPressedHandler OnResetStatisticsButtonPressed;
 
         /* Notifies that the statistics of everybody need to be reset */
-        public delegate void OnResetAllStatisticsButtonPressedHandler(HudWindow sender);
-        public event OnResetAllStatisticsButtonPressedHandler OnResetAllStatisticsButtonPressed;
+        private delegate void OnResetAllStatisticsButtonPressedHandler(HudWindow sender);
+        private event OnResetAllStatisticsButtonPressedHandler OnResetAllStatisticsButtonPressed;
 
         /* Notifies that the statistics of a our player need to be displayed 
          * in the expanded view */
-        public delegate void OnPlayerStatisticsNeedToBeDisplayedHandler(HudWindow sender);
-        public event OnPlayerStatisticsNeedToBeDisplayedHandler OnPlayerStatisticsNeedToBeDisplayed;
+        private delegate void OnPlayerStatisticsNeedToBeDisplayedHandler(HudWindow sender);
+        private event OnPlayerStatisticsNeedToBeDisplayedHandler OnPlayerStatisticsNeedToBeDisplayed;
 
         public HudWindow()
         {
             InitializeComponent();
             DisposeFlag = false;
+        }
+
+        public virtual void RegisterHandlers(Hud hud, Table t, Player p){
+            this.OnResetStatisticsButtonPressed += new HudWindow.OnResetStatisticsButtonPressedHandler(p.window_OnResetStatisticsButtonPressed);
+            this.OnResetAllStatisticsButtonPressed += new HudWindow.OnResetAllStatisticsButtonPressedHandler(t.window_OnResetAllStatisticsButtonPressed);
+            this.OnPlayerStatisticsNeedToBeDisplayed += new HudWindow.OnPlayerStatisticsNeedToBeDisplayedHandler(hud.window_OnPlayerStatisticsNeedToBeDisplayed);
+            this.LocationChanged += new EventHandler(hud.window_LocationChanged);
         }
 
         public void DisplayPlayerName(String playerName)

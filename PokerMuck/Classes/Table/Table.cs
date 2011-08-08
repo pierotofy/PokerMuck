@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace PokerMuck
 {
-    class Table : IHHMonitorHandler
+    public class Table : IHHMonitorHandler
     {
         /* Hand history monitor */
         private HHMonitor hhMonitor;

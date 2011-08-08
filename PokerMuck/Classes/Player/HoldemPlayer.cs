@@ -1146,6 +1146,43 @@ namespace PokerMuck
             }
         }
 
+        private List<String> GetPreflopPushingRange()
+        {
+            List<String> result = new List<String>();
+            if (startingHandsWithPreflopRaise.Count > 0)
+            {
+                // We calculate mean and standard deviation of the raising hands preflop
+                double percentileSum = 0;
+                double derivationSum = 0;
+                foreach (HoldemHand hand in startingHandsWithPreflopRaise)
+                {
+                    double percentile = (double)hand.GetPrelopPercentile();
+                    percentileSum += percentile;
+                    derivationSum += (percentile) * (percentile);
+                }
+
+                double mean = percentileSum / startingHandsWithPreflopRaise.Count;
+                double derivationSumAverage = derivationSum / startingHandsWithPreflopRaise.Count;
+                double stdDeviation = Math.Sqrt(derivationSumAverage - (mean * mean));
+
+                // Then the range is given by all the preflop hands that have a percentile
+                // less than (mean + standard deviation)
+                float range = (float)mean + (float)stdDeviation;
+
+                result = HoldemHand.GetCardsWithinPercentile(range);                
+            }
+
+            return result;
+        }
+
+        public void DisplayPreflopPushingRangeWindow()
+        {
+            HoldemCardDisplayDialog d = new HoldemCardDisplayDialog();
+            d.SelectCards(GetPreflopPushingRange());
+            d.Text = "Estimated Preflop Pushing Range for " + this.Name;
+            d.Show();
+        }
+
         /* Returns the statistics of the player */
         public override PlayerStatistics GetStatistics()
         {

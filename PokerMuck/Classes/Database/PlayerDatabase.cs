@@ -8,7 +8,7 @@ namespace PokerMuck
 {
     /* This class takes care of storing (in memory)
      * information about players */
-    class PlayerDatabase
+    public class PlayerDatabase
     {
         List<Player> players;
 

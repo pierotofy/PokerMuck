@@ -32,7 +32,7 @@
             this.lblPlayerName = new System.Windows.Forms.Label();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetPlayerStatisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.resetEverybodysStatisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblTotalHandsPlayed = new System.Windows.Forms.Label();
             this.contextMenu.SuspendLayout();
@@ -57,7 +57,6 @@
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.resetPlayerStatisticsToolStripMenuItem,
-            this.toolStripMenuItem1,
             this.resetEverybodysStatisticsToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
             this.contextMenu.Size = new System.Drawing.Size(218, 54);
@@ -71,8 +70,8 @@
             // 
             // toolStripMenuItem1
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(6, 6);
+            this.lineToolStripMenuItem.Name = "toolStripMenuItem1";
+            this.lineToolStripMenuItem.Size = new System.Drawing.Size(6, 6);
             // 
             // resetEverybodysStatisticsToolStripMenuItem
             // 
@@ -127,9 +126,9 @@
         #endregion
 
         private System.Windows.Forms.Label lblPlayerName;
-        private System.Windows.Forms.ContextMenuStrip contextMenu;
+        protected System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem resetPlayerStatisticsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        protected System.Windows.Forms.ToolStripSeparator lineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetEverybodysStatisticsToolStripMenuItem;
         private System.Windows.Forms.Label lblTotalHandsPlayed;
     }

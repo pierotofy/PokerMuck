@@ -12,10 +12,25 @@ namespace PokerMuck
 {
     public partial class HoldemHudWindow : HudWindow
     {
+        /* Notify that we need to display the player's pushing range preflop */
+        private delegate void OnPlayerPreflopPushingRangeNeedToBeDisplayedHandler(HoldemHudWindow sender);
+        private event OnPlayerPreflopPushingRangeNeedToBeDisplayedHandler OnPlayerPreflopPushingRangeNeedToBeDisplayed;
+
         public HoldemHudWindow()
         {
             InitializeComponent();
+        }
 
+        public override void RegisterHandlers(Hud hud, Table t, Player p)
+        {
+            base.RegisterHandlers(hud, t, p);
+
+            this.OnPlayerPreflopPushingRangeNeedToBeDisplayed += new OnPlayerPreflopPushingRangeNeedToBeDisplayedHandler(hud.holdemWindow_OnPlayerPreflopPushingRangeNeedToBeDisplayed);
+        }
+
+        void displayRaisingRangeToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (OnPlayerPreflopPushingRangeNeedToBeDisplayed != null) OnPlayerPreflopPushingRangeNeedToBeDisplayed(this);
         }
 
         public override void DisplayStatistics(PlayerStatistics stats)

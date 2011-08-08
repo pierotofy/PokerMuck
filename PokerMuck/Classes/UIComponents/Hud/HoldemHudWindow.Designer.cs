@@ -33,6 +33,7 @@
             this.picButtonStealer = new HudIcon(global::PokerMuck.Properties.Resources.StealMaskIco, "Frequent blind stealer");
             this.picCallingStation = new HudIcon(global::PokerMuck.Properties.Resources.TelephoneIco, "Calling station");
             this.picSolidPlayer = new HudIcon(global::PokerMuck.Properties.Resources.AnvilIco, "Solid Player");
+            this.displayRaisingRangeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
 
             this.SuspendLayout();
@@ -114,9 +115,26 @@
             this.Controls.SetChildIndex(this.lblImmediateStats, 0);
             this.Controls.SetChildIndex(this.picEasySteal, 0);
 
+            
+            // 
+            // displayRaisingRangeToolStripMenuItem
+            // 
+            this.displayRaisingRangeToolStripMenuItem.Name = "displayRaisingRangeToolStripMenuItem";
+            this.displayRaisingRangeToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.displayRaisingRangeToolStripMenuItem.Text = "Display Preflop Raising Range";
+            this.displayRaisingRangeToolStripMenuItem.Click += new System.EventHandler(displayRaisingRangeToolStripMenuItem_Click);
+            
+            //
+            // contextMenu
+            //
+            this.contextMenu.Items.Insert(0, this.displayRaisingRangeToolStripMenuItem);
+            this.contextMenu.Items.Insert(1, this.lineToolStripMenuItem);
+
             this.ResumeLayout(false);
 
         }
+
+
 
         #endregion
 
@@ -125,6 +143,7 @@
         private HudIcon picButtonStealer;
         private HudIcon picCallingStation;
         private HudIcon picSolidPlayer;
+        private System.Windows.Forms.ToolStripMenuItem displayRaisingRangeToolStripMenuItem;
 
     }
 }

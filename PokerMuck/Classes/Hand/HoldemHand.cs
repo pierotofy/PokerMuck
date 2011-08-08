@@ -11,7 +11,7 @@ namespace PokerMuck
     {
         public enum Rating { Nothing, Weak, Mediocre, Strong, Monster }
 
-        #region Hand Percentiles Hash Table 
+        #region Hand Percentiles Hash Table and methods
         private static Hashtable preflopPercentiles = new Hashtable()
         {
             {"AA", 0.005f},
@@ -318,6 +318,21 @@ namespace PokerMuck
             {"72o", 0.991f},
             {"32o", 1.000f}
         };
+
+        public static List<String> GetCardsWithinPercentile(float percentile)
+        {
+            List<String> result = new List<String>();
+
+            foreach (String cards in preflopPercentiles.Keys)
+            {
+                if ((float)preflopPercentiles[cards] <= percentile)
+                {
+                    result.Add(cards);
+                }
+            }
+
+            return result;
+        }
 
         /* Checks that every possible hand is covered in the table */
         public static void TestPercentiles()
@@ -808,6 +823,28 @@ namespace PokerMuck
             return cards[1];
         }
 
+        public float GetPrelopPercentile()
+        {
+            Debug.Assert(GetFirstCard() != null && GetSecondCard() != null, "Cannot retrieve the preflop percentile if the cards are not known.");
+
+            return (float)preflopPercentiles[this.ToString()];
+        }
+
+        public static string ConvertToString(CardFace firstFace, CardSuit firstSuit, CardFace secondFace, CardSuit secondSuit)
+        {
+            // Suited?
+            string suited = "o"; // default to offsuit
+            if (firstSuit == secondSuit) suited = "s";
+
+            // If we have a pair, it's obviously offsuit
+            if (firstFace == secondFace) suited = "";
+
+            string firstFaceStr = Card.CardFaceToChar(firstFace).ToString();
+            string secondFaceStr = Card.CardFaceToChar(secondFace).ToString();
+
+            return firstFaceStr + secondFaceStr + suited;
+        }
+
         /* In hold'em we don't really care whether we have Kh 6h or Kc 6c,
          * they can both be referred to as K6s (king-six suited) */
         public override string ToString()
@@ -821,13 +858,6 @@ namespace PokerMuck
             CardFace firstFace = firstCard.Face;
             CardFace secondFace = secondCard.Face;
 
-            // Suited?
-            string suited = "o"; // default to offsuit
-            if (firstSuit == secondSuit) suited = "s";
-
-            // If we have a pair, it's obviously offsuit
-            if (firstFace == secondFace) suited = "";
-
             // Swap them so that the bigger card is echoed first (A6 instead of 6A)
             if (firstCard.GetFaceValue() < secondCard.GetFaceValue())
             {
@@ -836,10 +866,7 @@ namespace PokerMuck
                 secondFace = t;
             }
 
-            string firstFaceStr = Card.CardFaceToChar(firstFace).ToString();
-            string secondFaceStr = Card.CardFaceToChar(secondFace).ToString();            
-
-            return firstFaceStr + secondFaceStr + suited;
+            return ConvertToString(firstFace, firstSuit, secondFace, secondSuit);
         }
 
         public HoldemHand.Classification GetHandClassification(HoldemGamePhase phase, HoldemBoard board)

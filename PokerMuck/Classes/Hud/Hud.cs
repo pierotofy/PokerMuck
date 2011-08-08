@@ -10,7 +10,7 @@ namespace PokerMuck
 {
     /* This class takes care of displaying a hud with statistics
      * of a table */
-    class Hud
+    public class Hud
     {
         private HudUserSettings settings;
 
@@ -91,11 +91,7 @@ namespace PokerMuck
                     // We set a 1:1 association between the player and the HudWindow
                     p.HudWindow = window;
 
-                    // Register a few handlers
-                    window.OnResetStatisticsButtonPressed += new HudWindow.OnResetStatisticsButtonPressedHandler(p.window_OnResetStatisticsButtonPressed);
-                    window.OnResetAllStatisticsButtonPressed += new HudWindow.OnResetAllStatisticsButtonPressedHandler(table.window_OnResetAllStatisticsButtonPressed);
-                    window.OnPlayerStatisticsNeedToBeDisplayed += new HudWindow.OnPlayerStatisticsNeedToBeDisplayedHandler(window_OnPlayerStatisticsNeedToBeDisplayed);
-                    window.LocationChanged += new EventHandler(window_LocationChanged);
+                    window.RegisterHandlers(this, table, p);
 
                     windowsList.Add(window);
                     window.Show(); // Without this we cannot move the windows
@@ -116,29 +112,45 @@ namespace PokerMuck
             table.PostHudDisplayAction();
         }
 
-        void window_OnPlayerStatisticsNeedToBeDisplayed(HudWindow sender)
+        public void holdemWindow_OnPlayerPreflopPushingRangeNeedToBeDisplayed(HoldemHudWindow sender)
         {
-            bool found = false;
-
-            // Find which player is associated with this hud
-            foreach (Player p in table.PlayerList)
+            HoldemPlayer p = (HoldemPlayer)FindPlayerAssociatedWith((HudWindow)sender);
+            if (p != null)
             {
-                if (p.HudWindow.Equals(sender))
-                {
-                    // Found!
-                    table.OnDisplayPlayerStatistics(p);
-                    found = true;
-                }
+                p.DisplayPreflopPushingRangeWindow();
             }
+        }
 
-            if (!found)
+        public void window_OnPlayerStatisticsNeedToBeDisplayed(HudWindow sender)
+        {
+            Player p = FindPlayerAssociatedWith(sender);
+            if (p != null)
+            {
+                table.OnDisplayPlayerStatistics(p);
+            }
+            else
             {
                 Debug.Print("A command to display the statistics of a player was received, but I couldn't find the player in the list.");
             }
         }
 
+        private Player FindPlayerAssociatedWith(HudWindow w)
+        {
+            // Find which player is associated with this hud
+            foreach (Player p in table.PlayerList)
+            {
+                if (p.HudWindow.Equals(w))
+                {
+                    // Found!
+                    return p;
+                }
+            }
+
+            return null;
+        }
+
         /* Make sure we store the new locations */
-        void window_LocationChanged(object sender, EventArgs e)
+        public void window_LocationChanged(object sender, EventArgs e)
         {
             StoreHudWindowPositions();
             settings.Save(); // Commit to file

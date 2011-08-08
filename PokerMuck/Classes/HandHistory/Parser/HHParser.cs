@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace PokerMuck
 {
-    abstract class HHParser
+    public abstract class HHParser
     {
         /* Events */
 

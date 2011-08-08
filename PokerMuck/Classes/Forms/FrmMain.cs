@@ -50,8 +50,18 @@ namespace PokerMuck
             pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
             pmDirector.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
 
+
             //pmDirector.Test();
             /*
+            HoldemCardDisplayDialog d = new HoldemCardDisplayDialog();
+            d.Show();
+            List<String> cards = new List<String>();
+            cards.Add("AA");
+            cards.Add("87s");
+            cards.Add("55");
+            cards.Add("KQo");
+            d.SelectCards(cards);
+       
             Statistic preflop = new Statistic(new StatisticsPercentageData("Raise", 2.5f), "Preflop");
             preflop.AddSubStatistic(new StatisticsPercentageData("For value", 0.2f));
             preflop.AddSubStatistic(new StatisticsPercentageData("Bluff", 0.2f));
