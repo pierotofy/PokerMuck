@@ -71,7 +71,6 @@ namespace PokerMuck
 
         /* Check-fold */
         private MultipleValueCounter checkFolds;
-        private MultipleValueCounter checksFoldsRatings;
 
         /* Check-call */
         private MultipleValueCounter checkCalls;
@@ -177,7 +176,6 @@ namespace PokerMuck
             this.checkRaises = (MultipleValueCounter)other.checkRaises.Clone();
             this.checksRaisesRatings = (MultipleValueCounter)other.checksRaisesRatings.Clone();
             this.checkFolds = (MultipleValueCounter)other.checkFolds.Clone();
-            this.checksFoldsRatings = (MultipleValueCounter)other.checksFoldsRatings.Clone();
             this.checkCalls = (MultipleValueCounter)other.checkCalls.Clone();
             this.checksCallsRatings = (MultipleValueCounter)other.checksCallsRatings.Clone();
             this.sawStreet = (MultipleValueCounter)other.sawStreet.Clone();
@@ -238,8 +236,6 @@ namespace PokerMuck
             checksRaisesRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
                 new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             checkFolds = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
-            checksFoldsRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
-                new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
             checkCalls = new MultipleValueCounter(HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River);
             checksCallsRatings = new MultipleValueCounter(new object[] { HoldemGamePhase.Preflop, HoldemGamePhase.Flop, HoldemGamePhase.Turn, HoldemGamePhase.River },
                 new object[] { HoldemHand.Rating.Nothing, HoldemHand.Rating.Weak, HoldemHand.Rating.Mediocre, HoldemHand.Rating.Strong, HoldemHand.Rating.Monster });
@@ -325,7 +321,6 @@ namespace PokerMuck
             checkRaises.Reset();
             checksRaisesRatings.Reset();
             checkFolds.Reset();
-            checksFoldsRatings.Reset();
             checkCalls.Reset();
             checksCallsRatings.Reset();
 
@@ -375,7 +370,6 @@ namespace PokerMuck
             checkRaises.AllowIncrement();
             checksRaisesRatings.AllowIncrement();
             checkFolds.AllowIncrement();
-            checksFoldsRatings.AllowIncrement();
             checkCalls.AllowIncrement();
             checksCallsRatings.AllowIncrement();
 
@@ -439,11 +433,6 @@ namespace PokerMuck
                     if (checkRaises[phase].WasIncremented)
                     {
                         checksRaisesRatings[phase, rating].Increment();
-                    }
-
-                    if (checkFolds[phase].WasIncremented)
-                    {
-                        checksFoldsRatings[phase, rating].Increment();
                     }
 
                     if (checkCalls[phase].WasIncremented)
@@ -635,16 +624,16 @@ namespace PokerMuck
             return ret;
         }
 
-        private void AppendActionsSubstatistics(HoldemGamePhase phase, Statistic statistic, MultipleValueCounter details)
+        private void AppendActionsSubstatistics(HoldemGamePhase phase, Statistic statistic, MultipleValueCounter ratings)
         {
-            float sum = (float)details.GetSumOfAllValuesIn(phase);
+            float sum = (float)ratings.GetSumOfAllValuesIn(phase);
 
             foreach (HoldemHand.Rating rating in Enum.GetValues(typeof(HoldemHand.Rating)))
             {
                 if (sum == 0) statistic.AddSubStatistic(new StatisticsUnknownData(rating.ToString()));
                 else
                 {
-                    float ratio = (float)details[phase, rating].Value / sum;
+                    float ratio = (float)ratings[phase, rating].Value / sum;
                     statistic.AddSubStatistic(new StatisticsPercentageData(rating.ToString(), ratio));
                 }
             }
@@ -750,17 +739,22 @@ namespace PokerMuck
             }
         }
 
-        private Statistic GetCheckActionStats(HoldemGamePhase phase, String name, String category, MultipleValueCounter values, MultipleValueCounter details)
+        /* @param ratings the multiple value counter object containing the ratings how a check action, can be null if no ratings are available */
+        private Statistic GetCheckActionStats(HoldemGamePhase phase, String name, String category, MultipleValueCounter values, MultipleValueCounter ratings)
         {
             int checkActions = (int)checkRaises[phase].Value + (int)checkCalls[phase].Value + (int)checkFolds[phase].Value;
 
-            if (checkActions == 0) return CreateUnknownActionStatistic(name, category);
+            if (checkActions == 0)
+            {
+                if (ratings != null) return CreateUnknownActionStatistic(name, category);
+                else return Statistic.CreateUnknown(name, category);
+            }
             else
             {
                 float ratio = (float)values[phase].Value / (float)checkActions;
                 Statistic ret = new Statistic(new StatisticsPercentageData(name, ratio), category);
 
-                AppendActionsSubstatistics(phase, ret, details);
+                if (ratings != null) AppendActionsSubstatistics(phase, ret, ratings);
 
                 return ret;
             }
@@ -781,7 +775,7 @@ namespace PokerMuck
         /* How many times has the player check folded? */
         public Statistic GetCheckFoldStats(HoldemGamePhase phase, String category)
         {
-            return GetCheckActionStats(phase, "Check Fold", category, checkFolds, checksFoldsRatings);
+            return GetCheckActionStats(phase, "Check Fold", category, checkFolds, null);
         }
 
 
@@ -1302,6 +1296,7 @@ namespace PokerMuck
             result.Set(checkRaisesAverage);
 
             // Overall check-fold % across all streets
+            
             Statistic checkFoldsFlop = result.Get("Check Fold", "Flop");
             Statistic checkFoldsAverage = checkFoldsFlop.Average("Summary", 0, result.Get("Check Fold", "Turn"),
                                                                                      result.Get("Check Fold", "River"));

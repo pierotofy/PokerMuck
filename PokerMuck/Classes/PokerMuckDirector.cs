@@ -84,15 +84,6 @@ namespace PokerMuck
             // Initialize the user configuration 
             userSettings = new PokerMuckUserSettings();
 
-            // Init windows listener
-            windowsListener = new WindowsListener(this);
-            windowsListener.ListenInterval = 200;
-            windowsListener.StartListening();
-
-            // Init new files monitor
-            newFilesMonitor = new NewFilesMonitor(UserSettings.HandHistoryDirectory, this);
-            newFilesMonitor.StartMonitoring();
-
             // First execution?
             
             if (UserSettings.FirstExecution)
@@ -110,6 +101,15 @@ namespace PokerMuck
 
             // Get the poker client from the user settings
             ChangePokerClient(userSettings.CurrentPokerClient);
+
+            // Init windows listener
+            windowsListener = new WindowsListener(this);
+            windowsListener.ListenInterval = 200;
+            windowsListener.StartListening();
+
+            // Init new files monitor
+            newFilesMonitor = new NewFilesMonitor(UserSettings.HandHistoryDirectory, this);
+            newFilesMonitor.StartMonitoring();
         }
 
 

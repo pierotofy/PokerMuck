@@ -68,8 +68,45 @@ namespace PokerMuck
             picButtonStealer.Visible = (stealRaises.Value >= 0.5) || (stealRaises is StatisticsUnknownData);
             picButtonStealer.SetQuestionSignVisible(stealRaises is StatisticsUnknownData);
 
-
             toggleIsSolidIcon(stats);
+
+            toggleIsDonkIcon(stats);
+        }
+
+        private void toggleIsDonkIcon(PlayerStatistics stats)
+        {
+            // If a person is betting/raising/check raising with nothing more than 10%, he's bluffing more than usual
+            // 10% is considered to be a standard "bluffing percentage" you can expect. More than that, is donkish
+            StatisticsData nothingBets = stats.Get("Bets", "Summary").FindSubStatistic(HoldemHand.Rating.Nothing.ToString());
+            StatisticsData nothingRaises = stats.Get("Raises", "Summary").FindSubStatistic(HoldemHand.Rating.Nothing.ToString());
+            StatisticsData nothingCheckRaises = stats.Get("Check Raise", "Summary").FindSubStatistic(HoldemHand.Rating.Nothing.ToString());
+
+            float valueSums = nothingBets.Value +
+                              nothingRaises.Value + 
+                              nothingCheckRaises.Value;
+
+            // To compute an average, we first have to see if the values are known (or are set to zero just because they are unknown)
+            float divideBy = 0;
+            if (!(nothingBets is StatisticsUnknownData))
+            {
+                divideBy += 1.0f;
+            }
+            if (!(nothingRaises is StatisticsUnknownData))
+            {
+                divideBy += 1.0f;
+            }
+            if (!(nothingCheckRaises is StatisticsUnknownData))
+            {
+                divideBy += 1.0f;
+            }
+            bool noInformation = (divideBy == 0);
+
+            float valueAverage;
+            if (noInformation) valueAverage = 0;
+            else valueAverage = valueSums / divideBy;
+
+            picDonkPlayer.Visible = (valueAverage >= 0.1) || noInformation;
+            picDonkPlayer.SetQuestionSignVisible(noInformation);
         }
 
         private void toggleIsSolidIcon(PlayerStatistics stats)

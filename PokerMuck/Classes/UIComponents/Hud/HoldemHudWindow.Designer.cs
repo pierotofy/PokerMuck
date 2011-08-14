@@ -32,7 +32,9 @@
             this.picEasySteal = new HudIcon(global::PokerMuck.Properties.Resources.GoldIco, "Easy blind steal");
             this.picButtonStealer = new HudIcon(global::PokerMuck.Properties.Resources.StealMaskIco, "Frequent blind stealer");
             this.picCallingStation = new HudIcon(global::PokerMuck.Properties.Resources.TelephoneIco, "Calling station");
-            this.picSolidPlayer = new HudIcon(global::PokerMuck.Properties.Resources.AnvilIco, "Solid Player");
+            this.picSolidPlayer = new HudIcon(global::PokerMuck.Properties.Resources.AnvilIco, "Solid player");
+            this.picDonkPlayer = new HudIcon(global::PokerMuck.Properties.Resources.DonkIco, "Frequent bluffer");
+            
             this.displayRaisingRangeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
 
@@ -95,6 +97,18 @@
             this.picSolidPlayer.TabIndex = 2;
             this.picSolidPlayer.TabStop = false;
 
+
+            // 
+            // picBluffPlayer
+            // 
+            this.picDonkPlayer.Location = new System.Drawing.Point(77, 18);
+            this.picDonkPlayer.Cursor = System.Windows.Forms.Cursors.SizeAll;
+            this.picDonkPlayer.Name = "picBluffPlayer";
+            this.picDonkPlayer.BackColor = System.Drawing.Color.Transparent;
+            this.picDonkPlayer.Size = new System.Drawing.Size(16, 14);
+            this.picDonkPlayer.TabIndex = 2;
+            this.picDonkPlayer.TabStop = false;
+
             // 
             // HoldemHudWindow
             // 
@@ -105,6 +119,8 @@
             this.Controls.Add(this.picButtonStealer);
             this.Controls.Add(this.picCallingStation);
             this.Controls.Add(this.picSolidPlayer);
+            this.Controls.Add(this.picDonkPlayer);
+
 
             this.Controls.Add(this.lblImmediateStats);
             this.Name = "HoldemHudWindow";
@@ -143,6 +159,7 @@
         private HudIcon picButtonStealer;
         private HudIcon picCallingStation;
         private HudIcon picSolidPlayer;
+        private HudIcon picDonkPlayer;
         private System.Windows.Forms.ToolStripMenuItem displayRaisingRangeToolStripMenuItem;
 
     }
