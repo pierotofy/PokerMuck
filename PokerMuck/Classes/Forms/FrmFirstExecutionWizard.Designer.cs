@@ -50,6 +50,8 @@
             this.lblPokerClient = new System.Windows.Forms.Label();
             this.cmbPokerClient = new System.Windows.Forms.ComboBox();
             this.lblPageTwoText = new System.Windows.Forms.Label();
+            this.lblPokerClientTheme = new System.Windows.Forms.Label();
+            this.cmbPokerClientTheme = new System.Windows.Forms.ComboBox();
             this.panelPageOne.SuspendLayout();
             this.panelPageThree.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureHandHistory)).BeginInit();
@@ -215,9 +217,9 @@
             this.panelPageFive.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelPageFive.Controls.Add(this.lblPageFiveText);
             this.panelPageFive.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.panelPageFive.Location = new System.Drawing.Point(49, 499);
+            this.panelPageFive.Location = new System.Drawing.Point(52, 501);
             this.panelPageFive.Name = "panelPageFive";
-            this.panelPageFive.Size = new System.Drawing.Size(487, 160);
+            this.panelPageFive.Size = new System.Drawing.Size(487, 161);
             this.panelPageFive.TabIndex = 7;
             this.panelPageFive.Visible = false;
             // 
@@ -237,6 +239,8 @@
             // panelPageTwo
             // 
             this.panelPageTwo.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panelPageTwo.Controls.Add(this.lblPokerClientTheme);
+            this.panelPageTwo.Controls.Add(this.cmbPokerClientTheme);
             this.panelPageTwo.Controls.Add(this.lblPokerClientLanguage);
             this.panelPageTwo.Controls.Add(this.cmbPokerClientLanguage);
             this.panelPageTwo.Controls.Add(this.lblPokerClient);
@@ -252,7 +256,7 @@
             // lblPokerClientLanguage
             // 
             this.lblPokerClientLanguage.Font = new System.Drawing.Font("Verdana", 9.75F);
-            this.lblPokerClientLanguage.Location = new System.Drawing.Point(79, 119);
+            this.lblPokerClientLanguage.Location = new System.Drawing.Point(79, 144);
             this.lblPokerClientLanguage.Name = "lblPokerClientLanguage";
             this.lblPokerClientLanguage.Size = new System.Drawing.Size(166, 31);
             this.lblPokerClientLanguage.TabIndex = 12;
@@ -266,7 +270,7 @@
             this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClientLanguage.Font = new System.Drawing.Font("Verdana", 9.75F);
             this.cmbPokerClientLanguage.FormattingEnabled = true;
-            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(245, 124);
+            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(245, 149);
             this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
             this.cmbPokerClientLanguage.Size = new System.Drawing.Size(177, 24);
             this.cmbPokerClientLanguage.TabIndex = 11;
@@ -275,7 +279,7 @@
             // lblPokerClient
             // 
             this.lblPokerClient.Font = new System.Drawing.Font("Verdana", 9.75F);
-            this.lblPokerClient.Location = new System.Drawing.Point(79, 89);
+            this.lblPokerClient.Location = new System.Drawing.Point(79, 114);
             this.lblPokerClient.Name = "lblPokerClient";
             this.lblPokerClient.Size = new System.Drawing.Size(52, 21);
             this.lblPokerClient.TabIndex = 10;
@@ -289,7 +293,7 @@
             this.cmbPokerClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClient.Font = new System.Drawing.Font("Verdana", 9.75F);
             this.cmbPokerClient.FormattingEnabled = true;
-            this.cmbPokerClient.Location = new System.Drawing.Point(132, 88);
+            this.cmbPokerClient.Location = new System.Drawing.Point(132, 113);
             this.cmbPokerClient.Name = "cmbPokerClient";
             this.cmbPokerClient.Size = new System.Drawing.Size(290, 24);
             this.cmbPokerClient.TabIndex = 9;
@@ -304,9 +308,31 @@
             this.lblPageTwoText.Margin = new System.Windows.Forms.Padding(0);
             this.lblPageTwoText.Name = "lblPageTwoText";
             this.lblPageTwoText.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
-            this.lblPageTwoText.Size = new System.Drawing.Size(487, 72);
+            this.lblPageTwoText.Size = new System.Drawing.Size(487, 89);
             this.lblPageTwoText.TabIndex = 0;
             this.lblPageTwoText.Text = resources.GetString("lblPageTwoText.Text");
+            // 
+            // lblPokerClientTheme
+            // 
+            this.lblPokerClientTheme.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.lblPokerClientTheme.Location = new System.Drawing.Point(79, 180);
+            this.lblPokerClientTheme.Name = "lblPokerClientTheme";
+            this.lblPokerClientTheme.Size = new System.Drawing.Size(63, 31);
+            this.lblPokerClientTheme.TabIndex = 14;
+            this.lblPokerClientTheme.Text = "Theme:";
+            this.lblPokerClientTheme.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClientTheme
+            // 
+            this.cmbPokerClientTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClientTheme.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.cmbPokerClientTheme.FormattingEnabled = true;
+            this.cmbPokerClientTheme.Location = new System.Drawing.Point(142, 185);
+            this.cmbPokerClientTheme.Name = "cmbPokerClientTheme";
+            this.cmbPokerClientTheme.Size = new System.Drawing.Size(280, 24);
+            this.cmbPokerClientTheme.TabIndex = 13;
             // 
             // FrmFirstExecutionWizard
             // 
@@ -361,5 +387,7 @@
         private System.Windows.Forms.ComboBox cmbPokerClient;
         private System.Windows.Forms.Label lblHandHistoryLanguageText;
         private System.Windows.Forms.PictureBox pictureHandHistory;
+        private System.Windows.Forms.Label lblPokerClientTheme;
+        private System.Windows.Forms.ComboBox cmbPokerClientTheme;
     }
 }

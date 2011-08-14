@@ -6,14 +6,14 @@ using System.Diagnostics;
 
 namespace PokerMuck
 {
-    class CardRecognitionManager
+    class VisualRecognitionManager
     {
         private Table table;
         private ColorMap colorMap;
 
-        public CardRecognitionManager(Table table)
+        public VisualRecognitionManager(Table table)
         {
-            Debug.Assert(table.Game != PokerGame.Unknown, "Cannot create a card recognition manager without knowing the game of the table");
+            Debug.Assert(table.Game != PokerGame.Unknown, "Cannot create a visual recognition manager without knowing the game of the table");
             
             this.table = table;
             this.colorMap = ColorMap.Create(table.Game);

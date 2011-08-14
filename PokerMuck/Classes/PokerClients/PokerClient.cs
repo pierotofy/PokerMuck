@@ -5,6 +5,8 @@ using System.Text;
 using System.Collections;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using System.IO;
 
 namespace PokerMuck
 {
@@ -26,6 +28,11 @@ namespace PokerMuck
 
         protected Hashtable regex;
         protected Hashtable config;
+
+        private ArrayList supportedVisualRecognitionThemes;
+        public ArrayList SupportedVisualRecognitionThemes { get { return supportedVisualRecognitionThemes; } }
+
+        public bool SupportsVisualRecognition { get { return supportedVisualRecognitionThemes.Count > 0; } }
 
         private String currentLanguage; //Don't allow subclasses to change this, force them to use InitializeLanguage
         public String CurrentLanguage { get { return currentLanguage; } }
@@ -138,12 +145,46 @@ namespace PokerMuck
             return str;
         }
 
+
+
         /* Default constructor, initializes the regex and config hashtables */
         protected PokerClient()
         {
             regex = new Hashtable();
             config = new Hashtable();
 
+            LoadSupportedVisualRecognitionThemes();
+        }
+
+        /* Themes that have a color map in the appropriate directory */
+        private void LoadSupportedVisualRecognitionThemes()
+        {
+            supportedVisualRecognitionThemes = new ArrayList();
+            
+            try
+            {
+                String[] files = System.IO.Directory.GetFiles(Application.StartupPath + @"\\Resources\\ColorMaps\\" + this.Name);
+
+                Regex themeName = new Regex(@"[\w]+_[\d]+-max_(?<theme>[\w]+)\.bmp");
+
+                foreach (String file in files)
+                {
+                    Match m = themeName.Match(file);
+                    if (m.Success){
+                        String theme = m.Groups["theme"].Value;
+
+                        Debug.Print("Found valid color map for " + this.Name + ": " + theme);
+                        supportedVisualRecognitionThemes.Add(theme);
+                    }else{
+                        Debug.Print("Detected invalid card map filename format: " + file + ", skipping...");
+                    }
+
+                }
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Debug.Print("CardMaps directory for " + this.Name + " not found, skipping...");
+            }
         }
 
         public bool HasRegex(String key)

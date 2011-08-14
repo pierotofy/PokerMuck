@@ -291,6 +291,9 @@ namespace PokerMuck
             // Load languages for the current client
             LoadPokerClientLanguages(pmDirector.UserSettings.CurrentPokerClient);
 
+            // Load themes
+            LoadPokerClientThemes(pmDirector.UserSettings.CurrentPokerClient);
+
             // Set current poker client language
             cmbPokerClientLanguage.Text = pmDirector.UserSettings.CurrentPokerClient.CurrentLanguage;
         }
@@ -309,6 +312,22 @@ namespace PokerMuck
         private void LoadPokerClientLanguages(PokerClient client)
         {
             cmbPokerClientLanguage.DataSource = client.SupportedLanguages;
+        }
+
+        private void LoadPokerClientThemes(PokerClient client)
+        {
+            if (client.SupportedVisualRecognitionThemes.Count > 0)
+            {
+                cmbPokerClientTheme.DataSource = client.SupportedVisualRecognitionThemes;
+                cmbPokerClientTheme.Enabled = true;
+            }
+            else
+            {
+                ArrayList list = new ArrayList();
+                list.Add("Not yet supported");
+                cmbPokerClientTheme.DataSource = list;
+                cmbPokerClientTheme.Enabled = false;                
+            }
         }
 
         /* Change hand history directory */
@@ -338,6 +357,7 @@ namespace PokerMuck
 
             pmDirector.ChangePokerClient(client);
             LoadPokerClientLanguages(client);
+            LoadPokerClientThemes(client);
 
             // Refresh hand history directory
             txtHandHistoryDirectory.Text = pmDirector.UserSettings.StoredHandHistoryDirectory;

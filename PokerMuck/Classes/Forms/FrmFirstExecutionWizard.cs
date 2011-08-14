@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections;
 
 namespace PokerMuck
 {
@@ -114,7 +115,9 @@ namespace PokerMuck
             // Load languages for the current client
             LoadPokerClientLanguages(userSettings.CurrentPokerClient);
 
-            // Set current poker client language
+            // Load themes
+            LoadPokerClientThemes(userSettings.CurrentPokerClient);
+            
             cmbPokerClientLanguage.Text = userSettings.CurrentPokerClient.CurrentLanguage;
         }
 
@@ -132,6 +135,22 @@ namespace PokerMuck
         private void LoadPokerClientLanguages(PokerClient client)
         {
             cmbPokerClientLanguage.DataSource = client.SupportedLanguages;
+        }
+
+        private void LoadPokerClientThemes(PokerClient client)
+        {
+            if (client.SupportedVisualRecognitionThemes.Count > 0)
+            {
+                cmbPokerClientTheme.DataSource = client.SupportedVisualRecognitionThemes;
+                cmbPokerClientTheme.Enabled = true;
+            }
+            else
+            {
+                ArrayList list = new ArrayList();
+                list.Add("Not yet supported");
+                cmbPokerClientTheme.DataSource = list;
+                cmbPokerClientTheme.Enabled = false;
+            }
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -152,6 +171,7 @@ namespace PokerMuck
             client.InitializeLanguage(client.DefaultLanguage);
 
             LoadPokerClientLanguages(client);
+            LoadPokerClientThemes(client);
 
             userSettings.CurrentPokerClient = client;
         }

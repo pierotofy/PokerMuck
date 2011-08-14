@@ -5,12 +5,12 @@ using System.Text;
 
 namespace PokerMuck
 {
-    class CardRecognitionMap
+    class VisualRecognitionMap
     {
         private String mapLocation;
         private ColorMap colorMap;
 
-        public CardRecognitionMap(String mapLocation, ColorMap colorMap)
+        public VisualRecognitionMap(String mapLocation, ColorMap colorMap)
         {
             this.mapLocation = mapLocation;
             this.colorMap = colorMap;

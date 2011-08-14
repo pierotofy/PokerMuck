@@ -47,6 +47,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -56,6 +57,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>DEFAEA458DBA261A9BEBE5F6440ABF7545067573</ManifestCertificateThumbprint>
@@ -97,10 +99,6 @@
     <Compile Include="Classes\Board\Board.cs" />
     <Compile Include="Classes\Board\HoldemBoard.cs" />
     <Compile Include="Classes\Card\CardList.cs" />
-    <Compile Include="Classes\Card\Recognition\CardRecognitionManager.cs" />
-    <Compile Include="Classes\Card\Recognition\CardRecognitionMap.cs" />
-    <Compile Include="Classes\Card\Recognition\ColorMaps\ColorMap.cs" />
-    <Compile Include="Classes\Card\Recognition\ColorMaps\HoldemColorMap.cs" />
     <Compile Include="Classes\Database\PlayerDatabase.cs" />
     <Compile Include="Classes\Forms\FrmFirstExecutionWizard.cs">
       <SubType>Form</SubType>
@@ -130,6 +128,10 @@
     <Compile Include="Classes\Ranking\Rank.cs" />
     <Compile Include="Classes\Ranking\RankScanner.cs" />
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
+    <Compile Include="Classes\Recognition\ColorMaps\ColorMap.cs" />
+    <Compile Include="Classes\Recognition\ColorMaps\HoldemColorMap.cs" />
+    <Compile Include="Classes\Recognition\VisualRecognitionManager.cs" />
+    <Compile Include="Classes\Recognition\VisualRecognitionMap.cs" />
     <Compile Include="Classes\Settings\HudUserSettings.cs" />
     <Compile Include="Classes\Statistics\MultipleValueCounter.cs" />
     <Compile Include="Classes\Statistics\Statistic.cs" />
@@ -301,6 +303,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Cards.ico" />
+    <Content Include="Resources\ColorMaps\Poker Stars\Holdem_9-max_Classic.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\donkIco.png" />
     <None Include="Resources\QuestionIco.png" />
     <None Include="Resources\ForbiddenIco.png" />
@@ -500,8 +505,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CardMaps\Party Poker\" />
-    <Folder Include="CardMaps\Poker Stars\" />
+    <Folder Include="Resources\ColorMaps\Party Poker\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

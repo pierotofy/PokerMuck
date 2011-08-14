@@ -116,6 +116,8 @@ namespace PokerMuck
             {
                 SetSetting("poker_client_name", value.Name);
                 SetSetting("poker_client_language", value.CurrentLanguage);
+
+                // TODO save current theme selection
             }
         }
 
