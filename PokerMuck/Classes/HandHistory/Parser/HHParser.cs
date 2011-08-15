@@ -20,6 +20,15 @@ namespace PokerMuck
             if (PlayerMuckHandAvailable != null) PlayerMuckHandAvailable(playerName, hand);
         }
 
+        /* We found hero's nickname */
+        public delegate void HeroNameFoundHandler(String heroName);
+        public event HeroNameFoundHandler HeroNameFound;
+
+        protected void OnHeroNameFound(String heroName)
+        {
+            if (HeroNameFound != null) HeroNameFound(heroName);
+        }
+
         /* A player is sitting at the table with us */
         public delegate void PlayerIsSeatedHandler(String playerName, int seatNumber);
         public event PlayerIsSeatedHandler PlayerIsSeated;
@@ -119,6 +128,8 @@ namespace PokerMuck
          * If we detect the end of a game we raise the appropriate event */
         protected virtual void CheckForEndOfRound(String line)
         {
+            Match matchResult;
+
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_end_of_round")))
             {
                 // Increment
@@ -132,6 +143,13 @@ namespace PokerMuck
                     OnRoundHasTerminated();
                     endOfRoundTokensDetected = 0;
                 }
+            }
+
+            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_hero_name"), out matchResult))
+            {
+                String heroName = matchResult.Groups["heroName"].Value;
+                OnHeroNameFound(heroName);
+                Debug.Print("Found hero's name: " + heroName);
             }
         }
 

@@ -133,10 +133,10 @@ namespace PokerMuck
 
 
             // Adjust size
-            this.Size = pmDirector.UserSettings.WindowSize;
+            this.Size = Globals.UserSettings.WindowSize;
 
             // Adjust window position
-            this.Location = pmDirector.UserSettings.WindowPosition;
+            this.Location = Globals.UserSettings.WindowPosition;
 
             // Load configuration
             LoadConfigurationValues();
@@ -271,35 +271,35 @@ namespace PokerMuck
         // Save new window size
         private void FrmMain_ResizeEnd(object sender, EventArgs e)
         {
-            pmDirector.UserSettings.WindowSize = this.Size;
+            Globals.UserSettings.WindowSize = this.Size;
         }
 
         private void FrmMain_LocationChanged(object sender, EventArgs e)
         {
             // Save window position for the future!
-            if (pmDirector != null) pmDirector.UserSettings.WindowPosition = this.Location;
+            if (pmDirector != null) Globals.UserSettings.WindowPosition = this.Location;
         }
 
         /* Read the values from the configuration and puts them into the UI */
         private void LoadConfigurationValues()
         {
-            txtHandHistoryDirectory.Text = pmDirector.UserSettings.StoredHandHistoryDirectory;
-            txtUserId.Text = pmDirector.UserSettings.UserID;
+            txtHandHistoryDirectory.Text = Globals.UserSettings.StoredHandHistoryDirectory;
+            txtUserId.Text = Globals.UserSettings.UserID;
 
             // Load poker client list
             LoadPokerClientList();
 
             // Set current poker client
-            cmbPokerClient.Text = pmDirector.UserSettings.CurrentPokerClient.Name;
+            cmbPokerClient.Text = Globals.UserSettings.CurrentPokerClient.Name;
 
             // Load languages for the current client
-            LoadPokerClientLanguages(pmDirector.UserSettings.CurrentPokerClient);
+            LoadPokerClientLanguages(Globals.UserSettings.CurrentPokerClient);
 
             // Load themes
-            LoadPokerClientThemes(pmDirector.UserSettings.CurrentPokerClient);
+            LoadPokerClientThemes(Globals.UserSettings.CurrentPokerClient);
 
             // Set current poker client language
-            cmbPokerClientLanguage.Text = pmDirector.UserSettings.CurrentPokerClient.CurrentLanguage;
+            cmbPokerClientLanguage.Text = Globals.UserSettings.CurrentPokerClient.CurrentLanguage;
         }
 
         /* Loads the poker clients into the appropriate combobox */
@@ -350,7 +350,7 @@ namespace PokerMuck
         /* User ID has changed, store in config */
         private void txtUserId_TextChanged(object sender, EventArgs e)
         {
-            pmDirector.UserSettings.UserID = txtUserId.Text;
+            Globals.UserSettings.UserID = txtUserId.Text;
         }
 
         /* Pokerclient has changed, store in config and load available languages */
@@ -366,13 +366,13 @@ namespace PokerMuck
             pmDirector.ChangePokerClient(client);
 
             // Refresh hand history directory
-            txtHandHistoryDirectory.Text = pmDirector.UserSettings.StoredHandHistoryDirectory;
+            txtHandHistoryDirectory.Text = Globals.UserSettings.StoredHandHistoryDirectory;
         }
 
         /* Pokerclient language has changed, initialize the new config */
         private void cmbPokerClientLanguage_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            PokerClient client = pmDirector.UserSettings.CurrentPokerClient;
+            PokerClient client = Globals.UserSettings.CurrentPokerClient;
             client.InitializeLanguage(cmbPokerClientLanguage.Text);
 
             // Tell directory that we have changed the client
@@ -382,7 +382,7 @@ namespace PokerMuck
 
         private void cmbPokerClientTheme_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            PokerClient client = pmDirector.UserSettings.CurrentPokerClient;
+            PokerClient client = Globals.UserSettings.CurrentPokerClient;
             client.SetTheme(cmbPokerClientTheme.Text);
 
             // Tell directory that we have changed the client

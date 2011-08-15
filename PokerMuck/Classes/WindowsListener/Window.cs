@@ -10,16 +10,16 @@ namespace PokerMuck
 {
     /* This class helps us keep track of information about a specific window 
      * Plus it provides some nice static methods for Win32 windows handling */
-    class Window
+    public class Window
     {
         /* Get the text of a window */
         [DllImport("user32.dll")]
-        public static extern int GetWindowText(int hWnd, StringBuilder text, int count);
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
         /* Additionally we'll need this one to find the X-Y coordinate of the window */
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowRect(int hWnd, out RECT lpRect);
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         /* We need also to define a RECT structure */
         [StructLayout(LayoutKind.Sequential)]
@@ -33,10 +33,10 @@ namespace PokerMuck
 
         /* This one will help us detect when a window gets closed */
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        public static extern int FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
-        private int handle;
-        public int Handle { get { return handle; } }
+        private IntPtr handle;
+        public IntPtr Handle { get { return (IntPtr)handle; } }
 
         // Keep track of the latest valid window title
         private String latestValidWindowTitle = String.Empty;
@@ -52,6 +52,13 @@ namespace PokerMuck
                 return latestValidWindowTitle;
             }
         }
+        public Rectangle Rectangle
+        {
+            get
+            {
+                return GetWindowRectFromHandle(handle);
+            }
+        }
 
         public bool HasBeenMinimized { get; set; }
 
@@ -59,11 +66,9 @@ namespace PokerMuck
         {
             get
             {
-                Rectangle windowRect = GetRect();
-
                 // On MS Windows, when a window is resized it is moved to -32000 both on X and Y coordinate
                 // Is there a better way to code this?
-                bool ret = (windowRect.X == -32000 && windowRect.Y == -32000);
+                bool ret = (Rectangle.X == -32000 && Rectangle.Y == -32000);
 
                 // Keep track of the ever been minimized variable
                 if (ret) HasBeenMinimized = true;
@@ -74,7 +79,7 @@ namespace PokerMuck
 
 
         /* User defined handle */
-        public Window(int handle)
+        public Window(IntPtr handle)
         {
             this.handle = handle;
             Initialize();
@@ -97,21 +102,16 @@ namespace PokerMuck
             return Title != String.Empty && Exists(Title);
         }
 
-        public Rectangle GetRect()
-        {
-            return GetWindowRectFromHandle(handle);
-        }
-
 
 
         // Static members
 
         public static bool Exists(String windowTitle)
         {
-            return FindWindowByCaption(IntPtr.Zero, windowTitle) != 0;
+            return FindWindowByCaption(IntPtr.Zero, windowTitle) != IntPtr.Zero;
         }
 
-        public static String GetWindowTitleFromHandle(int handle)
+        public static String GetWindowTitleFromHandle(IntPtr handle)
         {
             const int maxChars = 256;
             StringBuilder buffer = new StringBuilder(maxChars);
@@ -127,11 +127,11 @@ namespace PokerMuck
 
         public static Rectangle GetWindowRectFromWindowTitle(String windowTitle)
         {
-            int handle = FindWindowByCaption(IntPtr.Zero, windowTitle);
+            IntPtr handle = FindWindowByCaption(IntPtr.Zero, windowTitle);
             return GetWindowRectFromHandle(handle);
         }
 
-        public static Rectangle GetWindowRectFromHandle(int handle)
+        public static Rectangle GetWindowRectFromHandle(IntPtr handle)
         {
             // Ok, let's figure out it's position
 

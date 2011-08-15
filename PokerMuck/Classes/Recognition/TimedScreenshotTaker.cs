@@ -17,13 +17,13 @@ namespace PokerMuck
         public event ScreenshotTakenHandler ScreenshotTaken;
 
         private bool running;
-        private IntPtr windowHandle;
+        private Window window;
 
-        public TimedScreenshotTaker(int msInterval, IntPtr windowHandle)
+        public TimedScreenshotTaker(int msInterval, Window window)
         {
             this.scrTaker = new ScreenshotTaker();
             this.msInterval = msInterval;
-            this.windowHandle = windowHandle;
+            this.window = window;
             this.running = false;
         }
 
@@ -33,7 +33,7 @@ namespace PokerMuck
             {
                 Thread.Sleep(msInterval);
 
-                scrTaker.Take(windowHandle);
+                scrTaker.Take(window);
                 if (ScreenshotTaken != null) ScreenshotTaken(scrTaker.Current);
             }
         }

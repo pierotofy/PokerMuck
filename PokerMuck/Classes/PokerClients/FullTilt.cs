@@ -84,6 +84,8 @@ namespace PokerMuck
                 /* Detect who the button is */
                 regex.Add("hand_history_detect_button", @"The button is in seat #(?<seatNumber>[\d]+)");
 
+                /* Detect who our hero is (what's his nickname) */
+                //TODO! regex.Add("hand_history_detect_hero_nickname", @"Dealt to (?<heroNickname>.+) \[[\w\d ]+\]$");
 
                 /* Detect calls
                  * ex. SILJCAR calls $0.02 */

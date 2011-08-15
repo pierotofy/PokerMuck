@@ -59,7 +59,7 @@ namespace PokerMuck
             {
                 if (table.PlayerSeatingPositionIsRelative)
                 {
-                    positions = GetEffectivePositions(positions, table.PlayerList, table.UserID, table.MaxSeatingCapacity);
+                    positions = GetEffectivePositions(positions, table.PlayerList, table.CurrentHeroName, table.MaxSeatingCapacity);
                 }
                 Debug.Assert(positions.Count == table.MaxSeatingCapacity, "The number of available user defined hud positions is different that what we expected");
             }
@@ -168,7 +168,7 @@ namespace PokerMuck
             {
                 if (table.PlayerSeatingPositionIsRelative)
                 {
-                    positions = GetEffectivePositions(positions, table.PlayerList, table.UserID, table.MaxSeatingCapacity);
+                    positions = GetEffectivePositions(positions, table.PlayerList, table.CurrentHeroName, table.MaxSeatingCapacity);
                 }
 
                 foreach (Player p in table.PlayerList)
@@ -215,7 +215,7 @@ namespace PokerMuck
             List<Point> positions = settings.RetrieveHudWindowPositions(table.PokerClientName, table.MaxSeatingCapacity, table.GameType);
             if (table.PlayerSeatingPositionIsRelative)
             {
-                positions = GetEffectivePositions(positions, table.PlayerList, table.UserID, table.MaxSeatingCapacity);
+                positions = GetEffectivePositions(positions, table.PlayerList, table.CurrentHeroName, table.MaxSeatingCapacity);
             }
             
             // If the configuration didn't return us any result, we set dummy points
@@ -240,7 +240,7 @@ namespace PokerMuck
 
             if (table.PlayerSeatingPositionIsRelative)
             {
-                positions = GetTransposedPositions(positions, playerList, table.UserID, table.MaxSeatingCapacity);
+                positions = GetTransposedPositions(positions, playerList, table.CurrentHeroName, table.MaxSeatingCapacity);
             }
 
             // Finally, store the new positions in the settings!
@@ -275,7 +275,7 @@ namespace PokerMuck
 
         /* Given a list of transposed positions, it returns the effective positions
          * @param userID nickname of the user that is at the center (same as indicated in GetTransposedPlayerList) */
-        private List<Point> GetEffectivePositions(List<Point> transposedPositions, List<Player> playerList, String userID, int maxSeatingCapacity)
+        private List<Point> GetEffectivePositions(List<Point> transposedPositions, List<Player> playerList, String heroName, int maxSeatingCapacity)
         {
             // If there are no players, we can't do any transposition
             if (playerList.Count == 0 || transposedPositions.Count == 0) return transposedPositions;
@@ -286,7 +286,7 @@ namespace PokerMuck
                 result.Add(p);
             }
 
-            int heroSeat = FindHeroSeat(playerList, userID);
+            int heroSeat = FindHeroSeat(playerList, heroName);
 
             // Transpose points
             foreach (Player p in playerList)

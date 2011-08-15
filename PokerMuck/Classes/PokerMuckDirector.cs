@@ -16,6 +16,8 @@ namespace PokerMuck
      * - Creates new tables
      * - etc.
      */
+
+
     class PokerMuckDirector : IDetectWindowsChanges, INewFilesMonitorHandler
     {
         private WindowsListener windowsListener;
@@ -26,10 +28,6 @@ namespace PokerMuck
 
         /* Player's database */
         private PlayerDatabase playerDatabase;
-
-        /* Configuration */
-        private PokerMuckUserSettings userSettings;
-        public PokerMuckUserSettings UserSettings { get { return userSettings; } }
 
         /* NewFilesMonitor instance */
         private NewFilesMonitor newFilesMonitor;
@@ -82,25 +80,25 @@ namespace PokerMuck
             playerDatabase = new PlayerDatabase();
 
             // Initialize the user configuration 
-            userSettings = new PokerMuckUserSettings();
+            Globals.UserSettings = new PokerMuckUserSettings();
 
             // First execution?
             
-            if (UserSettings.FirstExecution)
+            if (Globals.UserSettings.FirstExecution)
             {
                 ShowFirstExecutionWizard();
 
                 // Reload settings
-                userSettings = new PokerMuckUserSettings();
+                Globals.UserSettings = new PokerMuckUserSettings();
 
-                UserSettings.FirstExecution = false;
+                Globals.UserSettings.FirstExecution = false;
 
                 // Save
-                UserSettings.Save();
+                Globals.UserSettings.Save();
             }
 
             // Get the poker client from the user settings
-            ChangePokerClient(userSettings.CurrentPokerClient);
+            ChangePokerClient(Globals.UserSettings.CurrentPokerClient);
 
             // Init windows listener
             windowsListener = new WindowsListener(this);
@@ -108,7 +106,7 @@ namespace PokerMuck
             windowsListener.StartListening();
 
             // Init new files monitor
-            newFilesMonitor = new NewFilesMonitor(UserSettings.HandHistoryDirectory, this);
+            newFilesMonitor = new NewFilesMonitor(Globals.UserSettings.HandHistoryDirectory, this);
             newFilesMonitor.StartMonitoring();
         }
 
@@ -120,7 +118,7 @@ namespace PokerMuck
 
             String filename = "test.txt";
             //String filename = "HH20110305 T371715473 No Limit Hold'em €4.46 + €0.54.txt";
-            Table newTable = new Table(filename, "test.txt - Notepad", new Rectangle(30, 30, 640, 480), pokerClient, playerDatabase, userSettings.UserID);
+            Table newTable = new Table(filename, new Window("test.txt - Notepad"), pokerClient, playerDatabase);
             newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
             newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
             tables.Add(newTable);
@@ -185,26 +183,26 @@ namespace PokerMuck
         /* Change the hand history directory */
         public void ChangeHandHistoryDirectory(String newDirectory)
         {
-            UserSettings.StoredHandHistoryDirectory = newDirectory;
+            Globals.UserSettings.StoredHandHistoryDirectory = newDirectory;
 
             // We need to create a new monitor
-            newFilesMonitor = new NewFilesMonitor(UserSettings.HandHistoryDirectory, this);
+            newFilesMonitor = new NewFilesMonitor(Globals.UserSettings.HandHistoryDirectory, this);
             newFilesMonitor.StartMonitoring();
 
-            Debug.Print("Changing hand history directory: " + UserSettings.HandHistoryDirectory);
+            Debug.Print("Changing hand history directory: " + Globals.UserSettings.HandHistoryDirectory);
         }
 
         /* Change the poker client */
         public void ChangePokerClient(PokerClient client)
         {
-            UserSettings.CurrentPokerClient = client;
+            Globals.UserSettings.CurrentPokerClient = client;
             pokerClient = client;
 
             // Also change directory
-            ChangeHandHistoryDirectory(UserSettings.StoredHandHistoryDirectory);
+            ChangeHandHistoryDirectory(Globals.UserSettings.StoredHandHistoryDirectory);
 
             // On load certain operations might need to be done by the client
-            userSettings.CurrentPokerClient.DoStartupProcessing(userSettings.StoredHandHistoryDirectory);
+            Globals.UserSettings.CurrentPokerClient.DoStartupProcessing(Globals.UserSettings.StoredHandHistoryDirectory);
         }
 
       
@@ -221,9 +219,6 @@ namespace PokerMuck
             if (t != null)
             {
                 // The position of this window which is associated with a table has changed
-
-                // Update information
-                t.WindowRect = windowRect;
 
                 // Inform the UI that we might need to shift the hud
                 RunGUIRoutine((Action)delegate()
@@ -272,7 +267,7 @@ namespace PokerMuck
         /* A new file was created! This might belong to one of the game windows */
         public void NewFileWasCreated(String filename)
         {
-            CreateTableFromPokerWindow(windowsListener.CurrentForegroundWindowTitle, windowsListener.CurrentForegroundWindowRect);
+            CreateTableFromPokerWindow(windowsListener.CurrentForegroundWindowTitle);
         }
 
         /* Windows Listener event handler, detects when a new windows becomes the active window */
@@ -280,12 +275,12 @@ namespace PokerMuck
         {
             if (windowTitle == "HudWindow") return; // Ignore hud windows
 
-            CreateTableFromPokerWindow(windowTitle, windowRect);
+            CreateTableFromPokerWindow(windowTitle);
             
             CheckForWindowsOverlaysOnHuds(windowTitle, windowRect);
         }
 
-        private void CreateTableFromPokerWindow(string windowTitle, Rectangle windowRect)
+        private void CreateTableFromPokerWindow(string windowTitle)
         {
             /* We ignore any event that is caused by a window titled "HudWindow"
              * because the user might be simply interacting with our hud */
@@ -301,17 +296,17 @@ namespace PokerMuck
                 {
                     // Valid poker window
 
-                    pokerClient.DoPregameProcessing(userSettings.StoredHandHistoryDirectory);
+                    pokerClient.DoPregameProcessing(Globals.UserSettings.StoredHandHistoryDirectory);
 
                     // We need to monitor this window for when it closes...
                     windowsListener.AddToMonitorList(windowTitle);
 
                     // Do we have a filename matching this window?
-                    String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(UserSettings.HandHistoryDirectory, pattern);
+                    String filename = HHDirectoryParser.GetHandHistoryFilenameFromRegexPattern(Globals.UserSettings.HandHistoryDirectory, pattern);
 
                     if (filename != String.Empty)
                     {
-                        String filePath = UserSettings.HandHistoryDirectory + @"\" + filename;
+                        String filePath = Globals.UserSettings.HandHistoryDirectory + @"\" + filename;
 
                         // A valid filename was found to be associated with a window title, see if we have a table already
                         Table table = FindTableByHHFilePath(filePath);
@@ -320,7 +315,7 @@ namespace PokerMuck
                         if (table == null)
                         {
                             // First time we see it, we need to create a table for this request
-                            Table newTable = new Table(filePath, windowTitle, windowRect, pokerClient, playerDatabase, userSettings.UserID);
+                            Table newTable = new Table(filePath, new Window(windowTitle), pokerClient, playerDatabase);
 
                             // Set a handler that notifies us of data changes
                             newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
@@ -341,11 +336,6 @@ namespace PokerMuck
                         }
                         else
                         {
-
-                            // Yeah we have a table, but the title might have changed... make
-                            // sure the table keeps track of this change!
-                            table.WindowTitle = windowTitle;
-
                             // Inform the UI that we might need to shift the hud
                             ShiftHud(table);
                         }
@@ -393,7 +383,7 @@ namespace PokerMuck
             foreach (Player p in sender.PlayerList)
             {
                 // If it has showed and it's not us
-                if (p.HasShowedThisRound && p.Name != UserSettings.UserID)
+                if (p.HasShowedThisRound && p.Name != Globals.UserSettings.UserID)
                 {
                     // Inform the UI
                     if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
@@ -477,7 +467,7 @@ namespace PokerMuck
             Cleanup();
 
             // Save configuration
-            UserSettings.Save();
+            Globals.UserSettings.Save();
 
         }
 

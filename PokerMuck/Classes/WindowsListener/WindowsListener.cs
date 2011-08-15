@@ -15,7 +15,7 @@ namespace PokerMuck
     {
         /* Will need these functions to find the current foreground window */
         [DllImport("user32.dll")]
-        static extern int GetForegroundWindow();
+        static extern IntPtr GetForegroundWindow();
 
         /* Object that will receive the notifications when something changes */
         private IDetectWindowsChanges handler;
@@ -108,7 +108,7 @@ namespace PokerMuck
                 Rectangle previousForegroundWindowRect = CurrentForegroundWindowRect;
 
                 // Retrieve window handle
-                int handle = GetForegroundWindowHandle();
+                IntPtr handle = GetForegroundWindowHandle();
 
                 // Update current foreground window title and window rect
                 CurrentForegroundWindowTitle = Window.GetWindowTitleFromHandle(handle);
@@ -220,21 +220,21 @@ namespace PokerMuck
         }
 
         /* Windows helper functions */
-        private int GetForegroundWindowHandle()
+        private IntPtr GetForegroundWindowHandle()
         {
-            int handle = 0;
+            IntPtr handle = IntPtr.Zero;
             handle = GetForegroundWindow();
             return handle;
         }
 
         private String GetForegroundWindowTitle(){
-            int handle = GetForegroundWindowHandle();
+            IntPtr handle = GetForegroundWindowHandle();
             return Window.GetWindowTitleFromHandle(handle);
         }
 
         private Rectangle GetForegroundWindowRect()
         {
-            int handle = GetForegroundWindowHandle();
+            IntPtr handle = GetForegroundWindowHandle();
             return Window.GetWindowRectFromHandle(handle);
         }
 

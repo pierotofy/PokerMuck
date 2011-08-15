@@ -45,15 +45,36 @@ namespace PokerMuck
         private int maxSeatingCapacity;
         public int MaxSeatingCapacity { get { return maxSeatingCapacity; } }
 
+        private String currentHeroName;
+        public String CurrentHeroName { get { return currentHeroName; } }
+
+        /* If not known, this is set to 0 */
+        private int currentHeroSeat;
+        public int CurrentHeroSeat { get { return currentHeroSeat; } }
+
         /* Game type of the table */
         public PokerGame Game { get; set; }
 
         /* The playing window's title currently associated with this table */
-        public String WindowTitle { get; set; }
+        public String WindowTitle
+        {
+            get
+            {
+                return window.Title;
+            }
+        }
 
-        /* The window rectangle associated with this table
-         * We do not use getters/setters because we use the ref keyword in some parts of the code */
-        public Rectangle WindowRect;
+        /* The window rectangle associated with this table */
+        public Rectangle WindowRect
+        {
+            get
+            {
+                return window.Rectangle;
+            }
+        }
+
+        // Window associated with this table
+        private Window window; 
 
         /* The hand history filename associated with this table */ 
         private String handHistoryFilePath;
@@ -94,16 +115,6 @@ namespace PokerMuck
             }
         }
 
-        /* Player's nickname at the table? */
-        private String userID;
-        public String UserID
-        {
-            get
-            {
-                return userID;
-            }
-        }
-
         public bool PlayerSeatingPositionIsRelative
         {
             get
@@ -135,19 +146,19 @@ namespace PokerMuck
                 System.IO.File.Exists(VisualRecognitionMapLocation);
         }
 
-        public Table(String handHistoryFilePath, String windowTitle, Rectangle windowRect, PokerClient pokerClient, PlayerDatabase playerDatabase, String userID)
+        public Table(String handHistoryFilePath, Window window, PokerClient pokerClient, PlayerDatabase playerDatabase)
         {
             this.handHistoryFilePath = handHistoryFilePath;
-            this.WindowTitle = windowTitle;
+            this.window = window;
             this.pokerClient = pokerClient;
-            this.userID = userID;
             this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
             this.GameID = String.Empty; // We don't know yet
-            this.gameType = pokerClient.GetPokerGameTypeFromWindowTitle(windowTitle);
+            this.currentHeroName = String.Empty;
+            this.currentHeroSeat = 0;
+            this.gameType = pokerClient.GetPokerGameTypeFromWindowTitle(WindowTitle);
             this.statistics = new TableStatistics(this); // We don't know what specific kind
             this.playerDatabase = playerDatabase;
-            this.WindowRect = windowRect;
             this.Hud = new Hud(this);
             this.visualRecognitionManager = null; // Not all tables have a visual recognition manager
 
@@ -300,6 +311,7 @@ namespace PokerMuck
                 handHistoryParser.RoundHasTerminated += new HHParser.RoundHasTerminatedHandler(handHistoryParser_RoundHasTerminated);
                 handHistoryParser.NewTableHasBeenCreated += new HHParser.NewTableHasBeenCreatedHandler(handHistoryParser_NewTableHasBeenCreated);
                 handHistoryParser.FoundTableMaxSeatingCapacity += new HHParser.FoundTableMaxSeatingCapacityHandler(handHistoryParser_FoundTableMaxSeatingCapacity);
+                handHistoryParser.HeroNameFound += new HHParser.HeroNameFoundHandler(handHistoryParser_HeroNameFound);
 
                 // Game specific handlers
                 if (Game == PokerGame.Holdem)
@@ -321,6 +333,25 @@ namespace PokerMuck
         }
 
         /* Generic handlers */
+
+        void handHistoryParser_HeroNameFound(string heroName)
+        {
+            this.currentHeroName = heroName;
+
+            // Attempt to find his seat
+            bool foundSeat = false;
+            foreach (Player p in PlayerList)
+            {
+                if (p.Name == heroName)
+                {
+                    currentHeroSeat = p.SeatNumber;
+                    foundSeat = true;
+                    break;
+                }
+            }
+
+            if (!foundSeat) currentHeroSeat = 0;
+        }
 
         void handHistoryParser_FoundTableMaxSeatingCapacity(int maxSeatingCapacity)
         {

@@ -23,6 +23,7 @@ namespace PokerMuck
         public ColorMap()
         {
             mapData = new Hashtable();
+            InitializeMapData();
         }
 
         /* Given an action (described as a string), it returns a color
@@ -32,6 +33,11 @@ namespace PokerMuck
             Debug.Assert(mapData.ContainsKey(action), "Trying to access an action from the color map that has not been assigned to a color: " + action);
             return (Color)mapData[action];
         }
+
+        /* Every game must have player cards in the map, but certain game modes might
+         * deal more cards than others (holdem: 2, omaha: 4). This method returns a list
+         * of actions that represent the cards of the player at a particular seat */
+        public abstract ArrayList GetPlayerCardsActions(int playerSeat);
 
         public ICollection Actions{
             get { return mapData.Keys; }

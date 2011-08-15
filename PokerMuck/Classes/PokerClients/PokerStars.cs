@@ -50,8 +50,9 @@ namespace PokerMuck
 
                 /* Recognize game (Hold'em, Omaha, No-limit, limit, etc.) 
                    Note that for PokerStars.it the only valid currency is EUR (and FPP), but this might be different 
-                   on other clients. This regex works for both play money and tournaments */
-                regex.Add("hand_history_game_token", @"([\d]+FPP (?<gameType>[^-]+) -)|((EUR|USD) (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \(.?[\d\.]+\/.?[\d\.]+ [\w]{3}\))");
+                   on other clients. This regex works for both play money and tournaments
+                 * ex. PokerStars Game #66066115721:  Hold'em No Limit (5/10) - 2011/08/16 0:15:57 CET [2011/08/15 18:15:57 ET] */
+                regex.Add("hand_history_game_token", @"([\d]+FPP (?<gameType>[^-]+) -)|((EUR|USD) (?<gameType>[^-]+) -)|(PokerStars Game #[\d]+:  (?<gameType>[^(]+) \(.?[\d\.]+\/.?[\d\.]+( [\w]{3})?\))");
 
                 /* Recognize players 
                  Ex. Seat 1: stallion089 (2105 in chips) => 1,"stallion089" 
@@ -84,6 +85,8 @@ namespace PokerMuck
                 /* Detect who the button is */
                 regex.Add("hand_history_detect_button", @"#(?<seatNumber>[\d]+) is the button");
 
+                /* Detect who our hero is (what's his nickname) */
+                regex.Add("hand_history_detect_hero_name", @"Dealt to (?<heroName>.+) \[[\w\d ]+\]$");
 
                 /* Detect calls
                  * ex. stallion089: calls 10 */

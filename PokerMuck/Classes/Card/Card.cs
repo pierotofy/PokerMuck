@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace PokerMuck
 {
@@ -21,6 +22,25 @@ namespace PokerMuck
 			this.Face = face;
 			this.Suit = suit;
 		}
+
+        /* Creates a card starting from a path/filename that uses our filenaming convention
+         * suit_face.ext , starting from 1, face = 1 = ace */
+        public static Card CreateFromPath(String path)
+        {
+            Regex fileToCardRegex = new Regex(@"(?<suit>[\d]+)_(?<face>[\d]+)\.[\w]{3}");
+            Match match = fileToCardRegex.Match(path);
+            if (match.Success)
+            {
+                CardFace face = (CardFace)Int32.Parse(match.Groups["face"].Value);
+                CardSuit suit = (CardSuit)Int32.Parse(match.Groups["suit"].Value);
+
+                return new Card(face, suit);
+            }
+            else
+            {
+                throw new Exception("Failed to create a card starting from a path/filename: " + path);
+            }
+        }
 
         /* Shallow copy, no objects to take care of */
         public object Clone()
