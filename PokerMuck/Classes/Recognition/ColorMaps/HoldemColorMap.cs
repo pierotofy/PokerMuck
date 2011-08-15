@@ -13,18 +13,10 @@ namespace PokerMuck
         {
         }
 
-        public override Color getActionColor(String action)
+        protected override void InitializeMapData()
         {
-            switch(action){
-                case "player_1_card_1":
-                    return Color.Red;
-                case "player_1_card_2":
-                    return Color.Green;
-
-                default:
-                    Debug.Assert(false, "No color is defined for action: " + action);
-                    return Color.Blue;
-            }
+            mapData["player_1_card_1"] = Color.Red;
+            mapData["player_1_card_2"] = Color.Blue;
         }
     }
 }

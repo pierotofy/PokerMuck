@@ -45,13 +45,13 @@
             this.panelPageFive = new System.Windows.Forms.Panel();
             this.lblPageFiveText = new System.Windows.Forms.Label();
             this.panelPageTwo = new System.Windows.Forms.Panel();
+            this.lblPokerClientTheme = new System.Windows.Forms.Label();
+            this.cmbPokerClientTheme = new System.Windows.Forms.ComboBox();
             this.lblPokerClientLanguage = new System.Windows.Forms.Label();
             this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
             this.lblPokerClient = new System.Windows.Forms.Label();
             this.cmbPokerClient = new System.Windows.Forms.ComboBox();
             this.lblPageTwoText = new System.Windows.Forms.Label();
-            this.lblPokerClientTheme = new System.Windows.Forms.Label();
-            this.cmbPokerClientTheme = new System.Windows.Forms.ComboBox();
             this.panelPageOne.SuspendLayout();
             this.panelPageThree.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureHandHistory)).BeginInit();
@@ -253,6 +253,29 @@
             this.panelPageTwo.TabIndex = 8;
             this.panelPageTwo.Visible = false;
             // 
+            // lblPokerClientTheme
+            // 
+            this.lblPokerClientTheme.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.lblPokerClientTheme.Location = new System.Drawing.Point(79, 180);
+            this.lblPokerClientTheme.Name = "lblPokerClientTheme";
+            this.lblPokerClientTheme.Size = new System.Drawing.Size(63, 31);
+            this.lblPokerClientTheme.TabIndex = 14;
+            this.lblPokerClientTheme.Text = "Theme:";
+            this.lblPokerClientTheme.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClientTheme
+            // 
+            this.cmbPokerClientTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClientTheme.Font = new System.Drawing.Font("Verdana", 9.75F);
+            this.cmbPokerClientTheme.FormattingEnabled = true;
+            this.cmbPokerClientTheme.Location = new System.Drawing.Point(142, 185);
+            this.cmbPokerClientTheme.Name = "cmbPokerClientTheme";
+            this.cmbPokerClientTheme.Size = new System.Drawing.Size(280, 24);
+            this.cmbPokerClientTheme.TabIndex = 13;
+            this.cmbPokerClientTheme.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientTheme_SelectionChangeCommitted);
+            // 
             // lblPokerClientLanguage
             // 
             this.lblPokerClientLanguage.Font = new System.Drawing.Font("Verdana", 9.75F);
@@ -311,28 +334,6 @@
             this.lblPageTwoText.Size = new System.Drawing.Size(487, 89);
             this.lblPageTwoText.TabIndex = 0;
             this.lblPageTwoText.Text = resources.GetString("lblPageTwoText.Text");
-            // 
-            // lblPokerClientTheme
-            // 
-            this.lblPokerClientTheme.Font = new System.Drawing.Font("Verdana", 9.75F);
-            this.lblPokerClientTheme.Location = new System.Drawing.Point(79, 180);
-            this.lblPokerClientTheme.Name = "lblPokerClientTheme";
-            this.lblPokerClientTheme.Size = new System.Drawing.Size(63, 31);
-            this.lblPokerClientTheme.TabIndex = 14;
-            this.lblPokerClientTheme.Text = "Theme:";
-            this.lblPokerClientTheme.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // cmbPokerClientTheme
-            // 
-            this.cmbPokerClientTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmbPokerClientTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPokerClientTheme.Font = new System.Drawing.Font("Verdana", 9.75F);
-            this.cmbPokerClientTheme.FormattingEnabled = true;
-            this.cmbPokerClientTheme.Location = new System.Drawing.Point(142, 185);
-            this.cmbPokerClientTheme.Name = "cmbPokerClientTheme";
-            this.cmbPokerClientTheme.Size = new System.Drawing.Size(280, 24);
-            this.cmbPokerClientTheme.TabIndex = 13;
             // 
             // FrmFirstExecutionWizard
             // 

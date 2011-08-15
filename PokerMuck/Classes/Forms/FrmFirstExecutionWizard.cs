@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
@@ -86,6 +87,10 @@ namespace PokerMuck
                 panelPageFive.Visible = true;
                 btnNext.Text = "&Finish";
                 lblTitle.Text = "Thank you!";
+
+                cmbPokerClient_SelectionChangeCommitted(null, EventArgs.Empty);
+                cmbPokerClientLanguage_SelectionChangeCommitted(null, EventArgs.Empty);
+                cmbPokerClientTheme_SelectionChangeCommitted(null, EventArgs.Empty);
                 userSettings.Save();
             }
             else if (currentPage == 6)
@@ -119,6 +124,7 @@ namespace PokerMuck
             LoadPokerClientThemes(userSettings.CurrentPokerClient);
             
             cmbPokerClientLanguage.Text = userSettings.CurrentPokerClient.CurrentLanguage;
+            cmbPokerClientTheme.Text = userSettings.CurrentPokerClient.CurrentTheme;
         }
 
         /* Loads the poker clients into the appropriate combobox */
@@ -147,7 +153,7 @@ namespace PokerMuck
             else
             {
                 ArrayList list = new ArrayList();
-                list.Add("Not yet supported");
+                list.Add("Feature not yet supported");
                 cmbPokerClientTheme.DataSource = list;
                 cmbPokerClientTheme.Enabled = false;
             }
@@ -181,6 +187,14 @@ namespace PokerMuck
         {
             PokerClient client = userSettings.CurrentPokerClient;
             client.InitializeLanguage(cmbPokerClientLanguage.Text);
+
+            userSettings.CurrentPokerClient = client;
+        }
+
+        private void cmbPokerClientTheme_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            PokerClient client = userSettings.CurrentPokerClient;
+            client.SetTheme(cmbPokerClientTheme.Text);
 
             userSettings.CurrentPokerClient = client;
         }

@@ -103,11 +103,15 @@ namespace PokerMuck
             get
             {
                 String pokerClientName = GetStringSetting("poker_client_name");
-                String pokerClientLanguage = GetStringSetting("poker_client_language");
                 
                 // Find in our list of available poker clients a poker client that reflect the name in the config (if any)
                 PokerClient result = PokerClientsList.Find(pokerClientName);
+                
+                String pokerClientLanguage = GetStringSetting("poker_client_language");
+                String pokerClientTheme = GetStringSetting(result.XmlName + "_theme");
+
                 result.InitializeLanguage(pokerClientLanguage);
+                result.SetTheme(pokerClientTheme);
 
                 return result;
             }
@@ -116,8 +120,7 @@ namespace PokerMuck
             {
                 SetSetting("poker_client_name", value.Name);
                 SetSetting("poker_client_language", value.CurrentLanguage);
-
-                // TODO save current theme selection
+                SetSetting(value.XmlName + "_theme", value.CurrentTheme);                
             }
         }
 

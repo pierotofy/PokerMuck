@@ -6,6 +6,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace PokerMuck
 {
@@ -50,8 +51,9 @@ namespace PokerMuck
         /* The playing window's title currently associated with this table */
         public String WindowTitle { get; set; }
 
-        /* The window rectangle associated with this table */
-        public Rectangle WindowRect { get; set; }
+        /* The window rectangle associated with this table
+         * We do not use getters/setters because we use the ref keyword in some parts of the code */
+        public Rectangle WindowRect;
 
         /* The hand history filename associated with this table */ 
         private String handHistoryFilePath;
@@ -60,6 +62,8 @@ namespace PokerMuck
         /* Every table keeps a reference to the parser used to read data from them */
         private HHParser handHistoryParser;
         public HHParser HandHistoryParser { get { return handHistoryParser; } }
+
+        private VisualRecognitionManager visualRecognitionManager;
 
         /* Notifies the delegate that data has changed */
         public delegate void RefreshUIHandler(Table sender);
@@ -108,6 +112,29 @@ namespace PokerMuck
             }
         }
 
+        /* Location of the visual maps is given by this format:
+         * {exe_path}/Resources/ColorMaps/{poker_client_name}/{game}_{max_table_capacity}-max_{theme}.bmp 
+         
+         * If the location is not known at the time (or there are no maps), it returns empty string */
+        public String VisualRecognitionMapLocation
+        {
+            get
+            {
+                if (Game != PokerGame.Unknown && maxSeatingCapacity != 0)
+                {
+                    return String.Format(@"{0}\Resources\ColorMaps\{1}\{2}_{3}-max_{4}.bmp", Application.StartupPath, pokerClient.Name, Game.ToString(), MaxSeatingCapacity, pokerClient.CurrentTheme);
+                }
+                else return String.Empty;
+            }
+        }
+
+        public bool IsVisualRecognitionPossible()
+        {
+            return pokerClient.SupportsVisualRecognition && 
+                VisualRecognitionMapLocation != "" &&
+                System.IO.File.Exists(VisualRecognitionMapLocation);
+        }
+
         public Table(String handHistoryFilePath, String windowTitle, Rectangle windowRect, PokerClient pokerClient, PlayerDatabase playerDatabase, String userID)
         {
             this.handHistoryFilePath = handHistoryFilePath;
@@ -122,6 +149,7 @@ namespace PokerMuck
             this.playerDatabase = playerDatabase;
             this.WindowRect = windowRect;
             this.Hud = new Hud(this);
+            this.visualRecognitionManager = null; // Not all tables have a visual recognition manager
 
             // By default we use the universal parser
             handHistoryParser = new UniversalHHParser(pokerClient);
@@ -297,6 +325,21 @@ namespace PokerMuck
         void handHistoryParser_FoundTableMaxSeatingCapacity(int maxSeatingCapacity)
         {
             this.maxSeatingCapacity = maxSeatingCapacity;
+
+            // Usually the max seating capacity is the last piece of information we need in order to create a visual recognition manager
+
+            // Attempt to create the visual recognition manager
+            if (IsVisualRecognitionPossible())
+            {
+                if (visualRecognitionManager == null)
+                {
+                    visualRecognitionManager = new VisualRecognitionManager(this);
+                }
+            }
+            else
+            {
+                Debug.Print("Visual recognition is not supported for " + this.ToString());
+            }
         }
 
         void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
@@ -385,6 +428,12 @@ namespace PokerMuck
         {
             PlayerList.Clear();
             if (hhMonitor != null) hhMonitor.StopMonitoring();
+            if (visualRecognitionManager != null) visualRecognitionManager.Cleanup();
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Table {0}: {1} max-seating: {2}, possible visual map location: {3}", this.TableId, this.Game.ToString(), this.MaxSeatingCapacity, this.VisualRecognitionMapLocation);
         }
     }
 }

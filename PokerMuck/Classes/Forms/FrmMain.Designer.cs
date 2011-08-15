@@ -34,6 +34,8 @@
             this.tabStatistics = new System.Windows.Forms.TabPage();
             this.lblPlayerStatisticsNote = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
+            this.lblPokerClientTheme = new System.Windows.Forms.Label();
+            this.cmbPokerClientTheme = new System.Windows.Forms.ComboBox();
             this.lblPokerClientLanguage = new System.Windows.Forms.Label();
             this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
             this.lblPokerClient = new System.Windows.Forms.Label();
@@ -51,14 +53,16 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
-            this.lblPokerClientTheme = new System.Windows.Forms.Label();
-            this.cmbPokerClientTheme = new System.Windows.Forms.ComboBox();
+            this.tabTools = new System.Windows.Forms.TabPage();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
             this.tabStatistics.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
             this.tabAboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
+            this.tabTools.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl
@@ -69,6 +73,7 @@
             this.tabControl.Controls.Add(this.tabHandsPage);
             this.tabControl.Controls.Add(this.tabStatistics);
             this.tabControl.Controls.Add(this.tabConfigurationPage);
+            this.tabControl.Controls.Add(this.tabTools);
             this.tabControl.Controls.Add(this.tabAboutPage);
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
@@ -82,7 +87,7 @@
             this.tabHandsPage.Location = new System.Drawing.Point(4, 22);
             this.tabHandsPage.Name = "tabHandsPage";
             this.tabHandsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHandsPage.Size = new System.Drawing.Size(336, 350);
+            this.tabHandsPage.Size = new System.Drawing.Size(320, 354);
             this.tabHandsPage.TabIndex = 0;
             this.tabHandsPage.Text = "Muck";
             this.tabHandsPage.UseVisualStyleBackColor = true;
@@ -93,7 +98,7 @@
             this.tabStatistics.Controls.Add(this.lblPlayerStatisticsNote);
             this.tabStatistics.Location = new System.Drawing.Point(4, 22);
             this.tabStatistics.Name = "tabStatistics";
-            this.tabStatistics.Size = new System.Drawing.Size(336, 350);
+            this.tabStatistics.Size = new System.Drawing.Size(320, 354);
             this.tabStatistics.TabIndex = 3;
             this.tabStatistics.Text = "Statistics";
             this.tabStatistics.UseVisualStyleBackColor = true;
@@ -104,7 +109,7 @@
             this.lblPlayerStatisticsNote.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPlayerStatisticsNote.Location = new System.Drawing.Point(0, 0);
             this.lblPlayerStatisticsNote.Name = "lblPlayerStatisticsNote";
-            this.lblPlayerStatisticsNote.Size = new System.Drawing.Size(336, 350);
+            this.lblPlayerStatisticsNote.Size = new System.Drawing.Size(320, 354);
             this.lblPlayerStatisticsNote.TabIndex = 1;
             this.lblPlayerStatisticsNote.Text = "Double-Click on a Hud Window to display player\'s statistics.";
             this.lblPlayerStatisticsNote.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -128,6 +133,27 @@
             this.tabConfigurationPage.TabIndex = 1;
             this.tabConfigurationPage.Text = "Configuration";
             this.tabConfigurationPage.UseVisualStyleBackColor = true;
+            // 
+            // lblPokerClientTheme
+            // 
+            this.lblPokerClientTheme.Location = new System.Drawing.Point(8, 188);
+            this.lblPokerClientTheme.Name = "lblPokerClientTheme";
+            this.lblPokerClientTheme.Size = new System.Drawing.Size(46, 19);
+            this.lblPokerClientTheme.TabIndex = 10;
+            this.lblPokerClientTheme.Text = "Theme:";
+            this.lblPokerClientTheme.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbPokerClientTheme
+            // 
+            this.cmbPokerClientTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbPokerClientTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPokerClientTheme.FormattingEnabled = true;
+            this.cmbPokerClientTheme.Location = new System.Drawing.Point(60, 186);
+            this.cmbPokerClientTheme.Name = "cmbPokerClientTheme";
+            this.cmbPokerClientTheme.Size = new System.Drawing.Size(252, 21);
+            this.cmbPokerClientTheme.TabIndex = 9;
+            this.cmbPokerClientTheme.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClientTheme_SelectionChangeCommitted);
             // 
             // lblPokerClientLanguage
             // 
@@ -308,7 +334,7 @@
             this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
             this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(330, 344);
+            this.entityHandsContainer.Size = new System.Drawing.Size(314, 348);
             this.entityHandsContainer.TabIndex = 4;
             // 
             // statisticsDisplay
@@ -325,25 +351,24 @@
             this.statisticsDisplay.TopMargin = 8;
             this.statisticsDisplay.Visible = false;
             // 
-            // lblPokerClientTheme
+            // tabTools
             // 
-            this.lblPokerClientTheme.Location = new System.Drawing.Point(8, 188);
-            this.lblPokerClientTheme.Name = "lblPokerClientTheme";
-            this.lblPokerClientTheme.Size = new System.Drawing.Size(46, 19);
-            this.lblPokerClientTheme.TabIndex = 10;
-            this.lblPokerClientTheme.Text = "Theme:";
-            this.lblPokerClientTheme.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tabTools.Controls.Add(this.pictureBox1);
+            this.tabTools.Location = new System.Drawing.Point(4, 22);
+            this.tabTools.Name = "tabTools";
+            this.tabTools.Size = new System.Drawing.Size(320, 354);
+            this.tabTools.TabIndex = 4;
+            this.tabTools.Text = "Tools";
+            this.tabTools.UseVisualStyleBackColor = true;
             // 
-            // cmbPokerClientTheme
+            // pictureBox1
             // 
-            this.cmbPokerClientTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmbPokerClientTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPokerClientTheme.FormattingEnabled = true;
-            this.cmbPokerClientTheme.Location = new System.Drawing.Point(60, 186);
-            this.cmbPokerClientTheme.Name = "cmbPokerClientTheme";
-            this.cmbPokerClientTheme.Size = new System.Drawing.Size(252, 21);
-            this.cmbPokerClientTheme.TabIndex = 9;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(320, 354);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // FrmMain
             // 
@@ -370,6 +395,8 @@
             this.tabConfigurationPage.PerformLayout();
             this.tabAboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
+            this.tabTools.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -400,6 +427,8 @@
         private System.Windows.Forms.Label lblPlayerStatisticsNote;
         private System.Windows.Forms.Label lblPokerClientTheme;
         private System.Windows.Forms.ComboBox cmbPokerClientTheme;
+        private System.Windows.Forms.TabPage tabTools;
+        private System.Windows.Forms.PictureBox pictureBox1;
 
 
     }

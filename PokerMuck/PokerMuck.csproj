@@ -83,6 +83,12 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AForge">
+      <HintPath>lib\AForge\Release\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Imaging">
+      <HintPath>lib\AForge\Release\AForge.Imaging.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -130,6 +136,8 @@
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
     <Compile Include="Classes\Recognition\ColorMaps\ColorMap.cs" />
     <Compile Include="Classes\Recognition\ColorMaps\HoldemColorMap.cs" />
+    <Compile Include="Classes\Recognition\TimedScreenshotTaker.cs" />
+    <Compile Include="Classes\Recognition\ScreenshotTaker.cs" />
     <Compile Include="Classes\Recognition\VisualRecognitionManager.cs" />
     <Compile Include="Classes\Recognition\VisualRecognitionMap.cs" />
     <Compile Include="Classes\Settings\HudUserSettings.cs" />

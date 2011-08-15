@@ -51,6 +51,10 @@ namespace PokerMuck
             pmDirector.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
 
 
+            ScreenshotTaker screenshot = new ScreenshotTaker();
+            screenshot.Take();
+            pictureBox1.Image = screenshot.CurrentSlice(new Rectangle(30, 30, 50, 50));
+
             //pmDirector.Test();
             /*
             HoldemCardDisplayDialog d = new HoldemCardDisplayDialog();
@@ -138,7 +142,7 @@ namespace PokerMuck
             LoadConfigurationValues();
 
             // Always start the view on the About tab
-            tabControl.SelectedIndex = 3;
+            tabControl.SelectedIndex = 4;
         }
 
         void pmDirector_RunGUIRoutine(Action d, Boolean asynchronous)
@@ -324,7 +328,7 @@ namespace PokerMuck
             else
             {
                 ArrayList list = new ArrayList();
-                list.Add("Not yet supported");
+                list.Add("Feature not yet supported");
                 cmbPokerClientTheme.DataSource = list;
                 cmbPokerClientTheme.Enabled = false;                
             }
@@ -355,9 +359,11 @@ namespace PokerMuck
             PokerClient client = PokerClientsList.Find(cmbPokerClient.Text);
             client.InitializeLanguage(client.DefaultLanguage);
 
-            pmDirector.ChangePokerClient(client);
             LoadPokerClientLanguages(client);
             LoadPokerClientThemes(client);
+
+            client.SetTheme(cmbPokerClientTheme.Text);
+            pmDirector.ChangePokerClient(client);
 
             // Refresh hand history directory
             txtHandHistoryDirectory.Text = pmDirector.UserSettings.StoredHandHistoryDirectory;
@@ -368,6 +374,16 @@ namespace PokerMuck
         {
             PokerClient client = pmDirector.UserSettings.CurrentPokerClient;
             client.InitializeLanguage(cmbPokerClientLanguage.Text);
+
+            // Tell directory that we have changed the client
+            pmDirector.ChangePokerClient(client);
+        }
+
+
+        private void cmbPokerClientTheme_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            PokerClient client = pmDirector.UserSettings.CurrentPokerClient;
+            client.SetTheme(cmbPokerClientTheme.Text);
 
             // Tell directory that we have changed the client
             pmDirector.ChangePokerClient(client);
@@ -401,6 +417,7 @@ namespace PokerMuck
 
             System.Diagnostics.Process.Start(url);
         }
+
 
     }
 }

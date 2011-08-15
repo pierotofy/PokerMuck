@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Drawing;
+using System.Collections;
 
 namespace PokerMuck
 {
@@ -15,9 +16,26 @@ namespace PokerMuck
      * but omaha has four. hold'em has a flop, but five card draw doesn't. */
     abstract class ColorMap
     {
+        /* Contains the associaction action => color, MUST be initialized by initializeMapData */
+        protected Hashtable mapData;
+        protected abstract void InitializeMapData();
+
+        public ColorMap()
+        {
+            mapData = new Hashtable();
+        }
+
         /* Given an action (described as a string), it returns a color
          * that is to be found in the associated color map */
-        public abstract Color getActionColor(String action);
+        public Color GetColorFor(String action)
+        {
+            Debug.Assert(mapData.ContainsKey(action), "Trying to access an action from the color map that has not been assigned to a color: " + action);
+            return (Color)mapData[action];
+        }
+
+        public ICollection Actions{
+            get { return mapData.Keys; }
+        }
 
         public static ColorMap Create(PokerGame game)
         {

@@ -37,6 +37,9 @@ namespace PokerMuck
         private String currentLanguage; //Don't allow subclasses to change this, force them to use InitializeLanguage
         public String CurrentLanguage { get { return currentLanguage; } }
 
+        private String currentTheme;
+        public String CurrentTheme { get { return currentTheme != null ? currentTheme : ""; } }
+
         /* Set the current language and calls the initializedata method */
         public void InitializeLanguage(String language)
         {
@@ -50,7 +53,13 @@ namespace PokerMuck
                 InitializeData();
             }
         }
-        
+
+        public void SetTheme(String theme)
+        {
+            if (SupportedVisualRecognitionThemes.Contains(theme)) this.currentTheme = theme;
+            else this.currentTheme = "";
+        }
+
         /* Each poker client needs to initialize regex, config and currentLanguage */
         protected abstract void InitializeData();
 
@@ -174,7 +183,10 @@ namespace PokerMuck
                         String theme = m.Groups["theme"].Value;
 
                         Debug.Print("Found valid color map for " + this.Name + ": " + theme);
-                        supportedVisualRecognitionThemes.Add(theme);
+                        if (!supportedVisualRecognitionThemes.Contains(theme))
+                        {
+                            supportedVisualRecognitionThemes.Add(theme);
+                        }
                     }else{
                         Debug.Print("Detected invalid card map filename format: " + file + ", skipping...");
                     }
