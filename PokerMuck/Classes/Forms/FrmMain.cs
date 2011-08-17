@@ -15,9 +15,6 @@ namespace PokerMuck
 {
     public partial class FrmMain : Form
     {
-        /* Instance of the director */
-        private PokerMuckDirector pmDirector;
-
         /* Maximum height of card list panels */
         private static int MAXIMUM_CARD_LIST_PANEL_HEIGHT = 100;
 
@@ -40,20 +37,16 @@ namespace PokerMuck
             SetStatus("Waiting for a game to start...");
 
             
-            pmDirector = new PokerMuckDirector();
-            pmDirector.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(pmDirector_RunGUIRoutine);
-            pmDirector.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
-            pmDirector.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
-            pmDirector.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
-            pmDirector.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
-            pmDirector.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
-            pmDirector.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
-            pmDirector.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
+            Globals.Director = new PokerMuckDirector();
+            Globals.Director.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(pmDirector_RunGUIRoutine);
+            Globals.Director.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
+            Globals.Director.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
+            Globals.Director.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
+            Globals.Director.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
+            Globals.Director.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
+            Globals.Director.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
+            Globals.Director.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
 
-
-            ScreenshotTaker screenshot = new ScreenshotTaker();
-            screenshot.Take();
-            pictureBox1.Image = screenshot.CurrentSlice(new Rectangle(30, 30, 50, 50));
 
             //pmDirector.Test();
             /*
@@ -265,7 +258,7 @@ namespace PokerMuck
         // Cleanup
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            pmDirector.Terminate();             
+            Globals.Director.Terminate();             
         }
 
         // Save new window size
@@ -277,14 +270,13 @@ namespace PokerMuck
         private void FrmMain_LocationChanged(object sender, EventArgs e)
         {
             // Save window position for the future!
-            if (pmDirector != null) Globals.UserSettings.WindowPosition = this.Location;
+            if (Globals.Director != null) Globals.UserSettings.WindowPosition = this.Location;
         }
 
         /* Read the values from the configuration and puts them into the UI */
         private void LoadConfigurationValues()
         {
             txtHandHistoryDirectory.Text = Globals.UserSettings.StoredHandHistoryDirectory;
-            txtUserId.Text = Globals.UserSettings.UserID;
 
             // Load poker client list
             LoadPokerClientList();
@@ -300,6 +292,8 @@ namespace PokerMuck
 
             // Set current poker client language
             cmbPokerClientLanguage.Text = Globals.UserSettings.CurrentPokerClient.CurrentLanguage;
+
+            chkTrainingMode.Enabled = Globals.UserSettings.TrainingModeEnabled;
         }
 
         /* Loads the poker clients into the appropriate combobox */
@@ -342,15 +336,9 @@ namespace PokerMuck
             if (result == DialogResult.OK)
             {
                 txtHandHistoryDirectory.Text = browserDialog.SelectedPath;
-                pmDirector.ChangeHandHistoryDirectory(browserDialog.SelectedPath);
+                Globals.Director.ChangeHandHistoryDirectory(browserDialog.SelectedPath);
             }
 
-        }
-
-        /* User ID has changed, store in config */
-        private void txtUserId_TextChanged(object sender, EventArgs e)
-        {
-            Globals.UserSettings.UserID = txtUserId.Text;
         }
 
         /* Pokerclient has changed, store in config and load available languages */
@@ -363,7 +351,7 @@ namespace PokerMuck
             LoadPokerClientThemes(client);
 
             client.SetTheme(cmbPokerClientTheme.Text);
-            pmDirector.ChangePokerClient(client);
+            Globals.Director.ChangePokerClient(client);
 
             // Refresh hand history directory
             txtHandHistoryDirectory.Text = Globals.UserSettings.StoredHandHistoryDirectory;
@@ -376,7 +364,7 @@ namespace PokerMuck
             client.InitializeLanguage(cmbPokerClientLanguage.Text);
 
             // Tell directory that we have changed the client
-            pmDirector.ChangePokerClient(client);
+            Globals.Director.ChangePokerClient(client);
         }
 
 
@@ -386,7 +374,7 @@ namespace PokerMuck
             client.SetTheme(cmbPokerClientTheme.Text);
 
             // Tell directory that we have changed the client
-            pmDirector.ChangePokerClient(client);
+            Globals.Director.ChangePokerClient(client);
         }
 
         /* Open www.pierotofy.it */
@@ -416,6 +404,11 @@ namespace PokerMuck
                 "&bn=" + "PP%2dDonationsBF";
 
             System.Diagnostics.Process.Start(url);
+        }
+
+        private void chkTrainingMode_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.UserSettings.TrainingModeEnabled = chkTrainingMode.Enabled;
         }
 
 

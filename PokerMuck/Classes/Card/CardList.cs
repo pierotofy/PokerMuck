@@ -139,7 +139,8 @@ namespace PokerMuck
             }
 
             // Remove last space
-            return res.Substring(0, res.Length - 1);
+            if (res == String.Empty) return String.Empty;
+            else return res.Substring(0, res.Length - 1);
         }
 
         /* Perform a deep copy */

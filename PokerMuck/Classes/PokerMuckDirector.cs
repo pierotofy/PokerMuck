@@ -153,6 +153,14 @@ namespace PokerMuck
             true);
         }
 
+        /* Note that some GUIoperations are still executed through a chain of events 
+         * that eventually arrive to the director. All newer code should use this method to 
+         * run code from the GUI thread */
+        public void RunFromGUIThread(Action d, Boolean asynchronous)
+        {
+            RunGUIRoutine(d, asynchronous);
+        }
+
         /* A window has been minimized... hide the hud associated with it */
         public void WindowMinimized(string windowTitle)
         {
@@ -383,7 +391,7 @@ namespace PokerMuck
             foreach (Player p in sender.PlayerList)
             {
                 // If it has showed and it's not us
-                if (p.HasShowedThisRound && p.Name != Globals.UserSettings.UserID)
+                if (p.HasShowedThisRound && p.Name != sender.CurrentHeroName)
                 {
                     // Inform the UI
                     if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
@@ -468,7 +476,6 @@ namespace PokerMuck
 
             // Save configuration
             Globals.UserSettings.Save();
-
         }
 
     }

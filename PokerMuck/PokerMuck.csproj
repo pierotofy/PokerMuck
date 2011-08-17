@@ -89,6 +89,10 @@
     <Reference Include="AForge.Imaging">
       <HintPath>lib\AForge\Release\AForge.Imaging.dll</HintPath>
     </Reference>
+    <Reference Include="AForge.Math, Version=2.2.1.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\AForge\Release\AForge.Math.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -155,11 +159,29 @@
     <Compile Include="Classes\Table\HoldemTableStatistics.cs" />
     <Compile Include="Classes\Table\Table.cs" />
     <Compile Include="Classes\Table\TableStatistics.cs" />
-    <Compile Include="Classes\UIComponents\HoldemCards\HoldemCardsButton.cs">
+    <Compile Include="Classes\UIComponents\Cards\CardButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Classes\UIComponents\HoldemCards\HoldemCardsButton.Designer.cs">
-      <DependentUpon>HoldemCardsButton.cs</DependentUpon>
+    <Compile Include="Classes\UIComponents\Cards\CardButton.designer.cs">
+      <DependentUpon>CardButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Cards\CardSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Cards\CardSelector.Designer.cs">
+      <DependentUpon>CardSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Cards\Holdem\HoldemCardsSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Cards\Holdem\HoldemCardsSelector.Designer.cs">
+      <DependentUpon>HoldemCardsSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Dialog\CardMatchSelectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Dialog\CardMatchSelectDialog.Designer.cs">
+      <DependentUpon>CardMatchSelectDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\UIComponents\CardPictureBox.cs">
       <SubType>Component</SubType>
@@ -182,6 +204,12 @@
     <Compile Include="Classes\UIComponents\ControlListContainer.Designer.cs">
       <DependentUpon>ControlListContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\UIComponents\Dialog\SingleCardSelectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\Dialog\SingleCardSelectDialog.Designer.cs">
+      <DependentUpon>SingleCardSelectDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\UIComponents\Dialog\HoldemCardDisplayDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,12 +221,6 @@
     </Compile>
     <Compile Include="Classes\UIComponents\ExtendedStatisticsPanel.Designer.cs">
       <DependentUpon>ExtendedStatisticsPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Classes\UIComponents\HoldemCards\HoldemCardsSelector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Classes\UIComponents\HoldemCards\HoldemCardsSelector.Designer.cs">
-      <DependentUpon>HoldemCardsSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\UIComponents\Hud\HoldemHudWindow.cs">
       <SubType>Form</SubType>
@@ -217,6 +239,12 @@
     </Compile>
     <Compile Include="Classes\UIComponents\Hud\HudWindow.designer.cs">
       <DependentUpon>HudWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\UIComponents\SelectableCardListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\SelectableCardPictureBox.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Classes\UIComponents\StatisticsDisplay.cs">
       <SubType>UserControl</SubType>
@@ -257,14 +285,20 @@
     <EmbeddedResource Include="Classes\Forms\FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Classes\UIComponents\HoldemCards\HoldemCardsButton.resx">
-      <DependentUpon>HoldemCardsButton.cs</DependentUpon>
+    <EmbeddedResource Include="Classes\UIComponents\Cards\CardButton.resx">
+      <DependentUpon>CardButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\Dialog\CardMatchSelectDialog.resx">
+      <DependentUpon>CardMatchSelectDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\ControlListContainer.resx">
       <DependentUpon>ControlListContainer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\CardListPanel.resx">
       <DependentUpon>CardListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\Dialog\SingleCardSelectDialog.resx">
+      <DependentUpon>SingleCardSelectDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\Dialog\HoldemCardDisplayDialog.resx">
       <DependentUpon>HoldemCardDisplayDialog.cs</DependentUpon>

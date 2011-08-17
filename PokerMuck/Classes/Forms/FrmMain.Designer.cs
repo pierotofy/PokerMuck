@@ -31,7 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHandsPage = new System.Windows.Forms.TabPage();
+            this.entityHandsContainer = new PokerMuck.ControlListContainer();
             this.tabStatistics = new System.Windows.Forms.TabPage();
+            this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
             this.lblPlayerStatisticsNote = new System.Windows.Forms.Label();
             this.tabConfigurationPage = new System.Windows.Forms.TabPage();
             this.lblPokerClientTheme = new System.Windows.Forms.Label();
@@ -40,10 +42,10 @@
             this.cmbPokerClientLanguage = new System.Windows.Forms.ComboBox();
             this.lblPokerClient = new System.Windows.Forms.Label();
             this.cmbPokerClient = new System.Windows.Forms.ComboBox();
-            this.txtUserId = new System.Windows.Forms.TextBox();
-            this.lblUserId = new System.Windows.Forms.Label();
             this.btnChangeHandHistory = new System.Windows.Forms.Button();
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
+            this.tabTools = new System.Windows.Forms.TabPage();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
             this.btnDonate = new System.Windows.Forms.Button();
             this.lblDonate = new System.Windows.Forms.Label();
@@ -51,18 +53,15 @@
             this.lblProgramName = new System.Windows.Forms.Label();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.entityHandsContainer = new PokerMuck.ControlListContainer();
-            this.statisticsDisplay = new PokerMuck.StatisticsDisplay();
-            this.tabTools = new System.Windows.Forms.TabPage();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.chkTrainingMode = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabHandsPage.SuspendLayout();
             this.tabStatistics.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
-            this.tabAboutPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
             this.tabTools.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabAboutPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl
@@ -92,6 +91,15 @@
             this.tabHandsPage.Text = "Muck";
             this.tabHandsPage.UseVisualStyleBackColor = true;
             // 
+            // entityHandsContainer
+            // 
+            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
+            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
+            this.entityHandsContainer.Name = "entityHandsContainer";
+            this.entityHandsContainer.Size = new System.Drawing.Size(314, 348);
+            this.entityHandsContainer.TabIndex = 4;
+            // 
             // tabStatistics
             // 
             this.tabStatistics.Controls.Add(this.statisticsDisplay);
@@ -102,6 +110,20 @@
             this.tabStatistics.TabIndex = 3;
             this.tabStatistics.Text = "Statistics";
             this.tabStatistics.UseVisualStyleBackColor = true;
+            // 
+            // statisticsDisplay
+            // 
+            this.statisticsDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.statisticsDisplay.BackColor = System.Drawing.Color.White;
+            this.statisticsDisplay.Location = new System.Drawing.Point(0, 2);
+            this.statisticsDisplay.Name = "statisticsDisplay";
+            this.statisticsDisplay.Size = new System.Drawing.Size(215, 295);
+            this.statisticsDisplay.StatisticsSpacing = 2;
+            this.statisticsDisplay.TabIndex = 0;
+            this.statisticsDisplay.TopMargin = 8;
+            this.statisticsDisplay.Visible = false;
             // 
             // lblPlayerStatisticsNote
             // 
@@ -116,14 +138,13 @@
             // 
             // tabConfigurationPage
             // 
+            this.tabConfigurationPage.Controls.Add(this.chkTrainingMode);
             this.tabConfigurationPage.Controls.Add(this.lblPokerClientTheme);
             this.tabConfigurationPage.Controls.Add(this.cmbPokerClientTheme);
             this.tabConfigurationPage.Controls.Add(this.lblPokerClientLanguage);
             this.tabConfigurationPage.Controls.Add(this.cmbPokerClientLanguage);
             this.tabConfigurationPage.Controls.Add(this.lblPokerClient);
             this.tabConfigurationPage.Controls.Add(this.cmbPokerClient);
-            this.tabConfigurationPage.Controls.Add(this.txtUserId);
-            this.tabConfigurationPage.Controls.Add(this.lblUserId);
             this.tabConfigurationPage.Controls.Add(this.btnChangeHandHistory);
             this.tabConfigurationPage.Controls.Add(this.txtHandHistoryDirectory);
             this.tabConfigurationPage.Location = new System.Drawing.Point(4, 22);
@@ -136,7 +157,7 @@
             // 
             // lblPokerClientTheme
             // 
-            this.lblPokerClientTheme.Location = new System.Drawing.Point(8, 188);
+            this.lblPokerClientTheme.Location = new System.Drawing.Point(8, 145);
             this.lblPokerClientTheme.Name = "lblPokerClientTheme";
             this.lblPokerClientTheme.Size = new System.Drawing.Size(46, 19);
             this.lblPokerClientTheme.TabIndex = 10;
@@ -149,7 +170,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClientTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClientTheme.FormattingEnabled = true;
-            this.cmbPokerClientTheme.Location = new System.Drawing.Point(60, 186);
+            this.cmbPokerClientTheme.Location = new System.Drawing.Point(60, 143);
             this.cmbPokerClientTheme.Name = "cmbPokerClientTheme";
             this.cmbPokerClientTheme.Size = new System.Drawing.Size(252, 21);
             this.cmbPokerClientTheme.TabIndex = 9;
@@ -157,7 +178,7 @@
             // 
             // lblPokerClientLanguage
             // 
-            this.lblPokerClientLanguage.Location = new System.Drawing.Point(8, 150);
+            this.lblPokerClientLanguage.Location = new System.Drawing.Point(8, 107);
             this.lblPokerClientLanguage.Name = "lblPokerClientLanguage";
             this.lblPokerClientLanguage.Size = new System.Drawing.Size(71, 31);
             this.lblPokerClientLanguage.TabIndex = 8;
@@ -170,7 +191,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClientLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClientLanguage.FormattingEnabled = true;
-            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(82, 156);
+            this.cmbPokerClientLanguage.Location = new System.Drawing.Point(82, 113);
             this.cmbPokerClientLanguage.Name = "cmbPokerClientLanguage";
             this.cmbPokerClientLanguage.Size = new System.Drawing.Size(230, 21);
             this.cmbPokerClientLanguage.TabIndex = 7;
@@ -178,7 +199,7 @@
             // 
             // lblPokerClient
             // 
-            this.lblPokerClient.Location = new System.Drawing.Point(8, 123);
+            this.lblPokerClient.Location = new System.Drawing.Point(8, 80);
             this.lblPokerClient.Name = "lblPokerClient";
             this.lblPokerClient.Size = new System.Drawing.Size(38, 21);
             this.lblPokerClient.TabIndex = 6;
@@ -191,38 +212,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPokerClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPokerClient.FormattingEnabled = true;
-            this.cmbPokerClient.Location = new System.Drawing.Point(49, 124);
+            this.cmbPokerClient.Location = new System.Drawing.Point(49, 81);
             this.cmbPokerClient.Name = "cmbPokerClient";
             this.cmbPokerClient.Size = new System.Drawing.Size(263, 21);
             this.cmbPokerClient.TabIndex = 5;
             this.cmbPokerClient.SelectionChangeCommitted += new System.EventHandler(this.cmbPokerClient_SelectionChangeCommitted);
             // 
-            // txtUserId
-            // 
-            this.txtUserId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUserId.Location = new System.Drawing.Point(82, 8);
-            this.txtUserId.Name = "txtUserId";
-            this.txtUserId.Size = new System.Drawing.Size(230, 20);
-            this.txtUserId.TabIndex = 4;
-            this.txtUserId.TextChanged += new System.EventHandler(this.txtUserId_TextChanged);
-            // 
-            // lblUserId
-            // 
-            this.lblUserId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblUserId.AutoSize = true;
-            this.lblUserId.Location = new System.Drawing.Point(8, 10);
-            this.lblUserId.Name = "lblUserId";
-            this.lblUserId.Size = new System.Drawing.Size(71, 13);
-            this.lblUserId.TabIndex = 3;
-            this.lblUserId.Text = "Your User ID:";
-            // 
             // btnChangeHandHistory
             // 
             this.btnChangeHandHistory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnChangeHandHistory.Location = new System.Drawing.Point(8, 78);
+            this.btnChangeHandHistory.Location = new System.Drawing.Point(8, 35);
             this.btnChangeHandHistory.Name = "btnChangeHandHistory";
             this.btnChangeHandHistory.Size = new System.Drawing.Size(304, 23);
             this.btnChangeHandHistory.TabIndex = 2;
@@ -234,11 +234,30 @@
             // 
             this.txtHandHistoryDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtHandHistoryDirectory.Location = new System.Drawing.Point(8, 52);
+            this.txtHandHistoryDirectory.Location = new System.Drawing.Point(8, 9);
             this.txtHandHistoryDirectory.Name = "txtHandHistoryDirectory";
             this.txtHandHistoryDirectory.ReadOnly = true;
             this.txtHandHistoryDirectory.Size = new System.Drawing.Size(304, 20);
             this.txtHandHistoryDirectory.TabIndex = 1;
+            // 
+            // tabTools
+            // 
+            this.tabTools.Controls.Add(this.pictureBox1);
+            this.tabTools.Location = new System.Drawing.Point(4, 22);
+            this.tabTools.Name = "tabTools";
+            this.tabTools.Size = new System.Drawing.Size(320, 354);
+            this.tabTools.TabIndex = 4;
+            this.tabTools.Text = "Tools";
+            this.tabTools.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(320, 354);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // tabAboutPage
             // 
@@ -328,47 +347,16 @@
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // entityHandsContainer
+            // chkTrainingMode
             // 
-            this.entityHandsContainer.BackColor = System.Drawing.Color.Transparent;
-            this.entityHandsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityHandsContainer.Location = new System.Drawing.Point(3, 3);
-            this.entityHandsContainer.Name = "entityHandsContainer";
-            this.entityHandsContainer.Size = new System.Drawing.Size(314, 348);
-            this.entityHandsContainer.TabIndex = 4;
-            // 
-            // statisticsDisplay
-            // 
-            this.statisticsDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.chkTrainingMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.statisticsDisplay.BackColor = System.Drawing.Color.White;
-            this.statisticsDisplay.Location = new System.Drawing.Point(0, 2);
-            this.statisticsDisplay.Name = "statisticsDisplay";
-            this.statisticsDisplay.Size = new System.Drawing.Size(215, 295);
-            this.statisticsDisplay.StatisticsSpacing = 2;
-            this.statisticsDisplay.TabIndex = 0;
-            this.statisticsDisplay.TopMargin = 8;
-            this.statisticsDisplay.Visible = false;
-            // 
-            // tabTools
-            // 
-            this.tabTools.Controls.Add(this.pictureBox1);
-            this.tabTools.Location = new System.Drawing.Point(4, 22);
-            this.tabTools.Name = "tabTools";
-            this.tabTools.Size = new System.Drawing.Size(320, 354);
-            this.tabTools.TabIndex = 4;
-            this.tabTools.Text = "Tools";
-            this.tabTools.UseVisualStyleBackColor = true;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(320, 354);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.chkTrainingMode.Location = new System.Drawing.Point(11, 188);
+            this.chkTrainingMode.Name = "chkTrainingMode";
+            this.chkTrainingMode.Size = new System.Drawing.Size(301, 24);
+            this.chkTrainingMode.TabIndex = 11;
+            this.chkTrainingMode.Text = "Image Recognition Training Mode Enabled";
+            this.chkTrainingMode.UseVisualStyleBackColor = true;
             // 
             // FrmMain
             // 
@@ -393,10 +381,10 @@
             this.tabStatistics.ResumeLayout(false);
             this.tabConfigurationPage.ResumeLayout(false);
             this.tabConfigurationPage.PerformLayout();
-            this.tabAboutPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
             this.tabTools.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabAboutPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -411,8 +399,6 @@
         private System.Windows.Forms.TextBox txtHandHistoryDirectory;
         private System.Windows.Forms.TabPage tabAboutPage;
         private System.Windows.Forms.PictureBox pictureEagle;
-        private System.Windows.Forms.Label lblUserId;
-        private System.Windows.Forms.TextBox txtUserId;
         private System.Windows.Forms.Label lblPokerClient;
         private System.Windows.Forms.ComboBox cmbPokerClient;
         private System.Windows.Forms.Label lblPokerClientLanguage;
@@ -429,6 +415,7 @@
         private System.Windows.Forms.ComboBox cmbPokerClientTheme;
         private System.Windows.Forms.TabPage tabTools;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.CheckBox chkTrainingMode;
 
 
     }

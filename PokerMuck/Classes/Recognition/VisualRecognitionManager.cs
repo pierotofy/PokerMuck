@@ -33,8 +33,9 @@ namespace PokerMuck
             this.timedScreenshotTaker.Start();
         }
 
-        void  timedScreenshotTaker_ScreenshotTaken(Bitmap screenshot)
+        void timedScreenshotTaker_ScreenshotTaken(Bitmap screenshot)
         {
+            /* Try to match player cards */
             List<Bitmap> playerCardImages = new List<Bitmap>();
             ArrayList playerCardsActions = colorMap.GetPlayerCardsActions(table.CurrentHeroSeat);
 
@@ -50,13 +51,47 @@ namespace PokerMuck
                 }
             }
 
-            CardList playerCards = matcher.MatchCards(playerCardImages);
+            CardList playerCards = matcher.MatchCards(playerCardImages, false);
             if (playerCards != null)
             {
-                Debug.Print("Matched! " + playerCards.ToString());
+                Debug.Print("Matched player cards! " + playerCards.ToString());
             }
 
-            //timedScreenshotTaker.Stop();
+            // Dispose
+            foreach (Bitmap image in playerCardImages) image.Dispose();
+
+            /* If community cards are supported, try to match them */
+            if (colorMap.SupportsCommunityCards)
+            {
+                List<Bitmap> communityCardImages = new List<Bitmap>();
+                ArrayList communityCardsActions = colorMap.GetCommunityCardsActions();
+
+                foreach (String action in communityCardsActions)
+                {
+                    Rectangle actionRect = recognitionMap.GetRectangleFor(action);
+                    if (!actionRect.Equals(Rectangle.Empty))
+                    {
+                        communityCardImages.Add(ScreenshotTaker.Slice(screenshot, actionRect));
+                    }
+                    else
+                    {
+                        Debug.Print("Warning: could not find a rectangle for action " + action);
+                    }
+                }
+
+                // We try to identify as many cards as possible
+                CardList communityCards = matcher.MatchCards(communityCardImages, true);
+                if (communityCards != null && communityCards.Count > 0)
+                {
+                    Debug.Print("Matched board cards! " + communityCards.ToString());
+                }
+
+                // Dispose
+                foreach (Bitmap image in communityCardImages) image.Dispose();
+            }
+
+            // Dispose screenshot
+            screenshot.Dispose();
         }
 
         public void Cleanup(){

@@ -16,22 +16,19 @@ namespace PokerMuck
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
 
-        private Bitmap current;
-        public Bitmap Current { get { return current; } }
-
         public ScreenshotTaker()
         {
         }
 
-        public void Take(){
+        public Bitmap Take(){
             Rectangle bounds = Screen.GetBounds(Point.Empty);
-            Take(bounds);
+            return Take(bounds);
         }
 
-        public void Take(Window window)
+        public Bitmap Take(Window window)
         {
             // We cannot use this method if the window is minimized
-            if (window.Minimized) return;
+            if (window.Minimized) return null;
 
             Rectangle rect = window.Rectangle;
 
@@ -41,22 +38,25 @@ namespace PokerMuck
                 Graphics g = Graphics.FromImage(result);
                 IntPtr hdc = g.GetHdc();
                 PrintWindow(window.Handle, hdc, 0);
-                current = result;
                 g.ReleaseHdc(hdc);
+                return result;
             }
             catch (Exception)
             {
                 Debug.Print("Failed to take screenshot of " + window.Title);
+                return null;
             }
         }
 
-        public void Take(Rectangle bounds)
+        public Bitmap Take(Rectangle bounds)
         {
-            current = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format24bppRgb);
-            using (Graphics g = Graphics.FromImage(current))
+            Bitmap result = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format24bppRgb);
+            using (Graphics g = Graphics.FromImage(result))
             {
                 g.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size);
             }
+
+            return result;
         }
 
         public static Bitmap Slice(Bitmap screenshot, Rectangle bounds)
@@ -69,12 +69,5 @@ namespace PokerMuck
 
             return result;
         }
-
-        public Bitmap CurrentSlice(Rectangle bounds)
-        {
-            Debug.Assert(current != null, "Cannot slice a screenshot that hasn't been taken");
-            return ScreenshotTaker.Slice(Current, bounds);
-        }
-
     }
 }

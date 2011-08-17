@@ -50,6 +50,29 @@ namespace PokerMuck
 
             mapData["player_card_1_seat_10"] = Color.FromArgb(0, 255, 10);
             mapData["player_card_2_seat_10"] = Color.FromArgb(255, 0, 10);
+
+            /* Flop cards = f0ff + card num
+             * Turn cards = 0032ff
+             * River cards = 0064ff
+             */
+            mapData["flop_card_1"] = Color.FromArgb(240, 255, 1);
+            mapData["flop_card_2"] = Color.FromArgb(240, 255, 2);
+            mapData["flop_card_3"] = Color.FromArgb(240, 255, 3);
+
+            mapData["turn_card"] = Color.FromArgb(0, 50, 255);
+
+            mapData["river_card"] = Color.FromArgb(0, 100, 255);
+        }
+
+        public override ArrayList GetCommunityCardsActions()
+        {
+            ArrayList result = new ArrayList();
+            result.Add("flop_card_1");
+            result.Add("flop_card_2");
+            result.Add("flop_card_3");
+            result.Add("turn_card");
+            result.Add("river_card");
+            return result;
         }
 
         public override ArrayList GetPlayerCardsActions(int playerSeat){

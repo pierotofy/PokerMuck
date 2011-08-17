@@ -33,8 +33,8 @@ namespace PokerMuck
             {
                 Thread.Sleep(msInterval);
 
-                scrTaker.Take(window);
-                if (ScreenshotTaken != null) ScreenshotTaken(scrTaker.Current);
+                Bitmap screenshot = scrTaker.Take(window);
+                if (ScreenshotTaken != null) ScreenshotTaken(screenshot);
             }
         }
 

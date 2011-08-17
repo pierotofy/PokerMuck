@@ -39,6 +39,13 @@ namespace PokerMuck
          * of actions that represent the cards of the player at a particular seat */
         public abstract ArrayList GetPlayerCardsActions(int playerSeat);
 
+        public bool SupportsCommunityCards { 
+            get { return GetCommunityCardsActions().Count > 0; } 
+        }
+
+        /* Simply return an empty arraylist if the map does not support community cards */
+        public abstract ArrayList GetCommunityCardsActions();
+
         public ICollection Actions{
             get { return mapData.Keys; }
         }

@@ -7,9 +7,9 @@ using System.Drawing;
 
 namespace PokerMuck
 {
-    class CardPictureBox : System.Windows.Forms.PictureBox
+    public class CardPictureBox : System.Windows.Forms.PictureBox
     {
-        private Card card;
+        protected Card card;
 
         // Store the original image height/width ratio
         private float heightWidthRatio;

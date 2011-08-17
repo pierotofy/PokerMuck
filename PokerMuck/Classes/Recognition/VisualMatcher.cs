@@ -6,14 +6,19 @@ using System.Drawing;
 using System.IO;
 using System.Diagnostics;
 using AForge.Imaging;
+using AForge.Math;
 using System.Drawing.Drawing2D;
 using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
+using System.Collections;
 
 namespace PokerMuck
 {
     class VisualMatcher
     {
+        const double PERFECT_MATCH_HISTOGRAM_THRESHOLD = 0.05d;
+        const double POSSIBLE_MATCH_TEMPLATE_THRESHOLD = 0.75d;
+
         private bool trainingMode;
         private PokerClient client;
         private List<String> cardMatchFiles;
@@ -93,13 +98,12 @@ namespace PokerMuck
             }
         }
 
-        /* Tries to match a set of bitmaps into a card list. If any card
-         * fails to match, the whole operation is aborted and null is returned */
-        public CardList MatchCards(List<Bitmap> images){
+        /* Tries to match a set of bitmaps into a card list. 
+         * @param allowPartialMatch If any card fails to match, the operation is aborted and the results obtained so far are returned
+         *  (but they might be incomplete). If this parameter is set to false, null is returned on failure. */
+        public CardList MatchCards(List<Bitmap> images, bool allowPartialMatch)
+        {
             CardList result = new CardList();
-
-            images[0].Save("1.bmp", ImageFormat.Bmp);
-            images[1].Save("2.bmp", ImageFormat.Bmp);
 
             foreach (Bitmap image in images)
             {
@@ -107,6 +111,10 @@ namespace PokerMuck
                 if (card != null)
                 {
                     result.AddCard(card);
+                }
+                else if (allowPartialMatch)
+                {
+                    return result;
                 }
                 else
                 {
@@ -117,37 +125,176 @@ namespace PokerMuck
             return result;
         }
 
-        /* It returns null if there are no good matches */
+        /* Given two images it makes a histogram comparison of its color channels
+         * and returns a double indicating the level of similarity.
+         * The smaller the value, the more similar the images are */
+        private double HistogramBitmapDifference(Bitmap image1, Bitmap image2)
+        {
+            ImageStatistics stats1 = new ImageStatistics(image1);
+            ImageStatistics stats2 = new ImageStatistics(image2);
+
+            double blueDiff = Math.Abs(stats1.Blue.Mean - stats2.Blue.Mean);
+            double greenDiff = Math.Abs(stats1.Green.Mean - stats2.Green.Mean);
+            double redDiff = Math.Abs(stats1.Red.Mean - stats2.Red.Mean);
+
+            return ((redDiff + blueDiff + greenDiff) / 3.0d);
+        }
+
+        /* Assume the two images are in the correct format
+         * 1 = perfectly equal
+           0 = totally different */
+        private double TemplateMatchingSimilarity(Bitmap image, Bitmap template)
+        {
+            ExhaustiveTemplateMatching tm = new ExhaustiveTemplateMatching(0);
+            TemplateMatch[] matchings = tm.ProcessImage(image, template);
+            return (double)matchings[0].Similarity;
+        }
+
+        /* It returns null if there are no good matches 
+         * If training mode is enabled, a window might ask the user to aid the algorithm find the best match */
         public Card MatchCard(Bitmap image)
         {
-            float maxSimilarity = 0.0f;
+            double minDifference = Double.MaxValue;
             String bestMatchFilename = "";
+
+            /* We keep a hashtable of possible matches (filename => match %)
+             * so that if training mode is enabled we can access it to figure out which
+             * are the most likely candidates */
+            Hashtable possibleMatches = new Hashtable();
+
 
             foreach (String cardMatchFile in cardMatchFiles)
             {
                 Bitmap candidateImage = new Bitmap(cardMatchFile);
 
-                // candidateImage should be smaller than image
+                // For template matching template should be smaller than image
                 candidateImage = ScaleIfBiggerThan(image, candidateImage);
 
-                ExhaustiveTemplateMatching tm = new ExhaustiveTemplateMatching(0);
-                TemplateMatch[] matchings = tm.ProcessImage(image, candidateImage);
+                double difference = HistogramBitmapDifference(image, candidateImage);
+                double similarity = TemplateMatchingSimilarity(image, candidateImage);
 
-                if (matchings[0].Similarity > maxSimilarity)
+                if (difference < minDifference)
                 {
-                    maxSimilarity = matchings[0].Similarity;
+                    minDifference = difference;
                     bestMatchFilename = cardMatchFile;
+                }
+
+                /* We use histogram difference to match perfect copies of the image (after the training phase is over)
+                 * but if they are different, we use the template matching as an indicator of similarity */
+
+                if (difference > PERFECT_MATCH_HISTOGRAM_THRESHOLD && similarity > POSSIBLE_MATCH_TEMPLATE_THRESHOLD)
+                {
+                    possibleMatches.Add(cardMatchFile, similarity);
+                }
+
+                candidateImage.Dispose();
+            }
+
+            Debug.Print("Matched " + bestMatchFilename + " (Difference: " + minDifference + ")");
+
+            Card matchedCard = null; // Hold the return value
+
+            /* If we have a possible match, but we are not too sure about it, we can ask the user to confirm our guesses */
+            if (Globals.UserSettings.TrainingModeEnabled)
+            {
+                // TODO! check for presence of template matching at a decent level
+                if (minDifference > PERFECT_MATCH_HISTOGRAM_THRESHOLD)
+                {
+                    //Debug.Print("Min difference too high, asking user to confirm our guesses");
+
+                    Card userCard = null;
+                    Globals.Director.RunFromGUIThread((Action)delegate()
+                            {
+                                userCard = AskUserToConfirm(image, possibleMatches);
+                            },false
+                    );
+
+                    
+                    if (userCard != null)
+                    {
+                        matchedCard = userCard;
+                    }
                 }
             }
 
-            Debug.Print("Matched card with " + bestMatchFilename + "(" + maxSimilarity + ")");
+            // If the user has selected a card, matchedCard is an object and this is skipped
+            if (minDifference < PERFECT_MATCH_HISTOGRAM_THRESHOLD && matchedCard == null) matchedCard = Card.CreateFromPath(bestMatchFilename);
 
-            // If the best match is less than 70%, chances are we didn't match anything (or we need to improve our mapping)
-            if (maxSimilarity > 0.7f) return Card.CreateFromPath(bestMatchFilename);
-            else return null;
+            return matchedCard;
         }
 
-        /* Keep proportions */
+        /* If the user selects a card, returns the card, otherwise null */
+        private Card AskUserToConfirm(Bitmap targetImage, Hashtable possibleMatches)
+        {
+            if (possibleMatches.Count == 0)
+            {
+                Debug.Print("Warning: We should ask the user to confirm an image, but there are no possible matches...");
+                return null;
+            }
+
+            CardMatchSelectDialog dialog = new CardMatchSelectDialog();
+            dialog.DisplayImageToMatch(targetImage);
+
+            // Create list
+            List<String> orderedFilenames = new List<String>();
+
+            foreach (String cardMatchFile in possibleMatches.Keys)
+            {
+                orderedFilenames.Add(cardMatchFile);
+
+                Debug.Print(cardMatchFile + " has similarity of " + possibleMatches[cardMatchFile]);
+            }
+
+            orderedFilenames.Sort((delegate(String file1, String file2)
+            {
+                return ((double)possibleMatches[file2]).CompareTo((double)possibleMatches[file1]);
+            }));
+
+            // Create cards from filenames
+            const int MAX_CARDS_TO_DISPLAY = 5;
+            int i = 0;
+            foreach (String filename in orderedFilenames)
+            {
+                dialog.AddPossibleCardMatch(Card.CreateFromPath(filename));
+                i++;
+                if (i == MAX_CARDS_TO_DISPLAY) break;
+            }
+
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                // The user selected a card
+                Card userCard = dialog.SelectedCard;
+
+                /* Before returning to the caller, we replace the image associated with the card
+                 * with the targetimage. This process allows us to slowly replace the common card images templates
+                 * with images that come directly from the poker client, allowing us to achieve an almost perfect match
+                 * the next time the same card is compared */
+                ReplaceTemplateImageWith(userCard, targetImage);
+
+                return userCard;
+            }
+
+            return null;
+        }
+
+        private void ReplaceTemplateImageWith(Card matchedCard, Bitmap newImage)
+        {
+            // Find the path of the template associated with the card
+            String targetFile = String.Format("{0}{1}", CardMatchesDirectory, matchedCard.ToFilename("bmp"));
+
+            try
+            {
+                newImage.Save(targetFile, ImageFormat.Bmp);
+                Debug.Print("Successfully replaced " + targetFile + " with new image");
+            }
+            catch (Exception)
+            {
+                Debug.Print("Warning! Tried to replace " + targetFile + " with a new image but failed because of an exception");
+            }
+        }
+
+        /* Keep proportions
+         * If scaling is done, the source image is disposed */
         private Bitmap ScaleIfBiggerThan(Bitmap otherImage, Bitmap sourceImage)
         {
             bool needsScaling = false;
@@ -179,6 +326,7 @@ namespace PokerMuck
 
                 g.DrawImage(sourceImage, 0, 0, newWidth, newHeight);
                 g.Dispose();
+                sourceImage.Dispose();
 
                 return result;
             }

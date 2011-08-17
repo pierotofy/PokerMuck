@@ -161,6 +161,7 @@ namespace PokerMuck
         {
             regex = new Hashtable();
             config = new Hashtable();
+            currentTheme = "";
 
             LoadSupportedVisualRecognitionThemes();
         }

@@ -22,20 +22,7 @@ namespace PokerMuck
             WindowPosition = new Point(480, 320); // We assume monitors will be bigger than this resolution
             WindowSize = new Size(209, 331); // Designer size
             FirstExecution = true;
-            UserID = "";
-        }
-
-        public String UserID
-        {
-            get
-            {
-                return GetStringSetting("player_user_id");
-            }
-
-            set
-            {
-                SetSetting("player_user_id", value);
-            }
+            TrainingModeEnabled = false;
         }
 
         public bool FirstExecution
@@ -66,6 +53,19 @@ namespace PokerMuck
         {
             String key = client.XmlName + "_hand_history_directory";
             SetSetting(key, directory);
+        }
+
+        public bool TrainingModeEnabled
+        {
+            get
+            {
+                return GetBoolSetting("training_mode_enabled");
+            }
+
+            set
+            {
+                SetSetting("training_mode_enabled", value);
+            }
         }
 
         /* This is the actual location of the hand history files (includes dynamic subdirectories) */

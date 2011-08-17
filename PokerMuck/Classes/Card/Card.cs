@@ -42,6 +42,20 @@ namespace PokerMuck
             }
         }
 
+        /* Takes as input the standard format (As, Kh, ...) */
+        public static Card CreateFromString(String card)
+        {
+            Debug.Assert(card.Length == 2, "Cannot create a card from a string of length != 2");
+
+            String faceStr= new String(card[0],1).ToUpper();
+            String suitStr = new String(card[1], 1).ToUpper();
+
+            CardFace face = Card.CharToCardFace(faceStr[0]);
+            CardSuit suit = Card.CharToCardSuit(suitStr[0]);
+
+            return new Card(face, suit);
+        }
+
         /* Shallow copy, no objects to take care of */
         public object Clone()
         {
@@ -51,6 +65,13 @@ namespace PokerMuck
         public override string ToString()
         {
             return CardFaceToChar(Face).ToString() + CardSuitToChar(Suit).ToString().ToLower();
+        }
+
+        /* Returns the filename that this card used to display itself
+         * using our naming convention */
+        public string ToFilename(String extension = "png")
+        {
+            return String.Format("{0}_{1}.{2}", (int)Suit, (int)Face, extension); 
         }
 
         public override bool Equals(object obj)

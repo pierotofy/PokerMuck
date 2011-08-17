@@ -14,7 +14,7 @@ namespace PokerMuck
     {
 
         /* Holds the current hand to display */
-        private CardList cardListToDisplay;
+        protected CardList cardListToDisplay;
         public CardList CardListToDisplay
         {
             get
@@ -40,12 +40,23 @@ namespace PokerMuck
         public int CardSpacing { get; set; }
 
         /* Every reference to a CardPictureBox is stored here */
-        private List<CardPictureBox> cardPictures;
+        protected List<CardPictureBox> cardPictures;
                
         public CardListPanel()
         {
             InitializeComponent();
+            BorderPadding = 4;
+            CardSpacing = 40;
             cardPictures = new List<CardPictureBox>(10);
+        }
+
+        public void AddCardToList(Card c)
+        {
+            if (cardListToDisplay != null)
+            {
+                cardListToDisplay.AddCard(c);
+                ReloadGraphics();
+            }
         }
 
         /* Clears every previous graphic added to the panel,
@@ -65,7 +76,7 @@ namespace PokerMuck
         }
 
         /* This method will load the card pictures (if available) */
-        private void LoadCardPictures()
+        protected virtual void LoadCardPictures()
         {
             if (cardListToDisplay != null)
             {
