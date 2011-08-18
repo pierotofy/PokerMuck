@@ -155,6 +155,7 @@ namespace PokerMuck
         public Card MatchCard(Bitmap image)
         {
             double minDifference = Double.MaxValue;
+            double maxSimilarity = 0.0d;
             String bestMatchFilename = "";
 
             /* We keep a hashtable of possible matches (filename => match %)
@@ -179,6 +180,11 @@ namespace PokerMuck
                     bestMatchFilename = cardMatchFile;
                 }
 
+                if (similarity > maxSimilarity)
+                {
+                    maxSimilarity = similarity;
+                }
+
                 /* We use histogram difference to match perfect copies of the image (after the training phase is over)
                  * but if they are different, we use the template matching as an indicator of similarity */
 
@@ -190,17 +196,16 @@ namespace PokerMuck
                 candidateImage.Dispose();
             }
 
-            Debug.Print("Matched " + bestMatchFilename + " (Difference: " + minDifference + ")");
+            //Debug.Print("Matched " + bestMatchFilename + " (Difference: " + minDifference + ")");
 
             Card matchedCard = null; // Hold the return value
 
             /* If we have a possible match, but we are not too sure about it, we can ask the user to confirm our guesses */
             if (Globals.UserSettings.TrainingModeEnabled)
             {
-                // TODO! check for presence of template matching at a decent level
-                if (minDifference > PERFECT_MATCH_HISTOGRAM_THRESHOLD)
+                if (minDifference > PERFECT_MATCH_HISTOGRAM_THRESHOLD && maxSimilarity > POSSIBLE_MATCH_TEMPLATE_THRESHOLD)
                 {
-                    //Debug.Print("Min difference too high, asking user to confirm our guesses");
+                    Debug.Print("Min difference too high (" + minDifference + ") and max similarity above threshold, asking user to confirm our guesses");
 
                     Card userCard = null;
                     Globals.Director.RunFromGUIThread((Action)delegate()
@@ -208,7 +213,6 @@ namespace PokerMuck
                                 userCard = AskUserToConfirm(image, possibleMatches);
                             },false
                     );
-
                     
                     if (userCard != null)
                     {
@@ -251,7 +255,7 @@ namespace PokerMuck
             }));
 
             // Create cards from filenames
-            const int MAX_CARDS_TO_DISPLAY = 5;
+            const int MAX_CARDS_TO_DISPLAY = 7;
             int i = 0;
             foreach (String filename in orderedFilenames)
             {

@@ -29,12 +29,14 @@ namespace PokerMuck
 
         private void Run()
         {
+            Thread.Sleep(msInterval);
+
             while (running)
             {
-                Thread.Sleep(msInterval);
-
                 Bitmap screenshot = scrTaker.Take(window);
                 if (ScreenshotTaken != null) ScreenshotTaken(screenshot);
+
+                Thread.Sleep(msInterval);
             }
         }
 
