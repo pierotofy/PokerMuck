@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace PokerMuck
 {
-    public class Table : IHHMonitorHandler
+    public class Table : IHHMonitorHandler, IVisualRecognitionManagerHandler
     {
         /* Hand history monitor */
         private HHMonitor hhMonitor;
@@ -55,6 +55,10 @@ namespace PokerMuck
         /* Game type of the table */
         public PokerGame Game { get; set; }
 
+        /* Reference to the TableDisplayWindow */
+        private TableDisplayWindow displayWindow;
+        public TableDisplayWindow DisplayWindow { get { return displayWindow; } }
+
         /* The playing window's title currently associated with this table */
         public String WindowTitle
         {
@@ -85,19 +89,6 @@ namespace PokerMuck
         public HHParser HandHistoryParser { get { return handHistoryParser; } }
 
         private VisualRecognitionManager visualRecognitionManager;
-
-        /* Notifies the delegate that data has changed */
-        public delegate void RefreshUIHandler(Table sender);
-        public event RefreshUIHandler RefreshUI;
-
-        /* The statistics of a player in this table need to be displayed */
-        public delegate void DisplayPlayerStatisticsHandler(Player p);
-        public event DisplayPlayerStatisticsHandler DisplayPlayerStatistics;
-
-        public void OnDisplayPlayerStatistics(Player p)
-        {
-            if (DisplayPlayerStatistics != null) DisplayPlayerStatistics(p);
-        }
 
         /* Reference to the Hud Window associated with this table. */
         public Hud Hud { get; set; }
@@ -151,6 +142,8 @@ namespace PokerMuck
             this.handHistoryFilePath = handHistoryFilePath;
             this.window = window;
             this.pokerClient = pokerClient;
+            this.playerDatabase = playerDatabase;
+            this.Game = PokerGame.Unknown;
             this.maxSeatingCapacity = 0; // We don't know yet
             this.TableId = String.Empty; // We don't know yet
             this.GameID = String.Empty; // We don't know yet
@@ -158,9 +151,9 @@ namespace PokerMuck
             this.currentHeroSeat = 0;
             this.gameType = pokerClient.GetPokerGameTypeFromWindowTitle(WindowTitle);
             this.statistics = new TableStatistics(this); // We don't know what specific kind
-            this.playerDatabase = playerDatabase;
             this.Hud = new Hud(this);
             this.visualRecognitionManager = null; // Not all tables have a visual recognition manager
+            this.displayWindow = PokerMuck.TableDisplayWindow.CreateForTable(this);
 
             // By default we use the universal parser
             handHistoryParser = new UniversalHHParser(pokerClient);
@@ -216,7 +209,7 @@ namespace PokerMuck
          * this means that the UI can finally be updated. */
         public void EndOfFileReached(String filename)
         {
-            if (RefreshUI != null) RefreshUI(this);
+            UpdateUI();
         }
 
 
@@ -232,10 +225,91 @@ namespace PokerMuck
             }
         }
 
+        public void ShowTableDisplayWindow()
+        {
+            Globals.Director.RunFromGUIThread((Action)delegate()
+            {
+                DisplayWindow.Show();
+            }, false);
+        }
+
+        public void HideTableDisplayWindow()
+        {
+            Globals.Director.RunFromGUIThread((Action)delegate()
+            {
+                DisplayWindow.Hide();
+            }, false);
+        }
+
+        /* In this method we take care of updating UI information
+         * about this table */
+        private void UpdateUI()
+        {
+            Trace.WriteLine("Refresh UI for " + GameID);
+
+            Globals.Director.OnDisplayStatus("Displaying Table #" + TableId);
+
+            // Flag to keep track of whether at least one mucked hand is available
+            bool muckedHandsAvailable = false;
+
+            // Check which players have shown their cards
+            List<Player> showdownPlayers = new List<Player>();
+            foreach (Player p in PlayerList)
+            {
+                // If it has showed and it's not us
+                if (p.HasShowedThisRound && p.Name != CurrentHeroName)
+                {
+                    showdownPlayers.Add(p);
+                    muckedHandsAvailable = true;
+                }
+            }
+
+            if (muckedHandsAvailable)
+            {
+                Globals.Director.RunFromGUIThread(
+                    (Action)delegate()
+                    {
+                        DisplayWindow.ClearMuck();
+                    }, false
+                    );
+
+                foreach (Player p in showdownPlayers)
+                {
+                    Globals.Director.RunFromGUIThread(
+                        (Action)delegate()
+                        {
+                            DisplayWindow.DisplayPlayerMuckedHand(p.Name, p.MuckedHand);
+                        }, false
+                        );
+                }
+
+                if (FinalBoard != null && !FinalBoard.Displayed){
+                    Globals.Director.RunFromGUIThread(
+                        (Action)delegate()
+                        {
+                            DisplayWindow.DisplayFinalBoard(FinalBoard);
+                        }, false
+                    );   
+                    FinalBoard.Displayed = true;
+                }
+            }
+
+
+            Globals.Director.RunFromGUIThread(
+                (Action)delegate()
+                {
+                    // Display hud information
+                    Hud.DisplayAndUpdate();
+
+                    // Update statistics
+                    DisplayWindow.UpdateStatistics();
+                }, true
+             );
+        }
 
         void handHistoryParser_PlayerIsSeated(string playerName, int seatNumber)
         {
-            Debug.Print("Player added: {0}", playerName);
+            Trace.WriteLine(String.Format("Player added: {0}", playerName));
 
             // Is this player already in the table's player's list?
             Player result = FindPlayer(playerName);
@@ -257,7 +331,7 @@ namespace PokerMuck
 
         void handHistoryParser_RoundHasTerminated()
         {
-            Debug.Print("Round has terminated");
+            Trace.WriteLine("Round has terminated");
 
             /* 1. Perform last statistics calculations
              * 2. Clear the statistics information relative to a single round
@@ -285,7 +359,7 @@ namespace PokerMuck
 
         private void handHistoryParser_GameDiscovered(string game)
         {
-            Debug.Print("Game discovered! {0}",game);
+            Trace.WriteLine(String.Format("Game discovered! {0}",game));
 
             // Find to what game this game string corresponds
             Game = pokerClient.GetPokerGameFromGameDescription(game);
@@ -300,7 +374,7 @@ namespace PokerMuck
             }
             else if (Game == PokerGame.Unknown)
             {
-                Debug.Print("We weren't able to find a better parser for this Game");
+                Trace.WriteLine("We weren't able to find a better parser for this Game");
             }
 
             // If we replaced our parser, we need to register the event handlers
@@ -322,6 +396,20 @@ namespace PokerMuck
 
                 // Also, resend the last line to the new parser!
                 hhMonitor.ResendLastLine();
+            }
+
+            if (Game != PokerGame.Unknown)
+            {
+                // Close temporary window
+                if (displayWindow != null) displayWindow.Dispose();
+
+                Globals.Director.RunFromGUIThread(
+                    (Action)delegate()
+                    {
+                        displayWindow = TableDisplayWindow.CreateForTable(this);
+                        displayWindow.Show();
+                    }, false
+                 );              
             }
         }
 
@@ -364,13 +452,38 @@ namespace PokerMuck
             {
                 if (visualRecognitionManager == null)
                 {
-                    visualRecognitionManager = new VisualRecognitionManager(this);
+                    visualRecognitionManager = new VisualRecognitionManager(this, this);
                 }
+
+                Globals.Director.RunFromGUIThread((Action)delegate()
+                {
+                    displayWindow.SetVisualRecognitionSupported(true);
+                }, false);
             }
             else
             {
-                Debug.Print("Visual recognition is not supported for " + this.ToString());
+                Trace.WriteLine("Visual recognition is not supported for " + this.ToString());
+
+                Globals.Director.RunFromGUIThread((Action)delegate()
+                {
+                    displayWindow.SetVisualRecognitionSupported(false);
+                }, false);
             }
+        }
+
+        /* Visual Recognition Manager handlers */
+        public void PlayerHandRecognized(CardList playerCards)
+        {
+            Globals.Director.RunFromGUIThread((Action)delegate()
+            {
+                DisplayWindow.DisplayPlayerHand(playerCards);
+            }, true);
+            
+        }
+
+        public void BoardRecognized(CardList board)
+        {
+            // TODO
         }
 
         void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
@@ -378,9 +491,9 @@ namespace PokerMuck
             if (this.TableId != String.Empty && this.TableId != tableId)
             {
 
-                Debug.Print("An existing table has just changed its tableID... starting transition.");
-                Debug.Print("Previous ID: " + this.TableId);
-                Debug.Print("New ID: " + tableId);
+                Trace.WriteLine("An existing table has just changed its tableID... starting transition.");
+                Trace.WriteLine("Previous ID: " + this.TableId);
+                Trace.WriteLine("New ID: " + tableId);
 
                 // Clear the list of players (new ones are coming)
                 foreach (Player p in PlayerList)
@@ -422,14 +535,14 @@ namespace PokerMuck
                 Player p = playerDatabase.Retrieve(playerName, GameID);
                 playerList.Add(p);
 
-                Debug.Print("Retrieved " + playerName + " from our database!");
+                Trace.WriteLine("Retrieved " + playerName + " from our database!");
             }
         }
 
         /* Remove a player from the table */
         private void RemovePlayer(String playerName)
         {
-            Debug.Print("Removing " + playerName);
+            Trace.WriteLine("Removing " + playerName);
             playerList.RemoveAll(
                 delegate(Player p)
                 {
@@ -460,6 +573,22 @@ namespace PokerMuck
             PlayerList.Clear();
             if (hhMonitor != null) hhMonitor.StopMonitoring();
             if (visualRecognitionManager != null) visualRecognitionManager.Cleanup();
+            if (DisplayWindow != null)
+            {
+                Globals.Director.RunFromGUIThread((Action)delegate()
+                {
+                    displayWindow.Close();
+                    displayWindow = null;
+                }, false);
+            }
+            if (Hud != null)
+            {
+                Globals.Director.RunFromGUIThread((Action)delegate()
+                {
+                    Hud.RemoveHud();
+                    Hud = null;
+                }, false);
+            }
         }
 
         public override string ToString()

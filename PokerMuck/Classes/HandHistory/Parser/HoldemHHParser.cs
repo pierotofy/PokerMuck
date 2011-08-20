@@ -219,13 +219,13 @@ namespace PokerMuck
                 currentTableId = matchResult.Groups["tableId"].Value;
                 String maxSeatingCapacity = matchResult.Groups["tableSeatingCapacity"].Value;
 
-                Debug.Print("Table: " + currentTableId);
-                Debug.Print("Max seating capacity: " + maxSeatingCapacity);
+                Trace.WriteLine("Table: " + currentTableId);
+                Trace.WriteLine("Max seating capacity: " + maxSeatingCapacity);
 
                 if (currentGameId != String.Empty) OnNewTableHasBeenCreated(currentGameId, currentTableId);
                 else
                 {
-                    Debug.Print("Table ID {0} found but no game ID has been assigned to this parser yet. Ignoring event.");
+                    Trace.WriteLine(String.Format("Table ID {0} found but no game ID has been assigned to this parser yet. Ignoring event.", currentTableId));
                 }
 
                 // Abemus max seating capacity?
@@ -242,12 +242,12 @@ namespace PokerMuck
                     if (!pokerClient.HasRegex("hand_history_max_seating_capacity"))
                     {
                         int inferredMaxCapacity = pokerClient.InferMaxSeatingCapacity(line);
-                        Debug.Print("Inferred max seating capacity: " + inferredMaxCapacity);
+                        Trace.WriteLine("Inferred max seating capacity: " + inferredMaxCapacity);
                         OnFoundTableMaxSeatingCapacity(inferredMaxCapacity);
                     }
                     else
                     {
-                        Debug.Print("Seating capacity not found, but we will find it later with a specialized regex");
+                        Trace.WriteLine("Seating capacity not found, but we will find it later with a specialized regex");
                     }
                 }
             }
@@ -258,7 +258,7 @@ namespace PokerMuck
                 String maxSeatingCapacity = matchResult.Groups["tableSeatingCapacity"].Value;
                 
                 Debug.Assert(maxSeatingCapacity != String.Empty, "Table max seating capacity regex found, but empty result.");
-                Debug.Print("Found certain max seating capacity from regex: " + maxSeatingCapacity);
+                Trace.WriteLine("Found certain max seating capacity from regex: " + maxSeatingCapacity);
 
                 OnFoundTableMaxSeatingCapacity(Int32.Parse(maxSeatingCapacity));
             }
@@ -269,7 +269,7 @@ namespace PokerMuck
                 float bigBlindAmount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
                 float smallBlindAmount = float.Parse(matchResult.Groups["smallBlindAmount"].Value);
 
-                Debug.Print("Found certain blind amounts: ({0}/{1})", smallBlindAmount, bigBlindAmount);
+                Trace.WriteLine(String.Format("Found certain blind amounts: ({0}/{1})", smallBlindAmount, bigBlindAmount));
 
                 OnFoundBigBlindAmount(bigBlindAmount);
                 OnFoundSmallBlindAmount(smallBlindAmount);
@@ -300,7 +300,7 @@ namespace PokerMuck
 
                 String playerName = matchResult.Groups["playerName"].Value;
 
-                Debug.Print(playerName + " folds");
+                Trace.WriteLine(playerName + " folds");
                 OnPlayerFolded(playerName, currentGamePhase);
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_check"), out matchResult))
@@ -318,7 +318,7 @@ namespace PokerMuck
                 String playerName = matchResult.Groups["playerName"].Value;
                 float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);
                 
-                Debug.Print(playerName + " raises " + raiseAmount);
+                Trace.WriteLine(playerName + " raises " + raiseAmount);
                 
                 OnPlayerRaised(playerName, raiseAmount, currentGamePhase);
             }
@@ -510,7 +510,7 @@ namespace PokerMuck
 
                     String bigBlindPlayerName = (String)playerSeats[seatNumbers[bigBlindIndex]];
                     String smallBlindPlayerName = (String)playerSeats[seatNumbers[smallBlindIndex]];
-                    Debug.Print("Inferred from button small blind ({0}) and big blind ({1})",smallBlindPlayerName, bigBlindPlayerName);
+                    Trace.WriteLine(String.Format("Inferred from button small blind ({0}) and big blind ({1})",smallBlindPlayerName, bigBlindPlayerName));
 
                     // Raise events
                     OnFoundBigBlind(bigBlindPlayerName);
@@ -518,12 +518,12 @@ namespace PokerMuck
                 }
                 else
                 {
-                    Debug.Print("I couldn't figure out who the blinds are because I don't have enough seats information (but I have the button #).");
+                    Trace.WriteLine("I couldn't figure out who the blinds are because I don't have enough seats information (but I have the button #).");
                 }
             }
             else
             {
-                Debug.Print("I couldn't figure out who the blinds are because the button was not specified.");
+                Trace.WriteLine("I couldn't figure out who the blinds are because the button was not specified.");
             }
         }
 
@@ -599,7 +599,7 @@ namespace PokerMuck
                 {
                     currentGamePhase = HoldemGamePhase.Showdown;
                     ShowdownEventRaised = true;
-                    Debug.Print("Guessing that showdown will begin");
+                    Trace.WriteLine("Guessing that showdown will begin");
                     OnShowdownWillBegin();
                 }
             }
@@ -622,7 +622,7 @@ namespace PokerMuck
             }
             else
             {
-                Debug.Print("Board detected, but only " + cards.Count + " cards in there. Skipping...");
+                Trace.WriteLine("Board detected, but only " + cards.Count + " cards in there. Skipping...");
             }
         }
     }

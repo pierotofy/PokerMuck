@@ -86,7 +86,7 @@ namespace PokerMuck
                 {
                     HudWindow window = HudWindowFactory.CreateHudWindow(table);
 
-                    Debug.Print("Create window for " + p.Name + " (" + p.SeatNumber + ")");
+                    Trace.WriteLine("Create window for " + p.Name + " (" + p.SeatNumber + ")");
 
                     // We set a 1:1 association between the player and the HudWindow
                     p.HudWindow = window;
@@ -126,11 +126,11 @@ namespace PokerMuck
             Player p = FindPlayerAssociatedWith(sender);
             if (p != null)
             {
-                table.OnDisplayPlayerStatistics(p);
+                table.DisplayWindow.DisplayStatistics(p);
             }
             else
             {
-                Debug.Print("A command to display the statistics of a player was received, but I couldn't find the player in the list.");
+                Trace.WriteLine("A command to display the statistics of a player was received, but I couldn't find the player in the list.");
             }
         }
 
@@ -354,7 +354,7 @@ namespace PokerMuck
                 else
                 {
                     // Should never happen
-                    Debug.Print("A command to update the hub data has been received, but no window is associated with this player: " + p.Name + ". Did we remove it?");
+                    Trace.WriteLine("A command to update the hub data has been received, but no window is associated with this player: " + p.Name + ". Did we remove it?");
                 }
             }
         }

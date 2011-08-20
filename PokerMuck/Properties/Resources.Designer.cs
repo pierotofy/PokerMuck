@@ -123,6 +123,20 @@ namespace PokerMuck.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap TableDisplayTabBackground {
+            get {
+                object obj = ResourceManager.GetObject("TableDisplayTabBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap TableDisplayWindowBackground {
+            get {
+                object obj = ResourceManager.GetObject("TableDisplayWindowBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap TelephoneIco {
             get {
                 object obj = ResourceManager.GetObject("TelephoneIco", resourceCulture);

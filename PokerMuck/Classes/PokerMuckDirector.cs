@@ -38,34 +38,12 @@ namespace PokerMuck
         public delegate void RunGUIRoutineHandler(Action d, Boolean asynchronous);
         public event RunGUIRoutineHandler RunGUIRoutine;
 
-        /* Tell the UI that we need to display a hand */
-        public delegate void DisplayPlayerMuckedHandHandler(Player player);
-        public event DisplayPlayerMuckedHandHandler DisplayPlayerMuckedHand;
-
-        /* Tell the UI that we need to display a final board */
-        public delegate void DisplayFinalBoardHandler(Board board);
-        public event DisplayFinalBoardHandler DisplayFinalBoard;
-
-
-        /* Tell the UI to clear the list of mucked hands */
-        public delegate void ClearAllPlayerMuckedHandsHandler();
-        public event ClearAllPlayerMuckedHandsHandler ClearAllPlayerMuckedHands;
-
-        /* Tell the UI to clear the last final board */
-        public delegate void ClearFinalBoardHandler();
-        public event ClearFinalBoardHandler ClearFinalBoard;
-
-        /* Tell the UI to display a status message */
         public delegate void DisplayStatusHandler(String status);
         public event DisplayStatusHandler DisplayStatus;
-
-        /* Tell the UI to display hud information */
-        public delegate void DisplayHudHandler(Table t);
-        public event DisplayHudHandler DisplayHud;
-
-        /* Tell the UI to display the statistics of this player */
-        public delegate void DisplayPlayerStatisticsHandler(Player p);
-        public event DisplayPlayerStatisticsHandler DisplayPlayerStatistics;
+        public void OnDisplayStatus(String status)
+        {
+            if (DisplayStatus != null) DisplayStatus(status);
+        }
 
         private Object createTableLock = new Object(); // Used for thread safety synchronization
 
@@ -119,10 +97,7 @@ namespace PokerMuck
             String filename = "test.txt";
             //String filename = "HH20110305 T371715473 No Limit Hold'em €4.46 + €0.54.txt";
             Table newTable = new Table(filename, new Window("test.txt - Notepad"), pokerClient, playerDatabase);
-            newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
-            newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
-            tables.Add(newTable);
-           
+            tables.Add(newTable);           
         }
 
         private void SetHudVisible(Table t, bool visible)
@@ -132,15 +107,6 @@ namespace PokerMuck
                 t.Hud.Visible = visible;
             }, 
             true);
-        }
-
-        void RemoveHud(Table t)
-        {
-            RunGUIRoutine((Action)delegate()
-            {
-                t.Hud.RemoveHud();
-            }, 
-            false);
         }
 
         /* Shift the position of the hud */
@@ -164,21 +130,23 @@ namespace PokerMuck
         /* A window has been minimized... hide the hud associated with it */
         public void WindowMinimized(string windowTitle)
         {
-            Debug.Print("Minimized: " + windowTitle);
+            Trace.WriteLine("Minimized: " + windowTitle);
             Table t = FindTableByWindowTitle(windowTitle);
             if (t != null){
                 SetHudVisible(t, false);
+                t.HideTableDisplayWindow();
             }
         }
 
         /* A window has been maximized... show the hud */
         public void WindowMaximized(string windowTitle)
         {
-            Debug.Print("Maximized: " + windowTitle);
+            Trace.WriteLine("Maximized: " + windowTitle);
             Table t = FindTableByWindowTitle(windowTitle);
             if (t != null)
             {
                 SetHudVisible(t, true);
+                t.ShowTableDisplayWindow();
             }
         }
 
@@ -197,7 +165,7 @@ namespace PokerMuck
             newFilesMonitor = new NewFilesMonitor(Globals.UserSettings.HandHistoryDirectory, this);
             newFilesMonitor.StartMonitoring();
 
-            Debug.Print("Changing hand history directory: " + Globals.UserSettings.HandHistoryDirectory);
+            Trace.WriteLine("Changing hand history directory: " + Globals.UserSettings.HandHistoryDirectory);
         }
 
         /* Change the poker client */
@@ -221,8 +189,6 @@ namespace PokerMuck
              * because the user might be simply interacting with our hud */
             if (windowTitle == "HudWindow") return;
 
-            Debug.Print("Position X: {0}, Y: {1}", windowRect.X, windowRect.Y);
-
             Table t = FindTableByWindowTitle(windowTitle);
             if (t != null)
             {
@@ -232,20 +198,23 @@ namespace PokerMuck
                 RunGUIRoutine((Action)delegate()
                                 {
                                     t.Hud.Shift();
+                                    if (t.DisplayWindow != null) t.DisplayWindow.UpdatePosition();
                                 }, true);
+
             }
 
-            CheckForWindowsOverlaysOnHuds(windowTitle, windowRect);
+            CheckForWindowsOverlaysOnConnectedWindows(windowTitle, windowRect);
         }
 
-        private void CheckForWindowsOverlaysOnHuds(String windowTitle, Rectangle windowRect)
+        private void CheckForWindowsOverlaysOnConnectedWindows(String windowTitle, Rectangle windowRect)
         {
             // Check for windows overlays on huds
             foreach (Table t in tables)
             {
                 RunGUIRoutine((Action)delegate()
                 {
-                    t.Hud.CheckForWindowOverlay(windowTitle, windowRect);
+                    if (t.Hud != null) t.Hud.CheckForWindowOverlay(windowTitle, windowRect);
+                    if (t.DisplayWindow != null) t.DisplayWindow.CheckForWindowOverlay(windowTitle, windowRect);
                 },
                   false);
             }
@@ -254,7 +223,7 @@ namespace PokerMuck
         /* Windows Listener event handler, detects when a window closes */
         public void WindowClosed(string windowTitle)
         {
-            Debug.Print("Window closed: " + windowTitle);
+            Trace.WriteLine("Window closed: " + windowTitle);
 
             Table t = FindTableByWindowTitle(windowTitle);
 
@@ -263,11 +232,8 @@ namespace PokerMuck
                 // TODO TEMP REMOVE DIALOG
                 DialogResult result = MessageBox.Show("Close the hud?", "PokerMuck", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes){
-
-                    RemoveHud(t);
                     t.Terminate();
                     tables.Remove(t);
-
                 }
             }
         }
@@ -281,20 +247,21 @@ namespace PokerMuck
         /* Windows Listener event handler, detects when a new windows becomes the active window */
         public void NewForegroundWindow(string windowTitle, Rectangle windowRect)
         {
-            if (windowTitle == "HudWindow") return; // Ignore hud windows
+            if (windowTitle == "HudWindow" || windowTitle == "TableDisplayWindow") return; // Ignore hud and table display windows
 
             CreateTableFromPokerWindow(windowTitle);
             
-            CheckForWindowsOverlaysOnHuds(windowTitle, windowRect);
+            CheckForWindowsOverlaysOnConnectedWindows(windowTitle, windowRect);
         }
 
         private void CreateTableFromPokerWindow(string windowTitle)
         {
             /* We ignore any event that is caused by a window titled "HudWindow"
-             * because the user might be simply interacting with our hud */
-            if (windowTitle == "HudWindow") return;
+             * because the user might be simply interacting with our hud.
+             * Same for "TableDisplayWindow" */
+            if (windowTitle == "HudWindow" || windowTitle == "TableDisplayWindow") return;
 
-            Debug.Print(String.Format("Window title: {0}", windowTitle));
+            Trace.WriteLine(String.Format("Window title: {0}", windowTitle));
 
             String pattern = pokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(windowTitle);
             if (pattern != String.Empty)
@@ -325,17 +292,10 @@ namespace PokerMuck
                             // First time we see it, we need to create a table for this request
                             Table newTable = new Table(filePath, new Window(windowTitle), pokerClient, playerDatabase);
 
-                            // Set a handler that notifies us of data changes
-                            newTable.RefreshUI += new Table.RefreshUIHandler(table_RefreshUI);
-
-                            // Set a handler that notifies of the necessity to display the 
-                            // statistics of a player
-                            newTable.DisplayPlayerStatistics += new Table.DisplayPlayerStatisticsHandler(newTable_DisplayPlayerStatistics);
-
                             // and add it to our list
                             tables.Add(newTable);
 
-                            Debug.Print("Created new table: " + newTable.WindowTitle + " on " + newTable.HandHistoryFilePath);
+                            Trace.WriteLine("Created new table: " + newTable.WindowTitle + " on " + newTable.HandHistoryFilePath);
 
                             OnDisplayStatus("Parsing for the first time... please wait.");
 
@@ -349,13 +309,12 @@ namespace PokerMuck
                         }
 
                         OnDisplayStatus("Focus is on the table associated with " + filename);
-                        Debug.Print(String.Format("Valid window title match with {0}", filename));
+                        Trace.WriteLine(String.Format("Valid window title match with {0}", filename));
                     }
                     else
                     {
                         OnDisplayStatus("New game started on window: " + windowTitle);
-                        Debug.Print("A valid window title was found ({0}) but no filename associated with the window could be found using pattern {1}. Is this our first hand at the table and no hand history is available?", windowTitle, pattern);
-
+                        Trace.WriteLine(String.Format("A valid window title was found ({0}) but no filename associated with the window could be found using pattern {1}. Is this our first hand at the table and no hand history is available?", windowTitle, pattern));
                     }
                 }
             }
@@ -363,53 +322,6 @@ namespace PokerMuck
             {
                 // The window is not a poker window... do what?
             }
-        }
-
-        void newTable_DisplayPlayerStatistics(Player p)
-        {
-            // Notify the GUI
-            if (DisplayPlayerStatistics != null) DisplayPlayerStatistics(p);
-        }
-
-        /* Data in one of the tables has changed, we can refresh the UI */
-        void table_RefreshUI(Table sender)
-        {
-            Debug.Print("Refresh UI for " + sender.GameID);
-
-            OnDisplayStatus("Displaying Table #" + sender.TableId);
-
-            // Tell the UI to clear any previous mucked hand from the screen
-            if (ClearAllPlayerMuckedHands != null) ClearAllPlayerMuckedHands();
-
-            // And the final board (if any)
-            if (ClearFinalBoard != null) ClearFinalBoard();
-
-            // Flag to keep track of whether at least one mucked hand is available
-            bool muckedHandsAvailable = false;
-
-            // Check which players need to be shown
-            foreach (Player p in sender.PlayerList)
-            {
-                // If it has showed and it's not us
-                if (p.HasShowedThisRound && p.Name != sender.CurrentHeroName)
-                {
-                    // Inform the UI
-                    if (DisplayPlayerMuckedHand != null) DisplayPlayerMuckedHand(p);
-
-                    muckedHandsAvailable = true;
-                }
-            }
-
-            // Display the final board (if any and if it hasn't been displayed before and if there were mucked hands)
-            if (sender.FinalBoard != null && !sender.FinalBoard.Displayed && muckedHandsAvailable)
-            {
-                if (DisplayFinalBoard != null) DisplayFinalBoard(sender.FinalBoard);
-
-                sender.FinalBoard.Displayed = true;
-            }
-
-            // Display hud information
-            if (DisplayHud != null) DisplayHud(sender);
         }
 
         /* Finds a table given its hand history filename. It can be null */
@@ -461,12 +373,6 @@ namespace PokerMuck
             {
                 t.Terminate();
             }
-        }
-
-        /* Helper method to raise the DisplayStatus event */
-        private void OnDisplayStatus(String status)
-        {
-            if (DisplayStatus != null) DisplayStatus(status);
         }
 
         /* This method must be called when you are done with the director */

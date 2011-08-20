@@ -36,7 +36,7 @@ namespace PokerMuck
             }
             else
             {
-                Debug.Print("Could not find client: " + name + ", defaulting to " + defaultClient.Name);
+                Trace.WriteLine("Could not find client: " + name + ", defaulting to " + defaultClient.Name);
                 return defaultClient;
             }           
         }

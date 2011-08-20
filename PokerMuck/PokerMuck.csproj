@@ -93,6 +93,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\AForge\Release\AForge.Math.dll</HintPath>
     </Reference>
+    <Reference Include="ConsoleWidget">
+      <HintPath>lib\ConsoleWidget.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -104,6 +107,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TabControlEX">
+      <HintPath>lib\TabControlEX.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Board\Board.cs" />
@@ -141,6 +147,7 @@
     <Compile Include="Classes\Ranking\SharkScopeRankScanner.cs" />
     <Compile Include="Classes\Recognition\ColorMaps\ColorMap.cs" />
     <Compile Include="Classes\Recognition\ColorMaps\HoldemColorMap.cs" />
+    <Compile Include="Classes\Recognition\IVisualRecognitionManagerHandler.cs" />
     <Compile Include="Classes\Recognition\TimedScreenshotTaker.cs" />
     <Compile Include="Classes\Recognition\ScreenshotTaker.cs" />
     <Compile Include="Classes\Recognition\VisualMatcher.cs" />
@@ -156,9 +163,9 @@
     <Compile Include="Classes\Statistics\StatisticsPercentageData.cs" />
     <Compile Include="Classes\Statistics\StatisticsUnknownData.cs" />
     <Compile Include="Classes\Statistics\ValueCounter.cs" />
-    <Compile Include="Classes\Table\HoldemTableStatistics.cs" />
+    <Compile Include="Classes\Table\Statistics\HoldemTableStatistics.cs" />
+    <Compile Include="Classes\Table\Statistics\TableStatistics.cs" />
     <Compile Include="Classes\Table\Table.cs" />
-    <Compile Include="Classes\Table\TableStatistics.cs" />
     <Compile Include="Classes\UIComponents\Cards\CardButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -258,6 +265,18 @@
     <Compile Include="Classes\UIComponents\StatisticItem.Designer.cs">
       <DependentUpon>StatisticItem.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\UIComponents\TableDisplay\HoldemTableDisplayWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\TableDisplay\InvisibleTableDisplayWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\TableDisplay\TableDisplayWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\TableDisplay\TableDisplayWindow.Designer.cs">
+      <DependentUpon>TableDisplayWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\WindowsListener\IDetectWindowsChanges.cs" />
     <Compile Include="Classes\Card\Card.cs" />
     <Compile Include="Classes\PokerClients\PokerClient.cs" />
@@ -323,6 +342,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\StatisticItem.resx">
       <DependentUpon>StatisticItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\TableDisplay\TableDisplayWindow.resx">
+      <DependentUpon>TableDisplayWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -506,6 +528,8 @@
     <Content Include="Resources\ColorMaps\Poker Stars\Holdem_9-max_Classic.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\TableDisplayTabBackground.png" />
+    <None Include="Resources\TableDisplayWindowBackground.png" />
     <None Include="Resources\donkIco.png" />
     <None Include="Resources\QuestionIco.png" />
     <None Include="Resources\ForbiddenIco.png" />

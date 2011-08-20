@@ -400,7 +400,7 @@ namespace PokerMuck
             if (lastFinalBoard != null && HasShowedThisRound)
             {
                 // Sweet, we have a board and we have a hand
-                Debug.Print("Board and hand available, calculating hand strength for " + Name);
+                Trace.WriteLine("Board and hand available, calculating hand strength for " + Name);
 
                 for (HoldemGamePhase phase = HoldemGamePhase.Preflop; phase <= HoldemGamePhase.River; phase++)
                 {
@@ -489,7 +489,7 @@ namespace PokerMuck
             {
                 HoldemHand holdemHand = (HoldemHand)hand;
 
-                Debug.Print("Muck hand available called!");
+                Trace.WriteLine("Muck hand available called!");
 
                 // Has this player raised preflop with this hand?
                 if (raises[HoldemGamePhase.Preflop].WasIncremented)

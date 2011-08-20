@@ -28,7 +28,7 @@ namespace PokerMuck
             }
             else
             {
-                Debug.Print("Directory doesn't exist: {0}, skipping initialization of file system watcher in newfilesmonitor class.", directoryToMonitor);
+                Trace.WriteLine(String.Format("Directory doesn't exist: {0}, skipping initialization of file system watcher in newfilesmonitor class.", directoryToMonitor));
             }
         }
                             

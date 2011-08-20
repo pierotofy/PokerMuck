@@ -68,7 +68,7 @@ namespace PokerMuck
                     BlobCounter bc = new BlobCounter();
                     bc.ProcessImage(colorFilteredMapImage);
                     Rectangle[] rects = bc.GetObjectsRectangles();
-                    if (rects.Count<Rectangle>() == 0) Debug.Print("Warning: No rectangles were found while processing " + mapLocation + " for " + actionColor.ToString());
+                    if (rects.Count<Rectangle>() == 0) Trace.WriteLine("Warning: No rectangles were found while processing " + mapLocation + " for " + actionColor.ToString());
 
                     Rectangle biggestRect = Rectangle.Empty;
                     foreach (Rectangle rect in rects)

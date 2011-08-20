@@ -99,7 +99,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cardListPanel.BackColor = System.Drawing.SystemColors.Control;
-            this.cardListPanel.BorderPadding = 0;
             this.cardListPanel.CardListToDisplay = null;
             this.cardListPanel.CardSpacing = 8;
             this.cardListPanel.HighlightColor = System.Drawing.Color.White;
@@ -127,6 +126,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CardMatchSelectDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Training";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.picCardToMatch)).EndInit();

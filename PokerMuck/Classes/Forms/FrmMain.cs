@@ -15,11 +15,12 @@ namespace PokerMuck
 {
     public partial class FrmMain : Form
     {
-        /* Maximum height of card list panels */
-        private static int MAXIMUM_CARD_LIST_PANEL_HEIGHT = 100;
-
         public FrmMain()
         {
+            // Register trace listener
+            if (System.IO.File.Exists("debug.txt")) System.IO.File.Delete("debug.txt");
+            System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.TextWriterTraceListener("debug.txt"));
+
             InitializeComponent();
 
             // Update program title
@@ -30,22 +31,13 @@ namespace PokerMuck
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            // TODO remove
-            //RankScanner r = new SharkScopeRankScanner();
-            //r.FindPlayerRank("stallion089");
+            Trace.WriteLine("Starting PokerMuck " + Application.ProductVersion + "... success!");
 
             SetStatus("Waiting for a game to start...");
-
             
             Globals.Director = new PokerMuckDirector();
-            Globals.Director.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(pmDirector_RunGUIRoutine);
-            Globals.Director.ClearAllPlayerMuckedHands += new PokerMuckDirector.ClearAllPlayerMuckedHandsHandler(pmDirector_ClearAllPlayerMuckedHands);
-            Globals.Director.DisplayPlayerMuckedHand += new PokerMuckDirector.DisplayPlayerMuckedHandHandler(pmDirector_DisplayPlayerMuckedHand);
-            Globals.Director.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(pmDirector_DisplayStatus);
-            Globals.Director.ClearFinalBoard += new PokerMuckDirector.ClearFinalBoardHandler(pmDirector_ClearFinalBoard);
-            Globals.Director.DisplayFinalBoard += new PokerMuckDirector.DisplayFinalBoardHandler(pmDirector_DisplayFinalBoard);
-            Globals.Director.DisplayHud += new PokerMuckDirector.DisplayHudHandler(pmDirector_DisplayHud);
-            Globals.Director.DisplayPlayerStatistics += new PokerMuckDirector.DisplayPlayerStatisticsHandler(pmDirector_DisplayPlayerStatistics);
+            Globals.Director.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(Director_RunGUIRoutine);
+            Globals.Director.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(Director_DisplayStatus);
 
 
             //pmDirector.Test();
@@ -72,31 +64,31 @@ namespace PokerMuck
 
             Statistic average = preflop.Average("Summary", 2, flop, turn);
 
-            Debug.Print("Average: " + average.ToString());
+            Trace.WriteLine("Average: " + average.ToString());
           
-
-            HoldemHand h1 = new HoldemHand(new Card(CardFace.Jack, CardSuit.Clubs), new Card(CardFace.Queen, CardSuit.Diamonds));
-            HoldemBoard b = new HoldemBoard(new Card(CardFace.King, CardSuit.Clubs),
-                                            new Card(CardFace.King, CardSuit.Diamonds),
-                                            new Card(CardFace.Five, CardSuit.Diamonds),
-                                            new Card(CardFace.Three, CardSuit.Clubs),
-                                            new Card(CardFace.Jack, CardSuit.Hearts));
+            
+            HoldemHand h1 = new HoldemHand(new Card(CardFace.Eight, CardSuit.Spades), new Card(CardFace.Nine, CardSuit.Diamonds));
+            HoldemBoard b = new HoldemBoard(new Card(CardFace.Six, CardSuit.Clubs),
+                                            new Card(CardFace.Ten, CardSuit.Diamonds),
+                                            new Card(CardFace.Two, CardSuit.Clubs),
+                                            new Card(CardFace.Ace, CardSuit.Hearts),
+                                            new Card(CardFace.Jack, CardSuit.Clubs));
 
             HoldemHand.Classification classification = h1.GetClassification(HoldemGamePhase.Preflop, b);
-            Debug.Print(classification.ToString());
+            Trace.WriteLine(classification.ToString());
 
             classification = h1.GetClassification(HoldemGamePhase.Flop, b);
-            Debug.Print(classification.ToString());
+            Trace.WriteLine(classification.ToString());
 
             classification = h1.GetClassification(HoldemGamePhase.Turn, b);
-            Debug.Print(classification.ToString());
+            Trace.WriteLine(classification.ToString());
             classification = h1.GetClassification(HoldemGamePhase.River, b);
-            Debug.Print(classification.ToString());
-             //*/
-
+            Trace.WriteLine(classification.ToString());
+             */
+            /*
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(".COM Play 736 (6 max) - 1/2 - No Limit Hold'em - Logged In As italystallion89");
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle("$0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89");
-            //Debug.Print("Result: " + res);
+            //Trace.WriteLine("Result: " + res);
 
             /* TODO remove
 
@@ -105,10 +97,10 @@ namespace PokerMuck
             StatisticsNumberData p3 = new StatisticsNumberData("Three", 0.25f, "Category", 2);
             StatisticsData avg1 = p2.Average("Average1", "Category", 2, p1, p3);
 
-            Debug.Print(p1.Name + ": " + p1.GetValue());
-            Debug.Print(p2.Name + ": " + p2.GetValue());
-            Debug.Print(p3.Name + ": " + p3.GetValue());
-            Debug.Print(avg1.Name + ": " + avg1.GetValue());
+            Trace.WriteLine(p1.Name + ": " + p1.GetValue());
+            Trace.WriteLine(p2.Name + ": " + p2.GetValue());
+            Trace.WriteLine(p3.Name + ": " + p3.GetValue());
+            Trace.WriteLine(avg1.Name + ": " + avg1.GetValue());
              
             
             Regex r = pmDirector.UserSettings.CurrentPokerClient.GetRegex("hand_history_game_token");
@@ -118,8 +110,8 @@ namespace PokerMuck
             //(((?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in)|((\$|€)[\d]+ [A-Z]{3} (?<gameType>) - ))
             if (m.Success)
             {
-                Debug.Print("OOOK");
-                Debug.Print(m.Groups["gameType"].Value);
+                Trace.WriteLine("OOOK");
+                Trace.WriteLine(m.Groups["gameType"].Value);
             }
             */
             //pmDirector.NewForegroundWindow("$0.95 + $0.05 Heads Up Sit & Go (229273428), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89", Rectangle.Empty);
@@ -135,10 +127,10 @@ namespace PokerMuck
             LoadConfigurationValues();
 
             // Always start the view on the About tab
-            tabControl.SelectedIndex = 4;
+            tabControl.SelectedIndex = tabControl.TabCount - 1;
         }
 
-        void pmDirector_RunGUIRoutine(Action d, Boolean asynchronous)
+        void Director_RunGUIRoutine(Action d, Boolean asynchronous)
         {
             if (this != null)
             {
@@ -149,63 +141,12 @@ namespace PokerMuck
                 }
                 catch (Exception e)
                 {
-                    Debug.Print("Error while running GUI Routine from FrmMain: " + e.Message);
+                    Trace.WriteLine("Error while running GUI Routine from FrmMain: " + e.Message);
                 }
             }
         }
 
-        void pmDirector_DisplayPlayerStatistics(Player p)
-        {
-            this.Invoke((Action)delegate()
-            {
-                statisticsDisplay.Visible = true;
-                tabControl.SelectedIndex = 1;
-                statisticsDisplay.DisplayStatistics(p);
-            });
-        }
-
-        /* Display the hud
-         * This cannot be handled by the director because
-         * it has to be thread safe. So we do it. */
-        void pmDirector_DisplayHud(Table t)
-        {
-            this.Invoke((Action)delegate()
-            {
-                t.Hud.DisplayAndUpdate();
-
-                // We also update the statistics that we might be watching
-                statisticsDisplay.UpdateStatistics();
-            });
-        }
-
-        /* Display the board after all the mucked hands */
-        void pmDirector_DisplayFinalBoard(Board board)
-        {
-            this.BeginInvoke((Action)delegate()
-            {
-                CardListPanel clp = new CardListPanel();
-                clp.CardListToDisplay = board;
-                clp.CardSpacing = 4;
-                clp.BackColor = Color.Transparent;
-
-                /* We set the initial size of the component to the largest possible, the
-                 * addPanel method will take care of setting the proper size */
-                clp.Size = entityHandsContainer.Size;
-
-                entityHandsContainer.AddPanel(clp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
-
-                tabControl.SelectedIndex = 0;
-            });
-        }
-
-        /* Our board is represented in the same panel as the mucked hands, so we don't need
-         * to do anything */
-        void pmDirector_ClearFinalBoard()
-        {
-
-        }
-
-        void pmDirector_DisplayStatus(string status)
+        void Director_DisplayStatus(string status)
         {
             // Thread safe
             this.BeginInvoke((Action)delegate()
@@ -214,41 +155,7 @@ namespace PokerMuck
             });
         }
 
-        void pmDirector_DisplayPlayerMuckedHand(Player player)
-        {
-            Debug.Print("Displayed!");
-
-            AddEntityCardListPanelEntry(player.Name, player.MuckedHand);
-        }
-
-        void pmDirector_ClearAllPlayerMuckedHands()
-        {
-            // Thread safe
-            this.Invoke((Action)delegate()
-            {
-                entityHandsContainer.ClearAll();
-            });
-        }
-
         /* Helper methods */
-
-        /* Thread safe insertion in the entity card list panel */
-        private void AddEntityCardListPanelEntry(String entityName, CardList list)
-        {
-            this.BeginInvoke((Action)delegate()
-            {
-                EntityCardListPanel ehp = new EntityCardListPanel();
-                ehp.EntityName = entityName;
-                ehp.CardListToDisplay = list;
-
-                /* We set the initial size of the component to the largest possible, the
-                 * addPanel method will take care of setting the proper size */
-                ehp.Size = entityHandsContainer.Size;
-
-                entityHandsContainer.AddPanel(ehp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
-            });
-        }
-
         private void SetStatus(String status)
         {
             lblStatus.Text = status;
@@ -258,6 +165,8 @@ namespace PokerMuck
         // Cleanup
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Trace.WriteLine("Quit signal received, cleaning up...");
+
             Globals.Director.Terminate();             
         }
 
@@ -293,7 +202,7 @@ namespace PokerMuck
             // Set current poker client language
             cmbPokerClientLanguage.Text = Globals.UserSettings.CurrentPokerClient.CurrentLanguage;
 
-            chkTrainingMode.Enabled = Globals.UserSettings.TrainingModeEnabled;
+            chkTrainingMode.Checked = Globals.UserSettings.TrainingModeEnabled;
         }
 
         /* Loads the poker clients into the appropriate combobox */
@@ -408,7 +317,7 @@ namespace PokerMuck
 
         private void chkTrainingMode_CheckedChanged(object sender, EventArgs e)
         {
-            Globals.UserSettings.TrainingModeEnabled = chkTrainingMode.Enabled;
+            Globals.UserSettings.TrainingModeEnabled = chkTrainingMode.Checked;
         }
 
 

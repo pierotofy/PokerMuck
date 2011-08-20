@@ -99,7 +99,7 @@ namespace PokerMuck
             {
                 if (p.NeverFoldedThisRound())
                 {
-                    Debug.Print("Went to showdown: " + p.Name);
+                    Trace.WriteLine("Went to showdown: " + p.Name);
                     p.IncrementWentToShowdown();
                 }
             }
@@ -108,7 +108,7 @@ namespace PokerMuck
         void HoldemTableStatistics_PlayerPushedAllIn(string playerName, HoldemGamePhase gamePhase)
         {
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
-            Debug.Print("Pushed all-in: " + p.Name);
+            Trace.WriteLine("Pushed all-in: " + p.Name);
             p.HasPushedAllIn(gamePhase);
         }
 
@@ -120,7 +120,7 @@ namespace PokerMuck
             {
                 if (winnerPlayer == p && winnerPlayer.WentToShowdownThisRound())
                 {
-                    Debug.Print("Winner at showdown: " + p.Name);
+                    Trace.WriteLine("Winner at showdown: " + p.Name);
                     p.IncrementWonAtShowdown();
                 }
             }
@@ -128,13 +128,13 @@ namespace PokerMuck
 
         void HoldemTableStatistics_HoleCardsWillBeDealt()
         {
-            Debug.Print("Hole cards will be dealt");
+            Trace.WriteLine("Hole cards will be dealt");
 
             // The player that is seating at seatNumber gets the button
             foreach (HoldemPlayer p in table.PlayerList)
             {
                 p.IsButton = (p.SeatNumber == buttonSeat);
-                if (p.IsButton) Debug.Print("Button is now: " + p.Name);
+                if (p.IsButton) Trace.WriteLine("Button is now: " + p.Name);
 
                 p.IsDealtHoleCards();
                 p.HasShowedThisRound = false;
@@ -209,7 +209,7 @@ namespace PokerMuck
             // On some clients, even if the player is sitting out they will make him automatically fold
             if (p == null)
             {
-                Debug.Print("Fold detected but the player is not in our list... is he sitting out?");
+                Trace.WriteLine("Fold detected but the player is not in our list... is he sitting out?");
                 return;
             }
             
@@ -254,7 +254,7 @@ namespace PokerMuck
             // On some clients, a player who is sitting out might be automatically made to check
             if (p == null)
             {
-                Debug.Print("Check detected but the player is not in our list. Is he sitting out?");
+                Trace.WriteLine("Check detected but the player is not in our list. Is he sitting out?");
                 return;
             }
 

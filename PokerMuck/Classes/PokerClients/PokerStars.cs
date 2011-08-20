@@ -131,7 +131,7 @@ namespace PokerMuck
         /* Given a game description, returns the corresponding PokerGame */
         public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
-            Debug.Print("Found game description: " + gameDescription);
+            Trace.WriteLine("Found game description: " + gameDescription);
 
             Match match = GetRegex("game_description_holdem").Match(gameDescription);
             if (match.Success)
@@ -146,7 +146,7 @@ namespace PokerMuck
         {
             // Return a common seating number (pokerstars always provides the number of seats available)
             // So this routine should never be executed
-            Debug.Print("We had to infer the max seating capacity using PokerStars. Wrong?");
+            Trace.WriteLine("We had to infer the max seating capacity using PokerStars. Wrong?");
 
             return DEFAULT_MAX_SEATING_CAPACITY;
         }

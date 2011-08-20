@@ -183,20 +183,20 @@ namespace PokerMuck
                     if (m.Success){
                         String theme = m.Groups["theme"].Value;
 
-                        Debug.Print("Found valid color map for " + this.Name + ": " + theme);
+                        Trace.WriteLine("Found valid color map for " + this.Name + ": " + theme);
                         if (!supportedVisualRecognitionThemes.Contains(theme))
                         {
                             supportedVisualRecognitionThemes.Add(theme);
                         }
                     }else{
-                        Debug.Print("Detected invalid card map filename format: " + file + ", skipping...");
+                        Trace.WriteLine("Detected invalid card map filename format: " + file + ", skipping...");
                     }
 
                 }
             }
             catch (DirectoryNotFoundException)
             {
-                Debug.Print("CardMaps directory for " + this.Name + " not found, skipping...");
+                Trace.WriteLine("CardMaps directory for " + this.Name + " not found, skipping...");
             }
         }
 

@@ -35,21 +35,21 @@ namespace PokerMuck
             try
             {
                 string searchResult = post.Post(requestURL);
-                Debug.Print(searchResult);
+                Trace.WriteLine(searchResult);
 
                 /* Match <div val="19" class="s2" title="J 2 Star(s)">J</div> */
                 Regex r = new Regex("<div val=\"[0-9]+\" class=\"s[0-9]\" title=\"([.]{3}) Star(s)\">J</div>");
 
                 Match m = r.Match(searchResult);
                 if (m.Success){
-                    Debug.Print(m.Groups[0].Value);
+                    Trace.WriteLine(m.Groups[0].Value);
                 }
             
             }
             catch (Exception e)
             {
                 // Something went wrong?
-                Debug.Print(e.ToString());
+                Trace.WriteLine(e.ToString());
 
                 return null; //TODO error handling?
             }

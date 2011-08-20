@@ -126,7 +126,7 @@ namespace PokerMuck
         }
 
         ~Player(){
-            Debug.Print("Destroying... " + Name);
+            Trace.WriteLine("Destroying... " + Name);
 
             DisposeHud();
         }
@@ -145,7 +145,7 @@ namespace PokerMuck
 
         protected Player(Player other)
         {
-            Debug.Print("Cloning " + other.Name);
+            Trace.WriteLine("Cloning " + other.Name);
 
             // Copy members here
             this.name = other.Name;

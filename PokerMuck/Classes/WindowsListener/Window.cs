@@ -146,7 +146,7 @@ namespace PokerMuck
             }
             else
             {
-                Debug.Print("A new window became the foreground window, but I couldn't figure out its position and size.");
+                Trace.WriteLine("A new window became the foreground window, but I couldn't figure out its position and size.");
             }
 
             return windowRect;

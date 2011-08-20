@@ -19,9 +19,9 @@ namespace PokerMuck
         const double PERFECT_MATCH_HISTOGRAM_THRESHOLD = 0.05d;
         const double POSSIBLE_MATCH_TEMPLATE_THRESHOLD = 0.75d;
 
-        private bool trainingMode;
         private PokerClient client;
         private List<String> cardMatchFiles;
+        private Point cardMatchDialogSpawnLocation; 
 
         private String CardMatchesDirectory
         {
@@ -32,14 +32,19 @@ namespace PokerMuck
         }
 
 
-        public VisualMatcher(PokerClient client, bool trainingMode)
+        public VisualMatcher(PokerClient client)
         {
             this.client = client;
-            this.trainingMode = trainingMode;
             this.cardMatchFiles = new List<String>();
+            this.cardMatchDialogSpawnLocation = new Point(200, 200);
 
             ReplicateCommonCardsForCurrentClient();
             LoadCardMatchFilesList();
+        }
+
+        public void SetCardMatchDialogSpawnLocation(int x, int y)
+        {
+            cardMatchDialogSpawnLocation = new Point(x, y);
         }
 
 
@@ -82,7 +87,7 @@ namespace PokerMuck
             // Copy each file into it’s new directory.
             foreach (FileInfo fi in source.GetFiles())
             {
-                Debug.Print(@"Copying {0}{1}", target.FullName, fi.Name);
+                Trace.WriteLine(String.Format(@"Copying {0}{1}", target.FullName, fi.Name));
                 fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
             }
 
@@ -154,6 +159,8 @@ namespace PokerMuck
          * If training mode is enabled, a window might ask the user to aid the algorithm find the best match */
         public Card MatchCard(Bitmap image)
         {
+            if (image == null) return null;
+
             double minDifference = Double.MaxValue;
             double maxSimilarity = 0.0d;
             String bestMatchFilename = "";
@@ -167,6 +174,8 @@ namespace PokerMuck
             foreach (String cardMatchFile in cardMatchFiles)
             {
                 Bitmap candidateImage = new Bitmap(cardMatchFile);
+
+                bool sizesMatch = candidateImage.Height == image.Height && candidateImage.Width == image.Width;
 
                 // For template matching template should be smaller than image
                 candidateImage = ScaleIfBiggerThan(image, candidateImage);
@@ -190,13 +199,19 @@ namespace PokerMuck
 
                 if (difference > PERFECT_MATCH_HISTOGRAM_THRESHOLD && similarity > POSSIBLE_MATCH_TEMPLATE_THRESHOLD)
                 {
-                    possibleMatches.Add(cardMatchFile, similarity);
+                    /* Our set of common cards is typically larger than the actual client matches 
+                     * (although there could be rare exceptions that would not influence negatively the behavior of the algorithm).
+                     * So, given that same size images have already been matched by the user during training mode,
+                     * we can pretty safely ignore them, since
+                     * they are likely to be perfectly matched with another target (and this block would have not been executed) */
+
+                    if (!sizesMatch) possibleMatches.Add(cardMatchFile, similarity);
                 }
 
                 candidateImage.Dispose();
             }
 
-            //Debug.Print("Matched " + bestMatchFilename + " (Difference: " + minDifference + ")");
+            //Trace.WriteLine("Matched " + bestMatchFilename + " (Difference: " + minDifference + ")");
 
             Card matchedCard = null; // Hold the return value
 
@@ -205,7 +220,7 @@ namespace PokerMuck
             {
                 if (minDifference > PERFECT_MATCH_HISTOGRAM_THRESHOLD && maxSimilarity > POSSIBLE_MATCH_TEMPLATE_THRESHOLD)
                 {
-                    Debug.Print("Min difference too high (" + minDifference + ") and max similarity above threshold, asking user to confirm our guesses");
+                    Trace.WriteLine("Min difference too high (" + minDifference + ") and max similarity above threshold, asking user to confirm our guesses");
 
                     Card userCard = null;
                     Globals.Director.RunFromGUIThread((Action)delegate()
@@ -232,11 +247,12 @@ namespace PokerMuck
         {
             if (possibleMatches.Count == 0)
             {
-                Debug.Print("Warning: We should ask the user to confirm an image, but there are no possible matches...");
+                Trace.WriteLine("Warning: We should ask the user to confirm an image, but there are no possible matches...");
                 return null;
             }
 
             CardMatchSelectDialog dialog = new CardMatchSelectDialog();
+            dialog.Location = cardMatchDialogSpawnLocation;
             dialog.DisplayImageToMatch(targetImage);
 
             // Create list
@@ -246,7 +262,7 @@ namespace PokerMuck
             {
                 orderedFilenames.Add(cardMatchFile);
 
-                Debug.Print(cardMatchFile + " has similarity of " + possibleMatches[cardMatchFile]);
+                Trace.WriteLine(cardMatchFile + " has similarity of " + possibleMatches[cardMatchFile]);
             }
 
             orderedFilenames.Sort((delegate(String file1, String file2)
@@ -289,11 +305,11 @@ namespace PokerMuck
             try
             {
                 newImage.Save(targetFile, ImageFormat.Bmp);
-                Debug.Print("Successfully replaced " + targetFile + " with new image");
+                Trace.WriteLine("Successfully replaced " + targetFile + " with new image");
             }
             catch (Exception)
             {
-                Debug.Print("Warning! Tried to replace " + targetFile + " with a new image but failed because of an exception");
+                Trace.WriteLine("Warning! Tried to replace " + targetFile + " with a new image but failed because of an exception");
             }
         }
 

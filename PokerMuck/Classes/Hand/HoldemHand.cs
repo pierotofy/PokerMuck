@@ -488,7 +488,7 @@ namespace PokerMuck
 
                 // Calculate draws (if we got until here, there might be some)
                 // Also, no draws are possible at the river
-                if (phase == HoldemGamePhase.River) draw = DrawType.Irrelevant;
+                if (phase == HoldemGamePhase.River) draw = DrawType.None;
                 else draw = GetDrawType(cards);
 
                 // -- Trips
@@ -872,7 +872,7 @@ namespace PokerMuck
         public HoldemHand.Classification GetHandClassification(HoldemGamePhase phase, HoldemBoard board)
         {
             HoldemHand.Classification classification = GetClassification(phase, board);
-            Debug.Print(String.Format("Rating hand [{0}] for {1} on board [{2}]: {3}", base.ToString(), phase.ToString(), board.ToString(), classification.ToString()));
+            Trace.WriteLine(String.Format("Rating hand [{0}] for {1} on board [{2}]: {3}", base.ToString(), phase.ToString(), board.ToString(), classification.ToString()));
             return classification;
         }
 

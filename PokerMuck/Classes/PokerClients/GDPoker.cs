@@ -126,7 +126,7 @@ namespace PokerMuck
         /* Given a game description, returns the corresponding PokerGame */
         public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
-            Debug.Print("Found game description: " + gameDescription);
+            Trace.WriteLine("Found game description: " + gameDescription);
 
             if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
 
@@ -204,11 +204,11 @@ namespace PokerMuck
                 try
                 {
                     File.Delete(file);
-                    Debug.Print("Deleted " + file);
+                    Trace.WriteLine("Deleted " + file);
                 }
                 catch (IOException)
                 {
-                    Debug.Print("Failed to delete: " + file + ". Is it being used?");
+                    Trace.WriteLine("Failed to delete: " + file + ". Is it being used?");
                 }
 
             }
@@ -228,11 +228,11 @@ namespace PokerMuck
             {
                 if (CreateHardLink(fileToCreate, fileToLink, IntPtr.Zero))
                 {
-                    Debug.Print("Created hard link for " + fileToLink + ".txt");
+                    Trace.WriteLine("Created hard link for " + fileToLink + ".txt");
                 }
                 else
                 {
-                    Debug.Print("Failed to create hard link for " + fileToLink + ".txt");
+                    Trace.WriteLine("Failed to create hard link for " + fileToLink + ".txt");
                 }
               
             }
@@ -248,7 +248,7 @@ namespace PokerMuck
             else if (gameType == PokerGameType.Ring) return false;
             else
             {
-                Debug.Print("Asked about player seating position relativity, but game type is unknown, guessing...");
+                Trace.WriteLine("Asked about player seating position relativity, but game type is unknown, guessing...");
                 return true;
             }
         }

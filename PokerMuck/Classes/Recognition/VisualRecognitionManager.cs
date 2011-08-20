@@ -11,30 +11,43 @@ namespace PokerMuck
 {
     class VisualRecognitionManager
     {
+        /* How often do we pick a new screenshot and elaborate the images? */
+        const int REFRESH_TIME = 4000;
+
         private Table table;
+        private IVisualRecognitionManagerHandler handler;
         private VisualRecognitionMap recognitionMap;
         private ColorMap colorMap;
         private TimedScreenshotTaker timedScreenshotTaker;
         private VisualMatcher matcher;
 
-        public VisualRecognitionManager(Table table)
+        public VisualRecognitionManager(Table table, IVisualRecognitionManagerHandler handler)
         {
             Debug.Assert(table.Game != PokerGame.Unknown, "Cannot create a visual recognition manager without knowing the game of the table");
             Debug.Assert(table.WindowRect != Rectangle.Empty, "Cannot create a visual recognition manager without knowing the window rect");
 
             this.table = table;
+            this.handler = handler;
             this.colorMap = ColorMap.Create(table.Game);
             this.recognitionMap = new VisualRecognitionMap(table.VisualRecognitionMapLocation, colorMap);
-            this.matcher = new VisualMatcher(Globals.UserSettings.CurrentPokerClient, false);
+            this.matcher = new VisualMatcher(Globals.UserSettings.CurrentPokerClient);
 
-            // TODO custom time refresh?
-            this.timedScreenshotTaker = new TimedScreenshotTaker(5000, new Window(table.WindowTitle));
+            this.timedScreenshotTaker = new TimedScreenshotTaker(REFRESH_TIME, new Window(table.WindowTitle));
             this.timedScreenshotTaker.ScreenshotTaken += new TimedScreenshotTaker.ScreenshotTakenHandler(timedScreenshotTaker_ScreenshotTaken);
             this.timedScreenshotTaker.Start();
         }
 
+        /* Update spawn location for the card select dialog (could have changed) */
+        private void UpdateCardMatchDialogSpawnLocation()
+        {
+            Rectangle winRect = table.WindowRect;
+            matcher.SetCardMatchDialogSpawnLocation(winRect.X + 30, winRect.Y + 30);
+        }
+
         void timedScreenshotTaker_ScreenshotTaken(Bitmap screenshot)
         {
+            UpdateCardMatchDialogSpawnLocation();
+
             /* Try to match player cards */
             List<Bitmap> playerCardImages = new List<Bitmap>();
             ArrayList playerCardsActions = colorMap.GetPlayerCardsActions(table.CurrentHeroSeat);
@@ -47,18 +60,19 @@ namespace PokerMuck
                 }
                 else
                 {
-                    Debug.Print("Warning: could not find a rectangle for action " + action);
+                    Trace.WriteLine("Warning: could not find a rectangle for action " + action);
                 }
             }
 
             CardList playerCards = matcher.MatchCards(playerCardImages, false);
             if (playerCards != null)
             {
-                Debug.Print("Matched player cards! " + playerCards.ToString());
+                Trace.WriteLine("Matched player cards! " + playerCards.ToString());
+                handler.PlayerHandRecognized(playerCards);
             }
 
             // Dispose
-            foreach (Bitmap image in playerCardImages) image.Dispose();
+            foreach (Bitmap image in playerCardImages) if (image != null) image.Dispose();
 
             /* If community cards are supported, try to match them */
             if (colorMap.SupportsCommunityCards)
@@ -75,7 +89,7 @@ namespace PokerMuck
                     }
                     else
                     {
-                        Debug.Print("Warning: could not find a rectangle for action " + action);
+                        Trace.WriteLine("Warning: could not find a rectangle for action " + action);
                     }
                 }
 
@@ -83,15 +97,16 @@ namespace PokerMuck
                 CardList communityCards = matcher.MatchCards(communityCardImages, true);
                 if (communityCards != null && communityCards.Count > 0)
                 {
-                    Debug.Print("Matched board cards! " + communityCards.ToString());
+                    Trace.WriteLine("Matched board cards! " + communityCards.ToString());
+                    handler.BoardRecognized(communityCards);
                 }
 
                 // Dispose
-                foreach (Bitmap image in communityCardImages) image.Dispose();
+                foreach (Bitmap image in communityCardImages) if (image != null) image.Dispose();
             }
 
             // Dispose screenshot
-            screenshot.Dispose();
+            if (screenshot != null) screenshot.Dispose();
         }
 
         public void Cleanup(){

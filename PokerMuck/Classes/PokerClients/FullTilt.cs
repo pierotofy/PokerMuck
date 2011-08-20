@@ -133,7 +133,7 @@ namespace PokerMuck
         /* Given a game description, returns the corresponding PokerGame */
         public override PokerGame GetPokerGameFromGameDescription(string gameDescription)
         {
-            Debug.Print("Found game description: " + gameDescription);
+            Trace.WriteLine("Found game description: " + gameDescription);
 
             if (gameDescription == (String)config["game_description_no_limit_holdem"]) return PokerGame.Holdem;
 
@@ -156,7 +156,7 @@ namespace PokerMuck
                     String maxSeatingCapacity = m.Groups["maxSeatingCapacity"].Value;
                     int maxCapacityGuess = Int32.Parse(maxSeatingCapacity);
 
-                    Debug.Print("Matched max seating capacity: " + maxSeatingCapacity + " from " + line);
+                    Trace.WriteLine("Matched max seating capacity: " + maxSeatingCapacity + " from " + line);
 
                     return maxCapacityGuess;
                 }else{

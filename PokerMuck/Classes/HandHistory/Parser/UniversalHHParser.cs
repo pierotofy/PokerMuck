@@ -35,7 +35,7 @@ namespace PokerMuck
             }
             else
             {
-                Debug.Print("Failed to match a gameType from the universal parser: " + line);
+                Trace.WriteLine("Failed to match a gameType from the universal parser: " + line);
             }
         }
 

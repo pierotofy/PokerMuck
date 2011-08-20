@@ -139,7 +139,7 @@ namespace PokerMuck
                 int numberRequired = pokerClient.GetConfigInt("hand_history_end_of_round_number_of_tokens_required");
                 if (endOfRoundTokensDetected >= numberRequired)
                 {
-                    Debug.Print("End of round");
+                    Trace.WriteLine("End of round");
                     OnRoundHasTerminated();
                     endOfRoundTokensDetected = 0;
                 }
@@ -149,7 +149,7 @@ namespace PokerMuck
             {
                 String heroName = matchResult.Groups["heroName"].Value;
                 OnHeroNameFound(heroName);
-                Debug.Print("Found hero's name: " + heroName);
+                Trace.WriteLine("Found hero's name: " + heroName);
             }
         }
 

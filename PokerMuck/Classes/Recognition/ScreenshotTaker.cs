@@ -43,7 +43,7 @@ namespace PokerMuck
             }
             catch (Exception)
             {
-                Debug.Print("Failed to take screenshot of " + window.Title);
+                Trace.WriteLine("Failed to take screenshot of " + window.Title);
                 return null;
             }
         }
@@ -61,6 +61,8 @@ namespace PokerMuck
 
         public static Bitmap Slice(Bitmap screenshot, Rectangle bounds)
         {
+            if (screenshot == null) return null;
+
             Bitmap result = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format24bppRgb);
             using (Graphics g = Graphics.FromImage(result))
             {

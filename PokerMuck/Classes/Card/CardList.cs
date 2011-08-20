@@ -155,5 +155,33 @@ namespace PokerMuck
             }
             return cardList;
         }
+
+
+        public override int GetHashCode()
+        {
+            return cards.GetHashCode();
+        }
+        
+        public override bool Equals(object obj)
+        {
+            // Null is false
+            if (obj == null) return false;
+            CardList otherList = (CardList)obj;
+
+            // Different size is false
+            if (cards.Count != otherList.cards.Count) return false;
+
+            bool equal = true;
+            for (int i = 0; i < cards.Count; i++)
+            {
+                if (!cards[i].Equals(otherList.cards[i]))
+                {
+                    equal = false;
+                    break;
+                }
+            }
+
+            return equal;
+        }
     }
 }

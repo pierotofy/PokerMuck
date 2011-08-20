@@ -10,6 +10,8 @@ using System.Collections;
 
 namespace PokerMuck
 {
+    /* This controls allows us to put one or more controls one after the other
+     * top to bottom. It also allows us to specify the max height of each control we add. */
     public partial class ControlListContainer : UserControl
     {
         /* This hashtable maps every control to a maximum height */

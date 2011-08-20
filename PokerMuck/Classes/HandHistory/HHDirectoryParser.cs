@@ -54,7 +54,7 @@ namespace PokerMuck
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    Debug.Print("Directory doesn't exist: {0}. Trying again later?", directory);
+                    Trace.WriteLine(String.Format("Directory doesn't exist: {0}. Trying again later?", directory));
                     return String.Empty;
                 }
             }

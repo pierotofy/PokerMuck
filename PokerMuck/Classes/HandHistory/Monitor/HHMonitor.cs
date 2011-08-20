@@ -131,8 +131,8 @@ namespace PokerMuck
                     }
                     catch (IOException e)
                     {
-                        Debug.Print(e.ToString());
-                        Debug.Print(String.Format("Cannot read {0}, trying again later?", handHistoryFilePath));
+                        Trace.WriteLine(e.ToString());
+                        Trace.WriteLine(String.Format("Cannot read {0}, trying again later?", handHistoryFilePath));
                     }
                 }
             }

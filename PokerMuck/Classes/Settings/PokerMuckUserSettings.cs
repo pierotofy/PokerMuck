@@ -21,6 +21,8 @@ namespace PokerMuck
             CurrentPokerClient = new PokerStars("English");
             WindowPosition = new Point(480, 320); // We assume monitors will be bigger than this resolution
             WindowSize = new Size(209, 331); // Designer size
+            TableDisplayRelativeWindowPosition = new Point(100, 100);
+            TableDisplayWindowSize = new Size(234, 344);
             FirstExecution = true;
             TrainingModeEnabled = false;
         }
@@ -65,6 +67,7 @@ namespace PokerMuck
             set
             {
                 SetSetting("training_mode_enabled", value);
+                Trace.WriteLine("Setting training mode to " + value);
             }
         }
 
@@ -121,6 +124,38 @@ namespace PokerMuck
                 SetSetting("poker_client_name", value.Name);
                 SetSetting("poker_client_language", value.CurrentLanguage);
                 SetSetting(value.XmlName + "_theme", value.CurrentTheme);                
+            }
+        }
+
+        public Size TableDisplayWindowSize
+        {
+            get
+            {
+                int width = GetIntSetting("table_display_window_width");
+                int height = GetIntSetting("table_display_window_height");
+                return new Size(width, height);
+            }
+
+            set
+            {
+                SetSetting("table_display_window_width", value.Width);
+                SetSetting("table_display_window_height", value.Height);
+            }
+        }
+
+        public Point TableDisplayRelativeWindowPosition
+        {
+            get
+            {
+                int posX = GetIntSetting("table_display_relative_window_position_x");
+                int posY = GetIntSetting("table_display_relative_window_position_y");
+                return new Point(posX, posY);
+            }
+
+            set
+            {
+                SetSetting("table_display_relative_window_position_x", value.X);
+                SetSetting("table_display_relative_window_position_y", value.Y);
             }
         }
 
