@@ -455,6 +455,16 @@ namespace PokerMuck
                     visualRecognitionManager = new VisualRecognitionManager(this, this);
                 }
 
+                // TODO REMOVE
+                
+                CardList cards = new CardList();
+                cards.AddCard(new Card(CardFace.Six, CardSuit.Spades));
+                cards.AddCard(new Card(CardFace.Eight, CardSuit.Spades));
+                //cards.AddCard(new Card(CardFace.Ace, CardSuit.Clubs));
+                //cards.AddCard(new Card(CardFace.Seven, CardSuit.Hearts));
+
+                PlayerHandRecognized(cards); 
+
                 Globals.Director.RunFromGUIThread((Action)delegate()
                 {
                     displayWindow.SetVisualRecognitionSupported(true);

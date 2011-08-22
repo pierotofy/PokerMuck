@@ -114,6 +114,8 @@
   <ItemGroup>
     <Compile Include="Classes\Board\Board.cs" />
     <Compile Include="Classes\Board\HoldemBoard.cs" />
+    <Compile Include="Classes\Calculator\HoldemOddsCalculator.cs" />
+    <Compile Include="Classes\Calculator\OddsCalculator.cs" />
     <Compile Include="Classes\Card\CardList.cs" />
     <Compile Include="Classes\Database\PlayerDatabase.cs" />
     <Compile Include="Classes\Forms\FrmFirstExecutionWizard.cs">
@@ -160,6 +162,7 @@
     <Compile Include="Classes\Statistics\StatisticsDescriptiveData.cs" />
     <Compile Include="Classes\Statistics\StatisticsLineData.cs" />
     <Compile Include="Classes\Statistics\StatisticsNumberData.cs" />
+    <Compile Include="Classes\Statistics\StatisticsOddsData.cs" />
     <Compile Include="Classes\Statistics\StatisticsPercentageData.cs" />
     <Compile Include="Classes\Statistics\StatisticsUnknownData.cs" />
     <Compile Include="Classes\Statistics\ValueCounter.cs" />
@@ -247,17 +250,23 @@
     <Compile Include="Classes\UIComponents\Hud\HudWindow.designer.cs">
       <DependentUpon>HudWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\UIComponents\PlayerStatisticsDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\UIComponents\PlayerStatisticsDisplay.Designer.cs">
+      <DependentUpon>PlayerStatisticsDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\UIComponents\SelectableCardListPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Classes\UIComponents\SelectableCardPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Classes\UIComponents\StatisticsDisplay.cs">
-      <SubType>UserControl</SubType>
+    <Compile Include="Classes\UIComponents\StatisticItemListDisplay.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Classes\UIComponents\StatisticsDisplay.Designer.cs">
-      <DependentUpon>StatisticsDisplay.cs</DependentUpon>
+    <Compile Include="Classes\UIComponents\StatisticItemListDisplay.Designer.cs">
+      <DependentUpon>StatisticItemListDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\UIComponents\StatisticItem.cs">
       <SubType>UserControl</SubType>
@@ -337,11 +346,14 @@
     <EmbeddedResource Include="Classes\UIComponents\Hud\HudWindow.resx">
       <DependentUpon>HudWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Classes\UIComponents\StatisticsDisplay.resx">
-      <DependentUpon>StatisticsDisplay.cs</DependentUpon>
+    <EmbeddedResource Include="Classes\UIComponents\PlayerStatisticsDisplay.resx">
+      <DependentUpon>PlayerStatisticsDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\StatisticItem.resx">
       <DependentUpon>StatisticItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Classes\UIComponents\StatisticItemListDisplay.resx">
+      <DependentUpon>StatisticItemListDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\UIComponents\TableDisplay\TableDisplayWindow.resx">
       <DependentUpon>TableDisplayWindow.cs</DependentUpon>

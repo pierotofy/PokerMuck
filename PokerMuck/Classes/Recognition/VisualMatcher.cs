@@ -17,7 +17,7 @@ namespace PokerMuck
     class VisualMatcher
     {
         const double PERFECT_MATCH_HISTOGRAM_THRESHOLD = 0.05d;
-        const double POSSIBLE_MATCH_TEMPLATE_THRESHOLD = 0.75d;
+        const double POSSIBLE_MATCH_TEMPLATE_THRESHOLD = 0.70d;
 
         private PokerClient client;
         private List<String> cardMatchFiles;

@@ -9,7 +9,7 @@ namespace PokerMuck
     /* Represents a statistical percentage data  */
     public class StatisticsPercentageData : StatisticsData
     {
-        private int precision;
+        protected int precision;
 
         public StatisticsPercentageData(String name, float value, int precision = 0) 
             : base(name, value)

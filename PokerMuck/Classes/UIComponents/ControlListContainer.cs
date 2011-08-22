@@ -76,7 +76,10 @@ namespace PokerMuck
                     {
                         // We're good, new height is OK
                         c.Height = newHeight;
-                    } 
+                    }
+
+                    // The width is always the max we have at disposal
+                    c.Width = this.Width;
                 }
             }
 

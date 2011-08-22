@@ -1,6 +1,6 @@
 ﻿namespace PokerMuck
 {
-    partial class StatisticsDisplay
+    partial class PlayerStatisticsDisplay
     {
         /// <summary> 
         /// Required designer variable.
@@ -58,6 +58,7 @@
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(234, 202);
             this.tabControl.TabIndex = 2;
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -79,14 +80,14 @@
             this.tabPage2.Text = "Flop";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // StatisticsDisplay
+            // PlayerStatisticsDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.lblPlayerName);
             this.DoubleBuffered = true;
-            this.Name = "StatisticsDisplay";
+            this.Name = "PlayerStatisticsDisplay";
             this.Size = new System.Drawing.Size(234, 226);
             this.SizeChanged += new System.EventHandler(this.StatisticsDisplay_SizeChanged);
             this.tabControl.ResumeLayout(false);

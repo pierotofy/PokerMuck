@@ -36,7 +36,7 @@
             // 
             this.lblName.AutoSize = true;
             this.lblName.BackColor = System.Drawing.Color.Transparent;
-            this.lblName.Location = new System.Drawing.Point(3, 3);
+            this.lblName.Location = new System.Drawing.Point(0, 3);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(58, 13);
             this.lblName.TabIndex = 0;

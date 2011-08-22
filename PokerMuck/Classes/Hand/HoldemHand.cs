@@ -823,6 +823,58 @@ namespace PokerMuck
             return cards[1];
         }
 
+        /* Returns the card with the higher face value, ignoring suit */
+        private Card GetHigher()
+        {
+            if (cards[0].GetFaceValue() > cards[1].GetFaceValue()) return cards[0];
+            else return cards[1];
+        }
+
+        private Card GetLower()
+        {
+            if (cards[0].GetFaceValue() < cards[1].GetFaceValue()) return cards[0];
+            else return cards[1];
+        }
+
+        public bool IsPaired()
+        {
+            return cards[0].Face == cards[1].Face;
+        }
+
+        public bool IsSuited()
+        {
+            return cards[0].Suit == cards[1].Suit;
+        }
+
+        public bool IsConnectors()
+        {
+            return IsGappedConnectors(0);
+        }
+
+        public bool IsGappedConnectors(int gap)
+        {
+            return (Math.Abs(cards[1].GetFaceValue(true) - cards[0].GetFaceValue(true)) == (gap + 1)) ||
+                   (Math.Abs(cards[1].GetFaceValue(false) - cards[0].GetFaceValue(false)) == (gap + 1)) ;
+        }
+
+
+        public bool IsConnectorsInRange(HoldemHand lower, HoldemHand upper)
+        {
+            return IsGappedConnectorsInRange(0, lower, upper);
+        }
+
+        /* Returns true if the hand is a gapped connector and is within the range of hands (inclusive)
+         * specified, ex. between 54 and JT (only the upper cards are checked) */
+        public bool IsGappedConnectorsInRange(int gap, HoldemHand lower, HoldemHand upper)
+        {
+            if (this.GetHigher().GetFaceValue() >= lower.GetHigher().GetFaceValue() &&
+                this.GetHigher().GetFaceValue() <= upper.GetHigher().GetFaceValue())
+            {
+                return IsGappedConnectors(gap);
+            }
+            else return false;
+        }
+
         public float GetPrelopPercentile()
         {
             Debug.Assert(GetFirstCard() != null && GetSecondCard() != null, "Cannot retrieve the preflop percentile if the cards are not known.");

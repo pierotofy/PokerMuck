@@ -25,32 +25,32 @@ namespace PokerMuck
             else return null;
         }
 
-        protected override void UpdateHandTab(Hand playerHand)
+        protected override void DisplayOdds(Hand playerHand)
         {
-            base.UpdateHandTab(playerHand);
-
-            if (HandTabNeedsUpdate(playerHand))
+            // Display how the hand rates in Holdem
+            float handPercentile = ((HoldemHand)playerHand).GetPrelopPercentile();
+            HoldemHand.Rating rating = new HoldemHand.ClassificationPreflop(((HoldemHand)playerHand)).GetRating();
+            Color rateColor = Color.FromArgb(184, 0, 0); // Red
+            if (rating == HoldemHand.Rating.Monster || rating == HoldemHand.Rating.Strong)
             {
-                // Display how the hand rates in Holdem
-                float handPercentile = ((HoldemHand)playerHand).GetPrelopPercentile();
-                HoldemHand.Rating rating = new HoldemHand.ClassificationPreflop(((HoldemHand)playerHand)).GetRating();
-                Color rateColor = Color.FromArgb(184, 0, 0); // Red
-                if (rating == HoldemHand.Rating.Monster || rating == HoldemHand.Rating.Strong)
-                {
-                    rateColor = Color.FromArgb(0, 184, 48); // Green
-                }
-                else if (rating == HoldemHand.Rating.Mediocre || rating == HoldemHand.Rating.Weak)
-                {
-                    rateColor = Color.FromArgb(255, 150, 0); // Orange
-                }
-
-                Label lblPreflopRate = new Label();
-                lblPreflopRate.Font = new Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                lblPreflopRate.ForeColor = rateColor;
-                lblPreflopRate.Text = "Top " + Math.Round(handPercentile * 100, 2) + "%";
-
-                handControlList.AddPanel(lblPreflopRate);
+                rateColor = Color.FromArgb(0, 184, 48); // Green
             }
+            else if (rating == HoldemHand.Rating.Mediocre || rating == HoldemHand.Rating.Weak)
+            {
+                rateColor = Color.FromArgb(255, 150, 0); // Orange
+            }
+
+            Label lblPreflopRate = new Label();
+            lblPreflopRate.Font = new Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblPreflopRate.ForeColor = rateColor;
+            lblPreflopRate.BackColor = Color.Transparent;
+            lblPreflopRate.Height = 16;
+            lblPreflopRate.Text = "Top " + Math.Round(handPercentile * 100, 2) + "%";
+            lblPreflopRate.Padding = new System.Windows.Forms.Padding(0, 0, 0, 0);
+
+            handControlLayout.Controls.Add(lblPreflopRate);
+
+            base.DisplayOdds(playerHand);
         }
     }
 }

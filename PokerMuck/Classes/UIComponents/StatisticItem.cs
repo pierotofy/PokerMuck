@@ -19,7 +19,6 @@ namespace PokerMuck
 
         private Color COLOR_HIGHLIGHT = Color.FromArgb(255, 220, 176, 121);
         private Color COLOR_SELECTED = Color.FromArgb(255, 215, 127, 18);
-        const int EXTENDED_PANEL_MARGIN_RIGHT = 9;
 
         private bool highlightOnMouseOver;
         [Description("Turn on/off hightlight on mouse over"),
@@ -89,7 +88,7 @@ namespace PokerMuck
             if (extendedPanel != null)
             {
                 extendedPanel.Top = this.Top;
-                extendedPanel.Left = (this.Right - extendedPanel.Width - EXTENDED_PANEL_MARGIN_RIGHT);
+                extendedPanel.Left = (this.Right - extendedPanel.Width - this.Parent.Margin.Right);
             }
         }
 

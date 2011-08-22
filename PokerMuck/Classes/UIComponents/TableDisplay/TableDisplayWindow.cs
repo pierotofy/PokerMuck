@@ -30,11 +30,14 @@ namespace PokerMuck
 
         private Hand lastPlayerHand; // Keep track of the last hand for which we displayed information about
 
+        protected OddsCalculator oddsCalculator;
+
         public TableDisplayWindow(Table table)
         {
             InitializeComponent();
             this.lastPlayerHand = null;
             this.table = table;
+            this.oddsCalculator = OddsCalculator.CreateFor(table.Game);
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.ResizeRedraw, true);
             this.Size = LoadWindowSize();
@@ -150,18 +153,37 @@ namespace PokerMuck
             if (HandTabNeedsUpdate(playerHand))
             {
                 // Clear previous stuff
-                handControlList.ClearAll();
+                handControlLayout.Controls.Clear();
 
                 // Display current hand
                 CardListPanel playerCardsPanel = new CardListPanel();
                 playerCardsPanel.BackColor = Color.Transparent;
                 playerCardsPanel.CardSpacing = 6;
+                playerCardsPanel.BorderPadding = 1;
 
                 playerCardsPanel.CardListToDisplay = playerHand;
-                handControlList.AddPanel(playerCardsPanel, 80);
+                playerCardsPanel.Height = 80;
+                handControlLayout.Controls.Add(playerCardsPanel);
 
-                Debug.Print("Executed!");
+                DisplayOdds(playerHand);
             }
+        }
+
+        protected virtual void DisplayOdds(Hand playerHand)
+        {
+            // Display odds
+            List<Statistic> odds = oddsCalculator.Calculate(playerHand);
+
+            StatisticItemListDisplay statisticListDisplay = new StatisticItemListDisplay();
+            statisticListDisplay.BackColor = Color.Transparent;
+            statisticListDisplay.TopMargin = 0;
+            statisticListDisplay.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            statisticListDisplay.Width = handControlLayout.Width - handControlLayout.Padding.Right - handControlLayout.Padding.Left;
+            statisticListDisplay.StatisticsSpacing = 2;
+            statisticListDisplay.AutoSize = true;
+            statisticListDisplay.Add(odds);
+
+            handControlLayout.Controls.Add(statisticListDisplay);
         }
 
         private Point LoadAbsoluteWindowPosition()

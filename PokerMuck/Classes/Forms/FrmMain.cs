@@ -65,26 +65,18 @@ namespace PokerMuck
             Statistic average = preflop.Average("Summary", 2, flop, turn);
 
             Trace.WriteLine("Average: " + average.ToString());
-          
-            
-            HoldemHand h1 = new HoldemHand(new Card(CardFace.Eight, CardSuit.Spades), new Card(CardFace.Nine, CardSuit.Diamonds));
-            HoldemBoard b = new HoldemBoard(new Card(CardFace.Six, CardSuit.Clubs),
-                                            new Card(CardFace.Ten, CardSuit.Diamonds),
-                                            new Card(CardFace.Two, CardSuit.Clubs),
-                                            new Card(CardFace.Ace, CardSuit.Hearts),
-                                            new Card(CardFace.Jack, CardSuit.Clubs));
+        
 
-            HoldemHand.Classification classification = h1.GetClassification(HoldemGamePhase.Preflop, b);
-            Trace.WriteLine(classification.ToString());
+            HoldemHand h1 = new HoldemHand(new Card(CardFace.Nine, CardSuit.Spades), new Card(CardFace.Six, CardSuit.Diamonds));
 
-            classification = h1.GetClassification(HoldemGamePhase.Flop, b);
-            Trace.WriteLine(classification.ToString());
-
-            classification = h1.GetClassification(HoldemGamePhase.Turn, b);
-            Trace.WriteLine(classification.ToString());
-            classification = h1.GetClassification(HoldemGamePhase.River, b);
-            Trace.WriteLine(classification.ToString());
+            if (h1.IsGappedConnectorsInRange(1, 
+        new HoldemHand(new Card(CardFace.Five, CardSuit.Clubs), new Card(CardFace.Four, CardSuit.Clubs)),
+        new HoldemHand(new Card(CardFace.Jack, CardSuit.Clubs), new Card(CardFace.Ten, CardSuit.Clubs))))
+            {
+                Trace.WriteLine("In range");
+            }
              */
+
             /*
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(".COM Play 736 (6 max) - 1/2 - No Limit Hold'em - Logged In As italystallion89");
             //String res = pmDirector.UserSettings.CurrentPokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle("$0.95 + $0.05 Heads Up Sit & Go (228858150), Table 1 - 10/20 - No Limit Hold'em - Logged In As italystallion89");
@@ -127,7 +119,7 @@ namespace PokerMuck
             LoadConfigurationValues();
 
             // Always start the view on the About tab
-            tabControl.SelectedIndex = tabControl.TabCount - 1;
+            //tabControl.SelectedIndex = tabControl.TabCount - 1;
         }
 
         void Director_RunGUIRoutine(Action d, Boolean asynchronous)
