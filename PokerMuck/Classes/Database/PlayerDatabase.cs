@@ -32,7 +32,7 @@ namespace PokerMuck
         {
             Player p = Find(playerName, gameID);
 
-            Debug.Assert(p != null, "Player " + playerName + " doesn't exist in our database");
+            Trace.Assert(p != null, "Player " + playerName + " doesn't exist in our database");
             return p.Clone(); // Return a copy
         }
 

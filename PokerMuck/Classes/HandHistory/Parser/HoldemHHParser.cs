@@ -257,7 +257,7 @@ namespace PokerMuck
             {
                 String maxSeatingCapacity = matchResult.Groups["tableSeatingCapacity"].Value;
                 
-                Debug.Assert(maxSeatingCapacity != String.Empty, "Table max seating capacity regex found, but empty result.");
+                Trace.Assert(maxSeatingCapacity != String.Empty, "Table max seating capacity regex found, but empty result.");
                 Trace.WriteLine("Found certain max seating capacity from regex: " + maxSeatingCapacity);
 
                 OnFoundTableMaxSeatingCapacity(Int32.Parse(maxSeatingCapacity));
@@ -280,7 +280,7 @@ namespace PokerMuck
             /* Detect raises, calls, folds, bets */
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_call"), out matchResult))
             {
-                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a call during an impossible game phase");
+                Trace.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a call during an impossible game phase");
 
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["amount"].Value);
@@ -288,7 +288,7 @@ namespace PokerMuck
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_bet"), out matchResult))
             {
-                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a bet during an impossible game phase");
+                Trace.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a bet during an impossible game phase");
 
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["amount"].Value);
@@ -296,7 +296,7 @@ namespace PokerMuck
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_fold"), out matchResult))
             {
-                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a fold during an impossible game phase");
+                Trace.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a fold during an impossible game phase");
 
                 String playerName = matchResult.Groups["playerName"].Value;
 
@@ -305,7 +305,7 @@ namespace PokerMuck
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_check"), out matchResult))
             {
-                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a check during an impossible game phase");
+                Trace.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a check during an impossible game phase");
 
                 String playerName = matchResult.Groups["playerName"].Value;
                 OnPlayerChecked(playerName, currentGamePhase);
@@ -313,7 +313,7 @@ namespace PokerMuck
 
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_raise"), out matchResult))
             {
-                Debug.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a raise during an impossible game phase");
+                Trace.Assert(currentGamePhase != HoldemGamePhase.Showdown && currentGamePhase != HoldemGamePhase.Summary, "We detected a raise during an impossible game phase");
 
                 String playerName = matchResult.Groups["playerName"].Value;
                 float raiseAmount = float.Parse(matchResult.Groups["raiseAmount"].Value);
@@ -364,7 +364,7 @@ namespace PokerMuck
                 List<Card> cards = GenerateCardsFromText(cardsText);
 
                 // Now that we have the string representation of the cards, we need to convert the string into an Hand object
-                Debug.Assert(cards.Count == 2, "Less or more than two cards were identified in this string: " + cardsText);
+                Trace.Assert(cards.Count == 2, "Less or more than two cards were identified in this string: " + cardsText);
 
                 Hand hand = new HoldemHand(cards[0], cards[1]);
                 
@@ -423,7 +423,7 @@ namespace PokerMuck
             cardsText = cardsText.Trim();
 
             String[] cards = cardsText.Split(' ');
-            Debug.Assert(cards.Length > 0, "No cards were extracted from " + cardsText + " but GenerateCardsFromText was called. Regex error?");
+            Trace.Assert(cards.Length > 0, "No cards were extracted from " + cardsText + " but GenerateCardsFromText was called. Regex error?");
             
             List<Card> result = new List<Card>(cards.Length);
             foreach (String card in cards)
@@ -463,7 +463,7 @@ namespace PokerMuck
                             break;
                         }
                     }
-                    Debug.Assert(buttonIndex != -1, "Button Index was not found while searching for the blinds. This should have not happened");
+                    Trace.Assert(buttonIndex != -1, "Button Index was not found while searching for the blinds. This should have not happened");
 
                     int bigBlindIndex = -1;
                     int smallBlindIndex = -1;
@@ -505,7 +505,7 @@ namespace PokerMuck
                     }
                     else
                     {
-                        Debug.Assert(false, "The button index seem to be out of the possible cases. Have we missed something?");
+                        Trace.Assert(false, "The button index seem to be out of the possible cases. Have we missed something?");
                     }
 
                     String bigBlindPlayerName = (String)playerSeats[seatNumbers[bigBlindIndex]];

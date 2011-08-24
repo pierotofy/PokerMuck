@@ -17,7 +17,7 @@ namespace PokerMuck
     class VisualMatcher
     {
         const double PERFECT_MATCH_HISTOGRAM_THRESHOLD = 0.05d;
-        const double POSSIBLE_MATCH_TEMPLATE_THRESHOLD = 0.70d;
+        const double POSSIBLE_MATCH_TEMPLATE_THRESHOLD = 0.7d;
 
         private PokerClient client;
         private List<String> cardMatchFiles;
@@ -318,8 +318,8 @@ namespace PokerMuck
         private Bitmap ScaleIfBiggerThan(Bitmap otherImage, Bitmap sourceImage)
         {
             bool needsScaling = false;
-            float widthScaleFactor = 0.0f;
-            float heightScaleFactor = 0.0f;
+            float widthScaleFactor = 1.0f;
+            float heightScaleFactor = 1.0f;
 
             if (sourceImage.Width > otherImage.Width)
             {

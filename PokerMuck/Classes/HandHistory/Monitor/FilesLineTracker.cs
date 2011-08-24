@@ -33,7 +33,7 @@ namespace PokerMuck
 
         public void IncreaseLineCount(String filename, int increment = 1)
         {
-            Debug.Assert(filename != String.Empty, "Tried to increase the line count for an empty string file");
+            Trace.Assert(filename != String.Empty, "Tried to increase the line count for an empty string file");
 
             int previousValue = 0;
             if (filesData.ContainsKey(filename))

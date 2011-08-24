@@ -26,7 +26,7 @@ namespace PokerMuck
 
         public UserSettings(String programName)
         {
-            Debug.Assert(programName != String.Empty,"programName cannot be empty when initializing a UserSettings object");
+            Trace.Assert(programName != String.Empty,"programName cannot be empty when initializing a UserSettings object");
 
             applicationDataPath = Environment.GetEnvironmentVariable("APPDATA") + @"\" + programName;
             settingsTable = new Hashtable();
@@ -82,7 +82,7 @@ namespace PokerMuck
         // Helper method to return the fill path to the settings file
         private String GetSettingsFilePath()
         {
-            Debug.Assert(SettingsPath != String.Empty, "SettingsPath is empty");
+            Trace.Assert(SettingsPath != String.Empty, "SettingsPath is empty");
             return SettingsPath + GetSettingsFilename();
         }
 

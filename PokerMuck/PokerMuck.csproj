@@ -537,6 +537,15 @@
     <Content Include="Resources\CardMatches\Common\4_9.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\ColorMaps\Poker Stars\Holdem_10-max_Classic.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ColorMaps\Poker Stars\Holdem_2-max_Classic.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ColorMaps\Poker Stars\Holdem_6-max_Classic.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\ColorMaps\Poker Stars\Holdem_9-max_Classic.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

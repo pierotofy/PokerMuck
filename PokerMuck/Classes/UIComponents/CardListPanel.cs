@@ -140,7 +140,7 @@ namespace PokerMuck
 
 
             int numCards = cardPictures.Count;
-            Debug.Assert(numCards > 0, "Trying to adjust zero cards?");
+            Trace.Assert(numCards > 0, "Trying to adjust zero cards?");
 
             // Retrieve the cards original width
             float originalCardWidth = (float)cardPictures[0].Width;

@@ -350,7 +350,7 @@ namespace PokerMuck
                             Card c2 = new Card(face2, suit2);
 
                             HoldemHand hand = new HoldemHand(c1, c2);
-                            Debug.Assert(HoldemHand.preflopPercentiles.ContainsKey(hand.ToString()), "Percentile not found for: " + hand.ToString());
+                            Trace.Assert(HoldemHand.preflopPercentiles.ContainsKey(hand.ToString()), "Percentile not found for: " + hand.ToString());
                         }
                     }
                 }
@@ -406,12 +406,13 @@ namespace PokerMuck
             public enum KickerType { Unknown, Irrelevant, Low, Middle, High }
             public enum PairType { Irrelevant, Bottom, Middle, Top }
             public enum DrawType { Irrelevant, None, Flush, Straight, FlushAndStraight }
+            public enum StraightDrawType { None, InsideStraightDraw, OpenEndedStraightDraw }
 
             private HandType hand;
             private KickerType kicker;
             private PairType pair;
             private DrawType draw;
-            public DrawType Draw { get { return draw; } }
+            private StraightDrawType straightDraw;
 
             public ClassificationPostflop(HoldemHand hand, HoldemGamePhase phase, HoldemBoard board)
             {
@@ -422,8 +423,9 @@ namespace PokerMuck
                 this.kicker = KickerType.Unknown;
                 this.pair = PairType.Irrelevant;
                 this.draw = DrawType.Irrelevant;
+                this.straightDraw = StraightDrawType.None;
 
-                Debug.Assert(communityCards.Count > 0, "Cannot classificate an empty list of community cards.");
+                Trace.Assert(communityCards.Count > 0, "Cannot classificate an empty list of community cards.");
 
                 // Create a new list including the board cards and the cards from the hand
                 CardList cards = new CardList(communityCards.Count + 2);
@@ -488,8 +490,25 @@ namespace PokerMuck
 
                 // Calculate draws (if we got until here, there might be some)
                 // Also, no draws are possible at the river
-                if (phase == HoldemGamePhase.River) draw = DrawType.None;
-                else draw = GetDrawType(cards);
+                if (phase == HoldemGamePhase.River)
+                {
+                    draw = DrawType.None;
+                    straightDraw = StraightDrawType.None;
+                }
+                else
+                {
+                    draw = GetDrawType(cards);
+
+                    if (IsInsideStraightDraw(cards))
+                    {
+                        straightDraw = StraightDrawType.InsideStraightDraw;
+                    }
+                    
+                    if (IsOpenEndedStraightDraw(cards))
+                    {
+                        straightDraw = StraightDrawType.OpenEndedStraightDraw;
+                    }
+                }
 
                 // -- Trips
                 if (isThreeOfAKind)
@@ -538,6 +557,80 @@ namespace PokerMuck
 
                 this.hand = HandType.HighCard;
                 this.kicker = GetKickerTypeFromCard(highCard);
+            }
+
+            public HandType GetHand()
+            {
+                return hand;
+            }
+
+            public StraightDrawType GetStraightDraw()
+            {
+                return straightDraw;
+            }
+
+            public DrawType GetDraw()
+            {
+                return draw;
+            }
+
+            public String GetHandDescription()
+            {
+                switch(this.hand){
+                    case HandType.HighCard:
+                        return "High card, " + kicker.ToString() + " kicker";
+                    case HandType.Pair:
+                        return pair.ToString() + " pair, " + kicker.ToString() + " kicker";
+                    case HandType.TwoPair:
+                        return "Two pair";
+                    case HandType.ThreeOfAKind:
+                        return "Three of a kind";
+                    case HandType.Straight:
+                        return "Straight";
+                    case HandType.Flush:
+                        return "Flush";
+                    case HandType.FullHouse:
+                        return "Full house";
+                    case HandType.FourOfAKind:
+                        return "Four of a kind";
+                    case HandType.RoyalFlush:
+                        return "Royal flush";
+                    case HandType.Unknown:
+                        return "Unknown";
+                }
+                return "<invalid>";
+            }
+
+            public String GetDrawsDescription()
+            {
+                if (draw == DrawType.Flush)
+                {
+                    return "Flush draw";
+                }
+                else if (draw == DrawType.Straight)
+                {
+                    if (straightDraw == StraightDrawType.InsideStraightDraw)
+                    {
+                        return "Inside straight draw";
+                    }
+                    else if (straightDraw == StraightDrawType.OpenEndedStraightDraw)
+                    {
+                        return "Open ended straight draw";
+                    }
+                }
+                else if (draw == DrawType.FlushAndStraight)
+                {
+                    if (straightDraw == StraightDrawType.InsideStraightDraw)
+                    {
+                        return "Flush and inside straight draw";
+                    }
+                    else if (straightDraw == StraightDrawType.OpenEndedStraightDraw)
+                    {
+                        return "Flush and open ended straight draw";
+                    }
+                }
+
+                return "None";
             }
 
             public bool HasADraw()
@@ -673,18 +766,60 @@ namespace PokerMuck
                 if (cardList.Count < 4) return false;
 
                 // Case 1: 4 cards to a straight (open ended straight draw)
-                if (cardList.AreConsecutive(true, false, 4) || cardList.AreConsecutive(false, false, 4))
+                if (IsOpenEndedStraightDraw(cardList))
                 {
                     return true;
                 }
 
                 // Case 2: inside straight draw
-                if (IsInsideStraightDraw(cardList, true) || IsInsideStraightDraw(cardList, false))
+                if (IsInsideStraightDraw(cardList))
                 {
                     return true;
                 }
 
                 return false;
+            }
+
+            private bool IsOpenEndedStraightDraw(CardList cardList)
+            {
+                if (cardList.Count < 4) return false;
+        
+                // Except if the ace is the last card, because there's no cards higher than the ace
+                if (cardList.AreConsecutive(true, false, 4)){
+
+                    // (list is sorted from lowest to highest)
+                    cardList.Sort(SortUsing.AceHigh);
+
+                    // Special case
+                    if (cardList[cardList.Count - 1].Face == CardFace.Ace &&
+                        cardList[cardList.Count - 2].Face == CardFace.King &&
+                        cardList[cardList.Count - 3].Face == CardFace.Queen &&
+                        cardList[cardList.Count - 4].Face == CardFace.Jack) return false;
+                    else return true;
+                }
+
+                // Except if the ace is not the first card, there's no cards lower than the ace
+
+                if (cardList.AreConsecutive(false, false, 4))
+                {
+                    cardList.Sort(SortUsing.AceLow);
+
+                    // Special case
+                    if (cardList[0].Face == CardFace.Ace &&
+                        cardList[1].Face == CardFace.Two &&
+                        cardList[2].Face == CardFace.Three &&
+                        cardList[3].Face == CardFace.Four) return false;
+                    else return true;
+                }
+
+                return false;
+            }
+
+            public bool IsInsideStraightDraw(CardList cardList)
+            {
+                if (cardList.Count < 4) return false;
+
+                return IsInsideStraightDraw(cardList, true) || IsInsideStraightDraw(cardList, false);
             }
 
             private bool IsInsideStraightDraw(CardList cardList, bool countAceAsHigh)
@@ -693,7 +828,24 @@ namespace PokerMuck
 
                 cardList.Sort(countAceAsHigh);
 
-                // Case 1: 1 card, missing, 3 straight
+                // Case 1 and 2 are special cases
+
+                // Case 1: first card is an ace and we are not counting ace as low, followed by 2, 3, 4
+                if (!countAceAsHigh &&
+                    cardList[0].Face == CardFace.Ace &&
+                    cardList[1].Face == CardFace.Two &&
+                    cardList[2].Face == CardFace.Three &&
+                    cardList[3].Face == CardFace.Four) return true;
+
+                // Case 2: first card is a J and we are counting ace as high, followed by Q, K, A
+                if (countAceAsHigh &&
+                    cardList[0].Face == CardFace.Jack &&
+                    cardList[1].Face == CardFace.Queen &&
+                    cardList[2].Face == CardFace.King &&
+                    cardList[3].Face == CardFace.Ace) return true;
+
+
+                // Case 2: 1 card, missing, 3 straight
                 for (int i = 0; i < (cardList.Count - 3); i++)
                 {
                     int faceValue = cardList[i].GetFaceValue(countAceAsHigh);
@@ -705,7 +857,7 @@ namespace PokerMuck
                     } 
                 }
 
-                // Case 2: 2 straight, missing, 2 straight
+                // Case 3: 2 straight, missing, 2 straight
                 for (int i = 1; i < (cardList.Count - 2); i++)
                 {
                     int faceValue = cardList[i].GetFaceValue(countAceAsHigh);
@@ -717,7 +869,7 @@ namespace PokerMuck
                     }
                 }
 
-                // Case 3: 3 straight, missing, 1 card
+                // Case 4: 3 straight, missing, 1 card
                 for (int i = 2; i < (cardList.Count - 1); i++)
                 {
                     int faceValue = cardList[i].GetFaceValue(countAceAsHigh);
@@ -803,7 +955,7 @@ namespace PokerMuck
 
             public override string ToString()
             {
-                return hand.ToString() + ", " + kicker.ToString() + " kicker, " + pair.ToString() + " pair, " + draw.ToString() + " draw - " + GetRating().ToString();
+                return hand.ToString() + ", " + kicker.ToString() + " kicker, " + pair.ToString() + " pair, " + draw.ToString() + " draw, " + straightDraw.ToString() + " straightdraw - " + GetRating().ToString();
             }
         }
         #endregion
@@ -877,7 +1029,7 @@ namespace PokerMuck
 
         public float GetPrelopPercentile()
         {
-            Debug.Assert(GetFirstCard() != null && GetSecondCard() != null, "Cannot retrieve the preflop percentile if the cards are not known.");
+            Trace.Assert(GetFirstCard() != null && GetSecondCard() != null, "Cannot retrieve the preflop percentile if the cards are not known.");
 
             return (float)preflopPercentiles[this.ToString()];
         }

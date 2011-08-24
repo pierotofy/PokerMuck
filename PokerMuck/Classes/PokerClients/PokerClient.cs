@@ -43,7 +43,7 @@ namespace PokerMuck
         /* Set the current language and calls the initializedata method */
         public void InitializeLanguage(String language)
         {
-            Debug.Assert(SupportedLanguages.Contains(language), "A poker client was initialized but it doesn't support the language: " + language);
+            Trace.Assert(SupportedLanguages.Contains(language), "A poker client was initialized but it doesn't support the language: " + language);
 
             // Avoid repeated initializations
             if (currentLanguage != language)
@@ -74,7 +74,7 @@ namespace PokerMuck
         {
             get
             {
-                Debug.Assert(SupportedLanguages.Count > 0, "There are no languages in this client");
+                Trace.Assert(SupportedLanguages.Count > 0, "There are no languages in this client");
                 return (String)SupportedLanguages[0];
             }
         }
@@ -116,7 +116,7 @@ namespace PokerMuck
         public virtual Card GenerateCardFromString(String card)
         {
             // This should never be different than 2
-            Debug.Assert(card.Length == 2, "A string representation of a card was found to be of invalid length: " + card.Length + " instead of 2");
+            Trace.Assert(card.Length == 2, "A string representation of a card was found to be of invalid length: " + card.Length + " instead of 2");
 
             // Uppercase to simplify checks
             String cardValues = card.ToUpper();
@@ -206,7 +206,7 @@ namespace PokerMuck
         }
 
         public Regex GetRegex(String key){
-            Debug.Assert(regex.ContainsKey(key),String.Format("The derived PokerClient class does not include the regex key: " + key));
+            Trace.Assert(regex.ContainsKey(key),String.Format("The derived PokerClient class does not include the regex key: " + key));
             
             string pattern = (String)regex[key];
             return new Regex(pattern, regexOptions);
@@ -230,7 +230,7 @@ namespace PokerMuck
 
         public Object GetConfig(String key)
         {
-            Debug.Assert(config.ContainsKey(key), String.Format("The derived PokerClient class does not include the config key: " + key));
+            Trace.Assert(config.ContainsKey(key), String.Format("The derived PokerClient class does not include the config key: " + key));
 
             return config[key];
         }

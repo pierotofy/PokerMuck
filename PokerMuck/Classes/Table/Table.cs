@@ -337,7 +337,8 @@ namespace PokerMuck
              * 2. Clear the statistics information relative to a single round
              * 3. Any player that hasn't played last round should be flagged as non-playing (and the hud window, removed)
              * 4. Set every player's HasPlayedLastRound flag to false, as to identify who will get eliminated
-             * in future rounds */
+             * in future rounds
+             * 5. Clear hand information from display window */
 
             for (int i = 0; i<PlayerList.Count; i++)
             {
@@ -355,6 +356,8 @@ namespace PokerMuck
 
             /* Clear the table statistics relative to a single round */
             statistics.PrepareStatisticsForNewRound();
+
+            DisplayWindow.ClearHandInformation();
         }
 
         private void handHistoryParser_GameDiscovered(string game)
@@ -458,12 +461,19 @@ namespace PokerMuck
                 // TODO REMOVE
                 
                 CardList cards = new CardList();
-                cards.AddCard(new Card(CardFace.Six, CardSuit.Spades));
-                cards.AddCard(new Card(CardFace.Eight, CardSuit.Spades));
-                //cards.AddCard(new Card(CardFace.Ace, CardSuit.Clubs));
-                //cards.AddCard(new Card(CardFace.Seven, CardSuit.Hearts));
+                //cards.AddCard(new Card(CardFace.Six, CardSuit.Spades));
+                //cards.AddCard(new Card(CardFace.Eight, CardSuit.Spades));
+                cards.AddCard(new Card(CardFace.Ace, CardSuit.Clubs));
+                cards.AddCard(new Card(CardFace.Seven, CardSuit.Hearts));
 
-                PlayerHandRecognized(cards); 
+                PlayerHandRecognized(cards);
+
+                CardList board = new CardList();
+                cards.AddCard(new Card(CardFace.Ace, CardSuit.Hearts));
+                cards.AddCard(new Card(CardFace.Seven, CardSuit.Spades));
+                cards.AddCard(new Card(CardFace.Six, CardSuit.Hearts));
+
+                BoardRecognized(board);
 
                 Globals.Director.RunFromGUIThread((Action)delegate()
                 {
@@ -493,7 +503,12 @@ namespace PokerMuck
 
         public void BoardRecognized(CardList board)
         {
-            // TODO
+            Globals.Director.RunFromGUIThread((Action)delegate()
+            {
+                if (Game == PokerGame.Holdem){
+                    ((HoldemTableDisplayWindow)DisplayWindow).DisplayBoard(board);
+                }                
+            }, true);
         }
 
         void handHistoryParser_NewTableHasBeenCreated(string gameId, string tableId)
@@ -527,7 +542,7 @@ namespace PokerMuck
          * from the database */
         private void CreatePlayer(String playerName)
         {
-            //Debug.Assert(GameID != String.Empty, "We are trying to create a player with no GameID");
+            //Trace.Assert(GameID != String.Empty, "We are trying to create a player with no GameID");
 
             // Do we need to create a new one?
             if (!playerDatabase.Contains(playerName, GameID))

@@ -77,7 +77,7 @@ namespace PokerMuck
             get
             {
                 PokerClient currentClient = CurrentPokerClient;
-                Debug.Assert(currentClient != null, "Current poker client is null but hand history directory was accessed.");
+                Trace.Assert(currentClient != null, "Current poker client is null but hand history directory was accessed.");
                 return StoredHandHistoryDirectory + @"\" + currentClient.GetCurrentHandHistorySubdirectory() + @"\";
             }
         }
@@ -89,14 +89,14 @@ namespace PokerMuck
             get
             {
                 PokerClient currentClient = CurrentPokerClient;
-                Debug.Assert(currentClient != null, "Current poker client is null but stored hand history directory was accessed.");
+                Trace.Assert(currentClient != null, "Current poker client is null but stored hand history directory was accessed.");
                 return GetHandHistoryDirectoryFor(currentClient);
             }
 
             set
             {
                 PokerClient currentClient = CurrentPokerClient;
-                Debug.Assert(currentClient != null, "Current poker client is null but stored hand history directory was set.");
+                Trace.Assert(currentClient != null, "Current poker client is null but stored hand history directory was set.");
                 SetHandHistoryDirectoryFor(currentClient, value);
             }
         }

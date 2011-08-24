@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace PokerMuck
 {
@@ -88,7 +89,7 @@ namespace PokerMuck
             if (extendedPanel != null)
             {
                 extendedPanel.Top = this.Top;
-                extendedPanel.Left = (this.Right - extendedPanel.Width - this.Parent.Margin.Right);
+                extendedPanel.Left = (this.Right - extendedPanel.Width - this.Parent.Margin.Right - extendedPanel.Margin.Right);
             }
         }
 
@@ -109,6 +110,8 @@ namespace PokerMuck
 
         private void StatisticsItem_MouseLeave(object sender, EventArgs e)
         {
+            if (MouseIsOverExtendedPanel()) return; 
+
             if (HighlightOnMouseOver && !itemIsSelected && !itemIsALine)
             {
                 this.BackColor = Color.Transparent;
@@ -120,6 +123,20 @@ namespace PokerMuck
             }
 
             if (extendedPanel != null && !itemIsSelected) extendedPanel.Hide();
+        }
+
+        private bool MouseIsOverExtendedPanel()
+        {
+            if (extendedPanel == null) return false;
+            else
+            {
+                Rectangle panelRect = extendedPanel.RectangleToScreen(extendedPanel.ClientRectangle);
+                Point cursorLocation = Cursor.Position;
+                const int CURSOR_AREA = 4;
+
+                return panelRect.IntersectsWith(new Rectangle(cursorLocation.X, cursorLocation.Y, CURSOR_AREA, CURSOR_AREA));
+            }
+
         }
 
         private void lblName_MouseEnter(object sender, EventArgs e)

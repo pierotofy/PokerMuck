@@ -25,10 +25,13 @@ namespace PokerMuck
 
         /* Maximum height of card list panels */
         private const int MAXIMUM_CARD_LIST_PANEL_HEIGHT = 100;
+        
+        protected const int CARD_SPACING = 6;
+        protected const int CARD_BORDER_PADDING = 1;
 
         private Table table; //Reference to the table that owns this display
 
-        private Hand lastPlayerHand; // Keep track of the last hand for which we displayed information about
+        protected Hand lastPlayerHand; // Keep track of the last hand for which we displayed information about
 
         protected OddsCalculator oddsCalculator;
 
@@ -65,19 +68,6 @@ namespace PokerMuck
             }
         }
 
-        public void DisplayPlayerMuckedHand(String playerName, Hand hand)
-        {
-            EntityCardListPanel ehp = new EntityCardListPanel();
-            ehp.EntityName = playerName;
-            ehp.CardListToDisplay = hand;
-
-            /* We set the initial size of the component to the largest possible, the
-             * addPanel method will take care of setting the proper size */
-            ehp.Size = entityHandsContainer.Size;
-
-            entityHandsContainer.AddPanel(ehp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
-        }
-
         public void DisplayFinalBoard(Board board)
         {
             CardListPanel clp = new CardListPanel();
@@ -92,9 +82,28 @@ namespace PokerMuck
             entityHandsContainer.AddPanel(clp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
         }
 
+        public void DisplayPlayerMuckedHand(String playerName, Hand hand)
+        {
+            EntityCardListPanel ehp = new EntityCardListPanel();
+            ehp.EntityName = playerName;
+            ehp.CardListToDisplay = hand;
+
+            /* We set the initial size of the component to the largest possible, the
+             * addPanel method will take care of setting the proper size */
+            ehp.Size = entityHandsContainer.Size;
+
+            entityHandsContainer.AddPanel(ehp, MAXIMUM_CARD_LIST_PANEL_HEIGHT);
+        }
+
         public void ClearMuck()
         {
             entityHandsContainer.ClearAll();
+        }
+
+        /* To be called at the end of a round */
+        public virtual void ClearHandInformation()
+        {
+            lastPlayerHand = null;
         }
 
         /* The position of the poker client window might have changed */
@@ -142,7 +151,7 @@ namespace PokerMuck
             }
         }
 
-        protected bool HandTabNeedsUpdate(Hand playerHand)
+        protected bool PlayerHandHasChanged(Hand playerHand)
         {
             return lastPlayerHand == null || !playerHand.Equals(lastPlayerHand);
         }
@@ -150,7 +159,7 @@ namespace PokerMuck
         protected virtual void UpdateHandTab(Hand playerHand)
         {
             // Update only if the hand is different than the previous one
-            if (HandTabNeedsUpdate(playerHand))
+            if (PlayerHandHasChanged(playerHand))
             {
                 // Clear previous stuff
                 handControlLayout.Controls.Clear();
@@ -158,8 +167,8 @@ namespace PokerMuck
                 // Display current hand
                 CardListPanel playerCardsPanel = new CardListPanel();
                 playerCardsPanel.BackColor = Color.Transparent;
-                playerCardsPanel.CardSpacing = 6;
-                playerCardsPanel.BorderPadding = 1;
+                playerCardsPanel.CardSpacing = CARD_SPACING;
+                playerCardsPanel.BorderPadding = CARD_BORDER_PADDING;
 
                 playerCardsPanel.CardListToDisplay = playerHand;
                 playerCardsPanel.Height = 80;
@@ -174,6 +183,14 @@ namespace PokerMuck
             // Display odds
             List<Statistic> odds = oddsCalculator.Calculate(playerHand);
 
+            StatisticItemListDisplay statisticListDisplay = CreateStatisticItemListDisplay();
+            statisticListDisplay.Add(odds);
+
+            handControlLayout.Controls.Add(statisticListDisplay);
+        }
+
+        protected StatisticItemListDisplay CreateStatisticItemListDisplay()
+        {
             StatisticItemListDisplay statisticListDisplay = new StatisticItemListDisplay();
             statisticListDisplay.BackColor = Color.Transparent;
             statisticListDisplay.TopMargin = 0;
@@ -181,9 +198,7 @@ namespace PokerMuck
             statisticListDisplay.Width = handControlLayout.Width - handControlLayout.Padding.Right - handControlLayout.Padding.Left;
             statisticListDisplay.StatisticsSpacing = 2;
             statisticListDisplay.AutoSize = true;
-            statisticListDisplay.Add(odds);
-
-            handControlLayout.Controls.Add(statisticListDisplay);
+            return statisticListDisplay;
         }
 
         private Point LoadAbsoluteWindowPosition()

@@ -25,7 +25,7 @@ namespace PokerMuck
             get
             {
                 int index = (int)enumIndex;
-                Debug.Assert(table.ContainsKey(index), "Invalid multiplevaluecounter category requested.");
+                Trace.Assert(table.ContainsKey(index), "Invalid multiplevaluecounter category requested.");
 
                 return (ValueCounter)table[index];
             }
@@ -36,7 +36,7 @@ namespace PokerMuck
             get
             {
                 int index = CalculateIndex((int)primaryEnumIndex, (int)secondaryEnumIndex);
-                Debug.Assert(table.ContainsKey(index), "Invalid multiplevaluecounter category requested.");
+                Trace.Assert(table.ContainsKey(index), "Invalid multiplevaluecounter category requested.");
 
                 return (ValueCounter)table[index];
             }
@@ -49,7 +49,7 @@ namespace PokerMuck
 
         public MultipleValueCounter(params object[] domains)
         {
-            Debug.Assert(domains.Length <= MAX_DOMAINS, "You cannot initialize a multiplevaluecounter with more than " + MAX_DOMAINS + " domains");
+            Trace.Assert(domains.Length <= MAX_DOMAINS, "You cannot initialize a multiplevaluecounter with more than " + MAX_DOMAINS + " domains");
 
             subdomains = null;
             table = new Hashtable(domains.Length);
@@ -62,7 +62,7 @@ namespace PokerMuck
         }
 
         public MultipleValueCounter(object[] domains, object[] subdomains){
-            Debug.Assert(domains.Length <= MAX_DOMAINS, "You cannot initialize a multiplevaluecounter with more than " + MAX_DOMAINS + " domains");
+            Trace.Assert(domains.Length <= MAX_DOMAINS, "You cannot initialize a multiplevaluecounter with more than " + MAX_DOMAINS + " domains");
 
             table = new Hashtable(domains.Length * subdomains.Length);
             this.subdomains = subdomains;

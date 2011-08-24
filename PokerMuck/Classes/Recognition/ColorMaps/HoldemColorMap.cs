@@ -64,6 +64,19 @@ namespace PokerMuck
             mapData["river_card"] = Color.FromArgb(0, 100, 255);
         }
 
+        public override ArrayList GetSameSizeActions()
+        {
+            // All of our actions should be of the same size
+            ArrayList result = new ArrayList();
+
+            foreach (String action in mapData.Keys)
+            {
+                result.Add(action);
+            }
+
+            return result;
+        }
+
         public override ArrayList GetCommunityCardsActions()
         {
             ArrayList result = new ArrayList();

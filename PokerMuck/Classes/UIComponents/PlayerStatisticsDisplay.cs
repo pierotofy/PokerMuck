@@ -146,7 +146,7 @@ namespace PokerMuck
                 if (tp.Text == name) return tp;
             }
 
-            Debug.Assert(false, "I couldn't find a tab page for " + name);
+            Trace.Assert(false, "I couldn't find a tab page for " + name);
             return null;
         }
 

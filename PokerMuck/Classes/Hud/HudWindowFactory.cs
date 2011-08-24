@@ -17,7 +17,7 @@ namespace PokerMuck
                 return new HoldemHudWindow();
             }
 
-            Debug.Assert(false, "I couldn't create a hud for this table: " + t.GameID);
+            Trace.Assert(false, "I couldn't create a hud for this table: " + t.GameID);
             return null; 
         }
     }

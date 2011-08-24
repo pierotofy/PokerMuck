@@ -45,7 +45,7 @@ namespace PokerMuck
         /* Takes as input the standard format (As, Kh, ...) */
         public static Card CreateFromString(String card)
         {
-            Debug.Assert(card.Length == 2, "Cannot create a card from a string of length != 2");
+            Trace.Assert(card.Length == 2, "Cannot create a card from a string of length != 2");
 
             String faceStr= new String(card[0],1).ToUpper();
             String suitStr = new String(card[1], 1).ToUpper();
@@ -116,7 +116,7 @@ namespace PokerMuck
                 case 'Q': return CardFace.Queen;
                 case 'K': return CardFace.King;
                 default:
-                    Debug.Assert(false, "Invalid char detected during conversion to CardFace: " + c);
+                    Trace.Assert(false, "Invalid char detected during conversion to CardFace: " + c);
                     return CardFace.Ace; // Never to be executed
             }
         }
@@ -131,7 +131,7 @@ namespace PokerMuck
                 case 'D': return CardSuit.Diamonds;
                 case 'H': return CardSuit.Hearts;
                 default:
-                    Debug.Assert(false, "Invalid char detected during conversion to CardSuit: " + c);
+                    Trace.Assert(false, "Invalid char detected during conversion to CardSuit: " + c);
                     return CardSuit.Hearts; // Never to be executed
             }
         }
@@ -156,7 +156,7 @@ namespace PokerMuck
                 case CardFace.King: return 'K';
 
                 default:
-                    Debug.Assert(false, "Invalid cardface detected during conversion to char: " + c);
+                    Trace.Assert(false, "Invalid cardface detected during conversion to char: " + c);
                     return 'A'; // Never to be executed
             }
         }
@@ -171,7 +171,7 @@ namespace PokerMuck
                 case CardSuit.Diamonds: return 'D';
                 case CardSuit.Hearts: return 'H';
                 default:
-                    Debug.Assert(false, "Invalid cardsuit detected during conversion to char: " + s);
+                    Trace.Assert(false, "Invalid cardsuit detected during conversion to char: " + s);
                     return 'H'; // Never to be executed
             }
         }

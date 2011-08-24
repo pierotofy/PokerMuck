@@ -61,7 +61,7 @@ namespace PokerMuck
                 {
                     positions = GetEffectivePositions(positions, table.PlayerList, table.CurrentHeroName, table.MaxSeatingCapacity);
                 }
-                Debug.Assert(positions.Count == table.MaxSeatingCapacity, "The number of available user defined hud positions is different that what we expected");
+                Trace.Assert(positions.Count == table.MaxSeatingCapacity, "The number of available user defined hud positions is different that what we expected");
             }
             else
             {
@@ -207,7 +207,7 @@ namespace PokerMuck
         /* Save the position of the hud windows associated with this table */
         private void StoreHudWindowPositions()
         {
-            Debug.Assert(table.MaxSeatingCapacity != 0, "Table max seating capacity is unknown, impossible to display hud.");
+            Trace.Assert(table.MaxSeatingCapacity != 0, "Table max seating capacity is unknown, impossible to display hud.");
 
             /* Foreach player, we need to find the position of the associated window
              * Note that if a seat is empty (ex. table with 9 seats and 3 players)
@@ -331,7 +331,7 @@ namespace PokerMuck
                     break;
                 }
             }
-            Debug.Assert(heroSeat != -1, "Failed to find hero seat, seat number was not found");
+            Trace.Assert(heroSeat != -1, "Failed to find hero seat, seat number was not found");
 
             return heroSeat;
         }
@@ -372,7 +372,7 @@ namespace PokerMuck
         /* Tries to setup the position of the window huds in the best way possible */
         private void SetupHudInitialPosition()
         {
-            Debug.Assert(windowsList != null, "Tried to rearrange the hud position for a windows list that doesn't exists");
+            Trace.Assert(windowsList != null, "Tried to rearrange the hud position for a windows list that doesn't exists");
 
             // No, an empty set was returned... initialize defaults
             windowsList.SetupDefaultPositions(table.WindowRect);

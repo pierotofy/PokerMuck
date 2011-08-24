@@ -49,7 +49,7 @@ namespace PokerMuck
         /* Shared function to compute the average of multiple statistics data */
         protected float ComputeAverage(params StatisticsData[] stats)
         {
-            Debug.Assert(stats.Length > 0, "Cannot compute the average of zero elements.");
+            Trace.Assert(stats.Length > 0, "Cannot compute the average of zero elements.");
             float total = 0;
             float totalStatistics = stats.Length + 1;
             foreach (StatisticsData stat in stats)

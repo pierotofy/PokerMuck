@@ -56,7 +56,7 @@
             this.tabControl.Controls.Add(this.tabStats);
             this.tabControl.Location = new System.Drawing.Point(2, 3);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 1;
+            this.tabControl.SelectedIndex = 0;
             this.tabControl.SelectedTabColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(115)))), ((int)(((byte)(72)))));
             this.tabControl.Size = new System.Drawing.Size(231, 340);
             this.tabControl.TabIndex = 0;

@@ -22,7 +22,7 @@ namespace PokerMuck
 
         /* The rank is a value between 0 and 1, with the exception of -1, which indicates that no rank is available */
         public void SetRank(float rank, PokerGameCategory category){
-            Debug.Assert((rank >= 0.0f || rank == -1.0f) && rank <= 1.0f, "rank is greather than or less than the allowed range.");
+            Trace.Assert((rank >= 0.0f || rank == -1.0f) && rank <= 1.0f, "rank is greather than or less than the allowed range.");
 
             ranks[category] = rank;
         }

@@ -28,7 +28,7 @@ namespace PokerMuck
 
         public static PokerClient Find(String name)
         {
-            Debug.Assert(defaultClient != null, "Trying to find a poker client before the default client has been set");
+            Trace.Assert(defaultClient != null, "Trying to find a poker client before the default client has been set");
 
             if (clientList.ContainsKey(name))
             {

@@ -18,7 +18,7 @@ namespace PokerMuck
                     return new HoldemPlayer(playerName);
             }
 
-            Debug.Assert(false, "CreatePlayer was called for an unhandled game type");
+            Trace.Assert(false, "CreatePlayer was called for an unhandled game type");
             return null;
         }
     }

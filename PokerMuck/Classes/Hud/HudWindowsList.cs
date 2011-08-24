@@ -47,7 +47,7 @@ namespace PokerMuck
 
         public void Remove(HudWindow window)
         {
-            Debug.Assert(window != null, "Trying to remove a null reference to a hud window");
+            Trace.Assert(window != null, "Trying to remove a null reference to a hud window");
             window.Close();
             windowsList.Remove(window);
         }
@@ -131,7 +131,7 @@ namespace PokerMuck
          * later. */
         public void SetupDefaultPositions(Rectangle windowRect)
         {
-            Debug.Assert(windowRect.Width != 0, "Invalid windowRect sent for setting up hud windows default position. Zero.");
+            Trace.Assert(windowRect.Width != 0, "Invalid windowRect sent for setting up hud windows default position. Zero.");
 
             Point relativeTableCenter = FindRelativeTableCenter(windowRect.Width);
             Point absoluteTableCenter = new Point(windowRect.X + relativeTableCenter.X,

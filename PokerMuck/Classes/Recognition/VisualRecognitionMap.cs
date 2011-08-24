@@ -22,7 +22,7 @@ namespace PokerMuck
          *  a different size */
         public VisualRecognitionMap(String mapLocation, ColorMap colorMap, Size mapSize)
         {
-            Debug.Assert(System.IO.File.Exists(mapLocation), "Cannot create a visualrecognitionmap without a proper map location: " + mapLocation);
+            Trace.Assert(System.IO.File.Exists(mapLocation), "Cannot create a visualrecognitionmap without a proper map location: " + mapLocation);
             this.mapLocation = mapLocation;
             this.colorMap = colorMap;
             this.mapData = new Hashtable();
@@ -30,6 +30,8 @@ namespace PokerMuck
             Bitmap mapImage = new Bitmap(mapLocation);
             if (!mapSize.Equals(Size.Empty)) mapImage = ResizeMap(mapImage, mapSize);
             AnaliseMap(mapImage);
+
+            SameSizeCheck(colorMap.GetSameSizeActions());
         }
 
         public VisualRecognitionMap(String mapLocation, ColorMap colorMap)
@@ -51,6 +53,7 @@ namespace PokerMuck
         private void AnaliseMap(Bitmap mapImage)
         {
             ColorFiltering filter = new ColorFiltering();
+            Trace.WriteLine("Analysing color map " + mapLocation + "...");
 
             foreach (String action in colorMap.Actions)
             {
@@ -68,7 +71,7 @@ namespace PokerMuck
                     BlobCounter bc = new BlobCounter();
                     bc.ProcessImage(colorFilteredMapImage);
                     Rectangle[] rects = bc.GetObjectsRectangles();
-                    if (rects.Count<Rectangle>() == 0) Trace.WriteLine("Warning: No rectangles were found while processing " + mapLocation + " for " + actionColor.ToString());
+                    if (rects.Count<Rectangle>() == 0) Trace.WriteLine("Warning: No rectangles were found for " + actionColor.ToString());
 
                     Rectangle biggestRect = Rectangle.Empty;
                     foreach (Rectangle rect in rects)
@@ -81,7 +84,55 @@ namespace PokerMuck
                     }
 
                     // Did we find a rectangle?
-                    if (!biggestRect.Equals(Rectangle.Empty)) mapData[action] = biggestRect;
+                    if (!biggestRect.Equals(Rectangle.Empty))
+                    {
+                        Trace.WriteLine("Found rectangle for " + action + ": " + biggestRect.ToString());
+                        mapData[action] = biggestRect;
+                    }
+                }
+            }
+        }
+
+        /* This function will raise an exception if the check fails */
+        public void SameSizeCheck(ArrayList actions)
+        {
+            Trace.WriteLine("Checking color map " + mapLocation + " for proper sizes...");
+            if (actions.Count <= 1) return;
+
+            Hashtable differentEntries = new Hashtable(); // holds the name of the actions that are different
+
+            /* We use the first valid rectangle as comparison (if the first valid rectangle is the odd one,
+             * all the others will be flagged) */
+            Rectangle refRect = Rectangle.Empty; 
+            foreach (String action in actions)
+            {
+                if (refRect.Equals(Rectangle.Empty))
+                {
+                    refRect = GetRectangleFor(action);
+                }
+
+                if (refRect.Equals(Rectangle.Empty)) continue; // Search for the first valid entry
+
+                Rectangle compareRect = GetRectangleFor(action);
+                if (compareRect.Equals(Rectangle.Empty)) continue; // Skip rectangles that are not in our list
+
+                if (refRect.Width != compareRect.Width || refRect.Height != compareRect.Height)
+                {
+                    differentEntries[action] = compareRect;
+                }
+            }
+
+            // Check failed?
+            if (differentEntries.Count > 0)
+            {
+                String errorMessage = String.Format("Your color map {0} contains some entries of invalid size (they should be of size: {1}x{2}px): ", 
+                    mapLocation, refRect.Width, refRect.Height);
+
+                foreach (String action in differentEntries.Keys)
+                {
+                    Rectangle rect = (Rectangle)differentEntries[action];
+                    errorMessage += String.Format("\n{0}: invalid size {2}x{3}px", action, rect.Width, rect.Height);
+                    throw new Exception(errorMessage);
                 }
             }
         }

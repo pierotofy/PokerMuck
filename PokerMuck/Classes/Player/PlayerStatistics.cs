@@ -33,7 +33,7 @@ namespace PokerMuck
         {
             String key = name + "_" + category;
             Statistic result = (Statistic)table[key];
-            Debug.Assert(result != null, "Trying to access a statistics value that doesn't exist. " + key);
+            Trace.Assert(result != null, "Trying to access a statistics value that doesn't exist. " + key);
 
             return result;
         }

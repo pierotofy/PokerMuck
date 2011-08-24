@@ -28,6 +28,11 @@ namespace PokerMuck
             this.subData = new List<StatisticsData>();
         }
 
+        public Statistic(StatisticsData mainData)
+            : this(mainData, "")
+        {
+        }
+
         public Statistic(StatisticsData mainData, String category, List<StatisticsData> subData)
             : this(mainData, category)
         {
@@ -84,7 +89,7 @@ namespace PokerMuck
                 StatisticsData[] subStats = new StatisticsData[paramsCount];
                 for (int j = 0; j < paramsCount; j++)
                 {
-                    Debug.Assert(SubData.Count == stats[j].SubData.Count, "Trying to compute the average of sub statistics values when their sizes are different.");
+                    Trace.Assert(SubData.Count == stats[j].SubData.Count, "Trying to compute the average of sub statistics values when their sizes are different.");
                     subStats[j] = stats[j].SubData[i];
                 }
 

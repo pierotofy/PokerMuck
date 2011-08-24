@@ -39,6 +39,15 @@ namespace PokerMuck
             Globals.Director.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(Director_RunGUIRoutine);
             Globals.Director.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(Director_DisplayStatus);
 
+            HoldemHand h1 = new HoldemHand(new Card(CardFace.Queen, CardSuit.Diamonds), new Card(CardFace.Ten, CardSuit.Spades));
+            HoldemBoard b = new HoldemBoard(new Card(CardFace.Seven, CardSuit.Clubs),
+                                        new Card(CardFace.Eight, CardSuit.Clubs),
+                                    new Card(CardFace.King, CardSuit.Hearts),
+                                    new Card(CardFace.Jack, CardSuit.Spades),
+                                    new Card(CardFace.Jack, CardSuit.Spades));
+            HoldemHand.Classification c = h1.GetClassification(HoldemGamePhase.Turn, b);
+            Trace.WriteLine(c.ToString());
+
 
             //pmDirector.Test();
             /*
@@ -171,7 +180,10 @@ namespace PokerMuck
         private void FrmMain_LocationChanged(object sender, EventArgs e)
         {
             // Save window position for the future!
-            if (Globals.Director != null) Globals.UserSettings.WindowPosition = this.Location;
+            if (Globals.Director != null)
+            {
+                if (this.Location.X > 0 && this.Location.Y > 0) Globals.UserSettings.WindowPosition = this.Location;
+            }
         }
 
         /* Read the values from the configuration and puts them into the UI */

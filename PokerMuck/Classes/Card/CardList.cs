@@ -54,7 +54,7 @@ namespace PokerMuck
         {
             get
             {
-                Debug.Assert(this.Count > 0, "Cannot retrieve last card from an empty list");
+                Trace.Assert(this.Count > 0, "Cannot retrieve last card from an empty list");
                 return cards.Last();
             }
         }

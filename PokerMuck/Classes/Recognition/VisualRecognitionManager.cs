@@ -23,8 +23,8 @@ namespace PokerMuck
 
         public VisualRecognitionManager(Table table, IVisualRecognitionManagerHandler handler)
         {
-            Debug.Assert(table.Game != PokerGame.Unknown, "Cannot create a visual recognition manager without knowing the game of the table");
-            Debug.Assert(table.WindowRect != Rectangle.Empty, "Cannot create a visual recognition manager without knowing the window rect");
+            Trace.Assert(table.Game != PokerGame.Unknown, "Cannot create a visual recognition manager without knowing the game of the table");
+            Trace.Assert(table.WindowRect != Rectangle.Empty, "Cannot create a visual recognition manager without knowing the window rect");
 
             this.table = table;
             this.handler = handler;

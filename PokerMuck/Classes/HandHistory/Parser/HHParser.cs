@@ -119,7 +119,7 @@ namespace PokerMuck
            A subclass can still disable this mechanism by overriding CheckForEndOfRound() */
         public virtual void ParseLine(String line)
         {
-            Debug.Assert(pokerClient != null, "pokerClient has not been initialized in the constructor before ParseLine has been called!");
+            Trace.Assert(pokerClient != null, "pokerClient has not been initialized in the constructor before ParseLine has been called!");
 
             CheckForEndOfRound(line);
         }

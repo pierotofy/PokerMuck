@@ -21,7 +21,7 @@ namespace PokerMuck
 
         public override StatisticsData Average(String name, int precision, params StatisticsData[] stats)
         {
-            Debug.Assert(stats.Length > 0, "Cannot compute the average of zero elements.");
+            Trace.Assert(stats.Length > 0, "Cannot compute the average of zero elements.");
 
             // Make sure that the stats we have at least one non-unknown value (otherwise this method will cause an
             // infinite loop
