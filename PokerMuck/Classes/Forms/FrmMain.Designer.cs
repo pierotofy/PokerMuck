@@ -43,17 +43,21 @@
             this.btnChangeHandHistory = new System.Windows.Forms.Button();
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
+            this.pictureEagle = new System.Windows.Forms.PictureBox();
+            this.btnJoinFacebookPage = new System.Windows.Forms.Button();
+            this.picturePokerMuckIcon = new System.Windows.Forms.PictureBox();
             this.btnDonate = new System.Windows.Forms.Button();
             this.lblDonate = new System.Windows.Forms.Label();
-            this.lblPieroTofyLink = new System.Windows.Forms.LinkLabel();
+            this.lblPokerMuckLink = new System.Windows.Forms.LinkLabel();
             this.lblProgramName = new System.Windows.Forms.Label();
-            this.pictureEagle = new System.Windows.Forms.PictureBox();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.btnSendTweet = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabDebug.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
             this.tabAboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picturePokerMuckIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl
@@ -207,11 +211,14 @@
             // 
             // tabAboutPage
             // 
+            this.tabAboutPage.Controls.Add(this.btnSendTweet);
+            this.tabAboutPage.Controls.Add(this.pictureEagle);
+            this.tabAboutPage.Controls.Add(this.btnJoinFacebookPage);
+            this.tabAboutPage.Controls.Add(this.picturePokerMuckIcon);
             this.tabAboutPage.Controls.Add(this.btnDonate);
             this.tabAboutPage.Controls.Add(this.lblDonate);
-            this.tabAboutPage.Controls.Add(this.lblPieroTofyLink);
+            this.tabAboutPage.Controls.Add(this.lblPokerMuckLink);
             this.tabAboutPage.Controls.Add(this.lblProgramName);
-            this.tabAboutPage.Controls.Add(this.pictureEagle);
             this.tabAboutPage.Location = new System.Drawing.Point(4, 22);
             this.tabAboutPage.Name = "tabAboutPage";
             this.tabAboutPage.Size = new System.Drawing.Size(320, 354);
@@ -219,16 +226,53 @@
             this.tabAboutPage.Text = "About";
             this.tabAboutPage.UseVisualStyleBackColor = true;
             // 
+            // pictureEagle
+            // 
+            this.pictureEagle.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.pictureEagle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureEagle.Image = global::PokerMuck.Properties.Resources.Eagle;
+            this.pictureEagle.Location = new System.Drawing.Point(167, 34);
+            this.pictureEagle.Name = "pictureEagle";
+            this.pictureEagle.Size = new System.Drawing.Size(53, 48);
+            this.pictureEagle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureEagle.TabIndex = 0;
+            this.pictureEagle.TabStop = false;
+            // 
+            // btnJoinFacebookPage
+            // 
+            this.btnJoinFacebookPage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnJoinFacebookPage.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnJoinFacebookPage.Location = new System.Drawing.Point(11, 195);
+            this.btnJoinFacebookPage.Name = "btnJoinFacebookPage";
+            this.btnJoinFacebookPage.Size = new System.Drawing.Size(301, 30);
+            this.btnJoinFacebookPage.TabIndex = 6;
+            this.btnJoinFacebookPage.Text = "2. Join our page on Facebook";
+            this.btnJoinFacebookPage.UseVisualStyleBackColor = true;
+            this.btnJoinFacebookPage.Click += new System.EventHandler(this.btnJoinFacebookPage_Click);
+            // 
+            // picturePokerMuckIcon
+            // 
+            this.picturePokerMuckIcon.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.picturePokerMuckIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.picturePokerMuckIcon.Image = global::PokerMuck.Properties.Resources.PokerMuckLogo;
+            this.picturePokerMuckIcon.Location = new System.Drawing.Point(103, 34);
+            this.picturePokerMuckIcon.Name = "picturePokerMuckIcon";
+            this.picturePokerMuckIcon.Size = new System.Drawing.Size(48, 48);
+            this.picturePokerMuckIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picturePokerMuckIcon.TabIndex = 5;
+            this.picturePokerMuckIcon.TabStop = false;
+            // 
             // btnDonate
             // 
             this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDonate.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDonate.Location = new System.Drawing.Point(11, 139);
+            this.btnDonate.Location = new System.Drawing.Point(11, 159);
             this.btnDonate.Name = "btnDonate";
-            this.btnDonate.Size = new System.Drawing.Size(301, 46);
+            this.btnDonate.Size = new System.Drawing.Size(301, 30);
             this.btnDonate.TabIndex = 4;
-            this.btnDonate.Text = "Donate \r\n(any amount)";
+            this.btnDonate.Text = "1. Donate (via Paypal)";
             this.btnDonate.UseVisualStyleBackColor = true;
             this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
             // 
@@ -236,26 +280,28 @@
             // 
             this.lblDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblDonate.Location = new System.Drawing.Point(3, 28);
+            this.lblDonate.Location = new System.Drawing.Point(3, 85);
             this.lblDonate.Name = "lblDonate";
-            this.lblDonate.Size = new System.Drawing.Size(309, 108);
+            this.lblDonate.Size = new System.Drawing.Size(309, 71);
             this.lblDonate.TabIndex = 3;
-            this.lblDonate.Text = resources.GetString("lblDonate.Text");
+            this.lblDonate.Text = "This program is free software. If you enjoyed using this program, please choose o" +
+    "ne of these options and contribute to the growth of the project. Your help is ne" +
+    "cessary to keep the program up to date.";
             this.lblDonate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblPieroTofyLink
+            // lblPokerMuckLink
             // 
-            this.lblPieroTofyLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblPokerMuckLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPieroTofyLink.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPieroTofyLink.Location = new System.Drawing.Point(63, 268);
-            this.lblPieroTofyLink.Name = "lblPieroTofyLink";
-            this.lblPieroTofyLink.Size = new System.Drawing.Size(188, 24);
-            this.lblPieroTofyLink.TabIndex = 2;
-            this.lblPieroTofyLink.TabStop = true;
-            this.lblPieroTofyLink.Text = "http://www.pierotofy.it";
-            this.lblPieroTofyLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblPieroTofyLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblPieroTofyLink_LinkClicked);
+            this.lblPokerMuckLink.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPokerMuckLink.Location = new System.Drawing.Point(68, 324);
+            this.lblPokerMuckLink.Name = "lblPokerMuckLink";
+            this.lblPokerMuckLink.Size = new System.Drawing.Size(206, 24);
+            this.lblPokerMuckLink.TabIndex = 2;
+            this.lblPokerMuckLink.TabStop = true;
+            this.lblPokerMuckLink.Text = "http://www.pokermuck.com";
+            this.lblPokerMuckLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPokerMuckLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblPokerMuckLink_LinkClicked);
             // 
             // lblProgramName
             // 
@@ -269,18 +315,6 @@
             this.lblProgramName.Text = "PokerMuck";
             this.lblProgramName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // pictureEagle
-            // 
-            this.pictureEagle.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.pictureEagle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureEagle.Image = global::PokerMuck.Properties.Resources.Eagle;
-            this.pictureEagle.Location = new System.Drawing.Point(109, 191);
-            this.pictureEagle.Name = "pictureEagle";
-            this.pictureEagle.Size = new System.Drawing.Size(93, 74);
-            this.pictureEagle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureEagle.TabIndex = 0;
-            this.pictureEagle.TabStop = false;
-            // 
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.White;
@@ -292,6 +326,19 @@
             this.lblStatus.TabIndex = 4;
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnSendTweet
+            // 
+            this.btnSendTweet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSendTweet.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSendTweet.Location = new System.Drawing.Point(8, 231);
+            this.btnSendTweet.Name = "btnSendTweet";
+            this.btnSendTweet.Size = new System.Drawing.Size(301, 30);
+            this.btnSendTweet.TabIndex = 7;
+            this.btnSendTweet.Text = "3. Send a Tweet about us";
+            this.btnSendTweet.UseVisualStyleBackColor = true;
+            this.btnSendTweet.Click += new System.EventHandler(this.btnSendTweet_Click);
             // 
             // FrmMain
             // 
@@ -317,6 +364,7 @@
             this.tabConfigurationPage.PerformLayout();
             this.tabAboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picturePokerMuckIcon)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -334,7 +382,7 @@
         private System.Windows.Forms.Label lblPokerClientLanguage;
         private System.Windows.Forms.ComboBox cmbPokerClientLanguage;
         private System.Windows.Forms.Label lblProgramName;
-        private System.Windows.Forms.LinkLabel lblPieroTofyLink;
+        private System.Windows.Forms.LinkLabel lblPokerMuckLink;
         private System.Windows.Forms.Label lblDonate;
         private System.Windows.Forms.Button btnDonate;
         private System.Windows.Forms.Label lblStatus;
@@ -343,6 +391,9 @@
         private System.Windows.Forms.CheckBox chkTrainingMode;
         private System.Windows.Forms.TabPage tabDebug;
         private ConsoleWidget.ConsoleTextBox consoleTextBox;
+        private System.Windows.Forms.PictureBox picturePokerMuckIcon;
+        private System.Windows.Forms.Button btnJoinFacebookPage;
+        private System.Windows.Forms.Button btnSendTweet;
 
 
     }

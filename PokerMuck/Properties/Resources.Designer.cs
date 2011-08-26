@@ -109,6 +109,13 @@ namespace PokerMuck.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap PokerMuckLogo {
+            get {
+                object obj = ResourceManager.GetObject("PokerMuckLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap QuestionIco {
             get {
                 object obj = ResourceManager.GetObject("QuestionIco", resourceCulture);

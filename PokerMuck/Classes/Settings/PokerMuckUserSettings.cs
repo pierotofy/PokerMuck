@@ -20,7 +20,7 @@ namespace PokerMuck
         {
             CurrentPokerClient = new PokerStars("English");
             WindowPosition = new Point(480, 320); // We assume monitors will be bigger than this resolution
-            WindowSize = new Size(209, 331); // Designer size
+            WindowSize = new Size(344, 456); // Designer size
             TableDisplayRelativeWindowPosition = new Point(100, 100);
             TableDisplayWindowSize = new Size(234, 344);
             FirstExecution = true;

@@ -125,15 +125,22 @@ namespace PokerMuck
             // Check failed?
             if (differentEntries.Count > 0)
             {
-                String errorMessage = String.Format("Your color map {0} contains some entries of invalid size (they should be of size: {1}x{2}px): ", 
+                Trace.WriteLine("Invalid color map detected, displaying error message with details.");
+                String errorMessage = String.Format("Your color map {0} contains some entries of invalid size (they should be of size: {1}x{2}px): \n", 
                     mapLocation, refRect.Width, refRect.Height);
 
                 foreach (String action in differentEntries.Keys)
                 {
                     Rectangle rect = (Rectangle)differentEntries[action];
-                    errorMessage += String.Format("\n{0}: invalid size {2}x{3}px", action, rect.Width, rect.Height);
-                    throw new Exception(errorMessage);
+                    errorMessage += String.Format("\n{0}: invalid size {1}x{2}px", action, rect.Width, rect.Height);
                 }
+
+                errorMessage += "\n\nThe program will now crash.";
+                Globals.Director.RunFromGUIThread((Action)delegate()
+                {
+                    System.Windows.Forms.MessageBox.Show(errorMessage, "I need your help to fix this", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+                }, false);
+                throw new Exception(errorMessage);
             }
         }
 

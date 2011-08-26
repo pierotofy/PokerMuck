@@ -38,7 +38,11 @@ namespace PokerMuck
             Globals.Director = new PokerMuckDirector();
             Globals.Director.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(Director_RunGUIRoutine);
             Globals.Director.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(Director_DisplayStatus);
-
+            
+            
+            
+            
+            /*
             HoldemHand h1 = new HoldemHand(new Card(CardFace.Queen, CardSuit.Diamonds), new Card(CardFace.Ten, CardSuit.Spades));
             HoldemBoard b = new HoldemBoard(new Card(CardFace.Seven, CardSuit.Clubs),
                                         new Card(CardFace.Eight, CardSuit.Clubs),
@@ -50,7 +54,7 @@ namespace PokerMuck
 
 
             //pmDirector.Test();
-            /*
+            
             HoldemCardDisplayDialog d = new HoldemCardDisplayDialog();
             d.Show();
             List<String> cards = new List<String>();
@@ -291,9 +295,9 @@ namespace PokerMuck
         }
 
         /* Open www.pierotofy.it */
-        private void lblPieroTofyLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void lblPokerMuckLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(new ProcessStartInfo(lblPieroTofyLink.Text));
+            System.Diagnostics.Process.Start(new ProcessStartInfo(lblPokerMuckLink.Text));
         }
 
 
@@ -324,6 +328,14 @@ namespace PokerMuck
             Globals.UserSettings.TrainingModeEnabled = chkTrainingMode.Checked;
         }
 
+        private void btnSendTweet_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://twitter.com/home?status=%23PokerMuck %23Poker open source HUD and muck hand viewer:%20http://www.pokermuck.com/");
+        }
 
+        private void btnJoinFacebookPage_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.facebook.com/pages/PokerMuck/210893282298358");
+        }
     }
 }
