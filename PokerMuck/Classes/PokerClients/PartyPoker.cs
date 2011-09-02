@@ -193,10 +193,10 @@ namespace PokerMuck
             // Format: 20110617\{TODAY'S FILES} (2011 = year, 06 = month, 17 = day) 
             
             // TODO: save timezone information somewhere? (If you play in a different country you can specify manually the server's timezone)
-            //DateTime now = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time"));
+            DateTime now = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time"));
             
             // Uncomment in production (works for 99% of the users)
-            DateTime now = DateTime.Now;
+            //DateTime now = DateTime.Now;
 
             return String.Format(@"{0}{1}{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
         }

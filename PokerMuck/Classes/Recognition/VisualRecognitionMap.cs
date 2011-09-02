@@ -13,6 +13,11 @@ namespace PokerMuck
 {
     class VisualRecognitionMap
     {
+        /* This constant indicates the minimum area that a colored area should have
+         * to be considered acceptable from the color map. Without this, a single pixel of the desired
+         * color might screw up our detection */ 
+        private const int MIN_AREA_THRESHOLD = 25;
+
         private Hashtable mapData;
         private String mapLocation;
         private ColorMap colorMap;
@@ -84,7 +89,7 @@ namespace PokerMuck
                     }
 
                     // Did we find a rectangle?
-                    if (!biggestRect.Equals(Rectangle.Empty))
+                    if (!biggestRect.Equals(Rectangle.Empty) && (biggestRect.Width * biggestRect.Height > MIN_AREA_THRESHOLD))
                     {
                         Trace.WriteLine("Found rectangle for " + action + ": " + biggestRect.ToString());
                         mapData[action] = biggestRect;

@@ -16,6 +16,11 @@ namespace PokerMuck
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
 
+        [DllImport("user32", EntryPoint = "SendMessageA")]
+        private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+        const int WM_PRINT = 0x0317;
+
+
         public ScreenshotTaker()
         {
         }
@@ -39,6 +44,10 @@ namespace PokerMuck
                 IntPtr hdc = g.GetHdc();
                 PrintWindow(window.Handle, hdc, 0);
                 g.ReleaseHdc(hdc);
+
+                // Send print message to window, as the printwindow tends to cause issues of refresh on the receiving window
+                SendMessage(window.Handle, WM_PRINT, 0, 0);
+
                 return result;
             }
             catch (Exception)

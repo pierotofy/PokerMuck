@@ -71,6 +71,18 @@ namespace PokerMuck
             toggleIsSolidIcon(stats);
 
             toggleIsDonkIcon(stats);
+            /*
+            picCallingStation.Visible = true;
+            picCallingStation.SetQuestionSignVisible(false);
+            picEasySteal.Visible = true;
+            picEasySteal.SetQuestionSignVisible(false);
+            picButtonStealer.Visible = true;
+            picButtonStealer.SetQuestionSignVisible(false);
+            picSolidPlayer.Visible = true;
+            picSolidPlayer.SetQuestionSignVisible(false);
+            picDonkPlayer.Visible = true;
+            picDonkPlayer.SetQuestionSignVisible(false);
+            */
         }
 
         private void toggleIsDonkIcon(PlayerStatistics stats)
