@@ -21,6 +21,7 @@ namespace PokerMuck
         private Hashtable mapData;
         private String mapLocation;
         private ColorMap colorMap;
+        private Size mapSize;
 
         /* @param mapSize before analising the map we can specify a size we want the map to be resized to
          *  this is useful because sometimes the target window that we are going to match is going to be of
@@ -29,14 +30,11 @@ namespace PokerMuck
         {
             Trace.Assert(System.IO.File.Exists(mapLocation), "Cannot create a visualrecognitionmap without a proper map location: " + mapLocation);
             this.mapLocation = mapLocation;
-            this.colorMap = colorMap;
             this.mapData = new Hashtable();
-            
-            Bitmap mapImage = new Bitmap(mapLocation);
-            if (!mapSize.Equals(Size.Empty)) mapImage = ResizeMap(mapImage, mapSize);
-            AnaliseMap(mapImage);
+            this.colorMap = colorMap;
+            this.mapSize = mapSize;
 
-            SameSizeCheck(colorMap.GetSameSizeActions());
+            ComputeForMapSize(mapSize);
         }
 
         public VisualRecognitionMap(String mapLocation, ColorMap colorMap)
@@ -45,11 +43,29 @@ namespace PokerMuck
 
         }
 
+        private void ComputeForMapSize(Size mapSize)
+        {
+            Bitmap mapImage = new Bitmap(mapLocation);
+            if (!mapSize.Equals(Size.Empty))
+            {
+                Bitmap oldMapImage = mapImage;
+                mapImage = ResizeMap(oldMapImage, mapSize);
+                oldMapImage.Dispose();
+            }
+            AnaliseMap(mapImage);
+            SameSizeCheck(colorMap.GetSameSizeActions(), 1);
+
+            mapImage.Dispose();
+        }
+
         private Bitmap ResizeMap(Bitmap mapImage, Size mapSize)
         {
             Bitmap result = new Bitmap(mapSize.Width, mapSize.Height);
             using (Graphics g = Graphics.FromImage(result))
             {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+
                 g.DrawImage(mapImage, 0, 0, mapSize.Width, mapSize.Height);
             }
             return result;
@@ -57,6 +73,7 @@ namespace PokerMuck
 
         private void AnaliseMap(Bitmap mapImage)
         {
+            mapData.Clear();
             ColorFiltering filter = new ColorFiltering();
             Trace.WriteLine("Analysing color map " + mapLocation + "...");
 
@@ -98,8 +115,21 @@ namespace PokerMuck
             }
         }
 
-        /* This function will raise an exception if the check fails */
-        public void SameSizeCheck(ArrayList actions)
+        /* Re-analyses the map using the new size (which typically reflects
+         * the size of the latest taken screenshot) */
+        public void AdjustToSize(Size newSize)
+        {
+            if (!this.mapSize.Equals(newSize))
+            {
+                this.mapSize = newSize;
+                ComputeForMapSize(mapSize);
+            }
+        }
+
+        /* This function will raise an exception if the check fails
+         * @param delta: how many pixels away two actions can be (ex. if delta = 1, two blocks can differ both in width
+               and height by 1 pixel) */
+        public void SameSizeCheck(ArrayList actions, int delta)
         {
             Trace.WriteLine("Checking color map " + mapLocation + " for proper sizes...");
             if (actions.Count <= 1) return;
@@ -121,7 +151,7 @@ namespace PokerMuck
                 Rectangle compareRect = GetRectangleFor(action);
                 if (compareRect.Equals(Rectangle.Empty)) continue; // Skip rectangles that are not in our list
 
-                if (refRect.Width != compareRect.Width || refRect.Height != compareRect.Height)
+                if (Math.Abs(refRect.Width - compareRect.Width) > delta || Math.Abs(refRect.Height - compareRect.Height) > delta)
                 {
                     differentEntries[action] = compareRect;
                 }

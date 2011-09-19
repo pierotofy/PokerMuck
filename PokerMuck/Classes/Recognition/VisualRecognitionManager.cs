@@ -48,6 +48,8 @@ namespace PokerMuck
         {
             UpdateCardMatchDialogSpawnLocation();
 
+            recognitionMap.AdjustToSize(screenshot.Size);
+
             /* Try to match player cards */
             List<Bitmap> playerCardImages = new List<Bitmap>();
             ArrayList playerCardsActions = colorMap.GetPlayerCardsActions(table.CurrentHeroSeat);

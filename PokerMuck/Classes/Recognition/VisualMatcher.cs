@@ -180,6 +180,7 @@ namespace PokerMuck
                 // For template matching template should be smaller than image
                 candidateImage = ScaleIfBiggerThan(image, candidateImage);
 
+
                 double difference = HistogramBitmapDifference(image, candidateImage);
                 double similarity = TemplateMatchingSimilarity(image, candidateImage);
 
@@ -342,7 +343,10 @@ namespace PokerMuck
 
                 Bitmap result = new Bitmap(newWidth, newHeight, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                 Graphics g = Graphics.FromImage((System.Drawing.Image)result);
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                //g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
 
                 g.DrawImage(sourceImage, 0, 0, newWidth, newHeight);
                 g.Dispose();
