@@ -21,6 +21,15 @@ namespace PokerMuck
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+
         /* We need also to define a RECT structure */
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
@@ -52,11 +61,26 @@ namespace PokerMuck
                 return latestValidWindowTitle;
             }
         }
+
+        public Size Size
+        {
+            get{
+                Rectangle rect = this.Rectangle;
+                return new Size(rect.Width, rect.Height);
+            }
+        }
+
         public Rectangle Rectangle
         {
             get
             {
                 return GetWindowRectFromHandle(handle);
+            }
+        }
+        public Rectangle ClientRectangle{
+            get
+            {
+                return GetClientRectFromHandle(handle);
             }
         }
 
@@ -102,6 +126,10 @@ namespace PokerMuck
             return Title != String.Empty && Exists(Title);
         }
 
+        public bool Resize(Size newSize, bool repaint = true)
+        {
+            return Window.ResizeWindow(handle, newSize, repaint);
+        }
 
 
         // Static members
@@ -125,10 +153,35 @@ namespace PokerMuck
             }
         }
 
+        public static bool ResizeWindow(IntPtr handle, Size newSize, bool repaint)
+        {
+            Rectangle windowRect = GetWindowRectFromHandle(handle);
+            return MoveWindow(handle, windowRect.X, windowRect.Y, newSize.Width, newSize.Height, repaint);
+        }
+
         public static Rectangle GetWindowRectFromWindowTitle(String windowTitle)
         {
             IntPtr handle = FindWindowByCaption(IntPtr.Zero, windowTitle);
             return GetWindowRectFromHandle(handle);
+        }
+
+        public static Rectangle GetClientRectFromHandle(IntPtr handle)
+        {
+            RECT rct; // C++ style
+            Rectangle clientRect = new Rectangle(); // C# style
+            if (GetClientRect(handle, out rct))
+            {
+                clientRect.X = rct.Left;
+                clientRect.Y = rct.Top;
+                clientRect.Width = rct.Right - rct.Left;
+                clientRect.Height = rct.Bottom - rct.Top;
+            }
+            else
+            {
+                Trace.WriteLine("I couldn't figure out client position and size of window handle " + handle.ToString());
+            }
+
+            return clientRect;
         }
 
         public static Rectangle GetWindowRectFromHandle(IntPtr handle)
@@ -146,7 +199,7 @@ namespace PokerMuck
             }
             else
             {
-                Trace.WriteLine("A new window became the foreground window, but I couldn't figure out its position and size.");
+                Trace.WriteLine("I couldn't figure out position and size of window handle " + handle.ToString());
             }
 
             return windowRect;

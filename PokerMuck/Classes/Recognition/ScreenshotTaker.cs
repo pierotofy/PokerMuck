@@ -19,7 +19,8 @@ namespace PokerMuck
         [DllImport("user32", EntryPoint = "SendMessageA")]
         private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
         const int WM_PRINT = 0x0317;
-
+        const uint WM_PRINTCLIENTONLY = 1;
+        const int WM_SETREDRAW = 0xB;
 
         public ScreenshotTaker()
         {
@@ -30,31 +31,54 @@ namespace PokerMuck
             return Take(bounds);
         }
 
-        public Bitmap Take(Window window)
+        /* @param size: if different than window size, resizes the window before taking the screenshot
+         *    note that this is different than resizing a bitmap, we are literally changing the window size */ 
+        public Bitmap Take(Window window, bool clientOnly, Size size)
         {
             // We cannot use this method if the window is minimized
             if (window.Minimized) return null;
 
-            Rectangle rect = window.Rectangle;
+            Size originalWindowSize = window.Size;
+            bool needResize = !originalWindowSize.Equals(size);
 
             try
             {
-                Bitmap result = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+                if (needResize)
+                {
+                    // If we are taking the client only, we don't need the extra repaint
+                    window.Resize(size, clientOnly ? false : true);
+                }
+
+                Rectangle screenshotRect = clientOnly ? window.ClientRectangle : window.Rectangle;
+
+                Bitmap result = new Bitmap(screenshotRect.Width, screenshotRect.Height, PixelFormat.Format24bppRgb);                
                 Graphics g = Graphics.FromImage(result);
                 IntPtr hdc = g.GetHdc();
-                PrintWindow(window.Handle, hdc, 0);
+                uint nFlags = (clientOnly ? WM_PRINTCLIENTONLY : 0);
+                PrintWindow(window.Handle, hdc, nFlags);
                 g.ReleaseHdc(hdc);
 
-                // Send print message to window, as the printwindow tends to cause issues of refresh on the receiving window
-                SendMessage(window.Handle, WM_PRINT, 0, 0);
+                // Restore original dimension
+                if (needResize)
+                {
+                    window.Resize(originalWindowSize, true); // OK, repaint now!
+                }
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Trace.WriteLine("Failed to take screenshot of " + window.Title);
+                Trace.WriteLine("Failed to take screenshot of " + window.Title + ": " + e.Message);
                 return null;
             }
+        }
+
+        public Bitmap Take(Window window, bool clientOnly)
+        {
+            Rectangle rect = window.Rectangle;
+            Size winSize = new Size(rect.Width, rect.Height);
+
+            return Take(window, clientOnly, winSize);
         }
 
         public Bitmap Take(Rectangle bounds)

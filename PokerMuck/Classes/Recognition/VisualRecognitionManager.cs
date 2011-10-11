@@ -20,6 +20,7 @@ namespace PokerMuck
         private ColorMap colorMap;
         private TimedScreenshotTaker timedScreenshotTaker;
         private VisualMatcher matcher;
+        private Window tableWindow;
 
         public VisualRecognitionManager(Table table, IVisualRecognitionManagerHandler handler)
         {
@@ -31,8 +32,15 @@ namespace PokerMuck
             this.colorMap = ColorMap.Create(table.Game);
             this.recognitionMap = new VisualRecognitionMap(table.VisualRecognitionMapLocation, colorMap);
             this.matcher = new VisualMatcher(Globals.UserSettings.CurrentPokerClient);
+            this.tableWindow = new Window(table.WindowTitle);
 
-            this.timedScreenshotTaker = new TimedScreenshotTaker(REFRESH_TIME, new Window(table.WindowTitle));
+            /* TODO:
+             * 1. Compare window size to recognition map
+             * 2. If different, send resize message to window (add to window size difference between current window size and recognition map size)
+             * 3. Repeat step 2 every 5 seconds
+             */
+
+            this.timedScreenshotTaker = new TimedScreenshotTaker(REFRESH_TIME, tableWindow);
             this.timedScreenshotTaker.ScreenshotTaken += new TimedScreenshotTaker.ScreenshotTakenHandler(timedScreenshotTaker_ScreenshotTaken);
             this.timedScreenshotTaker.Start();
         }
