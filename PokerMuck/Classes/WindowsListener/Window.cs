@@ -27,6 +27,10 @@ namespace PokerMuck
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool ClientToScreen(IntPtr hWnd, out POINT lpPoint);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
 
@@ -38,6 +42,14 @@ namespace PokerMuck
             public int Top;         // y position of upper-left corner
             public int Right;       // x position of lower-right corner
             public int Bottom;      // y position of lower-right corner
+        }
+
+        /* And POINT */
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int x;
+            public int y;
         }
 
         /* This one will help us detect when a window gets closed */
@@ -77,6 +89,8 @@ namespace PokerMuck
                 return GetWindowRectFromHandle(handle);
             }
         }
+
+        /* Returns the rectangle in terms of absolute screen coordinates, not relative to the container */
         public Rectangle ClientRectangle{
             get
             {
@@ -171,15 +185,29 @@ namespace PokerMuck
             Rectangle clientRect = new Rectangle(); // C# style
             if (GetClientRect(handle, out rct))
             {
-                clientRect.X = rct.Left;
-                clientRect.Y = rct.Top;
-                clientRect.Width = rct.Right - rct.Left;
-                clientRect.Height = rct.Bottom - rct.Top;
+                // Translate to screen cordinates
+                POINT topleft;
+                topleft.x = rct.Left;
+                topleft.y = rct.Top;
+
+                POINT bottomright;
+                bottomright.x = rct.Right;
+                bottomright.y = rct.Bottom;
+
+                ClientToScreen(handle, out topleft);
+                ClientToScreen(handle, out bottomright);
+
+                clientRect.X = topleft.x;
+                clientRect.Y = topleft.y;
+                clientRect.Width = bottomright.x - topleft.x;
+                clientRect.Height = bottomright.y - topleft.y;
             }
             else
             {
                 Trace.WriteLine("I couldn't figure out client position and size of window handle " + handle.ToString());
             }
+
+
 
             return clientRect;
         }
