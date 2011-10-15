@@ -25,6 +25,13 @@ namespace PokerMuck
 
             // Update program title
             lblProgramName.Text = Application.ProductName + " " + Application.ProductVersion;
+
+            // Hide tools tab for non-debug builds
+            #if !(DEBUG)
+            {
+                tabControl.Controls.Remove(tabTools);
+            }
+            #endif
         }
 
 
@@ -336,6 +343,35 @@ namespace PokerMuck
         private void btnJoinFacebookPage_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://www.facebook.com/pages/PokerMuck/210893282298358");
+        }
+
+        private void btnTakeWindowScreenshot_Click(object sender, EventArgs e)
+        {
+            String originalText = btnTakeWindowScreenshot.Text;
+
+            btnTakeWindowScreenshot.Enabled = false;
+            btnTakeWindowScreenshot.Text = "Click on the window, screenshot will be taken in 5 seconds";
+
+            Thread t = new Thread(new ThreadStart((Action)delegate()
+                {
+                    Thread.Sleep(5000);
+                    bool success = Globals.Director.TakeActiveWindowScreenshot(true);
+
+                    Director_RunGUIRoutine((Action)delegate()
+                    {
+                        if (success){
+                            MessageBox.Show("Screenshot saved as screenshot.jpg on Desktop", "Success");
+                        }else{
+                            MessageBox.Show("Could not take screenshot.", "Error");
+                        }
+                        btnTakeWindowScreenshot.Enabled = true;
+                        btnTakeWindowScreenshot.Text = originalText;
+                    }, false);
+                }
+            ));
+            t.Start();
+
+
         }
     }
 }

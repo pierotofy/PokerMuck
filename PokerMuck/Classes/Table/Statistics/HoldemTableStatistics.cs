@@ -149,6 +149,12 @@ namespace PokerMuck
         void handHistoryParser_PlayerRaised(string playerName, float raiseAmount, HoldemGamePhase gamePhase)
         {
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            if (p == null)
+            {
+                Trace.WriteLine("Raise detected but the player is not in our list. Did he just join?");
+                return;
+            }
+
 
             if (gamePhase == HoldemGamePhase.Preflop)
             {
@@ -281,6 +287,12 @@ namespace PokerMuck
         void handHistoryParser_PlayerCalled(string playerName, float amount, HoldemGamePhase gamePhase)
         {
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            if (p == null)
+            {
+                Trace.WriteLine("Call detected but the player is not in our list. Did he just join?");
+                return;
+            }
+
 
             // If we are preflop
             if (gamePhase == HoldemGamePhase.Preflop)
@@ -331,6 +343,12 @@ namespace PokerMuck
         void handHistoryParser_PlayerBet(string playerName, float amount, HoldemGamePhase gamePhase)
         {
             HoldemPlayer p = (HoldemPlayer)FindPlayer(playerName);
+            if (p == null)
+            {
+                Trace.WriteLine("Bet detected but the player is not in our list. Did he just join?");
+                return;
+            }
+
 
             // Flop
             if (gamePhase == HoldemGamePhase.Flop && !PlayerBetTheFlop)

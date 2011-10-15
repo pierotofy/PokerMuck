@@ -33,9 +33,7 @@ namespace PokerMuck
 
             while (running)
             {
-                Bitmap screenshot = scrTaker.Take(window, true, ScreenshotTaker.Mode.PrintScreen); // TODO: switch to true and resize color maps accordingly
-
-                screenshot.Save("screenshot.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                Bitmap screenshot = scrTaker.Take(window, true, ScreenshotTaker.Mode.PrintScreen);
 
                 if (ScreenshotTaken != null) ScreenshotTaken(screenshot);
 

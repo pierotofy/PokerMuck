@@ -21,20 +21,27 @@ namespace PokerMuck
         private Hashtable mapData;
         private String mapLocation;
         private ColorMap colorMap;
-        private Size mapSize;
+        private Size desiredMapSize;
+        private Size originalMapSize;
+
+        public Size OriginalMapSize { get { return originalMapSize; } }
 
         /* @param mapSize before analising the map we can specify a size we want the map to be resized to
          *  this is useful because sometimes the target window that we are going to match is going to be of
          *  a different size */
-        public VisualRecognitionMap(String mapLocation, ColorMap colorMap, Size mapSize)
+        public VisualRecognitionMap(String mapLocation, ColorMap colorMap, Size desiredMapSize)
         {
             Trace.Assert(System.IO.File.Exists(mapLocation), "Cannot create a visualrecognitionmap without a proper map location: " + mapLocation);
             this.mapLocation = mapLocation;
             this.mapData = new Hashtable();
             this.colorMap = colorMap;
-            this.mapSize = mapSize;
+            this.desiredMapSize = desiredMapSize;
 
-            ComputeForMapSize(mapSize);
+            Bitmap map = new Bitmap(mapLocation);
+            originalMapSize = map.Size;
+            map.Dispose();
+
+            ComputeForDesiredMapSize(desiredMapSize);
         }
 
         public VisualRecognitionMap(String mapLocation, ColorMap colorMap)
@@ -43,13 +50,13 @@ namespace PokerMuck
 
         }
 
-        private void ComputeForMapSize(Size mapSize)
+        private void ComputeForDesiredMapSize(Size desiredMapSize)
         {
             Bitmap mapImage = new Bitmap(mapLocation);
-            if (!mapSize.Equals(Size.Empty))
+            if (!desiredMapSize.Equals(Size.Empty))
             {
                 Bitmap oldMapImage = mapImage;
-                mapImage = ResizeMap(oldMapImage, mapSize);
+                mapImage = ResizeMap(oldMapImage, desiredMapSize);
                 oldMapImage.Dispose();
             }
             AnaliseMap(mapImage);
@@ -58,15 +65,15 @@ namespace PokerMuck
             mapImage.Dispose();
         }
 
-        private Bitmap ResizeMap(Bitmap mapImage, Size mapSize)
+        private Bitmap ResizeMap(Bitmap mapImage, Size desiredMapSize)
         {
-            Bitmap result = new Bitmap(mapSize.Width, mapSize.Height);
+            Bitmap result = new Bitmap(desiredMapSize.Width, desiredMapSize.Height);
             using (Graphics g = Graphics.FromImage(result))
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
 
-                g.DrawImage(mapImage, 0, 0, mapSize.Width, mapSize.Height);
+                g.DrawImage(mapImage, 0, 0, desiredMapSize.Width, desiredMapSize.Height);
             }
             return result;
         }
@@ -117,12 +124,12 @@ namespace PokerMuck
 
         /* Re-analyses the map using the new size (which typically reflects
          * the size of the latest taken screenshot) */
-        public void AdjustToSize(Size newSize)
+        public void AdjustToSize(Size newDesiredSize)
         {
-            if (!this.mapSize.Equals(newSize))
+            if (!this.desiredMapSize.Equals(newDesiredSize))
             {
-                this.mapSize = newSize;
-                ComputeForMapSize(mapSize);
+                this.desiredMapSize = newDesiredSize;
+                ComputeForDesiredMapSize(desiredMapSize);
             }
         }
 
@@ -186,6 +193,5 @@ namespace PokerMuck
             if (mapData.ContainsKey(action)) return (Rectangle)mapData[action];
             else return Rectangle.Empty;
         }
-
     }
 }

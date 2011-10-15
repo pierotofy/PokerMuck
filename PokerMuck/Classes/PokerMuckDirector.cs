@@ -363,6 +363,33 @@ namespace PokerMuck
             PokerClientsList.SetDefault(new PokerStars());
         }
 
+        /* Tools stuff */
+
+
+        public bool TakeActiveWindowScreenshot(bool clientOnly)
+        {
+            if (windowsListener != null)
+            {
+                Window w = new Window(windowsListener.CurrentForegroundWindowTitle);
+
+                ScreenshotTaker st = new ScreenshotTaker();
+                Bitmap screenshot = st.Take(w, clientOnly, ScreenshotTaker.Mode.PrintScreen);
+
+                try
+                {
+                    screenshot.Save(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\screenshot.jpg");
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         // Cleanup stuff
         private void Cleanup()
         {

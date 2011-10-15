@@ -43,6 +43,7 @@
             this.btnChangeHandHistory = new System.Windows.Forms.Button();
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
+            this.btnSendTweet = new System.Windows.Forms.Button();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
             this.btnJoinFacebookPage = new System.Windows.Forms.Button();
             this.picturePokerMuckIcon = new System.Windows.Forms.PictureBox();
@@ -51,13 +52,15 @@
             this.lblPokerMuckLink = new System.Windows.Forms.LinkLabel();
             this.lblProgramName = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.btnSendTweet = new System.Windows.Forms.Button();
+            this.tabTools = new System.Windows.Forms.TabPage();
+            this.btnTakeWindowScreenshot = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabDebug.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
             this.tabAboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picturePokerMuckIcon)).BeginInit();
+            this.tabTools.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -67,6 +70,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabDebug);
             this.tabControl.Controls.Add(this.tabConfigurationPage);
+            this.tabControl.Controls.Add(this.tabTools);
             this.tabControl.Controls.Add(this.tabAboutPage);
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
@@ -226,6 +230,19 @@
             this.tabAboutPage.Text = "About";
             this.tabAboutPage.UseVisualStyleBackColor = true;
             // 
+            // btnSendTweet
+            // 
+            this.btnSendTweet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSendTweet.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSendTweet.Location = new System.Drawing.Point(8, 231);
+            this.btnSendTweet.Name = "btnSendTweet";
+            this.btnSendTweet.Size = new System.Drawing.Size(301, 30);
+            this.btnSendTweet.TabIndex = 7;
+            this.btnSendTweet.Text = "3. Send a Tweet about us";
+            this.btnSendTweet.UseVisualStyleBackColor = true;
+            this.btnSendTweet.Click += new System.EventHandler(this.btnSendTweet_Click);
+            // 
             // pictureEagle
             // 
             this.pictureEagle.Anchor = System.Windows.Forms.AnchorStyles.Top;
@@ -327,18 +344,27 @@
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // btnSendTweet
+            // tabTools
             // 
-            this.btnSendTweet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabTools.Controls.Add(this.btnTakeWindowScreenshot);
+            this.tabTools.Location = new System.Drawing.Point(4, 22);
+            this.tabTools.Name = "tabTools";
+            this.tabTools.Size = new System.Drawing.Size(320, 354);
+            this.tabTools.TabIndex = 3;
+            this.tabTools.Text = "Tools";
+            this.tabTools.UseVisualStyleBackColor = true;
+            // 
+            // btnTakeWindowScreenshot
+            // 
+            this.btnTakeWindowScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSendTweet.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSendTweet.Location = new System.Drawing.Point(8, 231);
-            this.btnSendTweet.Name = "btnSendTweet";
-            this.btnSendTweet.Size = new System.Drawing.Size(301, 30);
-            this.btnSendTweet.TabIndex = 7;
-            this.btnSendTweet.Text = "3. Send a Tweet about us";
-            this.btnSendTweet.UseVisualStyleBackColor = true;
-            this.btnSendTweet.Click += new System.EventHandler(this.btnSendTweet_Click);
+            this.btnTakeWindowScreenshot.Location = new System.Drawing.Point(8, 8);
+            this.btnTakeWindowScreenshot.Name = "btnTakeWindowScreenshot";
+            this.btnTakeWindowScreenshot.Size = new System.Drawing.Size(304, 26);
+            this.btnTakeWindowScreenshot.TabIndex = 0;
+            this.btnTakeWindowScreenshot.Text = "Take client window screenshot";
+            this.btnTakeWindowScreenshot.UseVisualStyleBackColor = true;
+            this.btnTakeWindowScreenshot.Click += new System.EventHandler(this.btnTakeWindowScreenshot_Click);
             // 
             // FrmMain
             // 
@@ -365,6 +391,7 @@
             this.tabAboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picturePokerMuckIcon)).EndInit();
+            this.tabTools.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -394,6 +421,8 @@
         private System.Windows.Forms.PictureBox picturePokerMuckIcon;
         private System.Windows.Forms.Button btnJoinFacebookPage;
         private System.Windows.Forms.Button btnSendTweet;
+        private System.Windows.Forms.TabPage tabTools;
+        private System.Windows.Forms.Button btnTakeWindowScreenshot;
 
 
     }

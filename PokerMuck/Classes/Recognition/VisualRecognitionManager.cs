@@ -34,12 +34,6 @@ namespace PokerMuck
             this.matcher = new VisualMatcher(Globals.UserSettings.CurrentPokerClient);
             this.tableWindow = new Window(table.WindowTitle);
 
-            /* TODO:
-             * 1. Compare window size to recognition map
-             * 2. If different, send resize message to window (add to window size difference between current window size and recognition map size)
-             * 3. Repeat step 2 every 5 seconds
-             */
-
             this.timedScreenshotTaker = new TimedScreenshotTaker(REFRESH_TIME, tableWindow);
             this.timedScreenshotTaker.ScreenshotTaken += new TimedScreenshotTaker.ScreenshotTakenHandler(timedScreenshotTaker_ScreenshotTaken);
             this.timedScreenshotTaker.Start();
@@ -56,7 +50,28 @@ namespace PokerMuck
         {
             UpdateCardMatchDialogSpawnLocation();
 
-            recognitionMap.AdjustToSize(screenshot.Size);
+            /* This code would resize the map and recompute the data in it,
+             * but we don't use this approach anymore. */
+            //recognitionMap.AdjustToSize(screenshot.Size);
+
+            /* Instead if the screenshot we took differs in size from the map at our disposal
+             * we resize the window and retake the screenshot */
+            if (!screenshot.Size.Equals(recognitionMap.OriginalMapSize))
+            {
+                Trace.WriteLine(String.Format("Screenshot size ({0}x{1}) differs from our map image ({2}x{3}), resizing window...", 
+                    screenshot.Size.Width, screenshot.Size.Height, recognitionMap.OriginalMapSize.Width, recognitionMap.OriginalMapSize.Height));
+
+                Size winSize = tableWindow.Size;
+
+                Size difference = new Size(screenshot.Size.Width - recognitionMap.OriginalMapSize.Width,
+                                        screenshot.Size.Height - recognitionMap.OriginalMapSize.Height);
+
+                Size newSize = winSize - difference;
+
+                tableWindow.Resize(newSize, true);
+
+                return; // At next iteration this code should not be executed because sizes will be the same, unless the player resizes the window
+            }
 
             /* Try to match player cards */
             List<Bitmap> playerCardImages = new List<Bitmap>();
