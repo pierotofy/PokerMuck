@@ -163,7 +163,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(221)))), ((int)(((byte)(186)))), ((int)(((byte)(142)))));
             this.BackgroundImage = global::PokerMuck.Properties.Resources.TableDisplayWindowBackground;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(234, 344);
@@ -178,7 +178,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "TableDisplayWindow";
             this.TopMost = true;
-            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(254)))));
+            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(221)))), ((int)(((byte)(186)))), ((int)(((byte)(142)))));
             this.ResizeEnd += new System.EventHandler(this.TableDisplayWindow_ResizeEnd);
             this.LocationChanged += new System.EventHandler(this.TableDisplayWindow_LocationChanged);
             this.tabControl.ResumeLayout(false);

@@ -110,7 +110,6 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "HudWindow";
-            this.Opacity = 0.95D;
             this.Text = "HudWindow";
             this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.Silver;
