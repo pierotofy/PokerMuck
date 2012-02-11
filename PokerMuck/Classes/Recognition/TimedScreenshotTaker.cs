@@ -35,7 +35,7 @@ namespace PokerMuck
             {
                 Bitmap screenshot = scrTaker.Take(window, true, ScreenshotTaker.Mode.PrintScreen);
 
-                if (ScreenshotTaken != null) ScreenshotTaken(screenshot);
+                if (ScreenshotTaken != null && screenshot != null) ScreenshotTaken(screenshot);
 
                 Thread.Sleep(msInterval);
             }

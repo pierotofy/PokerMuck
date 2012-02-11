@@ -25,8 +25,10 @@ namespace PokerMuck
             {
                 /* To recognize a valid party poker game window
                   * ex. Turbo #2341732 -  NL  Hold'em - €3 Buy-in */
-                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>[^-]+) - .+(Buy-in|.[\d\.]+\/.[\d\.]+)");
+                regex.Add("game_window_title_to_recognize_games", @"^(?<gameDescription>[^-]+) - .+(Buy-in|.[\d\.]+\/.[\d\.]+|NL  Hold'em)");
                 
+                //
+
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"\*\* Dealing down cards \*\*");
                 regex.Add("hand_history_begin_flop_phase_token", @"\*\* Dealing Flop \*\* \[(?<flopCards>[\d\w \,]+)\]");
@@ -50,8 +52,9 @@ namespace PokerMuck
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * NL Texas Hold'em €3 EUR Buy-in Trny: 61535376 Level: 1  Blinds(20/40) - Friday, June 17, 23:14:29 CEST 2011
+                 * NL Texas Hold'em  Trny: 65167142 Level: 1  Blinds(20/40) - Sunday, November 27, 20:30:30 CET 2011
                  * €2 EUR NL Texas Hold'em - Monday, August 01, 21:27:54 CEST 2011 */
-                regex.Add("hand_history_game_token", @"(((?<gameType>.+) .[\d\.\,]+ [\w]{3} Buy\-in)|((\$|€)[\d\.]+ [A-Z]{3} (?<gameType>.+) - ))");
+                regex.Add("hand_history_game_token", @"(((?<gameType>.+) (.[\d\.\,]+ [\w]{3} Buy\-in| Trny:))|((\$|€)[\d\.]+ [A-Z]{3} (?<gameType>.+) - ))");
 
                 /* Recognize players 
                  Ex. Seat 1: Renik87 ( 2,000 )
@@ -193,10 +196,10 @@ namespace PokerMuck
             // Format: 20110617\{TODAY'S FILES} (2011 = year, 06 = month, 17 = day) 
             
             // TODO: save timezone information somewhere? (If you play in a different country you can specify manually the server's timezone)
-            //DateTime now = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time"));
+            DateTime now = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time"));
             
             // Uncomment in production (works for 99% of the users)
-            DateTime now = DateTime.Now;
+            //DateTime now = DateTime.Now;
 
             return String.Format(@"{0}{1}{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
         }

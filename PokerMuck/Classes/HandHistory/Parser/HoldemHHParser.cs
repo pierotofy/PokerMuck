@@ -363,12 +363,12 @@ namespace PokerMuck
 
                 List<Card> cards = GenerateCardsFromText(cardsText);
 
-                // Now that we have the string representation of the cards, we need to convert the string into an Hand object
-                Trace.Assert(cards.Count == 2, "Less or more than two cards were identified in this string: " + cardsText);
-
-                Hand hand = new HoldemHand(cards[0], cards[1]);
+                // Sometimes a regex will return only one card (when a player decides to show only one card)
+                if (cards.Count == 2){
+                    Hand hand = new HoldemHand(cards[0], cards[1]);
                 
-                OnPlayerMuckHandAvailable(playerName, hand);
+                    OnPlayerMuckHandAvailable(playerName, hand);
+                }
             }
 
             /* Search for final board */
