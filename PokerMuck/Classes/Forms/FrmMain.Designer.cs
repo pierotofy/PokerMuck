@@ -51,11 +51,12 @@
             this.picturePokerMuckIcon = new System.Windows.Forms.PictureBox();
             this.btnDonatePaypal = new System.Windows.Forms.Button();
             this.lblDonate = new System.Windows.Forms.Label();
-            this.lblPokerMuckLink = new System.Windows.Forms.LinkLabel();
             this.lblProgramName = new System.Windows.Forms.Label();
             this.txtBitcoinAddr = new System.Windows.Forms.TextBox();
             this.btnDonateBitcoin = new System.Windows.Forms.Button();
+            this.lblPokerMuckLink = new System.Windows.Forms.LinkLabel();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.btnCheckForUpdates = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabDebug.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
@@ -217,6 +218,7 @@
             // 
             // tabTools
             // 
+            this.tabTools.Controls.Add(this.btnCheckForUpdates);
             this.tabTools.Controls.Add(this.btnTakeWindowScreenshot);
             this.tabTools.Location = new System.Drawing.Point(4, 22);
             this.tabTools.Name = "tabTools";
@@ -332,20 +334,6 @@
     "cessary to keep the program up to date.";
             this.lblDonate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblPokerMuckLink
-            // 
-            this.lblPokerMuckLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPokerMuckLink.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPokerMuckLink.Location = new System.Drawing.Point(68, 324);
-            this.lblPokerMuckLink.Name = "lblPokerMuckLink";
-            this.lblPokerMuckLink.Size = new System.Drawing.Size(206, 24);
-            this.lblPokerMuckLink.TabIndex = 2;
-            this.lblPokerMuckLink.TabStop = true;
-            this.lblPokerMuckLink.Text = "http://www.pokermuck.com";
-            this.lblPokerMuckLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblPokerMuckLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblPokerMuckLink_LinkClicked);
-            // 
             // lblProgramName
             // 
             this.lblProgramName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -385,6 +373,20 @@
             this.btnDonateBitcoin.UseVisualStyleBackColor = true;
             this.btnDonateBitcoin.Click += new System.EventHandler(this.btnDonateBitcoin_Click);
             // 
+            // lblPokerMuckLink
+            // 
+            this.lblPokerMuckLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPokerMuckLink.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPokerMuckLink.Location = new System.Drawing.Point(68, 324);
+            this.lblPokerMuckLink.Name = "lblPokerMuckLink";
+            this.lblPokerMuckLink.Size = new System.Drawing.Size(206, 24);
+            this.lblPokerMuckLink.TabIndex = 2;
+            this.lblPokerMuckLink.TabStop = true;
+            this.lblPokerMuckLink.Text = "http://www.pokermuck.com";
+            this.lblPokerMuckLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPokerMuckLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblPokerMuckLink_LinkClicked);
+            // 
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.White;
@@ -396,6 +398,18 @@
             this.lblStatus.TabIndex = 4;
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnCheckForUpdates
+            // 
+            this.btnCheckForUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCheckForUpdates.Location = new System.Drawing.Point(8, 40);
+            this.btnCheckForUpdates.Name = "btnCheckForUpdates";
+            this.btnCheckForUpdates.Size = new System.Drawing.Size(304, 26);
+            this.btnCheckForUpdates.TabIndex = 1;
+            this.btnCheckForUpdates.Text = "Check for updates";
+            this.btnCheckForUpdates.UseVisualStyleBackColor = true;
+            this.btnCheckForUpdates.Click += new System.EventHandler(this.btnCheckForUpdates_Click);
             // 
             // FrmMain
             // 
@@ -457,6 +471,7 @@
         private System.Windows.Forms.Button btnTakeWindowScreenshot;
         private System.Windows.Forms.Button btnDonateBitcoin;
         private System.Windows.Forms.TextBox txtBitcoinAddr;
+        private System.Windows.Forms.Button btnCheckForUpdates;
 
 
     }
