@@ -86,7 +86,7 @@ namespace PokerMuck
 
                 /* Detect who our hero is (what's his nickname)
                  * ex. Dealt to italystallion89 [Tc 3d] */
-                regex.Add("hand_history_detect_hero_name", @"Dealt to (?<heroNickname>.+) \[[\w\d ]+\]$");
+                regex.Add("hand_history_detect_hero_name", @"Dealt to (?<heroName>.+) \[[\w\d ]+\]$");
 
                 /* Detect calls
                  * ex. SILJCAR calls $0.02 */

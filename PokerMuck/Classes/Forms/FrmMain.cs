@@ -139,7 +139,7 @@ namespace PokerMuck
             LoadConfigurationValues();
 
             // Always start the view on the About tab
-            //tabControl.SelectedIndex = tabControl.TabCount - 1;
+            tabControl.SelectedIndex = tabControl.TabCount - 1;
         }
 
         void Director_RunGUIRoutine(Action d, Boolean asynchronous)
@@ -372,6 +372,12 @@ namespace PokerMuck
             t.Start();
 
 
+        }
+
+        private void btnDonateBitcoin_Click(object sender, EventArgs e)
+        {
+            btnDonateBitcoin.Visible = false;
+            txtBitcoinAddr.Visible = true;
         }
     }
 }

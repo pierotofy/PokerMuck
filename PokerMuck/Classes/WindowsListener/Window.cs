@@ -56,6 +56,10 @@ namespace PokerMuck
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
+        /* Detect the visibility of a window */
+        [DllImport("user32.dll", EntryPoint = "IsWindowVisible", SetLastError = true)]
+        public static extern bool IsWindowVisible(IntPtr hWnd);
+        
         private IntPtr handle;
         public IntPtr Handle { get { return (IntPtr)handle; } }
 
@@ -71,6 +75,14 @@ namespace PokerMuck
                 String newTitle = GetWindowTitleFromHandle(handle);
                 if (newTitle != String.Empty) latestValidWindowTitle = newTitle;
                 return latestValidWindowTitle;
+            }
+        }
+
+        public bool Visible
+        {
+            get
+            {
+                return IsWindowVisible(handle);
             }
         }
 

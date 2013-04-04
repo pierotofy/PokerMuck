@@ -12,7 +12,7 @@ namespace PokerMuck
     public enum HoldemGamePhase { Preflop, Flop, Turn, River, Showdown, Summary };
 
     /* Enum of the possible player actions in a Hold'em game */
-    public enum HoldemPlayerAction { Call, Bet, Raise, Fold, Check, CheckRaise, CheckCall, CheckFold };
+    public enum HoldemPlayerAction { Call, Bet, Raise, Fold, Check, CheckRaise, CheckCall, CheckFold, None };
     
 
     /* Hold'em Hand History Parser */
@@ -400,9 +400,28 @@ namespace PokerMuck
             /* Find the button */
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_button"), out matchResult))
             {
-                int seatNumber = Int32.Parse(matchResult.Groups["seatNumber"].Value);
-                OnFoundButton(seatNumber);
+                Trace.Assert(matchResult.Groups["seatNumber"].Success || matchResult.Groups["playerName"].Success, "Detect button line matched, but no seatNumber or playerName set");
+                int seatNumber = -1;
 
+                if (matchResult.Groups["seatNumber"].Success)
+                {
+                    seatNumber = Int32.Parse(matchResult.Groups["seatNumber"].Value);
+                }
+                else if (matchResult.Groups["playerName"].Success)
+                {
+                    String playerName = matchResult.Groups["playerName"].Value;
+                    foreach (int seat in playerSeats.Keys)
+                    {
+                        if ((String)playerSeats[seat] == playerName)
+                        {
+                            seatNumber = seat;
+                            break;
+                        }
+                    }
+                    Trace.Assert(seatNumber != -1, "Button's player name found, but he's not in our players list");
+                }
+
+                OnFoundButton(seatNumber);
                 lastButtonSeatNumber = seatNumber; // Save
             }
         }
@@ -587,10 +606,14 @@ namespace PokerMuck
 
             else if (pokerClient.HasRegex("hand_history_begin_showdown_phase_token") && (foundMatch = LineMatchesRegex(line, pokerClient.GetRegex("hand_history_begin_showdown_phase_token"))))
             {
-                // Not all poker clients tell us when (and if) showdown begins, in this case we have it (and found it in the line)
-                currentGamePhase = HoldemGamePhase.Showdown;
-                ShowdownEventRaised = true;
-                OnShowdownWillBegin();
+                // Avoid double event calling if there are multiple showdowns for main/side pots
+                if (currentGamePhase != HoldemGamePhase.Showdown)
+                {
+                    // Not all poker clients tell us when (and if) showdown begins, in this case we have it (and found it in the line)
+                    currentGamePhase = HoldemGamePhase.Showdown;
+                    ShowdownEventRaised = true;
+                    OnShowdownWillBegin();
+                }
             }
             else if (!pokerClient.HasRegex("hand_history_begin_showdown_phase_token"))
             {

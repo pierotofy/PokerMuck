@@ -359,6 +359,7 @@ namespace PokerMuck
             PokerClientsList.Add(new PokerStars());
             PokerClientsList.Add(new PartyPoker());
             PokerClientsList.Add(new GDPoker());
+            PokerClientsList.Add(new SealsWithClubs());
 
             PokerClientsList.SetDefault(new PokerStars());
         }

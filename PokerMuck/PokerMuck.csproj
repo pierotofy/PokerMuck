@@ -32,8 +32,8 @@
     <MinimumRequiredVersion>0.1.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>0.2.2.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>0.2.3.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -60,10 +60,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>DEFAEA458DBA261A9BEBE5F6440ABF7545067573</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>999C6BCFA12A03C44057F06408533B6F7872DA31</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PokerMuck_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PokerMuck_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -143,6 +143,7 @@
     <Compile Include="Classes\PokerClients\PartyPoker.cs" />
     <Compile Include="Classes\PokerClients\FullTilt.cs" />
     <Compile Include="Classes\PokerClients\PokerStars.cs" />
+    <Compile Include="Classes\PokerClients\SealsWithClubs.cs" />
     <Compile Include="Classes\Ranking\PostSubmitter.cs" />
     <Compile Include="Classes\Ranking\Rank.cs" />
     <Compile Include="Classes\Ranking\RankScanner.cs" />
@@ -368,6 +369,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="PokerMuck_1_TemporaryKey.pfx" />
     <None Include="PokerMuck_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -1089,9 +1091,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
       <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
+      <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>

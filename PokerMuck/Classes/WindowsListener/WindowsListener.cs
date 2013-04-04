@@ -147,7 +147,10 @@ namespace PokerMuck
             for (int i = 0; i < items; i++)
             {
                 Window window = windowsListToMonitor[i];
-                if (!window.Exists())
+
+                // (!window.Minimized && !window.Visible) is currently there for fixing a glitch in the SWC
+                // client, which does not destroy the windows it creates but simply sets them invisible
+                if (!window.Exists() || (!window.Minimized && !window.Visible))
                 {
                     // Notify handler
                     handler.WindowClosed(window.Title);

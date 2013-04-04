@@ -42,25 +42,27 @@
             this.cmbPokerClient = new System.Windows.Forms.ComboBox();
             this.btnChangeHandHistory = new System.Windows.Forms.Button();
             this.txtHandHistoryDirectory = new System.Windows.Forms.TextBox();
+            this.tabTools = new System.Windows.Forms.TabPage();
+            this.btnTakeWindowScreenshot = new System.Windows.Forms.Button();
             this.tabAboutPage = new System.Windows.Forms.TabPage();
             this.btnSendTweet = new System.Windows.Forms.Button();
             this.pictureEagle = new System.Windows.Forms.PictureBox();
             this.btnJoinFacebookPage = new System.Windows.Forms.Button();
             this.picturePokerMuckIcon = new System.Windows.Forms.PictureBox();
-            this.btnDonate = new System.Windows.Forms.Button();
+            this.btnDonatePaypal = new System.Windows.Forms.Button();
             this.lblDonate = new System.Windows.Forms.Label();
             this.lblPokerMuckLink = new System.Windows.Forms.LinkLabel();
             this.lblProgramName = new System.Windows.Forms.Label();
+            this.txtBitcoinAddr = new System.Windows.Forms.TextBox();
+            this.btnDonateBitcoin = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.tabTools = new System.Windows.Forms.TabPage();
-            this.btnTakeWindowScreenshot = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabDebug.SuspendLayout();
             this.tabConfigurationPage.SuspendLayout();
+            this.tabTools.SuspendLayout();
             this.tabAboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picturePokerMuckIcon)).BeginInit();
-            this.tabTools.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -213,16 +215,40 @@
             this.txtHandHistoryDirectory.Size = new System.Drawing.Size(304, 20);
             this.txtHandHistoryDirectory.TabIndex = 1;
             // 
+            // tabTools
+            // 
+            this.tabTools.Controls.Add(this.btnTakeWindowScreenshot);
+            this.tabTools.Location = new System.Drawing.Point(4, 22);
+            this.tabTools.Name = "tabTools";
+            this.tabTools.Size = new System.Drawing.Size(320, 354);
+            this.tabTools.TabIndex = 3;
+            this.tabTools.Text = "Tools";
+            this.tabTools.UseVisualStyleBackColor = true;
+            // 
+            // btnTakeWindowScreenshot
+            // 
+            this.btnTakeWindowScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTakeWindowScreenshot.Location = new System.Drawing.Point(8, 8);
+            this.btnTakeWindowScreenshot.Name = "btnTakeWindowScreenshot";
+            this.btnTakeWindowScreenshot.Size = new System.Drawing.Size(304, 26);
+            this.btnTakeWindowScreenshot.TabIndex = 0;
+            this.btnTakeWindowScreenshot.Text = "Take client window screenshot";
+            this.btnTakeWindowScreenshot.UseVisualStyleBackColor = true;
+            this.btnTakeWindowScreenshot.Click += new System.EventHandler(this.btnTakeWindowScreenshot_Click);
+            // 
             // tabAboutPage
             // 
             this.tabAboutPage.Controls.Add(this.btnSendTweet);
             this.tabAboutPage.Controls.Add(this.pictureEagle);
             this.tabAboutPage.Controls.Add(this.btnJoinFacebookPage);
             this.tabAboutPage.Controls.Add(this.picturePokerMuckIcon);
-            this.tabAboutPage.Controls.Add(this.btnDonate);
+            this.tabAboutPage.Controls.Add(this.btnDonatePaypal);
             this.tabAboutPage.Controls.Add(this.lblDonate);
-            this.tabAboutPage.Controls.Add(this.lblPokerMuckLink);
             this.tabAboutPage.Controls.Add(this.lblProgramName);
+            this.tabAboutPage.Controls.Add(this.txtBitcoinAddr);
+            this.tabAboutPage.Controls.Add(this.btnDonateBitcoin);
+            this.tabAboutPage.Controls.Add(this.lblPokerMuckLink);
             this.tabAboutPage.Location = new System.Drawing.Point(4, 22);
             this.tabAboutPage.Name = "tabAboutPage";
             this.tabAboutPage.Size = new System.Drawing.Size(320, 354);
@@ -235,11 +261,11 @@
             this.btnSendTweet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSendTweet.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSendTweet.Location = new System.Drawing.Point(8, 231);
+            this.btnSendTweet.Location = new System.Drawing.Point(11, 267);
             this.btnSendTweet.Name = "btnSendTweet";
             this.btnSendTweet.Size = new System.Drawing.Size(301, 30);
             this.btnSendTweet.TabIndex = 7;
-            this.btnSendTweet.Text = "3. Send a Tweet about us";
+            this.btnSendTweet.Text = "4. Send a Tweet about us";
             this.btnSendTweet.UseVisualStyleBackColor = true;
             this.btnSendTweet.Click += new System.EventHandler(this.btnSendTweet_Click);
             // 
@@ -260,11 +286,11 @@
             this.btnJoinFacebookPage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnJoinFacebookPage.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnJoinFacebookPage.Location = new System.Drawing.Point(11, 195);
+            this.btnJoinFacebookPage.Location = new System.Drawing.Point(11, 231);
             this.btnJoinFacebookPage.Name = "btnJoinFacebookPage";
             this.btnJoinFacebookPage.Size = new System.Drawing.Size(301, 30);
             this.btnJoinFacebookPage.TabIndex = 6;
-            this.btnJoinFacebookPage.Text = "2. Join our page on Facebook";
+            this.btnJoinFacebookPage.Text = "3. Join our page on Facebook";
             this.btnJoinFacebookPage.UseVisualStyleBackColor = true;
             this.btnJoinFacebookPage.Click += new System.EventHandler(this.btnJoinFacebookPage_Click);
             // 
@@ -280,18 +306,18 @@
             this.picturePokerMuckIcon.TabIndex = 5;
             this.picturePokerMuckIcon.TabStop = false;
             // 
-            // btnDonate
+            // btnDonatePaypal
             // 
-            this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnDonatePaypal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDonate.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDonate.Location = new System.Drawing.Point(11, 159);
-            this.btnDonate.Name = "btnDonate";
-            this.btnDonate.Size = new System.Drawing.Size(301, 30);
-            this.btnDonate.TabIndex = 4;
-            this.btnDonate.Text = "1. Donate (via Paypal)";
-            this.btnDonate.UseVisualStyleBackColor = true;
-            this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
+            this.btnDonatePaypal.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDonatePaypal.Location = new System.Drawing.Point(11, 159);
+            this.btnDonatePaypal.Name = "btnDonatePaypal";
+            this.btnDonatePaypal.Size = new System.Drawing.Size(301, 30);
+            this.btnDonatePaypal.TabIndex = 4;
+            this.btnDonatePaypal.Text = "1. Donate (via Paypal)";
+            this.btnDonatePaypal.UseVisualStyleBackColor = true;
+            this.btnDonatePaypal.Click += new System.EventHandler(this.btnDonate_Click);
             // 
             // lblDonate
             // 
@@ -332,6 +358,33 @@
             this.lblProgramName.Text = "PokerMuck";
             this.lblProgramName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // txtBitcoinAddr
+            // 
+            this.txtBitcoinAddr.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBitcoinAddr.Location = new System.Drawing.Point(11, 200);
+            this.txtBitcoinAddr.Name = "txtBitcoinAddr";
+            this.txtBitcoinAddr.ReadOnly = true;
+            this.txtBitcoinAddr.Size = new System.Drawing.Size(301, 20);
+            this.txtBitcoinAddr.TabIndex = 9;
+            this.txtBitcoinAddr.TabStop = false;
+            this.txtBitcoinAddr.Text = "17A9QgZzpNwDvB77SMiwULBbLHyecDPXpg";
+            this.txtBitcoinAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtBitcoinAddr.Visible = false;
+            // 
+            // btnDonateBitcoin
+            // 
+            this.btnDonateBitcoin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDonateBitcoin.Font = new System.Drawing.Font("Arial Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDonateBitcoin.Location = new System.Drawing.Point(11, 195);
+            this.btnDonateBitcoin.Name = "btnDonateBitcoin";
+            this.btnDonateBitcoin.Size = new System.Drawing.Size(301, 30);
+            this.btnDonateBitcoin.TabIndex = 8;
+            this.btnDonateBitcoin.Text = "2. Donate (via Bitcoin)";
+            this.btnDonateBitcoin.UseVisualStyleBackColor = true;
+            this.btnDonateBitcoin.Click += new System.EventHandler(this.btnDonateBitcoin_Click);
+            // 
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.White;
@@ -343,28 +396,6 @@
             this.lblStatus.TabIndex = 4;
             this.lblStatus.Text = "Status Label";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tabTools
-            // 
-            this.tabTools.Controls.Add(this.btnTakeWindowScreenshot);
-            this.tabTools.Location = new System.Drawing.Point(4, 22);
-            this.tabTools.Name = "tabTools";
-            this.tabTools.Size = new System.Drawing.Size(320, 354);
-            this.tabTools.TabIndex = 3;
-            this.tabTools.Text = "Tools";
-            this.tabTools.UseVisualStyleBackColor = true;
-            // 
-            // btnTakeWindowScreenshot
-            // 
-            this.btnTakeWindowScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTakeWindowScreenshot.Location = new System.Drawing.Point(8, 8);
-            this.btnTakeWindowScreenshot.Name = "btnTakeWindowScreenshot";
-            this.btnTakeWindowScreenshot.Size = new System.Drawing.Size(304, 26);
-            this.btnTakeWindowScreenshot.TabIndex = 0;
-            this.btnTakeWindowScreenshot.Text = "Take client window screenshot";
-            this.btnTakeWindowScreenshot.UseVisualStyleBackColor = true;
-            this.btnTakeWindowScreenshot.Click += new System.EventHandler(this.btnTakeWindowScreenshot_Click);
             // 
             // FrmMain
             // 
@@ -388,10 +419,11 @@
             this.tabDebug.ResumeLayout(false);
             this.tabConfigurationPage.ResumeLayout(false);
             this.tabConfigurationPage.PerformLayout();
+            this.tabTools.ResumeLayout(false);
             this.tabAboutPage.ResumeLayout(false);
+            this.tabAboutPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEagle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picturePokerMuckIcon)).EndInit();
-            this.tabTools.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -411,7 +443,7 @@
         private System.Windows.Forms.Label lblProgramName;
         private System.Windows.Forms.LinkLabel lblPokerMuckLink;
         private System.Windows.Forms.Label lblDonate;
-        private System.Windows.Forms.Button btnDonate;
+        private System.Windows.Forms.Button btnDonatePaypal;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label lblPokerClientTheme;
         private System.Windows.Forms.ComboBox cmbPokerClientTheme;
@@ -423,6 +455,8 @@
         private System.Windows.Forms.Button btnSendTweet;
         private System.Windows.Forms.TabPage tabTools;
         private System.Windows.Forms.Button btnTakeWindowScreenshot;
+        private System.Windows.Forms.Button btnDonateBitcoin;
+        private System.Windows.Forms.TextBox txtBitcoinAddr;
 
 
     }

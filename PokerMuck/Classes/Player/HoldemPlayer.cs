@@ -446,7 +446,7 @@ namespace PokerMuck
 
                         if (classificationPostFlop.HasADraw())
                         {
-                            HoldemPlayerAction action = HoldemPlayerAction.Fold;
+                            HoldemPlayerAction action = HoldemPlayerAction.None;
 
                             if (calls[phase].WasIncremented) action = HoldemPlayerAction.Call;
                             else if (raises[phase].WasIncremented) action = HoldemPlayerAction.Raise;
@@ -458,7 +458,7 @@ namespace PokerMuck
                             else if (checkCalls[phase].WasIncremented) action = HoldemPlayerAction.CheckCall;
                             else if (checkFolds[phase].WasIncremented) action = HoldemPlayerAction.CheckFold;
 
-                            draws[phase, action].Increment();
+                            if (action != HoldemPlayerAction.None) draws[phase, action].Increment();
                         }
                     }
                 }
