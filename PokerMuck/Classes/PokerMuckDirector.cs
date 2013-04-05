@@ -261,6 +261,13 @@ namespace PokerMuck
              * Same for "TableDisplayWindow" */
             if (windowTitle == "HudWindow" || windowTitle == "TableDisplayWindow") return;
 
+            // Make sure the hand history directory is set (otherwise we cannot create a table)
+            if (!System.IO.Directory.Exists(Globals.UserSettings.StoredHandHistoryDirectory))
+            {
+                Trace.WriteLine("A valid game is available on window " + windowTitle + ", but the hand history path is invalid. Fix the hand history path in your settings");
+                return;
+            }
+
             Trace.WriteLine(String.Format("Window title: {0}", windowTitle));
 
             String pattern = pokerClient.GetHandHistoryFilenameRegexPatternFromWindowTitle(windowTitle);
