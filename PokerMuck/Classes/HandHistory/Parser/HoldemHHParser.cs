@@ -210,8 +210,6 @@ namespace PokerMuck
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_game_id_token"), out matchResult))
             {
                 currentGameId = matchResult.Groups["gameId"].Value;
-                OnNewGameHasStarted(currentGameId);
-
             }
             
             if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_table_token"), out matchResult))
@@ -222,11 +220,8 @@ namespace PokerMuck
                 Trace.WriteLine("Table: " + currentTableId);
                 Trace.WriteLine("Max seating capacity: " + maxSeatingCapacity);
 
-                if (currentGameId != String.Empty) OnNewTableHasBeenCreated(currentGameId, currentTableId);
-                else
-                {
-                    Trace.WriteLine(String.Format("Table ID {0} found but no game ID has been assigned to this parser yet. Ignoring event.", currentTableId));
-                }
+                // Note: often currentGameId will be null because we don't have that information
+                OnNewTableHasBeenCreated(currentGameId, currentTableId);
 
                 // Abemus max seating capacity?
                 if (maxSeatingCapacity != String.Empty)

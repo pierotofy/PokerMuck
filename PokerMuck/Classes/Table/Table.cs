@@ -209,7 +209,15 @@ namespace PokerMuck
          * this means that the UI can finally be updated. */
         public void EndOfFileReached(String filename)
         {
-            UpdateUI();
+            // We cannot display the UI if a proper parser hasn't been found
+            if (Game != PokerGame.Unknown)
+            {
+                UpdateUI();
+            }
+            else
+            {
+                Trace.WriteLine("Cannot update UI until a valid parser is found.");
+            }
         }
 
 

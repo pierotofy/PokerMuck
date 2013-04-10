@@ -32,7 +32,17 @@ namespace PokerMuck
             if (pattern != String.Empty)
             {
                 // Create regex
-                Regex regex = new Regex(pattern);
+                Regex regex;
+                try
+                {
+                    regex = new Regex(pattern);
+                }
+                catch (System.ArgumentException)
+                {
+                    // Invalid regex match
+                    Trace.WriteLine("Warning! The pattern for the hand history could not be compiled: " + pattern);
+                    return String.Empty;
+                }
 
                 try
                 {

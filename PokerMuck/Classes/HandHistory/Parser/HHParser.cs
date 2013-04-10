@@ -37,15 +37,6 @@ namespace PokerMuck
         {
             if (PlayerIsSeated != null) PlayerIsSeated(playerName, seatNumber);
         }
-        
-        /* A new game has begun */
-        public delegate void NewGameHasStartedHandler(String gameId); // TODO: do I really need gameID?
-        public event NewGameHasStartedHandler NewGameHasStarted;
-
-        protected void OnNewGameHasStarted(String gameId)
-        {
-            if (NewGameHasStarted != null) NewGameHasStarted(gameId);
-        }
 
         /* Cards are about to be dealt */
         public delegate void HoleCardsWillBeDealtHandler();

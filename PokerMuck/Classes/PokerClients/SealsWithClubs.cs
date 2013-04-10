@@ -29,8 +29,9 @@ namespace PokerMuck
             {
                 /* To recognize a valid game window title
                   * ex. NLHE 9max normal 10 #2 - Table 1 - NL Hold'em (9+1) - Logged in as stallion 
-                  *     Every Hour Three Prizes - Table 5 - NL Hold'em (0+0) - Logged in as stallion */
-                regex.Add("game_window_title_to_recognize_games", @"^(?<gameId>.+) - .+ - Logged in as .+$");
+                  *     Every Hour Three Prizes - Table 5 - NL Hold'em (0+0) - Logged in as stallion
+                 *      PLO 9max 1/1 #1 - PL Omaha (200 - 100) - Logged in as stallion */
+                regex.Add("game_window_title_to_recognize_games", @"^((?<gameId>.+ - Table [\d]+) - .+ - Logged in as .+|(?<gameId>.+) - .+ \([\d- ]+\) - Logged in as .+)$");
 
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"\*\* Hole Cards \*\*");
@@ -48,12 +49,14 @@ namespace PokerMuck
                 regex.Add("hand_history_game_id_token", @"^Hand #(?<handId>[\d]+) - ");
 
                 /* Recognize the table ID and max seating capacity (if available) 
-                 ex. Table: Every Hour Three Prizes - Table 6 */
-                regex.Add("hand_history_table_token", @"^Table: (?<tableId>.+) - ");
+                 ex. Table: Every Hour Three Prizes - Table 6 
+                     Table: NLHE 9max 1/1 #3*/
+                regex.Add("hand_history_table_token", @"^Table: (?<tableId>.+)");
 
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
-                 * ex. Game: NL Hold'em (0+0) - Blinds 75/150 */
-                regex.Add("hand_history_game_token", @"^Game: (?<gameType>.+) \([\d\+]+\) - ");
+                 * ex. Game: NL Hold'em (0+0) - Blinds 75/150 
+                       Game: NL Hold'em (20 - 100) - Blinds 1/1*/
+                regex.Add("hand_history_game_token", @"^Game: (?<gameType>.+) \([\d\+\- ]+\) - ");
 
                 /* Recognize players 
                  Ex. Seat 1: lolsupp123 (900)
@@ -88,11 +91,11 @@ namespace PokerMuck
 
                 /* Detect calls
                  * ex. SILJCAR calls $0.02 */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.\,]+[\d]+)");
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.\,]+[\d]*)");
 
                 /* Detect bets
                    ex. kan-ikkje bets $0.02 */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.\,]+[\d]+)");
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.\,]+[\d]*)");
 
                 /* Detect folds
                  * ex. kan-ikkje folds */
@@ -104,7 +107,7 @@ namespace PokerMuck
 
                 /* Detect raises 
                  * ex. SILJCAR raises to $0.04 */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d\.\,]+[\d]+)");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d\.\,]+[\d]*)");
 
                 /* Recognize end of round character sequence (in SWC it's a blank line) */
                 regex.Add("hand_history_detect_end_of_round", @"^$");
@@ -164,7 +167,7 @@ namespace PokerMuck
                 DateTime now = DateTime.Now;
                 String date = String.Format(@"{0}{1}{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
 
-                return "HH" + date + " " + gameId;
+                return ("HH" + date + " " + gameId).Replace("/", "-").Replace("#", "");
             }
             else
             {
