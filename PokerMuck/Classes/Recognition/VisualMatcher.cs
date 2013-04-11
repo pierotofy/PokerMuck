@@ -246,11 +246,12 @@ namespace PokerMuck
         /* If the user selects a card, returns the card, otherwise null */
         private Card AskUserToConfirm(Bitmap targetImage, Hashtable possibleMatches)
         {
+            /*
             if (possibleMatches.Count == 0)
             {
                 Trace.WriteLine("Warning: We should ask the user to confirm an image, but there are no possible matches...");
                 return null;
-            }
+            }*/
 
             CardMatchSelectDialog dialog = new CardMatchSelectDialog();
             dialog.Location = cardMatchDialogSpawnLocation;

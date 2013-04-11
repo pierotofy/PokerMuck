@@ -95,8 +95,17 @@ namespace PokerMuck
         public abstract PokerGameType GetPokerGameTypeFromWindowTitle(String windowTitle);
 
         /* Given the table token line, it tries to infer the maximum number of seats available
-         * (some clients' histories do not explicitly specify this value) */
-        public abstract int InferMaxSeatingCapacity(String line);
+         * from the hand_history_table_token line of the hand history
+         * (some clients' histories do not explicitly specify this value) 
+         * @param line line that matches the hand_history_table_token regex
+         * @param filename the name of the hand history file that is getting currently processed
+         */
+        public virtual int InferMaxSeatingCapacity(String line, String filename)
+        {
+            Trace.WriteLine("Inferred max seating capacity, but the method is not implemented in derived class.");
+
+            return DEFAULT_MAX_SEATING_CAPACITY;
+        }
 
         /* Certain poker clients display players on screen centered relative to our hero
          * if this is the case, child classes should return true

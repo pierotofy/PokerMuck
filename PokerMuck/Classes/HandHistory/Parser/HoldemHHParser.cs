@@ -150,7 +150,8 @@ namespace PokerMuck
             if (PlayerPushedAllIn != null) PlayerPushedAllIn(playerName, gamePhase);
         }
 
-        public HoldemHHParser(PokerClient pokerClient) : base(pokerClient)
+        public HoldemHHParser(PokerClient pokerClient, String handhistoryFilename)
+            : base(pokerClient, handhistoryFilename)
         {
             // Initialize vars
             PlayerHasShowedThisRound = false;
@@ -236,7 +237,7 @@ namespace PokerMuck
                     // Otherwise, we need to infer
                     if (!pokerClient.HasRegex("hand_history_max_seating_capacity"))
                     {
-                        int inferredMaxCapacity = pokerClient.InferMaxSeatingCapacity(line);
+                        int inferredMaxCapacity = pokerClient.InferMaxSeatingCapacity(line, handhistoryFilename);
                         Trace.WriteLine("Inferred max seating capacity: " + inferredMaxCapacity);
                         OnFoundTableMaxSeatingCapacity(inferredMaxCapacity);
                     }

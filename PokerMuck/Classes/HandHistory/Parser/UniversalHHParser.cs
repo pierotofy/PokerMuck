@@ -15,8 +15,8 @@ namespace PokerMuck
         public delegate void GameDiscoveredHandler(String gameType);
         public event GameDiscoveredHandler GameDiscovered;
 
-        public UniversalHHParser(PokerClient pokerClient)
-            : base(pokerClient)
+        public UniversalHHParser(PokerClient pokerClient, String handhistoryFilename)
+            : base(pokerClient, handhistoryFilename)
         {
             reGameType = pokerClient.GetRegex("hand_history_game_token");
         }

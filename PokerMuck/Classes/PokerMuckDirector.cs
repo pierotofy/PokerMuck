@@ -385,7 +385,7 @@ namespace PokerMuck
 
                 try
                 {
-                    screenshot.Save(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\screenshot.jpg");
+                    screenshot.Save(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\screenshot.png");
                 }
                 catch (Exception)
                 {

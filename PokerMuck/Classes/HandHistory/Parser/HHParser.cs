@@ -93,6 +93,9 @@ namespace PokerMuck
         /* What tableID are we currently parsing? */
         protected String currentTableId;
 
+        /* What is the filename of the current hand history? */
+        protected String handhistoryFilename;
+
         /* Counter for end of round tokens.
          * Every time this variable reaches a certain value (specified in the pokerclient class)
          * OnRoundHasTerminated() is raised.
@@ -100,9 +103,11 @@ namespace PokerMuck
         protected int endOfRoundTokensDetected;
 
         /* This will force subclasses to have a PokerClient in their constructor as well */
-        public HHParser(PokerClient pokerClient)
+        public HHParser(PokerClient pokerClient, String handhistoryFilename)
         {
             this.pokerClient = pokerClient;
+            this.handhistoryFilename = handhistoryFilename;
+
             endOfRoundTokensDetected = 0;
         }
 

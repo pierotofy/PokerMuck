@@ -139,10 +139,38 @@ namespace PokerMuck
             return PokerGameType.Unknown; // It doesn't make a difference to know the game type
         }
 
-        public override int InferMaxSeatingCapacity(string line)
+        public override int InferMaxSeatingCapacity(string line, String filename)
         {
-           // TODO: not sure how to handle this
-            return MAX_SEATING;
+            // SWC does not provide seating information in the hand history itself
+            // but it writes some clues in the filename
+
+            // ex.HH20130405 NLHE 9max 1-1 1.txt
+            //    HH20130405 NLHE HU 1-1 1.txt
+
+            // If we find the a referene to heads-up play, this should be a two seat table
+            if (line.IndexOf(" HU ") != -1) return 2;
+
+            else
+            {
+                Regex r = new Regex(@" (?<maxSeatingCapacity>[\d]+)max ");
+
+                // If we find the word "max" with a number before it, then we guess that that's the max number of seats
+                Match m = r.Match(line);
+                if (m.Success)
+                {
+                    String maxSeatingCapacity = m.Groups["maxSeatingCapacity"].Value;
+                    int maxCapacityGuess = Int32.Parse(maxSeatingCapacity);
+
+                    Trace.WriteLine("Matched max seating capacity: " + maxSeatingCapacity + " from " + line);
+
+                    return maxCapacityGuess;
+                }
+                else
+                {
+                    // No luck, return default value, hoping for the best
+                    return MAX_SEATING;
+                }
+            }
         }
 
         /**
@@ -154,6 +182,7 @@ namespace PokerMuck
             // TODO REMOVE IN PRODUCTION
             if (windowTitle == "test.txt - Notepad") return "test.txt";
             if (windowTitle == "test2.txt - Notepad") return "test2.txt";
+            //if (windowTitle == "HH20130405 NLHE 9max 1-1 1.txt - Notepad") return "HH20130405 NLHE 9max 1-1 1.txt";
 
             Regex regex = GetRegex("game_window_title_to_recognize_games");
             Match match = regex.Match(windowTitle);

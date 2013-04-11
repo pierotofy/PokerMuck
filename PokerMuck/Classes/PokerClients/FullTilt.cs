@@ -141,7 +141,7 @@ namespace PokerMuck
             return PokerGame.Unknown; //Default
         }
 
-        public override int InferMaxSeatingCapacity(string line)
+        public override int InferMaxSeatingCapacity(string line, String filename)
         {
             // line = Full Tilt Poker Game #29457232449: Table Escondido (shallow) - $0.01/$0.02 - No Limit Hold'em - 18:34:48 ET - 2011/03/29
             

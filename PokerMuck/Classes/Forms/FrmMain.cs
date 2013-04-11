@@ -363,7 +363,7 @@ namespace PokerMuck
                     Director_RunGUIRoutine((Action)delegate()
                     {
                         if (success){
-                            MessageBox.Show("Screenshot saved as screenshot.jpg on Desktop", "Success");
+                            MessageBox.Show("Screenshot saved as screenshot.png on Desktop", "Success");
                         }else{
                             MessageBox.Show("Could not take screenshot.", "Error");
                         }

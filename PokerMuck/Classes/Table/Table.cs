@@ -156,7 +156,7 @@ namespace PokerMuck
             this.displayWindow = PokerMuck.TableDisplayWindow.CreateForTable(this);
 
             // By default we use the universal parser
-            handHistoryParser = new UniversalHHParser(pokerClient);
+            handHistoryParser = new UniversalHHParser(pokerClient, System.IO.Path.GetFileName(handHistoryFilePath));
 
             // But as soon as we find what kind of game we're using, we're going to update our parser */
             ((UniversalHHParser)handHistoryParser).GameDiscovered += new UniversalHHParser.GameDiscoveredHandler(handHistoryParser_GameDiscovered);
@@ -237,7 +237,7 @@ namespace PokerMuck
         {
             Globals.Director.RunFromGUIThread((Action)delegate()
             {
-                DisplayWindow.Show();
+                if (DisplayWindow != null) DisplayWindow.Show();
             }, false);
         }
 
@@ -245,7 +245,7 @@ namespace PokerMuck
         {
             Globals.Director.RunFromGUIThread((Action)delegate()
             {
-                DisplayWindow.Hide();
+                if (DisplayWindow != null) DisplayWindow.Hide();
             }, false);
         }
 
@@ -277,7 +277,7 @@ namespace PokerMuck
                 Globals.Director.RunFromGUIThread(
                     (Action)delegate()
                     {
-                        DisplayWindow.ClearMuck();
+                        if (DisplayWindow != null) DisplayWindow.ClearMuck();
                     }, false
                     );
 
@@ -286,7 +286,7 @@ namespace PokerMuck
                     Globals.Director.RunFromGUIThread(
                         (Action)delegate()
                         {
-                            DisplayWindow.DisplayPlayerMuckedHand(p.Name, p.MuckedHand);
+                            if (DisplayWindow != null) DisplayWindow.DisplayPlayerMuckedHand(p.Name, p.MuckedHand);
                         }, false
                         );
                 }
@@ -295,7 +295,7 @@ namespace PokerMuck
                     Globals.Director.RunFromGUIThread(
                         (Action)delegate()
                         {
-                            DisplayWindow.DisplayFinalBoard(FinalBoard);
+                            if (DisplayWindow != null) DisplayWindow.DisplayFinalBoard(FinalBoard);
                         }, false
                     );   
                     FinalBoard.Displayed = true;
@@ -307,10 +307,10 @@ namespace PokerMuck
                 (Action)delegate()
                 {
                     // Display hud information
-                    Hud.DisplayAndUpdate();
+                    if (Hud != null) Hud.DisplayAndUpdate();
 
                     // Update statistics
-                    DisplayWindow.UpdateStatistics();
+                    if (DisplayWindow != null) DisplayWindow.UpdateStatistics();
                 }, true
              );
         }
@@ -365,7 +365,7 @@ namespace PokerMuck
             /* Clear the table statistics relative to a single round */
             statistics.PrepareStatisticsForNewRound();
 
-            DisplayWindow.ClearHandInformation();
+            if (DisplayWindow != null) DisplayWindow.ClearHandInformation();
         }
 
         private void handHistoryParser_GameDiscovered(string game)
@@ -380,7 +380,7 @@ namespace PokerMuck
             // Holdem?
             if (foundParser = (Game == PokerGame.Holdem))
             {
-                handHistoryParser = new HoldemHHParser(pokerClient);
+                handHistoryParser = new HoldemHHParser(pokerClient, System.IO.Path.GetFileName(handHistoryFilePath));
                 statistics = new HoldemTableStatistics(this);
             }
             else if (Game == PokerGame.Unknown)
@@ -417,8 +417,11 @@ namespace PokerMuck
                 Globals.Director.RunFromGUIThread(
                     (Action)delegate()
                     {
-                        displayWindow = TableDisplayWindow.CreateForTable(this);
-                        displayWindow.Show();
+                        if (displayWindow != null)
+                        {
+                            displayWindow = TableDisplayWindow.CreateForTable(this);
+                            displayWindow.Show();
+                        }
                     }, false
                  );              
             }
@@ -485,7 +488,7 @@ namespace PokerMuck
 
                 Globals.Director.RunFromGUIThread((Action)delegate()
                 {
-                    displayWindow.SetVisualRecognitionSupported(true);
+                    if (displayWindow != null) displayWindow.SetVisualRecognitionSupported(true);
                 }, false);
             }
             else
@@ -494,7 +497,7 @@ namespace PokerMuck
 
                 Globals.Director.RunFromGUIThread((Action)delegate()
                 {
-                    displayWindow.SetVisualRecognitionSupported(false);
+                    if (displayWindow != null) displayWindow.SetVisualRecognitionSupported(false);
                 }, false);
             }
         }
@@ -504,7 +507,7 @@ namespace PokerMuck
         {
             Globals.Director.RunFromGUIThread((Action)delegate()
             {
-                DisplayWindow.DisplayPlayerHand(playerCards);
+                if (DisplayWindow != null) DisplayWindow.DisplayPlayerHand(playerCards);
             }, true);
             
         }
@@ -513,7 +516,7 @@ namespace PokerMuck
         {
             Globals.Director.RunFromGUIThread((Action)delegate()
             {
-                if (Game == PokerGame.Holdem){
+                if (Game == PokerGame.Holdem && DisplayWindow != null){
                     ((HoldemTableDisplayWindow)DisplayWindow).DisplayBoard(board);
                 }                
             }, true);
@@ -606,22 +609,24 @@ namespace PokerMuck
             PlayerList.Clear();
             if (hhMonitor != null) hhMonitor.StopMonitoring();
             if (visualRecognitionManager != null) visualRecognitionManager.Cleanup();
-            if (DisplayWindow != null)
+
+            Globals.Director.RunFromGUIThread((Action)delegate()
             {
-                Globals.Director.RunFromGUIThread((Action)delegate()
+                if (DisplayWindow != null)
                 {
                     displayWindow.Close();
                     displayWindow = null;
-                }, false);
-            }
-            if (Hud != null)
-            {
-                Globals.Director.RunFromGUIThread((Action)delegate()
+                }
+            }, false);
+
+            Globals.Director.RunFromGUIThread((Action)delegate()
+            {            
+                if (Hud != null)
                 {
                     Hud.RemoveHud();
                     Hud = null;
-                }, false);
-            }
+                }
+            }, false);
         }
 
         public override string ToString()

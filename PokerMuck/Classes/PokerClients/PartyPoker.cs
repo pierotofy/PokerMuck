@@ -146,13 +146,6 @@ namespace PokerMuck
             return PokerGame.Unknown; //Default
         }
 
-        public override int InferMaxSeatingCapacity(string line)
-        {
-            Trace.WriteLine("Inferred max seating capacity. Must fix this");
-
-            return DEFAULT_MAX_SEATING_CAPACITY;
-        }
-
         /**
          * This function matches an open window title with patterns to recognize which hand history
          * the current window refers to (if it is even a poker game window). It will return an empty
