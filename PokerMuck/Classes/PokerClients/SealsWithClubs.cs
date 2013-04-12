@@ -38,7 +38,7 @@ namespace PokerMuck
                 regex.Add("hand_history_begin_flop_phase_token", @"\*\* Flop \*\* \[(?<flopCards>[\d\w ]+)\]");
                 regex.Add("hand_history_begin_turn_phase_token", @"\*\* Turn \*\* \[(?<turnCard>[\d\w ]+)\]");
                 regex.Add("hand_history_begin_river_phase_token", @"\*\* River \*\* \[(?<riverCard>[\d\w ]+)\]");
-                regex.Add("hand_history_begin_showdown_phase_token", @"\*\* ((Side|Main) )?Pot ([\d]? )Show Down \*\*");
+                regex.Add("hand_history_begin_showdown_phase_token", @"\*\* ((Side|Main) )?Pot ([\d] )?Show Down \*\*");
                 regex.Add("hand_history_begin_summary_phase_token", @"\*\* Summary \*\*"); // There's no summary in SWC, but we need to include it
 
 
@@ -56,10 +56,11 @@ namespace PokerMuck
                 /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
                  * ex. Game: NL Hold'em (0+0) - Blinds 75/150 
                        Game: NL Hold'em (20 - 100) - Blinds 1/1*/
-                regex.Add("hand_history_game_token", @"^Game: (?<gameType>.+) \([\d\+\- ]+\) - ");
+                regex.Add("hand_history_game_token", @"^Game: (?<gameType>.+) \([\d\+\- \.]+\) - ");
 
                 /* Recognize players 
                  Ex. Seat 1: lolsupp123 (900)
+                 *   Seat 3: shiftysean (330.02)
                  */
                 regex.Add("hand_history_detect_player_in_game", @"^Seat (?<seatNumber>[\d]+): (?<playerName>.+) \((€|\$)?[\d\.]+\)");
 

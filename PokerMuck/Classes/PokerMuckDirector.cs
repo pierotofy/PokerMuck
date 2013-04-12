@@ -86,6 +86,10 @@ namespace PokerMuck
             // Init new files monitor
             newFilesMonitor = new NewFilesMonitor(Globals.UserSettings.HandHistoryDirectory, this);
             newFilesMonitor.StartMonitoring();
+
+            // Save the settings
+            // This is useful in case some default settings have changed in the last update
+            Globals.UserSettings.Save();
         }
 
 
