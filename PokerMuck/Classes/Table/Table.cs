@@ -77,6 +77,15 @@ namespace PokerMuck
             }
         }
 
+        /* Whether the current table is minimized */
+        public bool Minimized
+        {
+            get
+            {
+                return window.Minimized;
+            }
+        }
+
         // Window associated with this table
         private Window window; 
 

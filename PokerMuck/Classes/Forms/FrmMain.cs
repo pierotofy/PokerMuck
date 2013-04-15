@@ -357,7 +357,7 @@ namespace PokerMuck
 
             Thread t = new Thread(new ThreadStart((Action)delegate()
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(2000);
                     bool success = Globals.Director.TakeActiveWindowScreenshot(true);
 
                     Director_RunGUIRoutine((Action)delegate()

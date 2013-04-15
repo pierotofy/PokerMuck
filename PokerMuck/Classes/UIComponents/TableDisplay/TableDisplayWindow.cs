@@ -217,12 +217,16 @@ namespace PokerMuck
 
         private void SaveRelativeWindowPosition()
         {
-            Point absolutePosition = this.Location;
-            Rectangle tableRect = table.WindowRect;
-            Point relativePosition = new Point(absolutePosition.X - tableRect.X, absolutePosition.Y - tableRect.Y);
+            // Don't save if it's minimized, it will compute a big relativePosition and make the hud disappear
+            if (!table.Minimized)
+            {
+                Point absolutePosition = this.Location;
+                Rectangle tableRect = table.WindowRect;
+                Point relativePosition = new Point(absolutePosition.X - tableRect.X, absolutePosition.Y - tableRect.Y);
 
-            Globals.UserSettings.TableDisplayRelativeWindowPosition = relativePosition;
-            Globals.UserSettings.Save();
+                Globals.UserSettings.TableDisplayRelativeWindowPosition = relativePosition;
+                Globals.UserSettings.Save();
+            }
         }
 
         private Size LoadWindowSize()

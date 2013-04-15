@@ -1029,7 +1029,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\ColorMaps\Seals With Clubs\Holdem_2-max_Default.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ColorMaps\Seals With Clubs\Holdem_6-max_Default.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ColorMaps\Seals With Clubs\Holdem_9-max_Default.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\PokerMuck-Logo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
