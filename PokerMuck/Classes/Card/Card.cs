@@ -27,7 +27,7 @@ namespace PokerMuck
          * suit_face.ext , starting from 1, face = 1 = ace */
         public static Card CreateFromPath(String path)
         {
-            Regex fileToCardRegex = new Regex(@"(?<suit>[\d]+)_(?<face>[\d]+)\.[\w]{3}");
+            Regex fileToCardRegex = new Regex(@"(?<suit>[1-4])_(?<face>[1-9][0-3]?)\.[\w]{3}$");
             Match match = fileToCardRegex.Match(path);
             if (match.Success)
             {

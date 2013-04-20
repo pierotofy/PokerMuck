@@ -108,6 +108,8 @@ namespace PokerMuck
          *  (but they might be incomplete). If this parameter is set to false, null is returned on failure. */
         public CardList MatchCards(List<Bitmap> images, bool allowPartialMatch)
         {
+            if (images.Count == 0) return null;
+
             CardList result = new CardList();
 
             foreach (Bitmap image in images)
@@ -238,7 +240,7 @@ namespace PokerMuck
             }
 
             // If the user has selected a card, matchedCard is an object and this is skipped
-            if (minDifference < PERFECT_MATCH_HISTOGRAM_THRESHOLD && matchedCard == null) matchedCard = Card.CreateFromPath(bestMatchFilename);
+            if (minDifference < PERFECT_MATCH_HISTOGRAM_THRESHOLD && matchedCard == null && bestMatchFilename != "") matchedCard = Card.CreateFromPath(bestMatchFilename);
 
             return matchedCard;
         }

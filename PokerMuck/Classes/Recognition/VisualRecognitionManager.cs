@@ -73,6 +73,9 @@ namespace PokerMuck
                 return; // At next iteration this code should not be executed because sizes will be the same, unless the player resizes the window
             }
 
+            // If we don't know where the player is seated, we don't need to process any further
+            if (table.CurrentHeroSeat == 0) return;
+
             /* Try to match player cards */
             List<Bitmap> playerCardImages = new List<Bitmap>();
             ArrayList playerCardsActions = colorMap.GetPlayerCardsActions(table.CurrentHeroSeat);

@@ -48,10 +48,7 @@ namespace PokerMuck
             Globals.Director = new PokerMuckDirector();
             Globals.Director.RunGUIRoutine += new PokerMuckDirector.RunGUIRoutineHandler(Director_RunGUIRoutine);
             Globals.Director.DisplayStatus += new PokerMuckDirector.DisplayStatusHandler(Director_DisplayStatus);
-            
-            
-            
-            
+
             /*
             HoldemHand h1 = new HoldemHand(new Card(CardFace.Queen, CardSuit.Diamonds), new Card(CardFace.Ten, CardSuit.Spades));
             HoldemBoard b = new HoldemBoard(new Card(CardFace.Seven, CardSuit.Clubs),
@@ -245,13 +242,25 @@ namespace PokerMuck
             {
                 cmbPokerClientTheme.DataSource = client.SupportedVisualRecognitionThemes;
                 cmbPokerClientTheme.Enabled = true;
+
+                // If a colormap became available during the last update, CurrentTheme needs to be changed
+                if (client.CurrentTheme == "")
+                {
+                    client.SetTheme(client.SupportedVisualRecognitionThemes[0].ToString());
+
+                    // Force save settings
+                    Globals.UserSettings.CurrentPokerClient = client;
+
+                    // Commit
+                    Globals.UserSettings.Save();
+                }
             }
             else
             {
                 ArrayList list = new ArrayList();
                 list.Add("Feature not yet supported");
                 cmbPokerClientTheme.DataSource = list;
-                cmbPokerClientTheme.Enabled = false;                
+                cmbPokerClientTheme.Enabled = false;
             }
         }
 
