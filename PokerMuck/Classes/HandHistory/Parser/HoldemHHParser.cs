@@ -237,7 +237,7 @@ namespace PokerMuck
                     // Otherwise, we need to infer
                     if (!pokerClient.HasRegex("hand_history_max_seating_capacity"))
                     {
-                        int inferredMaxCapacity = pokerClient.InferMaxSeatingCapacity(line, handhistoryFilename);
+                        int inferredMaxCapacity = pokerClient.InferMaxSeatingCapacity(line, handhistoryFilename, currentGameId);
                         Trace.WriteLine("Inferred max seating capacity: " + inferredMaxCapacity);
                         OnFoundTableMaxSeatingCapacity(inferredMaxCapacity);
                     }
@@ -280,6 +280,7 @@ namespace PokerMuck
 
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["amount"].Value);
+                Trace.WriteLine(playerName + " calls");
                 OnPlayerCalled(playerName, amount, currentGamePhase);
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_bet"), out matchResult))
@@ -288,7 +289,14 @@ namespace PokerMuck
 
                 String playerName = matchResult.Groups["playerName"].Value;
                 float amount = float.Parse(matchResult.Groups["amount"].Value);
-                OnPlayerBet(playerName, amount, currentGamePhase);
+                Trace.WriteLine(playerName + " bets " + amount);
+                
+                // Some poker clients mistakenly call a preflop raise a "bet", so we need to account for that
+                if (currentGamePhase == HoldemGamePhase.Preflop) {
+                    OnPlayerRaised(playerName, amount, currentGamePhase);
+                } else {
+                    OnPlayerBet(playerName, amount, currentGamePhase);
+                }
             }
             else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_player_fold"), out matchResult))
             {
@@ -343,12 +351,28 @@ namespace PokerMuck
                 // Retrieve player name
                 String playerName = matchResult.Groups["playerName"].Value;
 
+                // If we don't have a regex for detecting mucked hands, this is where we call a more specialized routine
+                if (!pokerClient.HasRegex("hand_history_detect_mucked_hand")) {
+                    List<KeyValuePair<string,string>> muckedHands = pokerClient.GetMuckedHands(currentGameId);
+                    foreach (var muckedHand in muckedHands) {
+                        List<Card> cards = GenerateCardsFromText(muckedHand.Value);
+
+                        // Sometimes a regex will return only one card (when a player decides to show only one card)
+                        if (cards.Count == 2) {
+                            Hand hand = new HoldemHand(cards[0], cards[1]);
+                            OnPlayerMuckHandAvailable(muckedHand.Key, hand);
+
+                            Trace.WriteLine("Retrieved mucked hand from alternative source (" + muckedHand.Key + ": " + muckedHand.Value + ")");
+                        }
+                    }
+                }
+
                 // Raise event
                 OnFoundWinner(playerName);
             }
 
             /* Search for mucked hands */
-            else if (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_mucked_hand"), out matchResult))
+            else if (pokerClient.HasRegex("hand_history_detect_mucked_hand") && LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_mucked_hand"), out matchResult))
             {
                 // Somebody had to show... keep track of this
                 PlayerHasShowedThisRound = true;
@@ -381,16 +405,20 @@ namespace PokerMuck
             else if (pokerClient.HasRegex("hand_history_detect_small_blind") && (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_small_blind"), out matchResult)))
             {
                 String playerName = matchResult.Groups["playerName"].Value;
-                float amount = float.Parse(matchResult.Groups["smallBlindAmount"].Value);
                 OnFoundSmallBlind(playerName);
-                OnFoundSmallBlindAmount(amount);
+                if (matchResult.Groups["smallBlindAmount"].Success) {
+                    float amount = float.Parse(matchResult.Groups["smallBlindAmount"].Value);
+                    OnFoundSmallBlindAmount(amount);
+                }
             }
             else if (pokerClient.HasRegex("hand_history_detect_big_blind") && (LineMatchesRegex(line, pokerClient.GetRegex("hand_history_detect_big_blind"), out matchResult)))
             {
                 String playerName = matchResult.Groups["playerName"].Value;
-                float amount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
                 OnFoundBigBlind(playerName);
-                OnFoundBigBlindAmount(amount);
+                if (matchResult.Groups["bigBlindAmount"].Success) {
+                    float amount = float.Parse(matchResult.Groups["bigBlindAmount"].Value);
+                    OnFoundBigBlindAmount(amount);
+                }
             }
 
             /* Find the button */

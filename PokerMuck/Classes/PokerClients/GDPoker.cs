@@ -147,7 +147,7 @@ namespace PokerMuck
             }
         }
 
-        public override int InferMaxSeatingCapacity(string line, String filename)
+        public override int InferMaxSeatingCapacity(string line, String filename, String currentGameId)
         {
            // On GB Poker, seats are relative to the player (view is always centered reative to the player position)
            // So for hud positioning purposes, we just say that there are always MAX_SEATING seats

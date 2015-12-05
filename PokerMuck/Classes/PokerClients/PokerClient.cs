@@ -99,12 +99,21 @@ namespace PokerMuck
          * (some clients' histories do not explicitly specify this value) 
          * @param line line that matches the hand_history_table_token regex
          * @param filename the name of the hand history file that is getting currently processed
+         * @param currentGameId the id of the current game
          */
-        public virtual int InferMaxSeatingCapacity(String line, String filename)
+        public virtual int InferMaxSeatingCapacity(String line, String filename, String currentGameId)
         {
             Trace.WriteLine("Inferred max seating capacity, but the method is not implemented in derived class.");
 
             return DEFAULT_MAX_SEATING_CAPACITY;
+        }
+
+        /* Some poker clients do not store the showed/mucked hands in the hand history. You can use this
+         * method to fetch the showdown hands from some other source (DB, filesystem, etc.).
+         * @return list of playerName -> Hand value pairs, where Hand is a string that is sent to GenerateCardsFromText */
+        public virtual List<KeyValuePair<String, String>> GetMuckedHands(String currentGameId) {
+            Trace.WriteLine("Trying to retrieve mucked hands from other source, but is not implemented in derived class.");
+            return new List<KeyValuePair<String, String>>();
         }
 
         /* Certain poker clients display players on screen centered relative to our hero

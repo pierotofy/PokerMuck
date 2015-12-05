@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace PokerMuck
 {
@@ -28,100 +29,80 @@ namespace PokerMuck
             if (CurrentLanguage == "English")
             {
                 /* To recognize a valid game window title
-                  * ex. NLHE 9max normal 10 #2 - Table 1 - NL Hold'em (9+1) - Logged in as stallion 
-                  *     Every Hour Three Prizes - Table 5 - NL Hold'em (0+0) - Logged in as stallion
-                 *      PLO 9max 1/1 #1 - PL Omaha (200 - 100) - Logged in as stallion */
-                regex.Add("game_window_title_to_recognize_games", @"^((?<gameId>.+ - Table [\d]+) - .+ - Logged in as .+|(?<gameId>.+) - .+ \([\d- ]+\) - Logged in as .+)$");
+                  * ex. 20 Chip Deep - 25/50 - T33435 Table 1
+                  *     Carom 2 - 0.01/0.02 - No Limit Holdem
+                  */
+                regex.Add("game_window_title_to_recognize_games", @"^((.+ - (?<gameId>T[\d]+) Table [\d]+)|(?<gameId>.+) - .*Limit Holdem.*)$");
 
                 /* Recognize the Hand History game phases */
-                regex.Add("hand_history_begin_preflop_phase_token", @"\*\* Hole Cards \*\*");
-                regex.Add("hand_history_begin_flop_phase_token", @"\*\* Flop \*\* \[(?<flopCards>[\d\w ]+)\]");
-                regex.Add("hand_history_begin_turn_phase_token", @"\*\* Turn \*\* \[(?<turnCard>[\d\w ]+)\]");
-                regex.Add("hand_history_begin_river_phase_token", @"\*\* River \*\* \[(?<riverCard>[\d\w ]+)\]");
-                regex.Add("hand_history_begin_showdown_phase_token", @"\*\* ((Side|Main) )?Pot ([\d] )?Show Down \*\*");
-                regex.Add("hand_history_begin_summary_phase_token", @"\*\* Summary \*\*"); // There's no summary in SWC, but we need to include it
+                regex.Add("hand_history_begin_preflop_phase_token", @"\*\*\* HOLE CARDS \*\*\*");
+                regex.Add("hand_history_begin_flop_phase_token", @"\*\*\* FLOP \*\*\* \[(?<flopCards>[\d\w ]+)\]");
+                regex.Add("hand_history_begin_turn_phase_token", @"\*\*\* TURN \*\*\* \[(?<turnCard>[\d\w ]+)\]");
+                regex.Add("hand_history_begin_river_phase_token", @"\*\*\* RIVER \*\*\* \[(?<riverCard>[\d\w ]+)\]");
+                regex.Add("hand_history_begin_showdown_phase_token", @"\*\*\* ((Side|Main) )?Pot ([\d] )?Show Down \*\*\*"); // There's no showdown in SWC?
+                regex.Add("hand_history_begin_summary_phase_token", @"\*\*\* SUMMARY \*\*\*");
 
 
                 /* Recognize the Hand History gameID 
                  * SWC does not provide a ID for the game. We return some other ID that identifies the hand.
-                 Ex. Hand #4837351-13 - 2013-04-02 11:12:09
+                 Ex. Hand #4837351: No Limit Holdem - 0.01/0.02
                  */
-                regex.Add("hand_history_game_id_token", @"^Hand #(?<handId>[\d]+) - ");
+                regex.Add("hand_history_game_id_token", @"^Hand #(?<gameId>[\d]+):.+");
 
-                /* Recognize the table ID and max seating capacity (if available) 
-                 ex. Table: Every Hour Three Prizes - Table 6 
-                     Table: NLHE 9max 1/1 #3*/
-                regex.Add("hand_history_table_token", @"^Table: (?<tableId>.+)");
+                regex.Add("hand_history_blind_amounts", @"^Hand #[\d]+:.+ - (?<smallBlindAmount>[\d\.\,]+)\/(?<bigBlindAmount>[\d\.\,]+)$");
 
-                /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) 
-                 * ex. Game: NL Hold'em (0+0) - Blinds 75/150 
-                       Game: NL Hold'em (20 - 100) - Blinds 1/1*/
-                regex.Add("hand_history_game_token", @"^Game: (?<gameType>.+) \([\d\+\- \.]+\) - ");
+                /* Recognize the table ID and max seating capacity (if available)*/
+                regex.Add("hand_history_table_token", @"^Table '(?<tableId>[^']+)'");
 
-                /* Recognize players 
-                 Ex. Seat 1: lolsupp123 (900)
-                 *   Seat 3: shiftysean (330.02)
-                 */
-                regex.Add("hand_history_detect_player_in_game", @"^Seat (?<seatNumber>[\d]+): (?<playerName>.+) \((€|\$)?[\d\.]+\)");
+                /* Recognize game type (Hold'em, Omaha, No-limit, limit, etc.) */
+                regex.Add("hand_history_game_token", @"^Hand #[\d]+: (?<gameType>.+) - .+");
 
-                /* Recognize mucked hands
-                 Ex. gobulldogs shows [Ac 7c] (Three of a Kind, Aces +T7) */
-                regex.Add("hand_history_detect_mucked_hand", @"^(?<playerName>.+) .*(shows|mucks) \[(?<cards>[\d\w ]+)\]");
+                /* Recognize players */
+                regex.Add("hand_history_detect_player_in_game", @"^Seat (?<seatNumber>[\d]+): (?<playerName>.+) \((€|\$)?[\d\.\,]+\)");
 
-                /* Recognize winners of a hand
-                 * Ex. lolsupp123 wins Pot (2075) */
-                regex.Add("hand_history_detect_hand_winner", @"^(?<playerName>.+) wins Pot \(");
+                /* Recognize winners of a hand  */
+                regex.Add("hand_history_detect_hand_winner", @"^(?<playerName>.+) wins pot \(");
 
-                /* Recognize all-ins
-                 * Ex. stallion raises to 1120 (All-in) */
-                regex.Add("hand_history_detect_all_in_push", @"^(?<playerName>.+) (bets|calls|raises).+ \(All-in\)");
+                /* Recognize all-ins */
+                regex.Add("hand_history_detect_all_in_push", @"^(?<playerName>.+) (bets|calls|raises).+ \(all in\)");
 
-                /* Detect who is the small/big blind
-                   Ex. dest04nab posts small blind 100
-                       lolsupp123 posts big blind 200 */
-                regex.Add("hand_history_detect_small_blind", @"^(?<playerName>.+) posts small blind (€|\$)?(?<smallBlindAmount>[\d\.\,]+)");
-                regex.Add("hand_history_detect_big_blind", @"^(?<playerName>.+) posts big blind (€|\$)?(?<bigBlindAmount>[\d\.\,]+)");
+                /* Detect who is the small/big blind */
+                regex.Add("hand_history_detect_small_blind", @"^(?<playerName>.+): posts the small blind");
+                regex.Add("hand_history_detect_big_blind", @"^(?<playerName>.+): posts the big blind");
 
-                /* Detect who the button is
-                   jycg has the dealer button */
-                regex.Add("hand_history_detect_button", @"^(?<playerName>.+) has the dealer button");
+                /* Detect who the button is */
+                regex.Add("hand_history_detect_button", @"Seat (?<seatNumber>[\d]+) is the button");
 
-                /* Detect who our hero is (what's his nickname) 
-                 ex. Dealt to stallion [Qc Qh] */
+                /* Detect who our hero is (what's his nickname)  */
                 regex.Add("hand_history_detect_hero_name", @"Dealt to (?<heroName>.+) \[[\w\d ]+\]");
 
-                /* Detect calls
-                 * ex. SILJCAR calls $0.02 */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.\,]+[\d]*)");
+                /* Detect calls */
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.\,]+[\d]*),?");
 
-                /* Detect bets
-                   ex. kan-ikkje bets $0.02 */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.\,]+[\d]*)");
+                /* Detect bets */
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.\,]+[\d]*),?");
 
-                /* Detect folds
-                 * ex. kan-ikkje folds */
+                /* Detect folds */
                 regex.Add("hand_history_detect_player_fold", @"(?<playerName>.+) folds");
 
-                /* Detect checks
-                 * ex. italystallion89 checks */
+                /* Detect checks */
                 regex.Add("hand_history_detect_player_check", @"(?<playerName>.+) checks");
 
-                /* Detect raises 
-                 * ex. SILJCAR raises to $0.04 */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d\.\,]+[\d]*)");
+                /* Detect raises  */
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d\.\,]+[\d]*),?");
 
                 /* Recognize end of round character sequence (in SWC it's a blank line) */
                 regex.Add("hand_history_detect_end_of_round", @"^$");
 
                 /* Game description (as shown in the hand history) */
-                config.Add("game_description_holdem", "Hold'em");
+                config.Add("game_description_holdem", "Holdem");
 
             }
 
             /* Number of sequences required to raise the OnRoundHasTerminated event.
              * This refers to the hand_history_detect_end_of_round regex, on SealsWithClubs
-             * we need 3 occurrences (3 blank lines) */
-            config.Add("hand_history_end_of_round_number_of_tokens_required", 3);
+             * we need 1 occurrences (1 blank line) */
+            config.Add("hand_history_end_of_round_number_of_tokens_required", 1);
 
         }
 
@@ -135,42 +116,63 @@ namespace PokerMuck
             return PokerGame.Unknown; //Default
         }
 
+        public override List<KeyValuePair<String, String>> GetMuckedHands(String currentGameId) {
+            var result = new List<KeyValuePair<String, String>>();
+
+            String content = getXmlHandData(currentGameId);
+            
+            if (content != "") {
+                // We use a simple regex to parse XML since our case is simple enough
+                MatchCollection matches = Regex.Matches(content, "<display_cards name=\"(?<playerName>[^\"]+)\" cards=\"(?<cards>[^\"]+)\"/>");
+                foreach (Match m in matches) {
+                    result.Add(new KeyValuePair<string, string>(m.Groups["playerName"].Value, m.Groups["cards"].Value));
+                }
+            } else {
+                Trace.WriteLine("Could not get mucked hands from external source.");
+            }
+
+            return result;
+        }
+
+
+        private String getXmlHandData(String currentGameId) {
+            if (currentGameId == "") return "";
+
+            String swcXmlClientDataFile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Temp\swcpoker\Client Game Data\" + currentGameId + ".xml";
+
+            // Lock until file is created
+            while (!File.Exists(swcXmlClientDataFile)) Thread.Sleep(5);
+
+            if (File.Exists(swcXmlClientDataFile)) {
+                return File.ReadAllText(swcXmlClientDataFile);
+            } else {
+                return "";
+            }
+        }
+
         public override PokerGameType GetPokerGameTypeFromWindowTitle(string windowTitle)
         {
             return PokerGameType.Unknown; // It doesn't make a difference to know the game type
         }
 
-        public override int InferMaxSeatingCapacity(string line, String filename)
+        public override int InferMaxSeatingCapacity(string line, String filename, String currentGameId)
         {
             // SWC does not provide seating information in the hand history itself
-            // but it writes some clues in the filename
+            // but it writes it in the more specific XML file hand history
 
-            // ex.HH20130405 NLHE 9max 1-1 1.txt
-            //    HH20130405 NLHE HU 1-1 1.txt
-
-            // If we find the a referene to heads-up play, this should be a two seat table
-            if (line.IndexOf(" HU ") != -1) return 2;
-
-            else
-            {
-                Regex r = new Regex(@" (?<maxSeatingCapacity>[\d]+)max ");
-
-                // If we find the word "max" with a number before it, then we guess that that's the max number of seats
-                Match m = r.Match(line);
-                if (m.Success)
-                {
-                    String maxSeatingCapacity = m.Groups["maxSeatingCapacity"].Value;
-                    int maxCapacityGuess = Int32.Parse(maxSeatingCapacity);
-
-                    Trace.WriteLine("Matched max seating capacity: " + maxSeatingCapacity + " from " + line);
-
-                    return maxCapacityGuess;
-                }
-                else
-                {
-                    // No luck, return default value, hoping for the best
+            String content = getXmlHandData(currentGameId);
+            if (content != "") {
+                Match m = Regex.Match(content, "<table seats=\"(?<seatCount>[\\d]+)\"");
+                if (m.Groups["seatCount"].Success) {
+                    int seatCount = Int32.Parse(m.Groups["seatCount"].Value);
+                    Trace.WriteLine("Found seat count from XML");
+                    return seatCount;
+                } else {
                     return MAX_SEATING;
                 }
+            }else{
+                // Return default value, hoping for the best
+                return MAX_SEATING;
             }
         }
 
@@ -194,10 +196,7 @@ namespace PokerMuck
                 // Filename = 
                 String gameId = match.Groups["gameId"].Value;
 
-                DateTime now = DateTime.Now;
-                String date = String.Format(@"{0}{1}{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
-
-                return ("HH" + date + " " + gameId).Replace("/", "-").Replace("#", "");
+                return gameId.Replace("/", "-").Replace("#", "");
             }
             else
             {
@@ -206,9 +205,17 @@ namespace PokerMuck
 
         }
 
-        public override String GetCurrentHandHistorySubdirectory()
-        {
-            return String.Empty; // Not needed
+        public override String GetCurrentHandHistorySubdirectory() {
+            // Seals with clubs organizes hand history files in directories by day
+            // Format: 2015-12-05\{TODAY'S FILES} (2015 = year, 12 = month, 05 = day) 
+
+            // TODO: save timezone information somewhere? (If you play in a different country you can specify manually the server's timezone)
+            //DateTime now = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time"));
+
+            // Uncomment in production (works for 99% of the users)
+            DateTime now = DateTime.Now;
+
+            return String.Format(@"{0}-{1}-{2}", now.Year.ToString("D4"), now.Month.ToString("D2"), now.Day.ToString("D2"));
         }
 
         public override bool IsPlayerSeatingPositionRelative(PokerGameType gameType){
