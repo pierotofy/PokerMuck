@@ -37,9 +37,9 @@ namespace PokerMuck
                 /* Recognize the Hand History game phases */
                 regex.Add("hand_history_begin_preflop_phase_token", @"\*\*\* HOLE CARDS \*\*\*");
                 regex.Add("hand_history_begin_flop_phase_token", @"\*\*\* FLOP \*\*\* \[(?<flopCards>[\d\w ]+)\]");
-                regex.Add("hand_history_begin_turn_phase_token", @"\*\*\* TURN \*\*\* \[(?<turnCard>[\d\w ]+)\]");
-                regex.Add("hand_history_begin_river_phase_token", @"\*\*\* RIVER \*\*\* \[(?<riverCard>[\d\w ]+)\]");
-                regex.Add("hand_history_begin_showdown_phase_token", @"\*\*\* ((Side|Main) )?Pot ([\d] )?Show Down \*\*\*"); // There's no showdown in SWC?
+                regex.Add("hand_history_begin_turn_phase_token", @"\*\*\* TURN \*\*\* \[[\d\w ]+\] \[(?<turnCard>[\d\w ]+)\]");
+                regex.Add("hand_history_begin_river_phase_token", @"\*\*\* RIVER \*\*\* \[[\d\w ]+\] \[(?<riverCard>[\d\w ]+)\]");
+                regex.Add("hand_history_begin_showdown_phase_token", @".+ wins pot"); // There's no real showdown in SWC
                 regex.Add("hand_history_begin_summary_phase_token", @"\*\*\* SUMMARY \*\*\*");
 
 
@@ -77,10 +77,10 @@ namespace PokerMuck
                 regex.Add("hand_history_detect_hero_name", @"Dealt to (?<heroName>.+) \[[\w\d ]+\]");
 
                 /* Detect calls */
-                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d\.\,]+[\d]*),?");
+                regex.Add("hand_history_detect_player_call", @"(?<playerName>.+) calls \$?(?<amount>[\d]+\.?,?[\d]*),?");
 
                 /* Detect bets */
-                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d\.\,]+[\d]*),?");
+                regex.Add("hand_history_detect_player_bet", @"(?<playerName>.+) bets \$?(?<amount>[\d]+\.?,?[\d]*),?");
 
                 /* Detect folds */
                 regex.Add("hand_history_detect_player_fold", @"(?<playerName>.+) folds");
@@ -89,10 +89,10 @@ namespace PokerMuck
                 regex.Add("hand_history_detect_player_check", @"(?<playerName>.+) checks");
 
                 /* Detect raises  */
-                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d\.\,]+[\d]*),?");
+                regex.Add("hand_history_detect_player_raise", @"(?<playerName>.+) raises to \$?(?<raiseAmount>[\d]+\.?,?[\d]*),?");
 
                 /* Recognize end of round character sequence (in SWC it's a blank line) */
-                regex.Add("hand_history_detect_end_of_round", @"^$");
+                regex.Add("hand_history_detect_end_of_round", @"^\s*$");
 
                 /* Game description (as shown in the hand history) */
                 config.Add("game_description_holdem", "Holdem");
@@ -103,6 +103,8 @@ namespace PokerMuck
              * This refers to the hand_history_detect_end_of_round regex, on SealsWithClubs
              * we need 1 occurrences (1 blank line) */
             config.Add("hand_history_end_of_round_number_of_tokens_required", 1);
+
+            config.Add("hand_history_begin_showdown_phase_token_matches_hand_winner", true);
 
         }
 

@@ -246,6 +246,12 @@ namespace PokerMuck
             return (float)GetConfig(key);
         }
 
+        public Boolean GetConfigBoolean(String key) {
+            if (ProvidesConfig(key)) {
+                return (Boolean)GetConfig(key);
+            } else return false;
+        }
+
         public Object GetConfig(String key)
         {
             Trace.Assert(config.ContainsKey(key), String.Format("The derived PokerClient class does not include the config key: " + key));

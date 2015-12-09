@@ -363,6 +363,7 @@ namespace PokerMuck
                             OnPlayerMuckHandAvailable(muckedHand.Key, hand);
 
                             Trace.WriteLine("Retrieved mucked hand from alternative source (" + muckedHand.Key + ": " + muckedHand.Value + ")");
+                            PlayerHasShowedThisRound = true;
                         }
                     }
                 }
@@ -637,6 +638,10 @@ namespace PokerMuck
                     currentGamePhase = HoldemGamePhase.Showdown;
                     ShowdownEventRaised = true;
                     OnShowdownWillBegin();
+
+                    if (pokerClient.GetConfigBoolean("hand_history_begin_showdown_phase_token_matches_hand_winner")) {
+                        foundMatch = false;
+                    }
                 }
             }
             else if (!pokerClient.HasRegex("hand_history_begin_showdown_phase_token"))
