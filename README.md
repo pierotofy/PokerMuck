@@ -5,6 +5,6 @@ PokerMuck is a GNU GPL online poker utility for the Windows platform maintained 
 
 ![PokerMuck Logo](https://pierotofy.github.io/pokermuck/images/thumb/8/88/Fullt-tilt-hud.png/800px-Fullt-tilt-hud.png)
 
-Windows Installer: [Download](http://www.pokermuck.com/application/setup.exe)
+Windows Installer: [Download](http://www.pokermuck.com/application/setup.exe) (might be broken, please compile from source code using Visual Studio if you have errors).
 
 Check the website for more information: https://pierotofy.github.io/pokermuck/
